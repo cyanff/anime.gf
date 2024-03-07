@@ -1,5 +1,3 @@
-"use client";
-
 import { UIMessage } from "@/lib/types";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Message from "@/components/Message";
@@ -11,12 +9,24 @@ enum ScrollEvent {
   NEW_COMPANION_MESSAGE
 }
 
-export default function MessagesArea(messages: UIMessage[]) {
-  const [uiMessages, setUIMessages] = useState(messages);
+interface MessageAreaProps {
+  msgProp: UIMessage[];
+}
+
+export default function MessagesArea({ msgProp }: MessageAreaProps) {
+  const [msgs, setMsgs] = useState(msgProp);
   const scrollHeightRef = useRef(0);
   const scrollBoxRef = useRef<HTMLDivElement | null>(null);
   const scrollEventRef = useRef<ScrollEvent | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  msgProp.map((msg) => {
+    console.log(msg);
+  });
+
+  // msgs.map((msg) => {
+  //   console.log(msg);
+  // });
 
   // This is garbage, will refactor later
   useLayoutEffect(() => {
@@ -30,29 +40,28 @@ export default function MessagesArea(messages: UIMessage[]) {
         break;
       case ScrollEvent.NEW_COMPANION_MESSAGE:
         if (oldScrollHeight - scrollBox.scrollTop - scrollBox.clientHeight < 200) {
-          scrollToMessagesEnd();
+          scrollToEnd();
         }
         break;
       case ScrollEvent.NEW_USER_MESSAGE:
-        scrollToMessagesEnd();
+        scrollToEnd();
         break;
       default:
         break;
     }
-  }, [uiMessages]);
+  }, [msgs]);
 
   // Scroll to bottom on load
   useEffect(() => {
-    scrollToMessagesEnd();
+    scrollToEnd();
   }, []);
 
   // Scroll handler, load more messages when user scrolls to the top
-  function doInfiniteScroll(e: React.UIEvent<HTMLDivElement, UIEvent>) {
+  function doScroll(e: React.UIEvent<HTMLDivElement, UIEvent>) {
     const scrollBox = e.currentTarget;
     const firstMessage = scrollBox.firstChild as HTMLElement | null;
-    // Get the attribute "data-msg-id" from the first message
-    // We fetch more messages that are older than the message with this id
-    const fromID = firstMessage?.dataset.msgId || "";
+
+    // Get message id to fetch starting from
 
     if (scrollBox.scrollTop == 0) {
       // Store the current scroll height before loading more messages
@@ -65,7 +74,7 @@ export default function MessagesArea(messages: UIMessage[]) {
     }
   }
 
-  function scrollToMessagesEnd() {
+  function scrollToEnd() {
     const messagesEnd = messagesEndRef.current!;
     messagesEnd.scrollIntoView({ block: "start", behavior: "smooth" });
   }
@@ -74,22 +83,20 @@ export default function MessagesArea(messages: UIMessage[]) {
     <div className="mb-4 flex h-full flex-col overflow-x-auto rounded-lg  bg-[#222222] p-4">
       <div
         ref={scrollBoxRef}
-        onScroll={doInfiniteScroll}
+        onScroll={doScroll}
         className="flex h-full flex-col space-y-4 overflow-auto scrollbar-track-neutral-600 scrollbar-thumb-neutral-400"
       >
-        {/* Render messages component */}
-        {uiMessages.map((message, index) => {
+        {msgs.map((msg, idx) => {
           const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          const humanReadableTimestamp = time.isoToUserRelativeTime(message.timestamp, userTimezone);
-
+          const humanReadableTimestamp = time.isoToUserRelativeTime(msg.timestamp, userTimezone);
           return (
             <Message
-              key={index}
-              data-msg-id={message.id}
-              avatarURL={message.avatarURL}
-              username={message.username}
+              key={idx}
+              data-msg-id={msg.id}
+              avatarURL={msg.avatarURL}
+              username={msg.username}
               timestamp={humanReadableTimestamp}
-              content={message.content || ""}
+              content={msg.content || ""}
             />
           );
         })}

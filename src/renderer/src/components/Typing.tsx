@@ -1,4 +1,4 @@
-import styles from "../assets/Typing.module.css";
+import styles from "../styles/Typing.module.css";
 import { cn } from "@/lib/utils";
 
 interface TypingProps {

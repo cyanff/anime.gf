@@ -1,4 +1,4 @@
-import "./assets/global.css";
+import "./styles/global.css";
 import MessagesArea from "@/components/MessagesArea";
 import ChatBar from "@/components/ChatBar";
 import { useState } from "react";
@@ -8,26 +8,18 @@ function App(): JSX.Element {
   const [userInput, setUserInput] = useState("");
   const [typing, setTyping] = useState(false);
 
-  /*
-    id: string;
-    username: string;
-    avatarURL: string | null;
-    content: string | null;
-    timestamp: string;
-  */
-
-  const messages: UIMessage[] = [
+  const msgs: UIMessage[] = [
     {
       id: "1",
       username: "cyan",
-      avatarURL: "https://example.com/avatar1.png",
+      avatarURL: "cyan.png",
       content: "Hello!",
       timestamp: "2022-01-01 10:00:00"
     },
     {
       id: "2",
       username: "saku",
-      avatarURL: "https://example.com/avatar2.png",
+      avatarURL: "saku.png",
       content: "hi",
       timestamp: "2022-01-01 10:01:00"
     }
@@ -39,17 +31,18 @@ function App(): JSX.Element {
         {/* Messages Area and Chat Bar Wrapper*/}
         <div className="flex h-full flex-auto flex-col">
           <div className="flex h-full flex-auto flex-shrink-0 flex-col">
-            <MessagesArea {...messages} />
+            <MessagesArea msgProp={msgs} />
             <ChatBar userInput={userInput} setUserInput={setUserInput} typing={true} />
           </div>
         </div>
+        ii
       </div>
       {/* Sidebar */}
       <div className="ml-8 hidden w-[22rem] flex-shrink-0 flex-col rounded-lg bg-[#222222] px-4 lg:flex">
         {/* Companion Avatar */}
         <div className="mt-4 flex w-full flex-col items-center rounded-lg bg-[#3C3C3C] px-4 py-6 shadow-md">
           <div className="relative h-64 w-64 overflow-hidden rounded-full shadow-md">
-            <img src="" alt="Avatar" className="h-full w-full object-cover object-top" />
+            <img src="saku.png" alt="Avatar" className="h-full w-full object-cover object-top" />
             <div className="h-10 w-10 rounded-full border-2 border-[#3C3C3C] bg-green-500"></div>
           </div>
           <div className="mt-6 w-40 rounded-md bg-[#222222] p-1.5 text-center text-xl font-black text-white">Saku</div>
