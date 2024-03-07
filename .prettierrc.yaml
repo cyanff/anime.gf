@@ -1,4 +1,4 @@
 singleQuote: false
-semi: false
+semi: true
 printWidth: 120
 trailingComma: none

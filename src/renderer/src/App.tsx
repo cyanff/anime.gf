@@ -1,51 +1,69 @@
-import "./assets/global.css"
-import { Button } from "@/components/ui/button"
+import "./assets/global.css";
+import MessagesArea from "@/components/MessagesArea";
+import ChatBar from "@/components/ChatBar";
+import { useState } from "react";
+import { UIMessage } from "@/lib/types";
 
 function App(): JSX.Element {
-  // const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+  const [userInput, setUserInput] = useState("");
+  const [typing, setTyping] = useState(false);
+
+  /*
+    id: string;
+    username: string;
+    avatarURL: string | null;
+    content: string | null;
+    timestamp: string;
+  */
+
+  const messages: UIMessage[] = [
+    {
+      id: "1",
+      username: "cyan",
+      avatarURL: "https://example.com/avatar1.png",
+      content: "Hello!",
+      timestamp: "2022-01-01 10:00:00"
+    },
+    {
+      id: "2",
+      username: "saku",
+      avatarURL: "https://example.com/avatar2.png",
+      content: "hi",
+      timestamp: "2022-01-01 10:01:00"
+    }
+  ];
 
   return (
-    <div>
-      <Button>Test</Button>
+    <div className="flex h-screen bg-[#373636] p-8 text-sm font-medium text-neutral-200 antialiased lg:text-base">
+      <div className="flex h-full w-full flex-row overflow-x-hidden">
+        {/* Messages Area and Chat Bar Wrapper*/}
+        <div className="flex h-full flex-auto flex-col">
+          <div className="flex h-full flex-auto flex-shrink-0 flex-col">
+            <MessagesArea {...messages} />
+            <ChatBar userInput={userInput} setUserInput={setUserInput} typing={true} />
+          </div>
+        </div>
+      </div>
+      {/* Sidebar */}
+      <div className="ml-8 hidden w-[22rem] flex-shrink-0 flex-col rounded-lg bg-[#222222] px-4 lg:flex">
+        {/* Companion Avatar */}
+        <div className="mt-4 flex w-full flex-col items-center rounded-lg bg-[#3C3C3C] px-4 py-6 shadow-md">
+          <div className="relative h-64 w-64 overflow-hidden rounded-full shadow-md">
+            <img src="" alt="Avatar" className="h-full w-full object-cover object-top" />
+            <div className="h-10 w-10 rounded-full border-2 border-[#3C3C3C] bg-green-500"></div>
+          </div>
+          <div className="mt-6 w-40 rounded-md bg-[#222222] p-1.5 text-center text-xl font-black text-white">Saku</div>
+        </div>
+        {/* Companion Bio */}
+        <div className="mt-6 flex flex-col p-5">
+          <h3 className="mb-2 text-lg font-bold text-white">About Me</h3>
+          <div className="whitespace-pre-line text-sm leading-6">im saku</div>
+        </div>
+        {/* Utlity Bar */}
+        <div className="relative mt-auto w-full rounded-md p-2" />
+      </div>
     </div>
-
-    // <div className="flex h-screen bg-[#373636] p-8 text-sm font-medium text-neutral-200 antialiased lg:text-base">
-    //   <div className="flex h-full w-full flex-row overflow-x-hidden">
-    //     {/* Messages Area and Chat Bar Wrapper*/}
-    //     <div className="flex h-full flex-auto flex-col">
-    //       <div className="flex h-full flex-auto flex-shrink-0 flex-col">
-    //         <MessagesArea messages={messages} chatMetadata={chatMetadata} ws={wsRef.current} />
-    //         <ChatBar
-    //           chatMetadata={chatMetadata}
-    //           userInput={userInput}
-    //           setUserInput={setUserInput}
-    //           typing={typing}
-    //         />
-    //       </div>
-    //     </div>
-    //   </div>
-    //   {/* Sidebar */}
-    //   <div className="ml-8 hidden w-[22rem] flex-shrink-0 flex-col rounded-lg bg-[#222222] px-4 lg:flex">
-    //     {/* Companion Avatar */}
-    //     <div className="mt-4 flex w-full flex-col items-center rounded-lg bg-[#3C3C3C] px-4 py-6 shadow-md">
-    //       <div className="relative h-64 w-64 overflow-hidden rounded-full shadow-md">
-    //         <img src="" alt="Avatar" className="h-full w-full object-cover object-top" />
-    //         <div className="h-10 w-10 rounded-full border-2 border-[#3C3C3C] bg-green-500"></div>
-    //       </div>
-    //       <div className="mt-6 w-40 rounded-md bg-[#222222] p-1.5 text-center text-xl font-black text-white">
-    //         Saku
-    //       </div>
-    //     </div>
-    //     {/* Companion Bio */}
-    //     <div className="mt-6 flex flex-col p-5">
-    //       <h3 className="mb-2 text-lg font-bold text-white">About Me</h3>
-    //       <div className="whitespace-pre-line text-sm leading-6">im saku</div>
-    //     </div>
-    //     {/* Utlity Bar */}
-    //     <div className="relative mt-auto w-full rounded-md p-2" />
-    //   </div>
-    // </div>
-  )
+  );
 }
 
-export default App
+export default App;
