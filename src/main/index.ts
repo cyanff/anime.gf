@@ -4,7 +4,7 @@ import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import { Migrator } from "./lib/migrator";
-import { dbPath, migrationsDir } from "./lib/utils";
+import { dbPath, migrationsDir, unpackedPath } from "./lib/utils";
 import Database from "better-sqlite3";
 import { autoUpdater } from "electron-updater";
 
@@ -76,3 +76,12 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
 }
+
+let paths = ["paths:"];
+paths.push(join("appPath:", app.getAppPath()));
+paths.push("unpackedPath:", unpackedPath);
+paths.push("migrationsDir:", migrationsDir);
+paths.push("dbPath:", dbPath);
+const pathsStr = paths.join("\n");
+const appData = app.getPath("appData");
+fs.writeFileSync(join(appData, "paths.txt"), pathsStr);
