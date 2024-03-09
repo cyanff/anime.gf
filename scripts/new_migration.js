@@ -1,8 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 
-// Create a new migration file process.cwd()/migrations
-const migrationDir = path.join(process.cwd(), "migrations");
+const migrationDir = path.join(process.cwd(), "resources/migrations");
 
 if (!fs.existsSync(migrationDir)) {
   fs.mkdirSync(migrationDir);
@@ -21,5 +20,4 @@ const timestamp = new Date()
   .slice(0, 14);
 
 // Create a new migration file with name: <timestamp>_<migrationName>.sql
-// Write the template to the file
 fs.writeFileSync(path.join(migrationDir, `${timestamp}_${migrationName}.sql`), template);

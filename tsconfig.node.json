@@ -4,6 +4,7 @@
   "compilerOptions": {
     "composite": true,
     "strict": true,
-    "types": ["electron-vite/node"]
+    "types": ["electron-vite/node"],
+    "noUnusedLocals": false
   }
 }
