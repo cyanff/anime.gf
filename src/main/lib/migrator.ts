@@ -4,11 +4,6 @@ import { app } from "electron";
 import { join } from "path";
 import { log } from "./logger";
 
-const root = process.cwd();
-
-if (process.env.NODE_ENV === "development") {
-}
-
 interface Migration {
   version: string;
   statement: string;
