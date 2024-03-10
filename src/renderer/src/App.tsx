@@ -25,8 +25,14 @@ function App(): JSX.Element {
     }
   ];
 
+  async function testIPC() {
+    const ddb = await window.api.getDDB();
+  }
+
   return (
     <div className="flex h-screen bg-[#373636] p-8 text-sm font-medium text-neutral-200 antialiased lg:text-base">
+      <button onClick={testIPC}>TestIPC</button>
+
       <div className="flex h-full w-full flex-row overflow-x-hidden">
         {/* Messages Area and Chat Bar Wrapper*/}
         <div className="flex h-full flex-auto flex-col">
@@ -35,7 +41,7 @@ function App(): JSX.Element {
             <ChatBar userInput={userInput} setUserInput={setUserInput} typing={true} />
           </div>
         </div>
-        ii
+        dub
       </div>
       {/* Sidebar */}
       <div className="ml-8 hidden w-[22rem] flex-shrink-0 flex-col rounded-lg bg-[#222222] px-4 lg:flex">

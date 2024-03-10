@@ -1,14 +1,19 @@
-import fs from "fs";
+import fs, { write } from "fs";
 import { app, shell, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import { Migrator } from "./lib/migrator";
 import { dbPath, migrationsDir } from "./lib/utils";
-import { DDB } from "./lib/utils";
+import { getDDB, writeDDB } from "./lib/utils";
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
+
+  // ======================= IPC =======================
+
+  ipcMain.handle("getDDB", getDDB);
+  ipcMain.handle("writeDDB", writeDDB);
 
   // Open or close DevTools using F12 in development
   // Ignore Cmd/Ctrl + R in production.
@@ -50,6 +55,8 @@ function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
+    minWidth: 960,
+    minHeight: 540,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === "linux" ? { icon } : {}),

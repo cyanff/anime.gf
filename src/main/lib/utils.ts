@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "fs/promises";
 import { app } from "electron";
 import { join, dirname } from "path";
 
@@ -17,18 +17,26 @@ export const migrationsDir =
 // ddb["key"] = "value";
 // DDB.write();
 let ddbPath = join(process.cwd(), "ddb.json");
-let ddb: Object;
-export class DDB {
-  constructor() {
-    throw new Error("DDB is a static class and cannot be instantiated");
+
+export async function fileExists(path: string) {
+  try {
+    await fs.access(path);
+    return true;
+  } catch {
+    // File doesn't exist or not accessible (e.g. no permissions)
+    return false;
   }
-  static get() {
-    if (ddb) {
-      return ddb;
-    }
-    return (ddb = JSON.parse(fs.readFileSync(ddbPath, "utf-8")));
+}
+
+export async function getDDB(): Promise<Object> {
+  const dbExists = await fileExists(ddbPath);
+  if (!dbExists) {
+    await fs.writeFile(ddbPath, JSON.stringify({}, null, 2));
   }
-  static write() {
-    fs.writeFileSync(ddbPath, JSON.stringify(ddb, null, 2));
-  }
+  const db = await fs.readFile(ddbPath, "utf-8");
+  return JSON.parse(db);
+}
+
+export async function writeDDB(ddb: Object) {
+  fs.writeFile(ddbPath, JSON.stringify(ddb, null, 2));
 }
