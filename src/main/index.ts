@@ -4,9 +4,8 @@ import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import { Migrator } from "./lib/migrator";
-import { dbPath, migrationsDir, rootPath, unpackedPath } from "./lib/utils";
-import Database from "better-sqlite3";
-import { autoUpdater } from "electron-updater";
+import { dbPath, migrationsDir } from "./lib/utils";
+import { DDB } from "./lib/utils";
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
@@ -27,8 +26,8 @@ app.whenReady().then(() => {
   app.on("ready", () => {
     // New install
     if (!fs.existsSync(dbPath)) {
-      const migrator = new Migrator({ migrationDir: migrationsDir, dbPath });
-      migrator.migrate();
+      // const migrator = new Migrator({ migrationDir: migrationsDir, dbPath });
+      // migrator.migrate();
     }
   });
 
