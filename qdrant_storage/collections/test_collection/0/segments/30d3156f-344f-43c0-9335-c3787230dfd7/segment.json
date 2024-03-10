@@ -1,0 +1,1 @@
+{"version":0,"config":{"vector_data":{"":{"size":4,"distance":"Dot","storage_type":"Memory","index":{"type":"plain","options":{}},"quantization_config":null}},"payload_storage_type":{"type":"on_disk"}}}
