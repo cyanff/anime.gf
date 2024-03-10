@@ -20,14 +20,6 @@ export default function MessagesArea({ msgProp }: MessageAreaProps) {
   const scrollEventRef = useRef<ScrollEvent | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  msgProp.map((msg) => {
-    console.log(msg);
-  });
-
-  // msgs.map((msg) => {
-  //   console.log(msg);
-  // });
-
   // This is garbage, will refactor later
   useLayoutEffect(() => {
     const scrollBox = scrollBoxRef.current!;
@@ -93,8 +85,8 @@ export default function MessagesArea({ msgProp }: MessageAreaProps) {
             <Message
               key={idx}
               data-msg-id={msg.id}
-              avatarURL={msg.avatarURL}
-              username={msg.username}
+              avatarURL={msg.avatar}
+              username={msg.name}
               timestamp={humanReadableTimestamp}
               content={msg.content || ""}
             />

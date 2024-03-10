@@ -10,8 +10,8 @@ export interface ChatMetadata {
 // Represent a message to be rendered
 export interface UIMessage {
   id: string;
-  username: string;
-  avatarURL: string | null;
+  name: string;
+  avatar: string | null;
   content: string | null;
   timestamp: string;
 }

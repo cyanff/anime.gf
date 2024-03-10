@@ -1,3 +1,32 @@
 {
-  "test": "test"
+  "chat": [
+    {
+      "id": "1",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "content": "hey, what's up?",
+      "timestamp": "2024-03-10T04:38:38Z"
+    },
+    {
+      "id": "2",
+      "name": "saku",
+      "avatar": "saku.png",
+      "content": "not much, you?",
+      "timestamp": "2024-03-10T04:39:38Z"
+    },
+    {
+      "id": "3",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "content": "same",
+      "timestamp": "2024-03-10T04:40:38Z"
+    },
+    {
+      "id": "4",
+      "name": "saku",
+      "avatar": "saku.png",
+      "content": "cool",
+      "timestamp": "2024-03-10T04:41:38Z"
+    }
+  ]
 }

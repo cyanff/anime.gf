@@ -1,47 +1,31 @@
 import "./styles/global.css";
-import MessagesArea from "@/components/MessagesArea";
 import ChatBar from "@/components/ChatBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UIMessage } from "@/lib/types";
+import MessagesArea from "@/components/MessagesArea";
 
-function App(): JSX.Element {
+function App({ ddbProp }): JSX.Element {
   const [userInput, setUserInput] = useState("");
   const [typing, setTyping] = useState(false);
+  const [ddb, setDDB] = useState(ddbProp);
 
-  const msgs: UIMessage[] = [
-    {
-      id: "1",
-      username: "cyan",
-      avatarURL: "cyan.png",
-      content: "Hello!",
-      timestamp: "2022-01-01 10:00:00"
-    },
-    {
-      id: "2",
-      username: "saku",
-      avatarURL: "saku.png",
-      content: "hi",
-      timestamp: "2022-01-01 10:01:00"
-    }
-  ];
-
-  async function testIPC() {
-    const ddb = await window.api.getDDB();
-  }
+  // Before closing, save data to ddb.json
+  useEffect(() => {
+    window.addEventListener("unload", () => {
+      window.api.writeDDB(ddb);
+    });
+  });
 
   return (
     <div className="flex h-screen bg-[#373636] p-8 text-sm font-medium text-neutral-200 antialiased lg:text-base">
-      <button onClick={testIPC}>TestIPC</button>
-
       <div className="flex h-full w-full flex-row overflow-x-hidden">
         {/* Messages Area and Chat Bar Wrapper*/}
         <div className="flex h-full flex-auto flex-col">
           <div className="flex h-full flex-auto flex-shrink-0 flex-col">
-            <MessagesArea msgProp={msgs} />
+            <MessagesArea msgProp={ddb.chat} />
             <ChatBar userInput={userInput} setUserInput={setUserInput} typing={true} />
           </div>
         </div>
-        dub
       </div>
       {/* Sidebar */}
       <div className="ml-8 hidden w-[22rem] flex-shrink-0 flex-col rounded-lg bg-[#222222] px-4 lg:flex">

@@ -13,7 +13,9 @@ app.whenReady().then(() => {
   // ======================= IPC =======================
 
   ipcMain.handle("getDDB", getDDB);
-  ipcMain.handle("writeDDB", writeDDB);
+  ipcMain.handle("writeDDB", (_, ddb) => {
+    writeDDB(ddb);
+  });
 
   // Open or close DevTools using F12 in development
   // Ignore Cmd/Ctrl + R in production.
@@ -82,3 +84,7 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
 }
+
+(async function () {
+  console.log(await getDDB());
+})();
