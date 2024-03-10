@@ -17,6 +17,7 @@
       "@renderer/*": [
         "src/renderer/src/*"
       ]
-    }
+    },
+    "noUnusedLocals": false
   }
 }
