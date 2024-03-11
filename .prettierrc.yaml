@@ -2,3 +2,4 @@ singleQuote: false
 semi: true
 printWidth: 120
 trailingComma: none
+plugins: ["prettier-plugin-tailwindcss"]
