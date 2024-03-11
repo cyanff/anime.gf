@@ -7,7 +7,7 @@ import { Migrator } from "./lib/migrator";
 import { dbPath, migrationsDir, rootPath, unpackedPath } from "./lib/utils";
 import Database from "better-sqlite3";
 import { autoUpdater } from "electron-updater";
-
+import { initalizeQdrantClient } from "../backend/lib/init-qdrant-client";
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
 
@@ -25,6 +25,8 @@ app.whenReady().then(() => {
   });
 
   app.on("ready", () => {
+    // Initialize Qdrant client running locally
+    initalizeQdrantClient();
     // New install
     if (!fs.existsSync(dbPath)) {
       const migrator = new Migrator({ migrationDir: migrationsDir, dbPath });
