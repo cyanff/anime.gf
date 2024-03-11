@@ -1,7 +1,11 @@
 import { pipeline } from "@xenova/transformers";
 
+export enum EmbeddingEnum {
+  GTE_SMALL = "gte_small"
+}
+
 // Initialize the pipeline once
-const generateEmbedding = await pipeline("feature-extraction", "Supabase/gte-small");
+const generateEmbedding = await pipeline("feature-extraction", EmbeddingEnum.GTE_SMALL);
 
 /**
  * Generates an embedding given a string

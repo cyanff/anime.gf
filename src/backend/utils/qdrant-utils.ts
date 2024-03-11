@@ -38,7 +38,8 @@ export function createCollection(id: number) {
 export async function searchCollection(id: number, vector: number[], limit: number) {
   let searchResult = await qdrantClient.search(`${id}`, {
     vector: vector,
-    limit: limit
+    limit: limit,
+    with_payload: true
   });
 
   return searchResult;

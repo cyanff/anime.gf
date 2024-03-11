@@ -1,5 +1,6 @@
 import { searchCollection } from "../utils/qdrant-utils";
-import { embed } from "../utils/embed";
+import { embed } from "./embed";
+import { Database, Tables } from "./types_db";
 
 export interface Username {
   username: string;
@@ -22,8 +23,7 @@ export interface RelevantContext {
   version: number;
   score: number;
   payload: any;
-  vector: any;
-  shared_key: any;
+  vector: number[] | null;
 }
 
 export interface ChatContext {
