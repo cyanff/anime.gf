@@ -22,7 +22,7 @@ function App({ ddbProp }): JSX.Element {
       {/* Sidebar */}
       <div className="flex flex-col w-80 h-full bg-neutral-900 rounded-lg mr-8">
         {/* Chat Cards */}
-        <div className="grow flex flex-col space-y-1 overflow-hidden hover:overflow-y-auto p-4 scrollbar my-3">
+        <div className="grow flex flex-col space-y-2 overflow-hidden hover:overflow-y-auto p-2 scrollbar my-1">
           {ddb.chat_cards.map((card, idx) => {
             return <ChatCard key={idx} id={card.id} name={card.name} avatar={card.avatar} msg={card.msg} />;
           })}
