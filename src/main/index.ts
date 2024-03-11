@@ -1,15 +1,21 @@
-import fs from "fs";
+import fs, { write } from "fs";
 import { app, shell, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import { Migrator } from "./lib/migrator";
-import { dbPath, migrationsDir, rootPath, unpackedPath } from "./lib/utils";
-import Database from "better-sqlite3";
-import { autoUpdater } from "electron-updater";
+import { dbPath, migrationsDir } from "./lib/utils";
+import { getDDB, writeDDB } from "./lib/utils";
 import { initalizeQdrantClient } from "../backend/lib/init-qdrant-client";
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
+
+  // ======================= IPC =======================
+
+  ipcMain.handle("getDDB", getDDB);
+  ipcMain.handle("writeDDB", (_, ddb) => {
+    writeDDB(ddb);
+  });
 
   // Open or close DevTools using F12 in development
   // Ignore Cmd/Ctrl + R in production.
@@ -29,8 +35,8 @@ app.whenReady().then(() => {
     initalizeQdrantClient();
     // New install
     if (!fs.existsSync(dbPath)) {
-      const migrator = new Migrator({ migrationDir: migrationsDir, dbPath });
-      migrator.migrate();
+      // const migrator = new Migrator({ migrationDir: migrationsDir, dbPath });
+      // migrator.migrate();
     }
   });
 
@@ -53,6 +59,8 @@ function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
+    minWidth: 960,
+    minHeight: 540,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === "linux" ? { icon } : {}),
@@ -78,3 +86,7 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
 }
+
+(async function () {
+  console.log(await getDDB());
+})();

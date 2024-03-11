@@ -74,3 +74,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+.scrollbar::-webkit-scrollbar {
+  width: 5px; /* Thin width */
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: #171717;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 10px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
