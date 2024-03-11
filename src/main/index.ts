@@ -6,7 +6,7 @@ import icon from "../../resources/icon.png?asset";
 import { Migrator } from "./lib/migrator";
 import { dbPath, migrationsDir } from "./lib/utils";
 import { getDDB, writeDDB } from "./lib/utils";
-
+import { initalizeQdrantClient } from "../backend/lib/qdrant-utils";
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
 
@@ -31,6 +31,8 @@ app.whenReady().then(() => {
   });
 
   app.on("ready", () => {
+    // Initialize Qdrant client running locally
+    initalizeQdrantClient();
     // New install
     if (!fs.existsSync(dbPath)) {
       // const migrator = new Migrator({ migrationDir: migrationsDir, dbPath });
