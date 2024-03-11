@@ -6,7 +6,7 @@ import icon from "../../resources/icon.png?asset";
 import { Migrator } from "./lib/migrator";
 import { dbPath, migrationsDir } from "./lib/utils";
 import { getDDB, writeDDB } from "./lib/utils";
-import { initalizeQdrantClient } from "../backend/lib/qdrant-utils";
+import { initalizeQdrantClient } from "../backend/utils/qdrant-utils";
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
 

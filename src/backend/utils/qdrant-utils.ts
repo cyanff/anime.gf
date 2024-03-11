@@ -29,6 +29,22 @@ export function createCollection(id: number) {
 }
 
 /**
+ * Searches a collection in Qdrant based on the provided parameters
+ * @param id - The ID of the collection to search
+ * @param vector - The vector to search for
+ * @param limit - The maximum number of results to return
+ * @returns A promise that resolves to the search result
+ */
+export async function searchCollection(id: number, vector: number[], limit: number) {
+  let searchResult = await qdrantClient.search(`${id}`, {
+    vector: vector,
+    limit: limit
+  });
+
+  return searchResult;
+}
+
+/**
  * Deletes a collection with the specified ID
  * @param id - The ID of the collection to delete
  */
