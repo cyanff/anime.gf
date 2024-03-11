@@ -1,4 +1,13 @@
-import { qdrantClient } from "./init-qdrant-client";
+import { QdrantClient } from "@qdrant/js-client-rest";
+
+let qdrantClient: QdrantClient;
+/**
+ * Initializes the Qdrant client running locally
+ */
+export function initalizeQdrantClient() {
+  qdrantClient = new QdrantClient({ host: "localhost", port: 6333 });
+}
+export { qdrantClient };
 
 /**
  * Creates a collection with the specified ID
@@ -23,7 +32,6 @@ export function createCollection(id: number) {
  * Deletes a collection with the specified ID
  * @param id - The ID of the collection to delete
  */
-export function deleteCollection(id: number){
+export function deleteCollection(id: number) {
   qdrantClient.deleteCollection(`${id}`);
 }
-
