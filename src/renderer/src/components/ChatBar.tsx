@@ -32,13 +32,12 @@ export default function ChatBar({ userInput, setUserInput, typing, className, ..
     // TODO
   }
 
-  const base = "flex min-h-fit w-full shrink-0 rounded-full space-x-2  bg-[#4F4F4F] py-3 px-4";
   return (
-    <>
+    <div className={className}>
       <div className="flex h-fit w-fit items-center ">
         <Typing className="mb-1 ml-4 mt-1" name="Saku" typing={typing} />
       </div>
-      <div className={cn(base, className)}>
+      <div className="flex min-h-fit w-full shrink-0 space-x-2 rounded-full  bg-[#4F4F4F] px-4 py-3">
         <div className="h-fit w-fit">
           <button className="flex size-6 items-center justify-center text-neutral-400 hover:text-neutral-300">
             <WrenchScrewdriverIcon className="size-6 fill-neutral-400 transition duration-300 ease-out hover:fill-neutral-200" />
@@ -65,6 +64,6 @@ export default function ChatBar({ userInput, setUserInput, typing, className, ..
           <PaperAirplaneIcon className="h-7 w-7 fill-[#E04B93]  transition duration-300 ease-out hover:fill-pink-400  " />
         </button>
       </div>
-    </>
+    </div>
   );
 }

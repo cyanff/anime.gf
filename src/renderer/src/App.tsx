@@ -24,14 +24,14 @@ function App({ ddbProp }): JSX.Element {
       {/* Sidebar */}
       <Squircle cornerRadius={16} cornerSmoothing={1} className="relative flex h-full w-80 flex-col bg-neutral-900">
         {/* Chat Cards */}
-        <div className="scroll-secondary group my-4 grow overflow-auto scroll-smooth">
+        <div className="scroll-secondary group/chat-cards my-4 grow overflow-auto scroll-smooth">
           <div className="-mt-2 flex h-full max-h-full flex-col p-2">
             {ddb.chat_cards.map((card, idx) => {
               return <ChatCard key={idx} id={card.id} name={card.name} avatar={card.avatar} msg={card.msg} />;
             })}
           </div>
           {/* Scrollbar Hover Fade In/Out Hack*/}
-          <div className="absolute right-0 top-0 h-full w-2 bg-neutral-900 transition duration-300 ease-out group-hover:opacity-0"></div>
+          <div className="absolute right-0 top-0 h-full w-2 bg-neutral-900 transition duration-300 ease-out group-hover/chat-cards:opacity-0"></div>
         </div>
 
         {/* Utility Bar */}
