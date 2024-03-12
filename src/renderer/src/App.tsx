@@ -1,7 +1,6 @@
 import "./styles/global.css";
 import ChatBar from "@/components/ChatBar";
 import { useEffect, useState } from "react";
-import MessagesArea from "@/components/MessagesArea";
 import ChatCard from "@/components/ChatCard";
 import { Cog8ToothIcon } from "@heroicons/react/24/solid";
 import Message from "@/components/Message";
