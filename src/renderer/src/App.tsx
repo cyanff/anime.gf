@@ -34,7 +34,7 @@ function App({ ddbProp }): JSX.Element {
             })}
           </div>
           {/* Scrollbar Hover Fade In/Out Hack*/}
-          <div className="absolute right-0 top-0 h-full w-2 bg-neutral-900 transition duration-300 ease-out group-hover/chat-cards:opacity-0"></div>
+          <div className="duration-[25ms] absolute right-0 top-0 h-full w-2 bg-neutral-900 transition ease-out group-hover/chat-cards:opacity-0"></div>
         </div>
 
         {/* Utility Bar */}

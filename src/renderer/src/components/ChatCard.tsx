@@ -8,13 +8,12 @@ interface Props {
   [x: string]: any;
 }
 
-// Todo add hover effects
 export default function ChatCard({ id, name, avatar, msg, className, ...rest }: Props) {
   return (
     <div
       {...rest}
       className={cn(
-        "group flex h-[70px] w-full cursor-pointer items-center space-x-3 rounded-md p-1 transition duration-300 ease-out hover:bg-neutral-600",
+        "group flex h-[70px] w-full cursor-pointer items-center space-x-3 rounded-md p-1 transition duration-150 ease-out hover:bg-neutral-700",
         className
       )}
     >

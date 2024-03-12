@@ -1,5 +1,11 @@
 import { PaperClipIcon } from "@heroicons/react/24/outline";
-import { Bars3Icon, EllipsisVerticalIcon, PaperAirplaneIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
+import {
+  Bars3Icon,
+  EllipsisVerticalIcon,
+  PaperAirplaneIcon,
+  WrenchIcon,
+  WrenchScrewdriverIcon
+} from "@heroicons/react/24/solid";
 import { useEffect, useRef } from "react";
 import Typing from "./Typing";
 import { cn } from "@/lib/utils";
@@ -37,12 +43,10 @@ export default function ChatBar({ userInput, setUserInput, typing, className, ..
       <div className="flex h-fit w-fit items-center ">
         <Typing className="mb-1 ml-4 mt-1" name="Saku" typing={typing} />
       </div>
-      <div className="flex min-h-fit w-full shrink-0 space-x-2 rounded-full  bg-[#4F4F4F] px-4 py-3">
-        <div className="h-fit w-fit">
-          <button className="flex size-6 items-center justify-center text-neutral-400 hover:text-neutral-300">
-            <WrenchScrewdriverIcon className="size-6 fill-neutral-400 transition duration-300 ease-out hover:fill-neutral-200" />
-          </button>
-        </div>
+      <div className=" flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-[#4F4F4F] px-4 py-3">
+        <button className="flex size-6 items-center justify-center text-neutral-400 hover:text-neutral-300">
+          <WrenchIcon className="size-6 fill-neutral-400 transition duration-150 ease-out hover:fill-neutral-200" />
+        </button>
         {/* Textarea wrapper */}
         <textarea
           onInput={(e) => setUserInput(e.currentTarget.value)}
@@ -57,11 +61,11 @@ export default function ChatBar({ userInput, setUserInput, typing, className, ..
           }}
           value={userInput}
           placeholder={`Message @Saku`}
-          className="h-6 max-h-64 w-full resize-none bg-inherit px-2 focus:outline-none"
+          className="scroll-secondary h-6 max-h-64 w-full resize-none overflow-y-auto bg-inherit px-2 font-[430] leading-6 focus:outline-none"
         />
         {/* Send button */}
         <button onClick={() => doSendMessage()} className="h-fit w-fit ">
-          <PaperAirplaneIcon className="h-7 w-7 fill-[#E04B93]  transition duration-300 ease-out hover:fill-pink-400  " />
+          <PaperAirplaneIcon className="h-7 w-7 fill-neutral-400  transition duration-150 ease-out hover:fill-neutral-200  " />
         </button>
       </div>
     </div>
