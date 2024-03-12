@@ -39,7 +39,10 @@
     "kysely": "^0.27.2",
     "mustache": "^4.2.0",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.22.4",
+    "zod-to-json-schema": "^3.22.4",
+    "zod-validation-error": "^3.0.3"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
