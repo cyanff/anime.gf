@@ -51,7 +51,7 @@ function App({ ddbProp }): JSX.Element {
         {/* Chat Area and Chat Bar Wrapper*/}
         <div className="flex h-full flex-auto flex-col pl-8 pr-2 pt-8">
           {/* Chat Area */}
-          <div className="scroll-primary scroll-gutter flex grow scroll-py-0 flex-col space-y-4 overflow-hidden px-4 hover:overflow-y-scroll">
+          <div className="scroll-primary scroll-gutter flex grow scroll-py-0 flex-col space-y-4 overflow-hidden px-5 hover:overflow-y-scroll">
             {ddb.chat.map((chat, i) => {
               const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
               const relativeTimestamp = time.isoToUserRelativeTime(chat.timestamp, timezone);

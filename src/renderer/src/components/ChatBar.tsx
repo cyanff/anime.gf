@@ -3,6 +3,7 @@ import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef } from "react";
 import Typing from "./Typing";
 import { cn } from "@/lib/utils";
+import { Squircle } from "@squircle-js/react";
 
 interface ChatBarProps {
   className?: string;
@@ -32,19 +33,16 @@ export default function ChatBar({ userInput, setUserInput, typing, className, ..
     // TODO
   }
 
+  const base =
+    "flex min-h-fit w-full shrink-0  space-x-2 border-[3px] focus-within:border-stone-600 border-transparent bg-[#4F4F4F] p-3 px-4 transition duration-200 ease-out ";
   return (
     <>
       <div className="flex h-4 w-fit items-center ">
         <Typing className="mb-3" name="Saku" typing={typing} />
       </div>
-      <div
-        className={cn(
-          "flex min-h-fit w-full shrink-0 flex-row space-x-2 rounded-lg border border-transparent bg-[#4F4F4F] p-3 px-4 transition duration-200 ease-out focus-within:border-neutral-500",
-          className
-        )}
-      >
+      <Squircle cornerRadius={50} cornerSmoothing={1} className={cn(base, className)}>
         <div className="h-fit w-fit">
-          <button className="flex h-6 w-6 items-center justify-center text-neutral-400 hover:text-neutral-300">
+          <button className="flex size-6 items-center justify-center text-neutral-400 hover:text-neutral-300">
             <PaperClipIcon className="h-6 w-6" />
           </button>
         </div>
@@ -66,9 +64,9 @@ export default function ChatBar({ userInput, setUserInput, typing, className, ..
         />
         {/* Send button */}
         <button onClick={() => doSendMessage()} className="h-fit w-fit ">
-          <PaperAirplaneIcon className="h-7 w-7 fill-orange-400 transition duration-200 ease-out  hover:fill-orange-300" />
+          <PaperAirplaneIcon className="h-7 w-7 fill-[#E04B93]  transition duration-200 ease-out hover:fill-orange-300  " />
         </button>
-      </div>
+      </Squircle>
     </>
   );
 }
