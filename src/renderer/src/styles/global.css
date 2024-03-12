@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* TODO, when we have multiple pages, refactor specialized styles into *.module.css files */
+
 /* ==================== Custom ==================== */
 @font-face {
   font-family: 'Inter';
@@ -15,40 +17,38 @@
   --font-inter: 'Inter', sans-serif;
 }
 
-
-.scroll-secondary::-webkit-scrollbar {
-  width: 5px; /* Thin width */
-}
-.scroll-secondary::-webkit-scrollbar-track {
-  background: #171717;
-}
-.scroll-secondary::-webkit-scrollbar-thumb {
-  background: #404040;
-  border-radius: 10px;
-}
-.scroll-secondary::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Secondary scrollbar */
 .scroll-primary::-webkit-scrollbar {
   width: 8px; /* Thin width */
 }
 .scroll-primary::-webkit-scrollbar-track {
-  background: #171717;
+  background: #212124;
   border-radius: 10px;
 }
 .scroll-primary::-webkit-scrollbar-thumb {
-  background: #404040;
+  background: theme(colors.neutral.900);
   border-radius: 10px;
 }
-.scroll-primary::-webkit-scrollbar-thumb:hover {
-  background: #555;
+
+/* Secondary scrollbar */
+.scroll-secondary::-webkit-scrollbar {
+  width: 5px; /* Thin width */
+}
+.scroll-secondary::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0);;
+}
+.scroll-secondary::-webkit-scrollbar-thumb {
+  background: theme(colors.neutral.700);
+  border-radius: 10px;
 }
 
+
+/* TODO: Use inline style instead */
 .scroll-gutter {
   scrollbar-gutter: stable;
 }
+
+
+
 
 
 

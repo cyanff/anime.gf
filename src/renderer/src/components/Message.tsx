@@ -12,25 +12,6 @@ interface Props {
   [x: string]: any;
 }
 
-// function Message({ className, avatar: avatarURL, username, timestamp, msg, ...rest }: Props) {
-//   return (
-//     <div {...rest} className={cn("h-30 flex w-full", className)}>
-//       <img
-//         className="h-12 w-12 shrink-0 rounded-full object-cover object-top"
-//         src={avatarURL ?? "/default_avatar.png"}
-//         alt="Avatar"
-//       />
-//       <div className="ml-4">
-//         <div className="flex h-fit flex-row items-baseline space-x-2">
-//           <div className="text-lg font-bold">{username}</div>
-//           <div className="text-[0.60rem]">{timestamp}</div>
-//         </div>
-//         <div className="whitespace-pre-line">{msg}</div>
-//       </div>
-//     </div>
-//   );
-// }
-
 const base = "max-w-3/4 h-fit flex shrink-0 items-center space-x-4 self-start pl-3 pr-8 py-2.5 font-[430]";
 function Message({ className, avatar, name, timestamp, msg, byUser, ...rest }: Props) {
   const userStyles = "self-end bg-grad-magenta text-neutral-50";

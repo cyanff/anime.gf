@@ -6,6 +6,7 @@ import ChatCard from "@/components/ChatCard";
 import { Cog8ToothIcon } from "@heroicons/react/24/solid";
 import Message from "@/components/Message";
 import time from "@/lib/time";
+import { Squircle } from "@squircle-js/react";
 
 function App({ ddbProp }): JSX.Element {
   const [userInput, setUserInput] = useState("");
@@ -20,17 +21,22 @@ function App({ ddbProp }): JSX.Element {
   });
 
   return (
-    <div className="flex h-screen bg-neutral-800 p-6 text-sm  text-neutral-100 antialiased lg:text-base">
+    <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
       {/* Sidebar */}
-      <div className=" flex h-full w-80 flex-col rounded-lg bg-neutral-900">
+      <Squircle cornerRadius={16} cornerSmoothing={1} className="relative flex h-full w-80 flex-col bg-neutral-900">
         {/* Chat Cards */}
-        <div className="scroll-secondary my-1 flex grow flex-col space-y-1 overflow-hidden scroll-smooth p-2 hover:overflow-y-auto">
-          {ddb.chat_cards.map((card, idx) => {
-            return <ChatCard key={idx} id={card.id} name={card.name} avatar={card.avatar} msg={card.msg} />;
-          })}
+        <div className="scroll-secondary group my-4 grow overflow-auto scroll-smooth">
+          <div className="-mt-2 flex h-full max-h-full flex-col p-2">
+            {ddb.chat_cards.map((card, idx) => {
+              return <ChatCard key={idx} id={card.id} name={card.name} avatar={card.avatar} msg={card.msg} />;
+            })}
+          </div>
+          {/* Scrollbar Hover Fade In/Out Hack*/}
+          <div className="absolute right-0 top-0 h-full w-2 bg-neutral-900 transition duration-300 ease-out group-hover:opacity-0"></div>
         </div>
+
         {/* Utility Bar */}
-        <div className="flex h-16 w-full shrink-0 flex-row rounded-b-md bg-neutral-700 p-3">
+        <div className="z-50 flex h-16 w-full shrink-0 flex-row bg-neutral-700 p-3">
           <div className="relative">
             <img src="cyan.png" alt="Avatar" className="h-10 w-10 rounded-full" />
             <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 ring-4 ring-gray-700"></span>
@@ -45,13 +51,13 @@ function App({ ddbProp }): JSX.Element {
             </button>
           </div>
         </div>
-      </div>
+      </Squircle>
       {/* Main Content */}
       <div className="flex h-full w-full grow flex-row overflow-x-hidden">
         {/* Chat Area and Chat Bar Wrapper*/}
-        <div className="flex h-full flex-auto flex-col pl-8 pr-2 pt-8">
+        <div className="relative flex h-full flex-auto flex-col pl-8 pt-8">
           {/* Chat Area */}
-          <div className="scroll-primary scroll-gutter flex grow scroll-py-0 flex-col space-y-4 overflow-hidden scroll-smooth px-5 hover:overflow-y-scroll">
+          <div className="scroll-primary scroll-gutter flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 transition duration-500 ease-out">
             {ddb.chat.map((chat, i) => {
               const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
               const relativeTimestamp = time.isoToUserRelativeTime(chat.timestamp, timezone);
@@ -63,12 +69,11 @@ function App({ ddbProp }): JSX.Element {
                   timestamp={relativeTimestamp}
                   msg={chat.msg}
                   byUser={chat.name === "cyan"}
-                  align={chat.name === "cyan" ? "right" : "left"}
                 />
               );
             })}
           </div>
-          <ChatBar userInput={userInput} setUserInput={setUserInput} typing={true} className="mb-1" />
+          <ChatBar userInput={userInput} setUserInput={setUserInput} typing={true} className="mb-1 mr-5" />
         </div>
       </div>
     </div>
