@@ -24,7 +24,10 @@ function App({ ddbProp }): JSX.Element {
       {/* Sidebar */}
       <Squircle cornerRadius={16} cornerSmoothing={1} className="relative flex h-full w-80 flex-col bg-neutral-900">
         {/* Chat Cards */}
-        <div className="scroll-secondary group/chat-cards my-4 grow overflow-auto scroll-smooth">
+        <div
+          style={{ scrollbarGutter: "stable" }}
+          className="scroll-secondary group/chat-cards my-4 grow overflow-auto scroll-smooth"
+        >
           <div className="-mt-2 flex h-full max-h-full flex-col p-2">
             {ddb.chat_cards.map((card, idx) => {
               return <ChatCard key={idx} id={card.id} name={card.name} avatar={card.avatar} msg={card.msg} />;
@@ -56,7 +59,7 @@ function App({ ddbProp }): JSX.Element {
         {/* Chat Area and Chat Bar Wrapper*/}
         <div className="relative flex h-full flex-auto flex-col pl-8 pt-8">
           {/* Chat Area */}
-          <div className="scroll-primary scroll-gutter flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 transition duration-500 ease-out">
+          <div className="scroll-primary flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 transition duration-500 ease-out">
             {ddb.chat.map((chat, i) => {
               const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
               const relativeTimestamp = time.isoToUserRelativeTime(chat.timestamp, timezone);

@@ -1,5 +1,20 @@
 import { cn } from "@/lib/utils";
 import { Squircle } from "@squircle-js/react";
+import {
+  ContextMenu,
+  ContextMenuCheckboxItem,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger
+} from "@/components/ui/context-menu";
 
 interface Props {
   className?: string;
@@ -38,3 +53,27 @@ function Message({ className, avatar, name, timestamp, msg, byUser, ...rest }: P
 }
 
 export default Message;
+
+/*
+<ContextMenu>
+  <ContextMenuTrigger className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm">
+  </ContextMenuTrigger>
+  <ContextMenuContent className="w-48">
+    <ContextMenuItem inset>Copy</ContextMenuItem>
+    <ContextMenuItem inset disabled>
+      Delete
+      <ContextMenuShortcut></ContextMenuShortcut>
+      <ContextMenuSeparator />
+    </ContextMenuItem>
+    <ContextMenuItem inset disabled>
+      Regenerate
+      <ContextMenuShortcut></ContextMenuShortcut>
+    </ContextMenuItem>
+    <ContextMenuItem inset disabled>
+      Rewind
+      <ContextMenuShortcut></ContextMenuShortcut>
+    </ContextMenuItem>
+  </ContextMenuContent>
+</ContextMenu>;
+
+*/

@@ -25,13 +25,13 @@
   border-radius: 10px;
 }
 .scroll-primary::-webkit-scrollbar-thumb {
-  background: theme(colors.neutral.900);
+  background: theme(colors.neutral.950);
   border-radius: 10px;
 }
 
 /* Secondary scrollbar */
 .scroll-secondary::-webkit-scrollbar {
-  width: 5px; /* Thin width */
+  width: 4px; /* Thin width */
 }
 .scroll-secondary::-webkit-scrollbar-track {
   background: rgba(0,0,0,0);;
