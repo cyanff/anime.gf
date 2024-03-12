@@ -86,7 +86,3 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
 }
-
-(async function () {
-  console.log(await getDDB());
-})();

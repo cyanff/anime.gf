@@ -1,7 +1,60 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
+/* ==================== Custom ==================== */
+@font-face {
+  font-family: 'Inter';
+  font-style:  normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/inter-var.ttf') format('truetype');
+}
+
+:root {
+  --font-inter: 'Inter', sans-serif;
+}
+
+
+.scroll-secondary::-webkit-scrollbar {
+  width: 5px; /* Thin width */
+}
+.scroll-secondary::-webkit-scrollbar-track {
+  background: #171717;
+}
+.scroll-secondary::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 10px;
+}
+.scroll-secondary::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Secondary scrollbar */
+.scroll-primary::-webkit-scrollbar {
+  width: 8px; /* Thin width */
+}
+.scroll-primary::-webkit-scrollbar-track {
+  background: #171717;
+  border-radius: 10px;
+}
+.scroll-primary::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 10px;
+}
+.scroll-primary::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.scroll-gutter {
+  scrollbar-gutter: stable;
+}
+
+
+
+
+
+/* ==================== Shadcn ==================== */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -73,22 +126,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-
-.scrollbar::-webkit-scrollbar {
-  width: 5px; /* Thin width */
-}
-
-.scrollbar::-webkit-scrollbar-track {
-  background: #171717;
-}
-
-.scrollbar::-webkit-scrollbar-thumb {
-  background: #404040;
-  border-radius: 10px;
-}
-
-.scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #555;
 }

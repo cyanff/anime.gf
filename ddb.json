@@ -4,29 +4,92 @@
       "id": "1",
       "name": "cyan",
       "avatar": "cyan.png",
-      "content": "hey, what's up?",
+      "msg": "hey, what's up?",
       "timestamp": "2024-03-10T04:38:38Z"
     },
     {
       "id": "2",
       "name": "saku",
       "avatar": "saku.png",
-      "content": "not much, you?",
+      "msg": "not much, you?",
       "timestamp": "2024-03-10T04:39:38Z"
     },
     {
       "id": "3",
       "name": "cyan",
       "avatar": "cyan.png",
-      "content": "same",
+      "msg": "same",
       "timestamp": "2024-03-10T04:40:38Z"
     },
     {
       "id": "4",
       "name": "saku",
       "avatar": "saku.png",
-      "content": "cool",
+      "msg": "cool",
       "timestamp": "2024-03-10T04:41:38Z"
+    },
+    {
+      "id": "5",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "msg": "Have you seen the latest movie release? It's been all the rage lately, especially on social media where everyone's talking about its groundbreaking special effects and the unexpected plot twist in the middle that apparently turns the entire story on its head. I was thinking of checking it out this weekend.",
+      "timestamp": "2024-03-10T04:42:38Z"
+    },
+    {
+      "id": "6",
+      "name": "saku",
+      "avatar": "saku.png",
+      "msg": "No, haven't yet.",
+      "timestamp": "2024-03-10T04:43:38Z"
+    },
+    {
+      "id": "7",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "msg": "Wanna go together?",
+      "timestamp": "2024-03-10T04:44:38Z"
+    },
+    {
+      "id": "8",
+      "name": "saku",
+      "avatar": "saku.png",
+      "msg": "Sure, sounds fun.",
+      "timestamp": "2024-03-10T04:45:38Z"
+    },
+    {
+      "id": "9",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "msg": "Awesome, I'll look up showtimes.",
+      "timestamp": "2024-03-10T04:46:38Z"
+    },
+    {
+      "id": "10",
+      "name": "saku",
+      "avatar": "saku.png",
+      "msg": "Great! Let's make it a day then. We could start with lunch at that new Italian place that opened up last month. I've heard their pasta is as close to authentic as you can get outside of Italy, and their chef is actually from a small town in Tuscany, which adds a lot of credibility to their dishes. After the movie, we could check out the arcade or maybe just take a walk downtown. It's been a while since we had a day out like that, and it sounds like the perfect way to spend a Saturday.",
+      "timestamp": "2024-03-10T04:47:38Z"
+    },
+    {
+      "id": "11",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "msg": "That sounds like an absolutely perfect plan! I've been craving some good pasta for weeks now, and a day out sounds like just the thing we need to break the monotony. Plus, I've been meaning to try my hand at some of those arcade games again - it's been too long, and I think my skills are getting rusty. Let's do it! I'll book us a table, and we can meet up around noon? I'll also check the movie timings so we can plan the day smoothly. It's going to be great catching up and spending some quality time together. It's a date!",
+      "timestamp": "2024-03-10T04:48:38Z"
+    },
+    {
+      "id": "12",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "msg": "okay i'm at the place where are you atm?",
+      "timestamp": "2024-03-10T04:49:38Z"
+    },
+    {
+      "id": "13",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "msg": "you know what, don't bother showing up",
+      "timestamp": "2024-03-10T05:20:38Z"
     }
   ],
   "chat_cards": [

@@ -2,14 +2,17 @@ import { PaperClipIcon } from "@heroicons/react/24/outline";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef } from "react";
 import Typing from "./Typing";
+import { cn } from "@/lib/utils";
 
 interface ChatBarProps {
+  className?: string;
   userInput: string;
   setUserInput: (input: string) => void;
   typing: boolean;
+  [x: string]: any;
 }
 
-export default function ChatBar({ userInput, setUserInput, typing }: ChatBarProps) {
+export default function ChatBar({ userInput, setUserInput, typing, className, ...rest }: ChatBarProps) {
   // Dynamically expand the text area to fit the user's input
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
@@ -30,11 +33,16 @@ export default function ChatBar({ userInput, setUserInput, typing }: ChatBarProp
   }
 
   return (
-    <div className="mt-1">
+    <>
       <div className="flex h-4 w-fit items-center ">
         <Typing className="mb-3" name="Saku" typing={typing} />
       </div>
-      <div className="flex min-h-fit w-full flex-row space-x-2 rounded-lg border border-transparent bg-[#4F4F4F] p-3 px-4 transition duration-200 ease-out focus-within:border-neutral-500">
+      <div
+        className={cn(
+          "flex min-h-fit w-full shrink-0 flex-row space-x-2 rounded-lg border border-transparent bg-[#4F4F4F] p-3 px-4 transition duration-200 ease-out focus-within:border-neutral-500",
+          className
+        )}
+      >
         <div className="h-fit w-fit">
           <button className="flex h-6 w-6 items-center justify-center text-neutral-400 hover:text-neutral-300">
             <PaperClipIcon className="h-6 w-6" />
@@ -46,7 +54,6 @@ export default function ChatBar({ userInput, setUserInput, typing }: ChatBarProp
           ref={textAreaRef}
           maxLength={1024}
           onKeyDown={(e) => {
-            // Send message on enter
             if (e.key === "Enter" && !e.shiftKey) {
               doSendMessage();
               // Prevent inserting a new line on pressing enter
@@ -62,6 +69,6 @@ export default function ChatBar({ userInput, setUserInput, typing }: ChatBarProp
           <PaperAirplaneIcon className="h-7 w-7 fill-orange-400 transition duration-200 ease-out  hover:fill-orange-300" />
         </button>
       </div>
-    </div>
+    </>
   );
 }

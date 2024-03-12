@@ -77,7 +77,7 @@ export default function MessagesArea({ msgProp }: Props) {
       <div
         ref={scrollBoxRef}
         onScroll={doScroll}
-        className="flex h-full flex-col space-y-4 overflow-auto scrollbar-track-neutral-600 scrollbar-thumb-neutral-400"
+        className="scrollbar-track-neutral-600 scrollbar-thumb-neutral-400 flex h-full flex-col space-y-4 overflow-auto"
       >
         {msgs.map((msg, idx) => {
           const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -86,10 +86,10 @@ export default function MessagesArea({ msgProp }: Props) {
             <Message
               key={idx}
               data-msg-id={msg.id}
-              avatarURL={msg.avatar}
+              avatar={msg.avatar}
               username={msg.name}
               timestamp={humanReadableTimestamp}
-              content={msg.content || ""}
+              msg={msg.content || ""}
             />
           );
         })}
