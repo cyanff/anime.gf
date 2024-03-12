@@ -19,12 +19,12 @@ export interface ContextWindowMessage {
 }
 
 export interface RelevantContext {
-  id: number;
-  version: number;
-  score: number;
-  payload: any;
-  vector: number[] | null;
-}
+    id: string | number;
+    version: number;
+    score: number;
+    payload?: Record<string, unknown> | null;
+    vector?: Record<string, unknown> | number[] | { [key: string]: number[] | { indices: number[]; values: number[]; } | undefined; } | null;
+  }
 
 export interface ChatContext {
   username: Username;

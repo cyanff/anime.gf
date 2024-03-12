@@ -4,7 +4,7 @@ import { z } from "zod";
 import config from "./config";
 import { Option } from "./types";
 import zodToJsonSchema from "zod-to-json-schema";
-import { omit, sleep } from "@/lib/utils";
+import { omit, sleep } from "./utils";
 import { fromZodError } from "zod-validation-error";
 
 export interface LLMConfig {
