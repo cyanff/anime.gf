@@ -1,9 +1,8 @@
 import { PaperClipIcon } from "@heroicons/react/24/outline";
-import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import { Bars3Icon, EllipsisVerticalIcon, PaperAirplaneIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef } from "react";
 import Typing from "./Typing";
 import { cn } from "@/lib/utils";
-import { Squircle } from "@squircle-js/react";
 
 interface ChatBarProps {
   className?: string;
@@ -33,17 +32,16 @@ export default function ChatBar({ userInput, setUserInput, typing, className, ..
     // TODO
   }
 
-  const base =
-    "flex min-h-fit w-full shrink-0  space-x-2 border-[3px] focus-within:border-stone-600 border-transparent bg-[#4F4F4F] p-3 px-4 transition duration-200 ease-out ";
+  const base = "flex min-h-fit w-full shrink-0 rounded-full space-x-2  bg-[#4F4F4F] py-3 px-4";
   return (
     <>
-      <div className="flex h-4 w-fit items-center ">
-        <Typing className="mb-3" name="Saku" typing={typing} />
+      <div className="flex h-fit w-fit items-center ">
+        <Typing className="mb-1 ml-4 mt-1" name="Saku" typing={typing} />
       </div>
-      <Squircle cornerRadius={50} cornerSmoothing={1} className={cn(base, className)}>
+      <div className={cn(base, className)}>
         <div className="h-fit w-fit">
           <button className="flex size-6 items-center justify-center text-neutral-400 hover:text-neutral-300">
-            <PaperClipIcon className="h-6 w-6" />
+            <WrenchScrewdriverIcon className="size-6 fill-neutral-400 transition duration-300 ease-out hover:fill-neutral-200" />
           </button>
         </div>
         {/* Textarea wrapper */}
@@ -64,9 +62,9 @@ export default function ChatBar({ userInput, setUserInput, typing, className, ..
         />
         {/* Send button */}
         <button onClick={() => doSendMessage()} className="h-fit w-fit ">
-          <PaperAirplaneIcon className="h-7 w-7 fill-[#E04B93]  transition duration-200 ease-out hover:fill-orange-300  " />
+          <PaperAirplaneIcon className="h-7 w-7 fill-[#E04B93]  transition duration-300 ease-out hover:fill-pink-400  " />
         </button>
-      </Squircle>
+      </div>
     </>
   );
 }

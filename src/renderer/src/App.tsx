@@ -41,7 +41,7 @@ function App({ ddbProp }): JSX.Element {
           </div>
           <div className="flex grow items-center justify-end">
             <button className="ml-5 text-neutral-400 transition hover:text-neutral-300 ">
-              <Cog8ToothIcon className="h-6 w-6" />
+              <Cog8ToothIcon className="h-6 w-6 duration-300 ease-out hover:rotate-180" />
             </button>
           </div>
         </div>
@@ -51,7 +51,7 @@ function App({ ddbProp }): JSX.Element {
         {/* Chat Area and Chat Bar Wrapper*/}
         <div className="flex h-full flex-auto flex-col pl-8 pr-2 pt-8">
           {/* Chat Area */}
-          <div className="scroll-primary scroll-gutter flex grow scroll-py-0 flex-col space-y-4 overflow-hidden px-5 hover:overflow-y-scroll">
+          <div className="scroll-primary scroll-gutter flex grow scroll-py-0 flex-col space-y-4 overflow-hidden scroll-smooth px-5 hover:overflow-y-scroll">
             {ddb.chat.map((chat, i) => {
               const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
               const relativeTimestamp = time.isoToUserRelativeTime(chat.timestamp, timezone);
@@ -68,7 +68,7 @@ function App({ ddbProp }): JSX.Element {
               );
             })}
           </div>
-          <ChatBar userInput={userInput} setUserInput={setUserInput} typing={typing} />
+          <ChatBar userInput={userInput} setUserInput={setUserInput} typing={true} className="mb-1" />
         </div>
       </div>
     </div>

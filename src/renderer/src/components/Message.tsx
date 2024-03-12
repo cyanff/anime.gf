@@ -31,7 +31,7 @@ interface Props {
 //   );
 // }
 
-const base = "max-w-3/4 flex shrink-0 items-center space-x-4 self-start pl-3 pr-8 py-2.5 font-[430]";
+const base = "max-w-3/4 h-fit flex shrink-0 items-center space-x-4 self-start pl-3 pr-8 py-2.5 font-[430]";
 function Message({ className, avatar, name, timestamp, msg, byUser, ...rest }: Props) {
   const userStyles = "self-end bg-grad-magenta text-neutral-50";
   const otherStyles = "self-start bg-neutral-700 text-neutral-100";

@@ -90,6 +90,76 @@
       "avatar": "cyan.png",
       "msg": "you know what, don't bother showing up",
       "timestamp": "2024-03-10T05:20:38Z"
+    },
+    {
+      "id": "14",
+      "name": "saku",
+      "avatar": "saku.png",
+      "msg": "Hey, I'm so sorry! My phone died, and I couldn't find a charger anywhere. I've been running around trying to borrow one. I'm on my way now, should be there in 5. Really sorry for the inconvenience. Please, let's not cancel. I was looking forward to this day.",
+      "timestamp": "2024-03-10T05:22:38Z"
+    },
+    {
+      "id": "15",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "msg": "Oh, okay. That explains it. I was worried something had happened to you. Let's not let this small hiccup ruin our plans. I'll wait for you at the restaurant. They've got a cozy waiting area. See you soon then!",
+      "timestamp": "2024-03-10T05:24:38Z"
+    },
+    {
+      "id": "16",
+      "name": "saku",
+      "avatar": "saku.png",
+      "msg": "Thank you for understanding and waiting! I appreciate it a lot. Rushing there now. Can't wait to catch up and enjoy the day as planned. See you in a bit!",
+      "timestamp": "2024-03-10T05:25:38Z"
+    },
+    {
+      "id": "17",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "msg": "Finally, you're here! Let's head in. I've been chatting with the waiter, and he's recommended a couple of dishes that sound amazing. Plus, I got us a little extra time to decide on our order. Ready to eat some delicious pasta?",
+      "timestamp": "2024-03-10T05:35:38Z"
+    },
+    {
+      "id": "18",
+      "name": "saku",
+      "avatar": "saku.png",
+      "msg": "Absolutely starving! Let's do this. Thanks for holding the fort while I was MIA. I owe you one. And yeah, I'm all ears for the waiter's recommendations. After the meal, we can head straight to the movie. I checked the times again, and we should be just in time for the afternoon show.",
+      "timestamp": "2024-03-10T05:37:38Z"
+    },
+    {
+      "id": "19",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "msg": "Perfect! The movie timing works out well. After that, how about we hit the arcade like we planned? I'm in the mood to beat some of your high scores today.",
+      "timestamp": "2024-03-10T05:39:38Z"
+    },
+    {
+      "id": "20",
+      "name": "saku",
+      "avatar": "saku.png",
+      "msg": "Challenge accepted! But first, let's enjoy this meal. It smells heavenly in here. I think today is going to be a fantastic day, despite the rocky start.",
+      "timestamp": "2024-03-10T05:41:38Z"
+    },
+    {
+      "id": "21",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "msg": "Agreed! Here's to good food, great company, and a day full of fun. Cheers!",
+      "timestamp": "2024-03-10T05:43:38Z"
+    },
+    {
+      "id": "22",
+      "name": "saku",
+      "avatar": "saku.png",
+      "msg": "Cheers! Oh, and remind me to tell you about this hilarious thing that happened at work last week. You're going to love it.",
+      "timestamp": "2024-03-10T05:45:38Z"
+    },
+    {
+      "id": "23",
+      "name": "cyan",
+      "avatar": "cyan.png",
+      "msg": "Looking forward to it! Let's dig in.",
+      "timestamp": "2024-03-10T05:47:38Z"
     }
   ],
   "chat_cards": [
