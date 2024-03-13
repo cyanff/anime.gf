@@ -13,7 +13,7 @@ export default function ChatCard({ id, name, avatar, msg, className, ...rest }: 
     <div
       {...rest}
       className={cn(
-        "group flex h-[70px] w-full cursor-pointer items-center space-x-3 rounded-md p-1 transition duration-150 ease-out hover:bg-neutral-700",
+        "group flex h-[70px] w-full cursor-pointer items-center space-x-3 rounded-md p-1 transition duration-150 ease-out hover:bg-accent",
         className
       )}
     >

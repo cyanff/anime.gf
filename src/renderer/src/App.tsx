@@ -15,6 +15,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { motion } from "framer-motion";
 
 function App({ ddbProp }): JSX.Element {
   const [userInput, setUserInput] = useState("");
@@ -28,10 +29,27 @@ function App({ ddbProp }): JSX.Element {
     });
   });
 
+  function addMsg() {
+    const newMsg = {
+      id: "-1",
+      name: "cyan",
+      avatar: "cyan.png",
+      msg: "Hello, World!",
+      timestamp: new Date().toISOString()
+    };
+    setDDB((prev) => {
+      return {
+        ...prev,
+        chat: [...prev.chat, newMsg]
+      };
+    });
+  }
+
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
+      <button className="absolute right-10 top-10 z-50 h-6 w-12 rounded-sm bg-neutral-500" onClick={addMsg}></button>
       {/* Sidebar */}
-      <Squircle cornerRadius={16} cornerSmoothing={1} className="relative flex h-full w-80 flex-col bg-neutral-900">
+      <Squircle cornerRadius={16} cornerSmoothing={1} className="relative flex h-full w-80 flex-col bg-background">
         {/* Chat Cards */}
         <div
           style={{ scrollbarGutter: "stable" }}
@@ -43,7 +61,7 @@ function App({ ddbProp }): JSX.Element {
             })}
           </div>
           {/* Scrollbar Hover Fade In/Out Hack*/}
-          <div className="duration-[25ms] absolute right-0 top-0 h-full w-2 bg-neutral-900 transition ease-out group-hover/chat-cards:opacity-0"></div>
+          <div className="duration-[25ms] absolute right-0 top-0 h-full w-2 bg-background transition ease-out group-hover/chat-cards:opacity-0"></div>
         </div>
 
         {/* Utility Bar */}

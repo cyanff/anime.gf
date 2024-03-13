@@ -43,7 +43,7 @@ export default function ChatBar({ userInput, setUserInput, typing, className, ..
       <div className="flex h-fit w-fit items-center ">
         <Typing className="mb-1 ml-4 mt-1" name="Saku" typing={typing} />
       </div>
-      <div className=" flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-[#4F4F4F] px-4 py-3">
+      <div className=" flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-neutral-600 px-4 py-3">
         <button className="flex size-6 items-center justify-center text-neutral-400 hover:text-neutral-300">
           <WrenchIcon className="size-6 fill-neutral-400 transition duration-150 ease-out hover:fill-neutral-200" />
         </button>
