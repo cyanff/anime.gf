@@ -10,6 +10,16 @@ import {
 } from "@/components/ui/context-menu";
 import { EllipsisHorizontalIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+
 interface Props {
   className?: string;
   avatar: string | null;
@@ -23,10 +33,9 @@ interface Props {
 
 function Message({ className, avatar, name, timestamp, msg, byUser, ...rest }: Props) {
   const roleAlign = byUser ? "self-end" : "self-start";
-  const roleColor = byUser ? "bg-grad-magenta text-neutral-50" : "bg-neutral-700 text-neutral-100";
-
+  const roleColor = byUser ? "bg-[#87375f]" : "bg-neutral-700";
   const base =
-    "h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[430] hover:brightness-90 transition duration-200 ease-in";
+    "h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[430] hover:brightness-90 transition duration-200 ease-in text-neutral-200";
   return (
     <ContextMenu>
       <ContextMenuTrigger className={cn("group/msg max-w-3/4 shrink-0", roleAlign)}>
@@ -40,14 +49,50 @@ function Message({ className, avatar, name, timestamp, msg, byUser, ...rest }: P
             {/* Username and Timestamp */}
             <div className="flex h-fit flex-row items-center justify-between space-x-3">
               <div className=" text-base font-semibold text-white">{name}</div>
-              <EllipsisHorizontalIcon className="size-6 cursor-pointer  opacity-0 transition duration-75 ease-out group-hover/msg:opacity-100" />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <EllipsisHorizontalIcon className="size-6 cursor-pointer opacity-0 transition duration-75 ease-out group-hover/msg:opacity-100" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-44">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem>Copy</DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem disabled>
+                      Delete
+                      <DropdownMenuShortcut>
+                        <WrenchScrewdriverIcon className="size-4" />
+                      </DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled>
+                      Regenerate
+                      <DropdownMenuShortcut>
+                        <WrenchScrewdriverIcon className="size-4" />
+                      </DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled>
+                      Rewind
+                      <DropdownMenuShortcut>
+                        <WrenchScrewdriverIcon className="size-4" />
+                      </DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled>
+                      Speak
+                      <DropdownMenuShortcut>
+                        <WrenchScrewdriverIcon className="size-4" />
+                      </DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <p className="text-left">{msg}</p>
           </div>
         </Squircle>
       </ContextMenuTrigger>
       <ContextMenuContent className="w-44">
-        <ContextMenuItem inset className="cursor-pointer transition duration-150 ease-out hover:bg-neutral-300">
+        <ContextMenuItem inset className="">
           Copy
           <ContextMenuShortcut></ContextMenuShortcut>
         </ContextMenuItem>

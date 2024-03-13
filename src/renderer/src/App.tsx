@@ -2,10 +2,19 @@ import "./styles/global.css";
 import ChatBar from "@/components/ChatBar";
 import { useEffect, useState } from "react";
 import ChatCard from "@/components/ChatCard";
-import { Cog8ToothIcon } from "@heroicons/react/24/solid";
+import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import Message from "@/components/Message";
 import time from "@/lib/time";
 import { Squircle } from "@squircle-js/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 function App({ ddbProp }): JSX.Element {
   const [userInput, setUserInput] = useState("");
@@ -47,10 +56,45 @@ function App({ ddbProp }): JSX.Element {
             <h3 className="font-semibold text-gray-100 ">cyan</h3>
             <p className="font-medium text-gray-400">Online</p>
           </div>
+          {/* Settings Icon */}
           <div className="flex grow items-center justify-end">
-            <button className="ml-5 text-neutral-400 transition hover:text-neutral-300 ">
-              <Cog8ToothIcon className="h-6 w-6 duration-300 ease-out hover:rotate-180" />
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Cog8ToothIcon className=" ml-5 size-6 cursor-pointer text-neutral-400 transition duration-300 ease-out hover:rotate-180 hover:text-neutral-300" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-44">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>Placeholder</DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem disabled>
+                    Placeholder
+                    <DropdownMenuShortcut>
+                      <WrenchScrewdriverIcon className="size-4" />
+                    </DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem disabled>
+                    Placeholder
+                    <DropdownMenuShortcut>
+                      <WrenchScrewdriverIcon className="size-4" />
+                    </DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem disabled>
+                    Placeholder
+                    <DropdownMenuShortcut>
+                      <WrenchScrewdriverIcon className="size-4" />
+                    </DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem disabled>
+                    Placeholder
+                    <DropdownMenuShortcut>
+                      <WrenchScrewdriverIcon className="size-4" />
+                    </DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </Squircle>
