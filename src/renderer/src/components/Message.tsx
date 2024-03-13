@@ -28,13 +28,13 @@ interface Props {
   timestamp: string;
   msg: string;
   byUser: boolean;
-  // Type for ...rest
-  [x: string]: any;
+  [rest: string]: any;
 }
 
 function Message({ className, avatar, name, timestamp, msg, byUser, ...rest }: Props) {
   const roleAlign = byUser ? "self-end" : "self-start";
-  const roleColor = byUser ? "bg-[#87375f]" : "bg-[#363636]";
+  const roleColor = byUser ? "bg-[#87375f]" : "bg-grad-gray";
+  // bg-[#363636]
   const base =
     "h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-90 transition duration-200 ease-in text-neutral-200";
   return (
