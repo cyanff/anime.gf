@@ -19,12 +19,12 @@ export interface ContextWindowMessage {
 }
 
 export interface RelevantContext {
-    id: string | number;
-    version: number;
-    score: number;
-    payload?: Record<string, unknown> | null;
-    vector?: Record<string, unknown> | number[] | { [key: string]: number[] | { indices: number[]; values: number[]; } | undefined; } | null;
-  }
+  id: string | number;
+  version: number;
+  score: number;
+  payload?: Record<string, unknown> | null;
+  vector?: Record<string, unknown> | number[] | { [key: string]: number[] | { indices: number[]; values: number[]; } | undefined; } | null;
+}
 
 export interface ChatContext {
   username: Username;
@@ -40,10 +40,10 @@ export async function getContext(chatID: number): Promise<ChatContext> {
   const relevantContext = await getRelevantContext(chatID, contextWindow);
 
   const chatContext: ChatContext = {
-    user: {
+    username: {
       username: username
     },
-    character: {
+    characterInfo: {
       displayName: characterInfo.display_name,
       sysPrompt: characterInfo.sys_prompt,
       metadata: characterInfo.metadata

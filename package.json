@@ -42,6 +42,7 @@
     "framer-motion": "^11.0.12",
     "kysely": "^0.27.2",
     "mustache": "^4.2.0",
+    "sqlite3": "^5.1.7",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4",

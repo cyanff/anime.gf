@@ -7,6 +7,7 @@ import { Migrator } from "./lib/migrator";
 import { dbPath, migrationsDir } from "./lib/utils";
 import { getDDB, writeDDB } from "./lib/utils";
 import { initalizeQdrantClient } from "../backend/utils/qdrant-utils";
+import { initializeDatabase } from "../backend/utils/sqlite-utils";
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
 
@@ -31,6 +32,8 @@ app.whenReady().then(() => {
   });
 
   app.on("ready", () => {
+    // Initialize trad db running locally
+    initializeDatabase();
     // Initialize Qdrant client running locally
     initalizeQdrantClient();
     // New install
