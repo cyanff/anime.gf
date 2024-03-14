@@ -1,7 +1,7 @@
 import { searchCollection } from "../utils/qdrant-utils";
 import { embed } from "./embed";
 import { Database, Tables } from "./types_db";
-
+import { queryData } from "../utils/sqlite-utils";
 export interface Username {
   username: string;
 }
@@ -81,7 +81,9 @@ async function getContextWindow(chatID: number) {
   return stripped;
 }
 
-async function getUsername(chatID: number) {}
+async function getUsername(chatID: number) {
+
+}
 
 async function getCharacterInfo(chatID: number) {}
 
