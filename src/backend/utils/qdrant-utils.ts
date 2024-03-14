@@ -29,6 +29,21 @@ export function createCollection(id: number) {
 }
 
 /**
+ * Inserts data into the Qdrant client.
+ * 
+ * @param id - The ID of the data.
+ * @param data - The data to be inserted.
+ */
+export function insertData(id: number, data: any[]) {
+  qdrantClient.upsert(`${id}`, {
+    wait: true,
+    points: data
+  });
+}
+
+
+
+/**
  * Searches a collection in Qdrant based on the provided parameters
  * @param id - The ID of the collection to search
  * @param vector - The vector to search for
