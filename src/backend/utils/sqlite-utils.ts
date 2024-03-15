@@ -132,20 +132,27 @@ export function queryData(tableName: string) {
   });
 }
 
+/**
+ * Retrieves the latest messages from a specific chat based on the provided chat ID and token limit.
+ * 
+ * @param chatId - The ID of the chat to retrieve messages from.
+ * @param tokenLimit - The maximum number of tokens to retrieve.
+ * @returns A promise that resolves with an array of the latest messages.
+ */
 export function getLatestMessages(chatId: number, tokenLimit: number): Promise<any> {
   return new Promise((resolve, reject) => {
     const sql = `
-        WITH Latest1kMessages AS (
-          SELECT * FROM messages WHERE chat_id = ? ORDER BY id DESC LIMIT 1000
-        ),
-        MessagesWithRunningTotal AS (
-          SELECT *, (SELECT SUM(token_count) FROM Latest1kMessages WHERE id <= m.id) AS running_total
-          FROM Latest1kMessages m
-        )
-        SELECT l.chat_id, l.content, l.sender_type, l.inserted_at, l.updated_at, l.is_embedded, l.token_count, l.id
-        FROM MessagesWithRunningTotal as l
-        WHERE running_total < ?
-      `;
+                WITH Latest1kMessages AS (
+                    SELECT * FROM messages WHERE chat_id = ? ORDER BY id ASC LIMIT 1000
+                ),
+                MessagesWithRunningTotal AS (
+                    SELECT *, (SELECT SUM(token_count) FROM Latest1kMessages WHERE id <= m.id) AS running_total
+                    FROM Latest1kMessages m
+                )
+                SELECT l.chat_id, l.content, l.sender_type, l.inserted_at, l.updated_at, l.is_embedded, l.token_count, l.id
+                FROM MessagesWithRunningTotal as l
+                WHERE running_total < ?
+            `;
     db.all(sql, [chatId, tokenLimit], (err, rows) => {
       if (err) reject(err.message);
       resolve(rows);
@@ -153,9 +160,17 @@ export function getLatestMessages(chatId: number, tokenLimit: number): Promise<a
   });
 }
 
+/**
+ * Retrieves a chunk of unembedded messages from the database based on the provided parameters.
+ * 
+ * @param chatId - The ID of the chat.
+ * @param contextTokenLimit - The maximum number of tokens to include in the context.
+ * @param chunkTokenLimit - The maximum number of tokens to include in the chunk.
+ * @returns A Promise that resolves with the retrieved messages.
+ */
 export function getUnembeddedChunk(chatId: number, contextTokenLimit: number, chunkTokenLimit: number): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const sql = `
+  return new Promise((resolve, reject) => {
+    const sql = `
         WITH UnembeddedMessages AS (
           SELECT * FROM messages WHERE is_embedded = false AND chat_id = ? ORDER BY id DESC
         ),
@@ -172,11 +187,11 @@ export function getUnembeddedChunk(chatId: number, contextTokenLimit: number, ch
         )
         SELECT * FROM MessagesWithChunkTotal WHERE chunk_total <= ?
       `;
-      db.all(sql, [chatId, contextTokenLimit, chunkTokenLimit], (err, rows) => {
-        if (err) reject(err.message);
-        resolve(rows);
-      });
+    db.all(sql, [chatId, contextTokenLimit, chunkTokenLimit], (err, rows) => {
+      if (err) reject(err.message);
+      resolve(rows);
     });
-  }
+  });
+}
 
 initializeDatabase();

@@ -98,8 +98,6 @@ async function getContextWindow(chatID: number) {
         sender_type: message.sender_type
       };
     })
-    // The messages are ordered from newest to oldest, we need the opposite for the prompt
-    .reverse();
 
   return stripped;
 }
