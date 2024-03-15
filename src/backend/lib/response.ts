@@ -11,19 +11,37 @@ import { PreTrainedTokenizer } from "@xenova/transformers";
 import { insertData } from "../utils/sqlite-utils";
 
 export async function response(chatID) {
-  // Gather the necessary context
-  const context = await getContext(chatID);
+  let context, prompt, completion;
 
-  // Construct the prompt
-  const llmTokenizer = await getTokenizer(LLMEnum.NOUS_HERMES_2_YI_34B);
-  const prompt = await constructPrompt(llmTokenizer, context);
+  try {
+    // Gather the necessary context
+    context = await getContext(chatID);
+  } catch (err) {
+    console.error(`Failed to get context for chat ID ${chatID}: ${(err as Error).message}`);
+  }
 
-  // Call the LLM
-  const llmConfig = llm.getDefaultConfig(LLMEnum.NOUS_HERMES_2_YI_34B);
-  const completion = await llm.getCompletion(prompt, llmConfig);
+  try {
+    // Construct the prompt
+    const llmTokenizer = await getTokenizer(LLMEnum.NOUS_HERMES_2_YI_34B);
+    prompt = await constructPrompt(llmTokenizer, context);
+  } catch (err) {
+    console.error(`Failed to construct prompt: ${(err as Error).message}`);
+  }
 
-  // Insert the reply into the database
-  await insertReply(completion, chatID);
+  try {
+    // Call the LLM
+    const llmConfig = llm.getDefaultConfig(LLMEnum.NOUS_HERMES_2_YI_34B);
+    completion = await llm.getCompletion(prompt, llmConfig);
+  } catch (err) {
+    console.error(`Failed to get completion from LLM: ${(err as Error).message}`);
+  }
+
+  try {
+    // Insert the reply into the database
+    await insertReply(completion, chatID);
+  } catch (err) {
+    console.error(`Failed to insert reply into database for chat ID ${chatID}: ${(err as Error).message}`);
+  }
 }
 
 /**
@@ -82,7 +100,5 @@ async function insertReply(completion: string, chatID: number) {
     "character",
     token_count,
     false
-  ])
-    .then(() => console.log("Data inserted successfully"))
-    .catch((err) => console.error("Error inserting data:", err));
+  ]);
 }
