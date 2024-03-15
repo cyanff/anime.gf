@@ -92,10 +92,11 @@ export async function chunk(chatID: number) {
   insertData(chatID, processedChunkEmbeddings, { chunk: rawChunk });
 }
 
+
 /**
- * Get the context window messages for a chat
- * @param chatID The chat to get the context window messages for
- * @returns An array of context window messages
+ * Retrieves the context window messages for a given chat ID.
+ * @param chatID - The ID of the chat.
+ * @returns A promise that resolves to an array of ContextWindowMessage objects.
  */
 async function getContextWindow(chatID: number):  Promise<ContextWindowMessage[]> {
   const contextWindow = await getLatestMessages(chatID, config.CONTEXT_TOKEN_LIMIT);
@@ -112,10 +113,11 @@ async function getContextWindow(chatID: number):  Promise<ContextWindowMessage[]
   return stripped;
 }
 
+
 /**
  * Retrieves the user information for a given chat ID.
  * @param chatID - The ID of the chat.
- * @returns The persona of the user.
+ * @returns A Promise that resolves to the user's persona.
  */
 async function getUserInfo(chatID: number): Promise<UserInfo> {
   const userInfo = await queryData("chat", "persona", chatID)
@@ -128,7 +130,7 @@ async function getUserInfo(chatID: number): Promise<UserInfo> {
 /**
  * Retrieves character information based on the provided chat ID.
  * @param chatID - The ID of the chat.
- * @returns The character information.
+ * @returns A promise that resolves to the character information.
  */
 async function getCharacterInfo(chatID: number): Promise<CharacterInfo> {
   const characterInfo = await queryData("character", "display_name, sys_prompt, metadata", chatID)
