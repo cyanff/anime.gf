@@ -92,13 +92,12 @@ export async function chunk(chatID: number) {
   insertData(chatID, processedChunkEmbeddings, { chunk: rawChunk });
 }
 
-
 /**
  * Retrieves the context window messages for a given chat ID.
  * @param chatID - The ID of the chat.
  * @returns A promise that resolves to an array of ContextWindowMessage objects.
  */
-async function getContextWindow(chatID: number):  Promise<ContextWindowMessage[]> {
+async function getContextWindow(chatID: number): Promise<ContextWindowMessage[]> {
   const contextWindow = await getLatestMessages(chatID, config.CONTEXT_TOKEN_LIMIT);
 
   // We only need these fields from each message
@@ -113,17 +112,13 @@ async function getContextWindow(chatID: number):  Promise<ContextWindowMessage[]
   return stripped;
 }
 
-
 /**
  * Retrieves the user information for a given chat ID.
  * @param chatID - The ID of the chat.
  * @returns A Promise that resolves to the user's persona.
  */
 async function getUserInfo(chatID: number): Promise<UserInfo> {
-  const userInfo = await queryData("chat", "persona", chatID)
-    .then(() => console.log("User info queried successfully"))
-    .catch((err) => console.error("Error querying data:", err));
-
+  const userInfo = (await queryData("chat", "persona", chatID)) as UserInfo;
   return userInfo[0].persona;
 }
 
@@ -133,10 +128,7 @@ async function getUserInfo(chatID: number): Promise<UserInfo> {
  * @returns A promise that resolves to the character information.
  */
 async function getCharacterInfo(chatID: number): Promise<CharacterInfo> {
-  const characterInfo = await queryData("character", "display_name, sys_prompt, metadata", chatID)
-    .then(() => console.log("Character info queried successfully"))
-    .catch((err) => console.error("Error querying data:", err));
-
+  const characterInfo = (await queryData("character", "display_name, sys_prompt, metadata", chatID)) as CharacterInfo;
   return characterInfo[0];
 }
 
