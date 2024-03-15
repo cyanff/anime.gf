@@ -12,7 +12,7 @@ export async function initializeDatabase() {
 
   try {
     await createTable(
-      "identities",
+      "personas",
       `id INTEGER PRIMARY KEY AUTOINCREMENT,
          user_id INTEGER NOT NULL,
          inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -26,9 +26,10 @@ export async function initializeDatabase() {
     );
     await createTable(
       "chats",
-      `id INTEGER PRIMARY KEY AUTOINCREMENT,
+      `id INTEGER PRIMARY KEY AUTOINCREMENT
          inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
-         updated_at TEXT`
+         updated_at TEXT,
+         persona id INTEGER NOT NULL,`
     );
     await createTable(
       "messages",
@@ -71,7 +72,7 @@ function createTable(tableName: string, columns: string) {
  * @param values - The values to insert into the columns.
  * @returns A promise that resolves to true if the data is successfully inserted, or rejects with an error message if an error occurs.
  */
-export function insertData(tableName: string, columns: string, values: any[]) {
+export async function insertData(tableName: string, columns: string, values: any[]) {
   return new Promise((resolve, reject) => {
     const sql = `INSERT INTO ${tableName} (${columns}) VALUES(${values.map(() => "?").join(",")})`;
     db.run(sql, values, (err) => {
@@ -131,7 +132,7 @@ export function queryData(tableName: string) {
   });
 }
 
-export function getLatestMessages(tokenLimit: number, chatId: number) {
+export function getLatestMessages(chatId: number, tokenLimit: number): Promise<any> {
   return new Promise((resolve, reject) => {
     const sql = `
         WITH Latest1kMessages AS (
@@ -151,5 +152,31 @@ export function getLatestMessages(tokenLimit: number, chatId: number) {
     });
   });
 }
+
+export function getUnembeddedChunk(chatId: number, contextTokenLimit: number, chunkTokenLimit: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const sql = `
+        WITH UnembeddedMessages AS (
+          SELECT * FROM messages WHERE is_embedded = false AND chat_id = ? ORDER BY id DESC
+        ),
+        MessagesWithRunningTotal AS (
+          SELECT *, (SELECT SUM(token_count) FROM UnembeddedMessages WHERE id <= m.id) AS running_total
+          FROM UnembeddedMessages m
+        ),
+        ChunkMessages AS (
+          SELECT * FROM MessagesWithRunningTotal WHERE running_total <= ?
+        ),
+        MessagesWithChunkTotal AS (
+          SELECT *, (SELECT SUM(token_count) FROM ChunkMessages WHERE id <= m.id) AS chunk_total
+          FROM ChunkMessages m
+        )
+        SELECT * FROM MessagesWithChunkTotal WHERE chunk_total <= ?
+      `;
+      db.all(sql, [chatId, contextTokenLimit, chunkTokenLimit], (err, rows) => {
+        if (err) reject(err.message);
+        resolve(rows);
+      });
+    });
+  }
 
 initializeDatabase();

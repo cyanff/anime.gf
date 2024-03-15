@@ -1,7 +1,8 @@
-import { searchCollection } from "../utils/qdrant-utils";
+import { insertData, searchCollection } from "../utils/qdrant-utils";
 import { embed } from "./embed";
 import { Database, Tables } from "./types_db";
-import { queryData } from "../utils/sqlite-utils";
+import { queryData, getLatestMessages, getUnembeddedChunk } from "../utils/sqlite-utils";
+import config from "./config";
 export interface Username {
   username: string;
 }
@@ -23,7 +24,11 @@ export interface RelevantContext {
   version: number;
   score: number;
   payload?: Record<string, unknown> | null;
-  vector?: Record<string, unknown> | number[] | { [key: string]: number[] | { indices: number[]; values: number[]; } | undefined; } | null;
+  vector?:
+    | Record<string, unknown>
+    | number[]
+    | { [key: string]: number[] | { indices: number[]; values: number[] } | undefined }
+    | null;
 }
 
 export interface ChatContext {
@@ -34,6 +39,7 @@ export interface ChatContext {
 }
 
 export async function getContext(chatID: number): Promise<ChatContext> {
+  await chunk(chatID);
   const contextWindow = await getContextWindow(chatID);
   const username = await getUsername(chatID);
   const characterInfo = await getCharacterInfo(chatID);
@@ -56,15 +62,32 @@ export async function getContext(chatID: number): Promise<ChatContext> {
 }
 
 /**
+ * Retrieves a chunk of data for a given chat ID, processes it, and inserts the processed data into the database.
+ * @param chatID - The ID of the chat.
+ * @returns A Promise that resolves when the chunk is processed and inserted into the database.
+ */
+export async function chunk(chatID: number) {
+  const rawChunk = await getUnembeddedChunk(config.CONTEXT_TOKEN_LIMIT, config.CHUNK_TOKEN_LIMIT, chatID);
+
+  // Check if rawChunk is empty
+  if (rawChunk.length === 0) {
+    console.log('Raw chunk is empty, skipping processing');
+    return;
+  }
+
+  // TODO: format raw chunk for LLM declarative summarization before embedding
+  const processedChunk = "";
+  const processedChunkEmbeddings = await embed(processedChunk);
+  insertData(chatID, processedChunkEmbeddings, rawChunk );
+}
+
+/**
  * Get the context window messages for a chat
  * @param chatID The chat to get the context window messages for
  * @returns An array of context window messages
  */
 async function getContextWindow(chatID: number) {
-  //   const { data: contextWindow, error: contextWindowErr } = await supabaseService.rpc("latest_messages_within_limit", {
-  //     token_limit: config.CTX_TOKENS,
-  //     m_chat_id: chatID
-  //   });
+  const contextWindow: any = await getLatestMessages(chatID, config.CONTEXT_TOKEN_LIMIT);
 
   // We only need these fields from each message
   const stripped = contextWindow
@@ -81,9 +104,7 @@ async function getContextWindow(chatID: number) {
   return stripped;
 }
 
-async function getUsername(chatID: number) {
-
-}
+async function getUsername(chatID: number) {}
 
 async function getCharacterInfo(chatID: number) {}
 
@@ -105,15 +126,15 @@ async function getRelevantContext(chatID: number, contextWindow: ContextWindowMe
 }
 
 /**
- * Concatenates the content property from each context window message into a single string
+ * Concatenates the content property from each message object into a single string
  *
- * @param contextWindow - Array of context window messages
+ * @param messages - Array of messages
  * @returns String containing the concatenated messages
  */
-export function concatenateMessageContent(contextWindow: ContextWindowMessage[]): string {
+export function concatenateMessageContent(messages: any[]): string {
   let messageString = "";
-  if (contextWindow) {
-    contextWindow.forEach((message) => {
+  if (messages) {
+    messages.forEach((message) => {
       messageString += ` ${message.content}`;
     });
   }

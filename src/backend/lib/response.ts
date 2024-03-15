@@ -1,4 +1,3 @@
-
 import dotenv from "dotenv";
 import { getContext } from "./context";
 import { getTokenizer } from "./tokenizer";
@@ -9,10 +8,10 @@ import llm from "./llm";
 import { ChatContext } from "./context";
 import Mustache from "mustache";
 import { PreTrainedTokenizer } from "@xenova/transformers";
+import { insertData } from "../utils/sqlite-utils";
 
-export default async function (){
-
-  // Gather the necessary context 
+export async function response(chatID) {
+  // Gather the necessary context
   const context = await getContext(chatID);
 
   // Construct the prompt
@@ -26,7 +25,6 @@ export default async function (){
   // Insert the reply into the database
   await insertReply(completion, chatID);
 }
-
 
 /**
  * Construct a prompt to be sent to the LLM.
@@ -47,7 +45,7 @@ async function constructPrompt(tokenizer: PreTrainedTokenizer, context: ChatCont
 
   // Parse each chunk of relevant context
   let relevantContext = context.relevantContext.map((chunk) => {
-    const parsedChunk = JSON.parse(chunk.payload);
+    const parsedChunk = chunk.payload;
     // Parse each message from each chunk
     const messages = parsedChunk.map((message: any) => {
       // TODO: implement conversion of timestamp to natural language before returning
@@ -66,6 +64,16 @@ async function constructPrompt(tokenizer: PreTrainedTokenizer, context: ChatCont
   return prompt;
 }
 
+/**
+ * Inserts a reply into the database.
+ * @param completion - The completion string to be inserted.
+ * @param chatID - The ID of the chat.
+ * @returns A promise that resolves when the data is inserted successfully.
+ */
 async function insertReply(completion: string, chatID: number) {
-
+  const tokenizer = await getTokenizer(EmbeddingEnum.GTE_SMALL);
+  const token_count = tokenizer(completion).input_ids.size;
+  await insertData('messages', 'chat_id, msg, sender_type, num_tokens, embedded', [chatID, completion, 'character', token_count, false])
+  .then(() => console.log('Data inserted successfully'))
+  .catch(err => console.error('Error inserting data:', err));
 }

@@ -7,9 +7,11 @@ import { deepFreeze } from "./utils";
 // LLM Configs
 ///////////////////////////////////////////////////////////////
 // The number tokens the llm should be passed from the chat history
-const CTX_TOKENS = 512;
+const CONTEXT_TOKEN_LIMIT = 512;
 // The token limit of the embedding chunk
-const CHUNK_TOKENS = 128;
+const CHUNK_TOKEN_LIMIT = 128;
+// The number of search results to query
+const SEARCH_LIMIT = 3;
 // How many times to attempt to get a valid JSON completion
 const JSON_ATTEMPTS = 3;
 const JSON_ATTEMPTS_DELAY = 3000;
@@ -37,8 +39,9 @@ const HEARTBEAT_INTERVAL = 30000;
 ///////////////////////////////////////////////////////////////
 
 export default {
-  CTX_TOKENS,
-  CHUNK_TOKENS,
+  CONTEXT_TOKEN_LIMIT,
+  CHUNK_TOKEN_LIMIT,
+  SEARCH_LIMIT,
   JSON_ATTEMPTS,
   JSON_ATTEMPTS_DELAY,
   HEARTBEAT_INTERVAL,

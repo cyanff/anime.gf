@@ -34,14 +34,18 @@ export function createCollection(id: number) {
  * @param id - The ID of the data.
  * @param data - The data to be inserted.
  */
-export function insertData(id: number, data: any[]) {
+export function insertData(id: number, vector: number[], payload: Record<string, unknown> | null) {
   qdrantClient.upsert(`${id}`, {
     wait: true,
-    points: data
+    points: [
+      {
+        id: id,
+        vector: vector,
+        payload: payload
+      }
+    ]
   });
 }
-
-
 
 /**
  * Searches a collection in Qdrant based on the provided parameters
