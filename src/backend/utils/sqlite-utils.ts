@@ -1,4 +1,5 @@
 import * as sqlite3 from "sqlite3";
+import { RawChunk, ContextWindowMessage } from "../lib/context";
 
 let db;
 
@@ -22,8 +23,14 @@ export async function initializeDatabase() {
       "characters",
       `id INTEGER PRIMARY KEY AUTOINCREMENT,
          inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
-         updated_at TEXT`
+         updated_at TEXT,
+         display_name TEXT,
+         sys_prompt TEXT,
+         metadata TEXT`
+
     );
+
+
     await createTable(
       "chats",
       `id INTEGER PRIMARY KEY AUTOINCREMENT
@@ -118,19 +125,21 @@ export function deleteData(tableName: string, id: number) {
 }
 
 /**
- * Queries data from the specified table in the SQLite database.
+ * Queries data from the specified table and column in the SQLite database.
  * @param tableName - The name of the table to query.
+ * @param columnName - The name of the column to select. If not provided, selects all columns.
  * @returns A promise that resolves with the queried rows or rejects with an error message.
  */
-export function queryData(tableName: string) {
-  return new Promise((resolve, reject) => {
-    const sql = `SELECT * FROM ${tableName}`;
-    db.all(sql, [], (err, rows) => {
-      if (err) reject(err.message);
-      resolve(rows);
+export function queryData(tableName: string, columnName: string, id: number) {
+    return new Promise((resolve, reject) => {
+      const columnToSelect = columnName || '*';
+      const sql = `SELECT ${columnToSelect} FROM ${tableName} WHERE id = ${id}`;
+      db.all(sql, [], (err, rows) => {
+        if (err) reject(err.message);
+        resolve(rows);
+      });
     });
-  });
-}
+  }
 
 /**
  * Retrieves the latest messages from a specific chat based on the provided chat ID and token limit.
@@ -139,7 +148,7 @@ export function queryData(tableName: string) {
  * @param tokenLimit - The maximum number of tokens to retrieve.
  * @returns A promise that resolves with an array of the latest messages.
  */
-export function getLatestMessages(chatId: number, tokenLimit: number): Promise<any> {
+export function getLatestMessages(chatId: number, tokenLimit: number): Promise<ContextWindowMessage[]> {
   return new Promise((resolve, reject) => {
     const sql = `
                 WITH Latest1kMessages AS (
@@ -168,7 +177,7 @@ export function getLatestMessages(chatId: number, tokenLimit: number): Promise<a
  * @param chunkTokenLimit - The maximum number of tokens to include in the chunk.
  * @returns A Promise that resolves with the retrieved messages.
  */
-export function getUnembeddedChunk(chatId: number, contextTokenLimit: number, chunkTokenLimit: number): Promise<any> {
+export function getUnembeddedChunk(chatId: number, contextTokenLimit: number, chunkTokenLimit: number): Promise<RawChunk[]> {
   return new Promise((resolve, reject) => {
     const sql = `
         WITH UnembeddedMessages AS (

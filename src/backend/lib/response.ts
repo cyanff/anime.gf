@@ -45,7 +45,7 @@ async function constructPrompt(tokenizer: PreTrainedTokenizer, context: ChatCont
 
   // Parse each chunk of relevant context
   let relevantContext = context.relevantContext.map((chunk) => {
-    const payload: Record<string, any> | null | undefined = chunk.payload;
+    const payload = chunk.payload;
     if (!payload) {
       return [];
     }
