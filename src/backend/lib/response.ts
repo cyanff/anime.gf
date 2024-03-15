@@ -45,9 +45,12 @@ async function constructPrompt(tokenizer: PreTrainedTokenizer, context: ChatCont
 
   // Parse each chunk of relevant context
   let relevantContext = context.relevantContext.map((chunk) => {
-    const parsedChunk = chunk.payload;
+    const payload: Record<string, any> | null | undefined = chunk.payload;
+    if (!payload) {
+      return [];
+    }
     // Parse each message from each chunk
-    const messages = parsedChunk.map((message: any) => {
+    const messages = payload.map((message: any) => {
       // TODO: implement conversion of timestamp to natural language before returning
       return {
         role: message.sender_type,
@@ -73,7 +76,13 @@ async function constructPrompt(tokenizer: PreTrainedTokenizer, context: ChatCont
 async function insertReply(completion: string, chatID: number) {
   const tokenizer = await getTokenizer(EmbeddingEnum.GTE_SMALL);
   const token_count = tokenizer(completion).input_ids.size;
-  await insertData('messages', 'chat_id, msg, sender_type, num_tokens, embedded', [chatID, completion, 'character', token_count, false])
-  .then(() => console.log('Data inserted successfully'))
-  .catch(err => console.error('Error inserting data:', err));
+  await insertData("messages", "chat_id, msg, sender_type, num_tokens, embedded", [
+    chatID,
+    completion,
+    "character",
+    token_count,
+    false
+  ])
+    .then(() => console.log("Data inserted successfully"))
+    .catch((err) => console.error("Error inserting data:", err));
 }

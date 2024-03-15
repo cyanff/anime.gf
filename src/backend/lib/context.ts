@@ -23,12 +23,22 @@ export interface RelevantContext {
   id: string | number;
   version: number;
   score: number;
-  payload?: Record<string, unknown> | null;
+  payload?: Record<string, any> | null;
   vector?:
     | Record<string, unknown>
     | number[]
     | { [key: string]: number[] | { indices: number[]; values: number[] } | undefined }
     | null;
+}
+
+export interface RawChunk {
+  chat_id: number;
+  msg: string;
+  sender_type: string;
+  inserted_at: string;
+  updated_at: string;
+  num_tokens: number;
+  embedded: boolean;
 }
 
 export interface ChatContext {
@@ -67,18 +77,18 @@ export async function getContext(chatID: number): Promise<ChatContext> {
  * @returns A Promise that resolves when the chunk is processed and inserted into the database.
  */
 export async function chunk(chatID: number) {
-  const rawChunk = await getUnembeddedChunk(config.CONTEXT_TOKEN_LIMIT, config.CHUNK_TOKEN_LIMIT, chatID);
+  const rawChunk: RawChunk[] = await getUnembeddedChunk(config.CONTEXT_TOKEN_LIMIT, config.CHUNK_TOKEN_LIMIT, chatID);
 
   // Check if rawChunk is empty
   if (rawChunk.length === 0) {
-    console.log('Raw chunk is empty, skipping processing');
+    console.log("Raw chunk is empty, skipping processing");
     return;
   }
 
   // TODO: format raw chunk for LLM declarative summarization before embedding
   const processedChunk = "";
   const processedChunkEmbeddings = await embed(processedChunk);
-  insertData(chatID, processedChunkEmbeddings, rawChunk );
+  insertData(chatID, processedChunkEmbeddings, {"chunk": rawChunk});
 }
 
 /**
@@ -90,14 +100,13 @@ async function getContextWindow(chatID: number) {
   const contextWindow: any = await getLatestMessages(chatID, config.CONTEXT_TOKEN_LIMIT);
 
   // We only need these fields from each message
-  const stripped = contextWindow
-    .map((message) => {
-      return {
-        content: message.content,
-        inserted_at: message.inserted_at,
-        sender_type: message.sender_type
-      };
-    })
+  const stripped = contextWindow.map((message) => {
+    return {
+      content: message.content,
+      inserted_at: message.inserted_at,
+      sender_type: message.sender_type
+    };
+  });
 
   return stripped;
 }
