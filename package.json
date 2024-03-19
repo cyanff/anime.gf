@@ -34,20 +34,15 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@squircle-js/react": "^1.2.0",
     "@types/better-sqlite3": "^7.6.9",
-    "@xenova/transformers": "^2.16.0",
     "better-sqlite3": "^9.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "electron-updater": "^6.1.7",
     "framer-motion": "^11.0.12",
-    "kysely": "^0.27.2",
     "mustache": "^4.2.0",
     "sqlite3": "^5.1.7",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.22.4",
-    "zod-to-json-schema": "^3.22.4",
-    "zod-validation-error": "^3.0.3"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
