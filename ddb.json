@@ -18,442 +18,36 @@
       "id": "3",
       "name": "cyan",
       "avatar": "cyan.png",
-      "msg": "same",
+      "msg": "just chilling. have you seen Dune? The new one, it's pretty good",
       "timestamp": "2024-03-10T04:40:38Z"
     },
     {
       "id": "4",
       "name": "saku",
       "avatar": "saku.png",
-      "msg": "cool",
+      "msg": "yeah, i fell asleep halfway through. super boring tbh",
       "timestamp": "2024-03-10T04:41:38Z"
     },
     {
       "id": "5",
       "name": "cyan",
       "avatar": "cyan.png",
-      "msg": "Have you seen the latest movie release? It's been all the rage lately, especially on social media where everyone's talking about its groundbreaking special effects and the unexpected plot twist in the middle that apparently turns the entire story on its head. I was thinking of checking it out this weekend.",
-      "timestamp": "2024-03-10T04:42:38Z"
+      "msg": "huh?? it was the greatest movie ever made!",
+      "timestamp": "2024-03-10T04:41:38Z"
     },
     {
       "id": "6",
       "name": "saku",
       "avatar": "saku.png",
-      "msg": "No, haven't yet.",
-      "timestamp": "2024-03-10T04:43:38Z"
+      "msg": "you're worthless and your opinion is invalid",
+      "timestamp": "2024-03-10T04:41:38Z"
     },
     {
       "id": "7",
       "name": "cyan",
       "avatar": "cyan.png",
-      "msg": "Wanna go together?",
-      "timestamp": "2024-03-10T04:44:38Z"
-    },
-    {
-      "id": "8",
-      "name": "saku",
-      "avatar": "saku.png",
-      "msg": "Sure, sounds fun.",
-      "timestamp": "2024-03-10T04:45:38Z"
-    },
-    {
-      "id": "9",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Awesome, I'll look up showtimes.",
-      "timestamp": "2024-03-10T04:46:38Z"
-    },
-    {
-      "id": "10",
-      "name": "saku",
-      "avatar": "saku.png",
-      "msg": "Great! Let's make it a day then. We could start with lunch at that new Italian place that opened up last month. I've heard their pasta is as close to authentic as you can get outside of Italy, and their chef is actually from a small town in Tuscany, which adds a lot of credibility to their dishes. After the movie, we could check out the arcade or maybe just take a walk downtown. It's been a while since we had a day out like that, and it sounds like the perfect way to spend a Saturday.",
-      "timestamp": "2024-03-10T04:47:38Z"
-    },
-    {
-      "id": "11",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "That sounds like an absolutely perfect plan! I've been craving some good pasta for weeks now, and a day out sounds like just the thing we need to break the monotony. Plus, I've been meaning to try my hand at some of those arcade games again - it's been too long, and I think my skills are getting rusty. Let's do it! I'll book us a table, and we can meet up around noon? I'll also check the movie timings so we can plan the day smoothly. It's going to be great catching up and spending some quality time together. It's a date!",
-      "timestamp": "2024-03-10T04:48:38Z"
-    },
-    {
-      "id": "12",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "okay i'm at the place where are you atm?",
-      "timestamp": "2024-03-10T04:49:38Z"
-    },
-    {
-      "id": "13",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "you know what, don't bother showing up",
-      "timestamp": "2024-03-10T05:20:38Z"
-    },
-    {
-      "id": "14",
-      "name": "saku",
-      "avatar": "saku.png",
-      "msg": "Hey, I'm so sorry! My phone died, and I couldn't find a charger anywhere. I've been running around trying to borrow one. I'm on my way now, should be there in 5. Really sorry for the inconvenience. Please, let's not cancel. I was looking forward to this day.",
-      "timestamp": "2024-03-10T05:22:38Z"
-    },
-    {
-      "id": "15",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Oh, okay. That explains it. I was worried something had happened to you. Let's not let this small hiccup ruin our plans. I'll wait for you at the restaurant. They've got a cozy waiting area. See you soon then!",
-      "timestamp": "2024-03-10T05:24:38Z"
-    },
-    {
-      "id": "16",
-      "name": "saku",
-      "avatar": "saku.png",
-      "msg": "Thank you for understanding and waiting! I appreciate it a lot. Rushing there now. Can't wait to catch up and enjoy the day as planned. See you in a bit!",
-      "timestamp": "2024-03-10T05:25:38Z"
-    },
-    {
-      "id": "17",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Finally, you're here! Let's head in. I've been chatting with the waiter, and he's recommended a couple of dishes that sound amazing. Plus, I got us a little extra time to decide on our order. Ready to eat some delicious pasta?",
-      "timestamp": "2024-03-10T05:35:38Z"
-    },
-    {
-      "id": "18",
-      "name": "saku",
-      "avatar": "saku.png",
-      "msg": "Absolutely starving! Let's do this. Thanks for holding the fort while I was MIA. I owe you one. And yeah, I'm all ears for the waiter's recommendations. After the meal, we can head straight to the movie. I checked the times again, and we should be just in time for the afternoon show.",
-      "timestamp": "2024-03-10T05:37:38Z"
-    },
-    {
-      "id": "19",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Perfect! The movie timing works out well. After that, how about we hit the arcade like we planned? I'm in the mood to beat some of your high scores today.",
-      "timestamp": "2024-03-10T05:39:38Z"
-    },
-    {
-      "id": "20",
-      "name": "saku",
-      "avatar": "saku.png",
-      "msg": "Challenge accepted! But first, let's enjoy this meal. It smells heavenly in here. I think today is going to be a fantastic day, despite the rocky start.",
-      "timestamp": "2024-03-10T05:41:38Z"
-    },
-    {
-      "id": "21",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Agreed! Here's to good food, great company, and a day full of fun. Cheers!",
-      "timestamp": "2024-03-10T05:43:38Z"
-    },
-    {
-      "id": "22",
-      "name": "saku",
-      "avatar": "saku.png",
-      "msg": "Cheers! Oh, and remind me to tell you about this hilarious thing that happened at work last week. You're going to love it.",
-      "timestamp": "2024-03-10T05:45:38Z"
-    },
-    {
-      "id": "23",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Looking forward to it! Let's dig in.",
-      "timestamp": "2024-03-10T05:47:38Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:22:55.459Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:23:00.399Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:30:21.615Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:30:23.245Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:39:47.007Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:39:49.082Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:39:56.125Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:45:46.786Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:45:54.719Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:46:11.002Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:46:21.091Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:46:25.753Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:46:30.873Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:47:46.930Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:47:49.462Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:47:55.926Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:52:14.388Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:52:39.525Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:52:41.942Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:52:46.061Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:52:53.194Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:53:39.833Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:53:47.442Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:53:50.448Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:53:56.866Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:01.887Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:05.810Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:12.471Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:20.588Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:27.380Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:27.601Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:31.841Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:34.166Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:36.566Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:38.777Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:41.260Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:53.330Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:55.652Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:54:58.618Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:55:04.885Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T02:55:11.590Z"
-    },
-    {
-      "id": "-1",
-      "name": "cyan",
-      "avatar": "cyan.png",
-      "msg": "Hello, World!",
-      "timestamp": "2024-03-13T03:07:48.609Z"
+      "msg": ":(",
+      "timestamp": "2024-03-10T04:41:38Z"
     }
   ],
   "chat_cards": [
@@ -461,73 +55,19 @@
       "id": "1",
       "name": "saku",
       "avatar": "saku.png",
-      "msg": "yeah, i'm good you?"
+      "msg": "you're worthless and your opinion is invalid"
     },
     {
       "id": "2",
       "name": "akane",
       "avatar": "akane.png",
-      "msg": "hey what are you doing?"
+      "msg": "hey what are you upto?"
     },
     {
       "id": "3",
       "name": "emiko",
       "avatar": "emiko.png",
-      "msg": "hey, how are you?"
-    },
-    {
-      "id": "4",
-      "name": "saku",
-      "avatar": "saku.png",
-      "msg": "yeah, i'm good you?"
-    },
-    {
-      "id": "5",
-      "name": "akane",
-      "avatar": "akane.png",
-      "msg": "hey what are you doing?"
-    },
-    {
-      "id": "6",
-      "name": "emiko",
-      "avatar": "emiko.png",
-      "msg": "hey, how are you?"
-    },
-    {
-      "id": "7",
-      "name": "saku",
-      "avatar": "saku.png",
-      "msg": "yeah, i'm good you?"
-    },
-    {
-      "id": "8",
-      "name": "akane",
-      "avatar": "akane.png",
-      "msg": "hey what are you doing?"
-    },
-    {
-      "id": "9",
-      "name": "emiko",
-      "avatar": "emiko.png",
-      "msg": "hey, how are you?"
-    },
-    {
-      "id": "10",
-      "name": "saku",
-      "avatar": "saku.png",
-      "msg": "yeah, i'm good you?"
-    },
-    {
-      "id": "11",
-      "name": "akane",
-      "avatar": "akane.png",
-      "msg": "hey what are you doing?"
-    },
-    {
-      "id": "12",
-      "name": "emiko",
-      "avatar": "emiko.png",
-      "msg": "hey, how are you?"
+      "msg": "yeah i could see that, but i'm not sure how you're so confident"
     }
   ]
 }
