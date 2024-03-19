@@ -18,6 +18,8 @@
         "src/renderer/src/*"
       ]
     },
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+
   }
 }
