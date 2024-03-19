@@ -2,7 +2,7 @@ import fs from "fs";
 import Database from "better-sqlite3";
 import { app } from "electron";
 import { join } from "path";
-import { log } from "./logger";
+import { log } from "../utils/logger";
 
 interface Migration {
   version: string;

@@ -1,3 +1,13 @@
+import fs from "fs/promises";
+import { app } from "electron";
+import { join, dirname } from "path";
+
+export const rootPath = process.env.NODE_ENV === "development" ? app.getAppPath() : dirname(app.getAppPath());
+export const dbPath = join(app.getPath("userData"), "agf.db");
+export const unpackedPath = join(rootPath, "/app.asar.unpacked/resources/");
+export const migrationsDir =
+  process.env.NODE_ENV === "development" ? join(rootPath, "resources/migrations") : join(unpackedPath, "migrations");
+
 /**
  * Freeze an object along with all of it's properties and subproperties making it completely immutable.
  * This is useful because Object.freeze() only freezes the top level properties.
@@ -21,6 +31,16 @@ export function deepFreeze(object: any) {
   return Object.freeze(object);
 }
 
+export async function fileExists(path: string) {
+  try {
+    await fs.access(path);
+    return true;
+  } catch {
+    // File doesn't exist or not accessible (e.g. no permissions)
+    return false;
+  }
+}
+
 /**
  * Remove all top level properties matching the blacklist from an object
  * @param obj The object to clone and remove properties from
@@ -40,18 +60,24 @@ export function omit(obj: any, blacklist: string[]): any {
   return deepClone;
 }
 
-// oyasumi
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-/**
- * Return the value clamped between the minimum and maximum values (inclusive).
- * @param val The value to clamp
- * @param min The minimum value
- * @param max The maximum value
- * @returns The clamped value
- */
 export function clamp(val: number, min: number, max: number) {
   return Math.min(Math.max(val, min), max);
 }
+
+/**
+ * Check if the given value is of type Error, if not rethrow it.
+ * https://stackoverflow.com/a/70993058
+ * @param error A value that should be of type Error
+ */
+export function isError(error: any): asserts error is Error {
+  if (!(error instanceof Error)) {
+    throw error;
+  }
+}
+
+export type Result<T, E> = { kind: "ok"; value: T } | { kind: "err"; error: E };
+export type Option<T> = { kind: "some"; value: T } | { kind: "none" };

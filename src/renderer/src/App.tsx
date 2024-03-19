@@ -46,7 +46,7 @@ function App({ ddbProp }): JSX.Element {
 
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
-      {/* <button className="absolute right-10 top-10 z-50 h-6 w-12 rounded-sm bg-neutral-500" onClick={addMsg}></button> */}
+      <button className="absolute right-10 top-10 z-50 h-6 w-12 rounded-sm bg-neutral-500" onClick={addMsg}></button>
       {/* Sidebar */}
       <Squircle cornerRadius={16} cornerSmoothing={1} className="relative flex h-full w-80 flex-col bg-background">
         {/* Chat Cards */}

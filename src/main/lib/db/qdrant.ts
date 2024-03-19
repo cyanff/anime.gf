@@ -30,7 +30,7 @@ export function createCollection(id: number) {
 
 /**
  * Inserts data into the Qdrant client.
- * 
+ *
  * @param id - The ID of the data.
  * @param data - The data to be inserted.
  */

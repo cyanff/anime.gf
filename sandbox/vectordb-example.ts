@@ -1,7 +1,6 @@
 import { QdrantClient } from "@qdrant/js-client-rest";
 
 export async function createCollection() {
-
   /**
    * First, download the latest Qdrant image from Dockerhub:
    * 
@@ -20,7 +19,7 @@ export async function createCollection() {
   await client.createCollection("test_collection", {
     vectors: { size: 4, distance: "Dot" }
   });
-  
+
   // insert vectors
   const operationInfo = await client.upsert("test_collection", {
     wait: true,

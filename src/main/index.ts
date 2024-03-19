@@ -3,19 +3,19 @@ import { app, shell, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
-import { Migrator } from "./lib/migrator";
-import { dbPath, migrationsDir } from "./lib/utils";
-import { getDDB, writeDDB } from "./lib/utils";
-import { initalizeQdrantClient } from "../backend/utils/qdrant-utils";
-import { initializeDatabase } from "../backend/utils/sqlite-utils";
+import { Migrator } from "./lib/db/migrator";
+import { dbPath, migrationsDir } from "./lib/utils/misc";
+import ddb from "./lib/db/ddb";
+import { initalizeQdrantClient } from "./lib/db/qdrant";
+import { initializeDatabase } from "./lib/db/sqlite";
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
 
   // ======================= IPC =======================
 
-  ipcMain.handle("getDDB", getDDB);
-  ipcMain.handle("writeDDB", (_, ddb) => {
-    writeDDB(ddb);
+  ipcMain.handle("getDDB", ddb.get);
+  ipcMain.handle("writeDDB", (_, data) => {
+    ddb.write(data);
   });
 
   // Open or close DevTools using F12 in development

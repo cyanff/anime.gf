@@ -1,23 +1,21 @@
-import { insertData, searchCollection } from "../utils/qdrant-utils";
+import { insertData, searchCollection } from "./db/qdrant";
 import { embed } from "./embed";
-import { Database, Tables } from "./types_db";
-import { queryData, getLatestMessages, getUnembeddedChunk } from "../utils/sqlite-utils";
-import config from "./config";
+import { queryData, getLatestMessages, getUnembeddedChunk } from "./db/sqlite";
+import config from "../../../config";
 
 export interface UserInfo {
-  username: string;
+  name: string;
 }
 
 export interface CharacterInfo {
-  displayName: string;
-  sysPrompt: string;
-  metadata: Tables<"companions">["metadata"];
+  name: string;
+  prompt: string;
 }
 
-export interface ContextWindowMessage {
+export interface Messages {
   content: string | null;
   inserted_at: string;
-  sender_type: Database["public"]["Enums"]["sender_type_enum"];
+  sender_type: "user" | "character";
 }
 
 export interface RelevantContext {
@@ -45,7 +43,7 @@ export interface RawChunk {
 export interface ChatContext {
   userInfo: UserInfo;
   characterInfo: CharacterInfo;
-  contextWindow: ContextWindowMessage[];
+  contextWindow: Messages[];
   relevantContext: RelevantContext[];
 }
 
@@ -58,12 +56,11 @@ export async function getContext(chatID: number): Promise<ChatContext> {
 
   const chatContext: ChatContext = {
     userInfo: {
-      username: userInfo.username
+      name: userInfo.name
     },
     characterInfo: {
-      displayName: characterInfo.displayName,
-      sysPrompt: characterInfo.sysPrompt,
-      metadata: characterInfo.metadata
+      name: characterInfo.name,
+      prompt: characterInfo.prompt
     },
     contextWindow: contextWindow,
     relevantContext: relevantContext
@@ -80,9 +77,7 @@ export async function getContext(chatID: number): Promise<ChatContext> {
 export async function chunk(chatID: number) {
   const rawChunk = await getUnembeddedChunk(config.CONTEXT_TOKEN_LIMIT, config.CHUNK_TOKEN_LIMIT, chatID);
 
-  // Check if rawChunk is empty
   if (rawChunk.length === 0) {
-    console.log("Raw chunk is empty, skipping processing");
     return;
   }
 
@@ -97,7 +92,7 @@ export async function chunk(chatID: number) {
  * @param chatID - The ID of the chat.
  * @returns A promise that resolves to an array of ContextWindowMessage objects.
  */
-async function getContextWindow(chatID: number): Promise<ContextWindowMessage[]> {
+async function getContextWindow(chatID: number): Promise<Messages[]> {
   const contextWindow = await getLatestMessages(chatID, config.CONTEXT_TOKEN_LIMIT);
 
   // We only need these fields from each message
@@ -138,29 +133,9 @@ async function getCharacterInfo(chatID: number): Promise<CharacterInfo> {
  * @param contextWindow - An array of context window messages.
  * @returns A promise that resolves to the relevant context.
  */
-async function getRelevantContext(chatID: number, contextWindow: ContextWindowMessage[]): Promise<RelevantContext[]> {
-  // Generate context window embeddings
-  let contextWindowString = concatenateMessageContent(contextWindow);
-  let contextWindowEmbeddings = await embed(contextWindowString);
-
-  // Search for relevant context
-  let relevantContext = await searchCollection(chatID, contextWindowEmbeddings, config.SEARCH_LIMIT);
-
+async function getRelevantContext(chatID: number, contextWindow: Messages[]): Promise<RelevantContext[]> {
+  let embedding = await embed("PLACEHOLDER");
+  const limit = config.vss.LIMIT;
+  let relevantContext = await searchCollection(chatID, embedding, limit);
   return relevantContext;
-}
-
-/**
- * Concatenates the content property from each message object into a single string
- *
- * @param messages - Array of messages
- * @returns String containing the concatenated messages
- */
-export function concatenateMessageContent(messages: any[]): string {
-  let messageString = "";
-  if (messages) {
-    messages.forEach((message) => {
-      messageString += ` ${message.content}`;
-    });
-  }
-  return `${messageString}`;
 }

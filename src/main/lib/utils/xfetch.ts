@@ -1,15 +1,14 @@
-/**
- * Simple fetch wrapper
- */
-
-import { Result } from "./types";
-import { isError } from "./error";
+import { Result, isError } from "./misc";
 
 export interface Headers {
   Authorization?: string;
 }
 
-async function post(url: string, body: Object = {}, headers: Record<string, string> = {}): Promise<Result<any, Error>> {
+export async function post(
+  url: string,
+  body: Object = {},
+  headers: Record<string, string> = {}
+): Promise<Result<any, Error>> {
   // Default Content-Type to application/json
   if (!headers["Content-Type"]) {
     headers["Content-Type"] = "application/json";
@@ -35,5 +34,3 @@ async function post(url: string, body: Object = {}, headers: Record<string, stri
     return { kind: "err", error: err };
   }
 }
-
-export default { post };
