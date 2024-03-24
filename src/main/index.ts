@@ -8,6 +8,9 @@ import { dbPath, migrationsDir } from "./lib/utils/misc";
 import ddb from "./lib/db/ddb";
 import { initalizeQdrantClient } from "./lib/db/qdrant";
 import { initializeDatabase } from "./lib/db/sqlite";
+
+// Enable globl renderer sandboxing
+app.enableSandbox();
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
 
@@ -69,7 +72,11 @@ function createWindow(): void {
     ...(process.platform === "linux" ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
-      sandbox: false
+      sandbox: true,
+      contextIsolation: true,
+      nodeIntegration: false,
+      webviewTag: false,
+      webSecurity: true
     }
   });
 
