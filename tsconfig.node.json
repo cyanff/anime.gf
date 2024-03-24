@@ -1,6 +1,6 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
-  "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*", "src/backend/**/*", "config.ts", "sandbox/vectordb-example.ts"],
+  "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*", "src/backend/**/*", "config.ts", "sandbox/*"],
   "compilerOptions": {
     "composite": true,
     "strict": true,
