@@ -5,16 +5,23 @@ import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import { dbPath, migrationsDir } from "./lib/utils/misc";
 import { initalizeQdrantClient } from "./lib/db/qdrant";
-import { initializeDatabase } from "./lib/db/sqlite";
-import { parse } from "./lib/silly";
+import { initializeDatabase, Migrator } from "./lib/db/sqlite";
 
-const card = parse("rock.png", "png");
-console.log(JSON.stringify(card, null, 2));
+// const card = parse("rock.png", "png");
+// console.log(JSON.stringify(card, null, 2));
 
 // Enable globl renderer sandboxing
 app.enableSandbox();
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
+
+  initializeDatabase();
+  initalizeQdrantClient();
+  // New install
+  if (!fs.existsSync(dbPath)) {
+    // const migrator = new Migrator({ migrationDir: migrationsDir, dbPath });
+    // migrator.migrate();
+  }
 
   // Open or close DevTools using F12 in development
   // Ignore Cmd/Ctrl + R in production.
@@ -27,18 +34,6 @@ app.whenReady().then(() => {
   app.on("activate", function () {
     // For macOS, re-create a window in the app when the dock icon is clicked
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
-
-  app.on("ready", () => {
-    // Initialize trad db running locally
-    initializeDatabase();
-    // Initialize Qdrant client running locally
-    initalizeQdrantClient();
-    // New install
-    if (!fs.existsSync(dbPath)) {
-      // const migrator = new Migrator({ migrationDir: migrationsDir, dbPath });
-      // migrator.migrate();
-    }
   });
 
   // Quit when all windows are closed

@@ -19,34 +19,10 @@ import {
 function App(): JSX.Element {
   const [userInput, setUserInput] = useState("");
   const [typing, setTyping] = useState(false);
-  const [ddb, setDDB] = useState({});
-
-  // Before closing, save data to ddb.json
-  useEffect(() => {
-    window.addEventListener("unload", () => {
-      window.api.writeDDB(ddb);
-    });
-  });
-
-  function addMsg() {
-    const newMsg = {
-      id: "-1",
-      name: "cyan",
-      avatar: "cyan.png",
-      msg: "Hello, World!",
-      timestamp: new Date().toISOString()
-    };
-    setDDB((prev) => {
-      return {
-        ...prev,
-        chat: [...prev.chat, newMsg]
-      };
-    });
-  }
 
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
-      <button className="absolute right-10 top-10 z-50 h-6 w-12 rounded-sm bg-neutral-500" onClick={addMsg}></button>
+      <button className="absolute right-10 top-10 z-50 h-6 w-12 rounded-sm bg-neutral-500"></button>
       {/* Sidebar */}
       <Squircle cornerRadius={16} cornerSmoothing={1} className="relative flex h-full w-80 flex-col bg-background">
         {/* Chat Cards */}
@@ -54,11 +30,7 @@ function App(): JSX.Element {
           style={{ scrollbarGutter: "stable" }}
           className="scroll-secondary group/chat-cards my-4 grow overflow-auto scroll-smooth"
         >
-          <div className="-mt-2 flex h-full max-h-full flex-col p-2">
-            {ddb?.chat_cards?.map((card, idx) => {
-              return <ChatCard key={idx} id={card.id} name={card.name} avatar={card.avatar} msg={card.msg} />;
-            })}
-          </div>
+          <div className="-mt-2 flex h-full max-h-full flex-col p-2"></div>
           {/* Scrollbar Hover Fade In/Out Hack*/}
           <div className="absolute right-0 top-0 h-full w-2 bg-background transition duration-75 ease-out group-hover/chat-cards:opacity-0"></div>
         </div>
@@ -120,22 +92,7 @@ function App(): JSX.Element {
         {/* Chat Area and Chat Bar Wrapper*/}
         <div className="relative flex h-full flex-auto flex-col pl-8 pt-8">
           {/* Chat Area */}
-          <div className="scroll-primary flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 transition duration-500 ease-out">
-            {ddb?.chat?.map((chat, i) => {
-              const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-              const relativeTimestamp = time.isoToUserRelativeTime(chat.timestamp, timezone);
-              return (
-                <Message
-                  key={i}
-                  avatar={chat.avatar}
-                  name={chat.name}
-                  timestamp={relativeTimestamp}
-                  msg={chat.msg}
-                  byUser={chat.name === "cyan"}
-                />
-              );
-            })}
-          </div>
+          <div className="scroll-primary flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 transition duration-500 ease-out"></div>
           <ChatBar userInput={userInput} setUserInput={setUserInput} typing={true} className="mb-1 mr-5" />
         </div>
       </div>

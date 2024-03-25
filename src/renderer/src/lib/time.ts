@@ -1,3 +1,7 @@
+function sqliteToISO(time: string) {
+  return time.replace(" ", "T") + "Z";
+}
+
 /**
  * Converts an ISO string to a user-relative time string.
  * @param iso - The ISO string representing the date and time.
@@ -91,5 +95,6 @@ function isoToLLMRelativeTime(iso: string) {
 
 export default {
   isoToUserRelativeTime,
-  isoToLLMRelativeTime
+  isoToLLMRelativeTime,
+  sqliteToISO
 };

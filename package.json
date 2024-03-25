@@ -19,7 +19,7 @@
     "build:linux": "electron-vite build && electron-builder --linux",
     "gen-types": "",
     "new-migration": "node ./scripts/new_migration.js",
-    "nuke": "node ./scripts/nuke_db.js",
+    "nuke": "node ./scripts/nuke.js",
     "seed": "electron ./scripts/seed.js"
   },
   "dependencies": {
