@@ -1,8 +1,8 @@
-const fs = require("fs");
+import fs from "fs";
 
-const encode = require("png-chunks-encode");
-const extract = require("png-chunks-extract");
-const PNGtext = require("png-chunk-text");
+import encode from "png-chunks-encode";
+import extract from "png-chunks-extract";
+import PNGtext from "png-chunk-text";
 
 /**
  * Writes Character metadata to a PNG image buffer.
@@ -62,7 +62,7 @@ const read = (image) => {
  * @param {string} format File format
  * @returns {string} Character data
  */
-const parse = (cardUrl, format) => {
+export const parse = (cardUrl, format) => {
   let fileFormat = format === undefined ? "png" : format;
 
   switch (fileFormat) {
@@ -80,5 +80,3 @@ module.exports = {
   write,
   read
 };
-
-console.log(parse("rock.png", "png"));

@@ -16,10 +16,10 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 
-function App({ ddbProp }): JSX.Element {
+function App(): JSX.Element {
   const [userInput, setUserInput] = useState("");
   const [typing, setTyping] = useState(false);
-  const [ddb, setDDB] = useState(ddbProp);
+  const [ddb, setDDB] = useState({});
 
   // Before closing, save data to ddb.json
   useEffect(() => {

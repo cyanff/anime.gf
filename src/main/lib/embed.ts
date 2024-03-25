@@ -1,3 +1,4 @@
+// @ts-ignore
 import { pipeline } from "@xenova/transformers";
 
 export enum EmbeddingEnum {

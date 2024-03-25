@@ -1,25 +1,20 @@
-import fs, { write } from "fs";
-import { app, shell, BrowserWindow, ipcMain } from "electron";
+import fs from "fs";
+import { app, shell, BrowserWindow } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
-import { Migrator } from "./lib/db/migrator";
 import { dbPath, migrationsDir } from "./lib/utils/misc";
-import ddb from "./lib/db/ddb";
 import { initalizeQdrantClient } from "./lib/db/qdrant";
 import { initializeDatabase } from "./lib/db/sqlite";
+import { parse } from "./lib/silly";
+
+const card = parse("rock.png", "png");
+console.log(JSON.stringify(card, null, 2));
 
 // Enable globl renderer sandboxing
 app.enableSandbox();
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
-
-  // ======================= IPC =======================
-
-  ipcMain.handle("getDDB", ddb.get);
-  ipcMain.handle("writeDDB", (_, data) => {
-    ddb.write(data);
-  });
 
   // Open or close DevTools using F12 in development
   // Ignore Cmd/Ctrl + R in production.

@@ -2,15 +2,9 @@ import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI } from "@electron-toolkit/preload";
 
 // Declare API types so that type checking works in the renderer process
-export interface API {
-  getDDB: () => Promise<Object>;
-  writeDDB: (ddb: Object) => Promise<void>;
-}
+export interface API {}
 
-const api: API = {
-  getDDB: () => ipcRenderer.invoke("getDDB"),
-  writeDDB: (ddb) => ipcRenderer.invoke("writeDDB", ddb)
-};
+const api: API = {};
 
 try {
   contextBridge.exposeInMainWorld("electron", electronAPI);
