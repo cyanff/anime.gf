@@ -1,10 +1,16 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
-  "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*", "src/backend/**/*", "config.ts", "sandbox/*"],
+  "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*", "src/backend/**/*", "config.ts", "sandbox/*", "src/shared/**/*"],
   "compilerOptions": {
     "composite": true,
     "strict": true,
     "types": ["electron-vite/node"],
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
+    "paths": {
+      "@shared/*": [
+        "./src/shared/*"
+      ]
+    },
+
   }
 }

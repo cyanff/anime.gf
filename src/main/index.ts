@@ -19,10 +19,10 @@ app.whenReady().then(async () => {
   await initQdrant();
   await initBlob();
 
-  ipcMain.handle("store.sqlite.run", async (_, query: string, params: [] = []) => {
+  ipcMain.handle("sqlite.run", async (_, query: string, params: [] = []) => {
     return run(query, params);
   });
-  ipcMain.handle("store.sqlite.all", async (_, query: string, params: [] = []) => {
+  ipcMain.handle("sqlite.all", async (_, query: string, params: [] = []) => {
     return all(query, params);
   });
 

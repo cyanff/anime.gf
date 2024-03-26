@@ -1,4 +1,4 @@
-import { Result, isError } from "./misc";
+import { Result, isError } from "@shared/utils";
 
 export interface Headers {
   Authorization?: string;

@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { app } from "electron";
 import { join } from "path";
-import { isError } from "../utils/misc";
+import { isError } from "@shared/utils";
 
 let db: Database.Database;
 

@@ -3,6 +3,7 @@
   "include": [
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
+    "src/shared/**/*",
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts"
   ],
@@ -14,8 +15,8 @@
       "@/*": [
         "./src/renderer/src/*"
       ],
-      "@renderer/*": [
-        "src/renderer/src/*"
+      "@shared/*": [
+        "./src/shared/*"
       ]
     },
     "noUnusedLocals": false,

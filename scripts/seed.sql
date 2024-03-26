@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS personas
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    avatar TEXT NOT NULL,
+    avatar TEXT,
     metadata TEXT,
     inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TEXT
@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS characters
 CREATE TABLE IF NOT EXISTS chats 
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    persona_id INTEGER,
-    character_id INTEGER,
+    persona_id INTEGER NOT NULL,
+    character_id INTEGER NOT NULL,
     inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TEXT,
     FOREIGN KEY(persona_id) REFERENCES personas(id),

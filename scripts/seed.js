@@ -2,7 +2,6 @@ const Database = require("better-sqlite3");
 const os = require("os");
 const { join } = require("path");
 const fs = require("fs");
-const remote = require("electron").remote;
 const { app } = require("electron");
 
 const dbPath = join(os.homedir(), ".config/agf/agf.db");

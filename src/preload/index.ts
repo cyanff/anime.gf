@@ -5,9 +5,9 @@ import { electronAPI } from "@electron-toolkit/preload";
 export interface API {}
 
 const api = {
-  store: {
-    run: (query: string, params: [] = []) => ipcRenderer.invoke("store.sqlite.run", query, params),
-    all: (query: string, params: [] = []) => ipcRenderer.invoke("store.sqlite.all", query, params)
+  sqlite: {
+    run: (query: string, params: [] = []) => ipcRenderer.invoke("sqlite.run", query, params),
+    all: (query: string, params: [] = []) => ipcRenderer.invoke("sqlite.all", query, params)
   }
 };
 

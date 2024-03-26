@@ -2,7 +2,7 @@
 // This includes silly tavern cards, images, audio, base weights, lora adapters, and other binary data.
 
 import fs from "fs/promises";
-import { fileExistsAndAccessible } from "../utils/misc";
+import { fileExistsAndAccessible } from "../utils";
 import path from "path";
 import { app } from "electron";
 

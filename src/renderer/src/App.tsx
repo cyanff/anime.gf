@@ -15,10 +15,61 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { Message as MessageRow, Persona as PersonaRow } from "@shared/db_types";
+import queries from "@/lib/queries";
+import { Result } from "@shared/utils";
 
 function App(): JSX.Element {
-  const [userInput, setUserInput] = useState("");
+  const [chatID, setChatID] = useState(1);
+  const [persona, setPersona] = useState<PersonaRow>();
+  const [chatCards, setChatCards] = useState<any[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [typing, setTyping] = useState(false);
+
+  // Fetch sidebar character cards
+  useEffect(() => {
+    (async () => {
+      const chatCards = await queries.getChatCards();
+      if (chatCards.kind == "err") {
+        // TODO: show sonner toast
+        return;
+      }
+      setChatCards(chatCards.value);
+    })();
+  }, []);
+
+  // Fetch persona and chat messages
+  useEffect(() => {
+    (async () => {
+      const persona = await window.api.getPersona(chatID);
+      const chatHistory = await window.api.getChatHistory(chatID);
+      setPersona(persona);
+      setMessages(chatHistory);
+    })();
+  }, []);
+
+  const cardClickHandler = async (chatID: number) => {
+    setChatID(chatID);
+    const persona = await window.api.getPersona(chatID);
+    const chatHistory = await window.api.getChatHistory(chatID);
+    setPersona(persona);
+    setMessages(chatHistory);
+  };
+
+  // Send message handler
+  const sendMessageHandler = async (userInput) => {
+    if (userInput.length == 0) {
+      return;
+    }
+
+    setMessages((prevMessages) => [...prevMessages, userInput]);
+    await window.api.sendMessage(chatID, userInput, "user");
+
+    const response = await window.api.getResponse(chatID);
+    setMessages((prevMessages) => [...prevMessages, response]);
+    await window.api.sendMessage(chatID, response, "character");
+    setTyping(false);
+  };
 
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
@@ -26,9 +77,8 @@ function App(): JSX.Element {
         className="absolute right-10 top-10 z-50 h-6 w-12 rounded-sm bg-neutral-500"
         onClick={async () => {
           const query = `SELECT * FROM messages`;
-          const messages = await window.api.store.all(query);
-
-          console.log(messages);
+          const messages: MessageRow[] = await window.api.store.all(query);
+          console.log(messages[0].text);
         }}
       ></button>
       {/* Sidebar */}
@@ -101,7 +151,7 @@ function App(): JSX.Element {
         <div className="relative flex h-full flex-auto flex-col pl-8 pt-8">
           {/* Chat Area */}
           <div className="scroll-primary flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 transition duration-500 ease-out"></div>
-          <ChatBar userInput={userInput} setUserInput={setUserInput} typing={true} className="mb-1 mr-5" />
+          {/* <ChatBar userInput={userInput} setUserInput={setUserInput} typing={true} className="mb-1 mr-5" /> */}
         </div>
       </div>
     </div>
