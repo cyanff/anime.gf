@@ -4,7 +4,7 @@ let qdrantClient: QdrantClient;
 /**
  * Initializes the Qdrant client running locally
  */
-export function initalizeQdrantClient() {
+export async function init() {
   qdrantClient = new QdrantClient({ host: "localhost", port: 6333 });
 }
 export { qdrantClient };

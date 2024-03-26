@@ -1,35 +1,36 @@
-import fs from "fs";
-import { app, shell, BrowserWindow } from "electron";
+import { app, shell, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
-import { dbPath, migrationsDir } from "./lib/utils/misc";
-import { initalizeQdrantClient } from "./lib/db/qdrant";
-import { initializeDatabase, Migrator } from "./lib/db/sqlite";
+import { init as initQdrant } from "./lib/store/qdrant";
+import { init as initSqlite } from "./lib/store/sqlite";
+import { init as initBlob } from "./lib/store/blob";
+import { run, all } from "./lib/store/sqlite";
 
 // const card = parse("rock.png", "png");
 // console.log(JSON.stringify(card, null, 2));
 
-// Enable globl renderer sandboxing
+// Enable globlal renderer sandboxing
 app.enableSandbox();
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   electronApp.setAppUserModelId("com.electron");
 
-  initializeDatabase();
-  initalizeQdrantClient();
-  // New install
-  if (!fs.existsSync(dbPath)) {
-    // const migrator = new Migrator({ migrationDir: migrationsDir, dbPath });
-    // migrator.migrate();
-  }
+  await initSqlite();
+  await initQdrant();
+  await initBlob();
+
+  ipcMain.handle("store.sqlite.run", async (_, query: string, params: [] = []) => {
+    return run(query, params);
+  });
+  ipcMain.handle("store.sqlite.all", async (_, query: string, params: [] = []) => {
+    return all(query, params);
+  });
 
   // Open or close DevTools using F12 in development
   // Ignore Cmd/Ctrl + R in production.
   app.on("browser-window-created", (_, window) => {
     optimizer.watchWindowShortcuts(window);
   });
-
-  createWindow();
 
   app.on("activate", function () {
     // For macOS, re-create a window in the app when the dock icon is clicked
@@ -46,6 +47,7 @@ app.whenReady().then(() => {
     }
   });
 
+  createWindow();
   // Implement Electron auto-updater
   // autoUpdater.on();
   // https://www.electron.build/auto-update.html

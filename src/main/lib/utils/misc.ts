@@ -8,6 +8,15 @@ export const unpackedPath = join(rootPath, "/app.asar.unpacked/resources/");
 export const migrationsDir =
   process.env.NODE_ENV === "development" ? join(rootPath, "resources/migrations") : join(unpackedPath, "migrations");
 
+export async function fileExistsAndAccessible(path): Promise<boolean> {
+  try {
+    await fs.access(path);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
 /**
  * Freeze an object along with all of it's properties and subproperties making it completely immutable.
  * This is useful because Object.freeze() only freezes the top level properties.
