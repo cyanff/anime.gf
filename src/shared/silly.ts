@@ -1,17 +1,18 @@
-import fs from "fs";
-
 import encode from "png-chunks-encode";
 import extract from "png-chunks-extract";
 import PNGtext from "png-chunk-text";
 
+// TODO: make this non blocking
+
 /**
  * Writes Character metadata to a PNG image buffer.
- * @param {Buffer} image PNG image buffer
- * @param {string} data Character data to write
- * @returns {Buffer} PNG image buffer with metadata
+ * @param img PNG image buffer
+ * @param data Character data to write
+ * @returns PNG image buffer with metadata
  */
-const write = (image, data) => {
-  const chunks = extract(image);
+
+function write(img: Buffer, data: string): Buffer {
+  const chunks = extract(img);
   const tEXtChunks = chunks.filter((chunk) => chunk.name === "tEXt");
 
   // Remove all existing tEXt chunks
@@ -23,15 +24,15 @@ const write = (image, data) => {
   chunks.splice(-1, 0, PNGtext.encode("chara", base64EncodedData));
   const newBuffer = Buffer.from(encode(chunks));
   return newBuffer;
-};
+}
 
 /**
  * Reads Character metadata from a PNG image buffer.
- * @param {Buffer} image PNG image buffer
- * @returns {string} Character data
+ * @param img PNG image buffer
+ * @returns Character data
  */
-const read = (image) => {
-  const chunks = extract(image);
+function read(img: Buffer): string {
+  const chunks = extract(img);
 
   const textChunks = chunks
     .filter(function (chunk) {
@@ -54,29 +55,9 @@ const read = (image) => {
   }
 
   return Buffer.from(textChunks[index].text, "base64").toString("utf8");
-};
+}
 
-/**
- * Parses a card image and returns the character metadata.
- * @param {string} cardUrl Path to the card image
- * @param {string} format File format
- * @returns {string} Character data
- */
-export const parse = (cardUrl, format) => {
-  let fileFormat = format === undefined ? "png" : format;
-
-  switch (fileFormat) {
-    case "png": {
-      const buffer = fs.readFileSync(cardUrl);
-      return read(buffer);
-    }
-  }
-
-  throw new Error("Unsupported format");
-};
-
-module.exports = {
-  parse,
+export default {
   write,
   read
 };

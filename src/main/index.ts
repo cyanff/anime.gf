@@ -6,9 +6,7 @@ import { init as initQdrant } from "./lib/store/qdrant";
 import { init as initSqlite } from "./lib/store/sqlite";
 import { init as initBlob } from "./lib/store/blob";
 import { run, all } from "./lib/store/sqlite";
-
-// const card = parse("rock.png", "png");
-// console.log(JSON.stringify(card, null, 2));
+import blob from "./lib/store/blob";
 
 // Enable globlal renderer sandboxing
 app.enableSandbox();
@@ -24,6 +22,9 @@ app.whenReady().then(async () => {
   });
   ipcMain.handle("sqlite.all", async (_, query: string, params: [] = []) => {
     return all(query, params);
+  });
+  ipcMain.handle("blob.cards.get", async (_, card: string) => {
+    return await blob.cards.get(card);
   });
 
   // Open or close DevTools using F12 in development

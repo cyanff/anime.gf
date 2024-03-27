@@ -31,7 +31,7 @@ function App(): JSX.Element {
     (async () => {
       const chatCards = await queries.getChatCards();
       if (chatCards.kind == "err") {
-        // TODO: show sonner toast
+        // TODO: show sonner toast on error
         return;
       }
       setChatCards(chatCards.value);
@@ -41,10 +41,10 @@ function App(): JSX.Element {
   // Fetch persona and chat messages
   useEffect(() => {
     (async () => {
-      const persona = await window.api.getPersona(chatID);
-      const chatHistory = await window.api.getChatHistory(chatID);
-      setPersona(persona);
-      setMessages(chatHistory);
+      // const persona = await window.api.getPersona(chatID);
+      // const chatHistory = await window.api.getChatHistory(chatID);
+      // setPersona(persona);
+      // setMessages(chatHistory);
     })();
   }, []);
 

@@ -1,13 +1,28 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { electronAPI } from "@electron-toolkit/preload";
+import { Result } from "@shared/utils";
 
 // Declare API types so that type checking works in the renderer process
-export interface API {}
-
-const api = {
+export interface API {
   sqlite: {
-    run: (query: string, params: [] = []) => ipcRenderer.invoke("sqlite.run", query, params),
-    all: (query: string, params: [] = []) => ipcRenderer.invoke("sqlite.all", query, params)
+    run: (query: string, params?: []) => Promise<any>;
+    all: (query: string, params?: []) => Promise<unknown[]>;
+  };
+  blob: {
+    cards: {
+      get: (card: string) => Promise<Result<Buffer, Error>>;
+    };
+  };
+}
+
+const api: API = {
+  sqlite: {
+    run: (query, params = []) => ipcRenderer.invoke("sqlite.run", query, params),
+    all: (query, params = []) => ipcRenderer.invoke("sqlite.all", query, params)
+  },
+  blob: {
+    cards: {
+      get: (card: string) => ipcRenderer.invoke("blob.cards.get", card)
+    }
   }
 };
 

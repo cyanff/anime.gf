@@ -5,17 +5,43 @@ import fs from "fs/promises";
 import { fileExistsAndAccessible } from "../utils";
 import path from "path";
 import { app } from "electron";
+import { Result, isError } from "@shared/utils";
+
+// Root directory for all blob data
+const blobPath = path.join(app.getPath("userData"), "blob");
+// Silly tavern .png cards are stored in blob/cards
+const cardsPath = path.join(blobPath, "cards");
 
 export async function init() {
-  const blobPath = path.join(app.getPath("userData"), "blob");
-  const blobFolderExists = await fileExistsAndAccessible(blobPath);
-  if (!blobFolderExists) {
+  const blobDirExists = await fileExistsAndAccessible(blobPath);
+  if (!blobDirExists) {
     await fs.mkdir(blobPath);
   }
 
-  const cardsPath = path.join(blobPath, "cards");
-  const cardsFolderExists = await fileExistsAndAccessible(cardsPath);
-  if (!cardsFolderExists) {
+  const cardsDirExists = await fileExistsAndAccessible(cardsPath);
+  if (!cardsDirExists) {
     await fs.mkdir(cardsPath);
   }
 }
+
+export namespace cards {
+  /**
+   * Get a card's file Buffer given a it's file name (with file extension)
+   * @param card The card's name with file extension
+   * @returns A Result object with the card's buffer or an error
+   * @example
+   * const bufferRes = await get("card1.png");
+   */
+  export async function get(card: string): Promise<Result<Buffer, Error>> {
+    try {
+      return { kind: "ok", value: await fs.readFile(path.join(cardsPath, card)) };
+    } catch (e) {
+      isError(e);
+      return { kind: "err", error: e };
+    }
+  }
+}
+
+export default {
+  cards
+};

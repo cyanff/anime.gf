@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS characters
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     card TEXT NOT NULL,
-    hash TEXT NOT NULL,
     inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TEXT
 );
@@ -46,17 +45,16 @@ VALUES
     ('John Doe', 'https://example.com/avatars/john.jpg', '{"age": 30, "location": "New York"}'),
     ('Jane Smith', 'https://example.com/avatars/jane.jpg', '{"age": 25, "location": "London"}');
 
-INSERT INTO characters  (card, hash)
+INSERT INTO characters  (card)
 VALUES
-    ('card1.png', '1'),
-    ('card2.png', '2'),
-    ('card3.png', '3');
+    ('card1.png'),
+    ('card2.png');
 
 INSERT INTO chats (persona_id, character_id)
 VALUES
     (1, 1),
     (1, 2),
-    (2, 3);
+    (2, 2);
 
 INSERT INTO messages (chat_id, text, sender_type, num_tokens, is_embedded)
 VALUES
