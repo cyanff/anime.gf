@@ -23,6 +23,9 @@ app.whenReady().then(async () => {
   ipcMain.handle("sqlite.all", async (_, query: string, params: [] = []) => {
     return all(query, params);
   });
+  ipcMain.handle("sqlite.get", async (_, query: string, params: [] = []) => {
+    return run(query, params);
+  });
   ipcMain.handle("blob.cards.get", async (_, card: string) => {
     return await blob.cards.get(card);
   });

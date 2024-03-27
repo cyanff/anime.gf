@@ -26,29 +26,29 @@ interface Props {
   avatar: string | null;
   name: string;
   timestamp: string;
-  msg: string;
-  byUser: boolean;
+  message: string;
+  sender: "user" | "character";
   [rest: string]: any;
 }
 
-function Message({ className, avatar, name, timestamp, msg, byUser, ...rest }: Props) {
+function Message({ className, avatar, name, timestamp, message, sender, ...rest }: Props) {
+  const byUser = sender === "user";
   const roleAlign = byUser ? "self-end" : "self-start";
   const roleColor = byUser ? "bg-[#87375f]" : "bg-grad-gray";
   // bg-[#363636]
   const base =
-    "h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-90 transition duration-200 ease-in text-neutral-200";
+    "h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-90 transition duration-200 ease-in text-neutral-200 rounded-3xl";
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ delay: 1 }}
       className={cn("group/msg max-w-3/4 shrink-0", roleAlign)}
     >
       <ContextMenu>
         {/* Right Click Menu*/}
         <ContextMenuTrigger>
-          <Squircle cornerRadius={25} cornerSmoothing={1} {...rest} className={cn(base, roleColor, className)}>
+          <div {...rest} className={cn(base, roleColor, className)}>
             <img
               className="size-11 shrink-0 rounded-full object-cover object-top"
               src={avatar || "default_avatar.png"}
@@ -96,9 +96,9 @@ function Message({ className, avatar, name, timestamp, msg, byUser, ...rest }: P
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              <p className="text-left">{msg}</p>
+              <p className="text-left">{message}</p>
             </div>
-          </Squircle>
+          </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="w-44">
           <ContextMenuItem inset className="">

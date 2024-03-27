@@ -1,13 +1,15 @@
 import { Result, isError } from "@shared/utils";
 import silly from "@shared/silly";
 
-export interface ChatCard {
-  chat_id: number;
-  last_message: string;
-  name: string;
-  //avatar: string;
-}
-async function getChatCards(): Promise<Result<ChatCard[], Error>> {
+export interface ChatCards
+  extends Array<{
+    chat_id: number;
+    last_message: string;
+    name: string;
+  }> {}
+
+// TODO, pagination
+async function getChatCards(): Promise<Result<ChatCards, Error>> {
   const query = `
   SELECT
   c.id AS chat_id,
@@ -51,6 +53,60 @@ LIMIT 20;
   }
 }
 
+export interface Persona {
+  name: string;
+  avatar?: string;
+  metadata?: any;
+}
+async function getPersona(chatID: number): Promise<Result<Persona, Error>> {
+  const query = `
+  SELECT id, name, metadata
+  FROM personas
+  WHERE personas.id = (SELECT persona_id FROM chats WHERE chats.id = ${chatID});
+  `.trim();
+
+  try {
+    const row = (await window.api.sqlite.get(query)) as Persona;
+    return { kind: "ok", value: row };
+  } catch (e) {
+    isError(e);
+    console.error("Error:", e);
+    return { kind: "err", error: e };
+  }
+}
+
+export interface ChatHistory
+  extends Array<{
+    sender: "user" | "character";
+    message: string;
+    timestamp: string;
+  }> {}
+
+async function getChatHistory(
+  chatID: number,
+  startID?: number,
+  limit: number = 25
+): Promise<Result<ChatHistory, Error>> {
+  const query = `
+  SELECT text as message,  sender_type as sender, inserted_at as timestamp
+  FROM messages
+  WHERE ${startID ? `id <= ${startID} AND chat_id = ${chatID}` : `chat_id = ${chatID}`} 
+  ORDER BY inserted_at DESC
+  LIMIT ${limit};
+  `;
+
+  try {
+    const rows = (await window.api.sqlite.all(query)) as ChatHistory;
+    return { kind: "ok", value: rows };
+  } catch (e) {
+    isError(e);
+    console.error("Error:", e);
+    return { kind: "err", error: e };
+  }
+}
+
 export default {
-  getChatCards
+  getChatCards,
+  getPersona,
+  getChatHistory
 };

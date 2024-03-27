@@ -1,11 +1,5 @@
-import "./styles/global.css";
-import ChatBar from "@/components/ChatBar";
-import { useEffect, useState } from "react";
 import ChatCard from "@/components/ChatCard";
-import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import Message from "@/components/Message";
-import time from "@/lib/time";
-import { Squircle } from "@squircle-js/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,16 +9,18 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Message as MessageRow, Persona as PersonaRow } from "@shared/db_types";
-import queries from "@/lib/queries";
-import { Result } from "@shared/utils";
-import { ChatCard as ChatCardI } from "@/lib/queries";
+import queries, { ChatCard as ChatCardI, ChatHistory as ChatHistoryI, Persona as PersonaI } from "@/lib/queries";
+import time from "@/lib/time";
+import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
+import { Squircle } from "@squircle-js/react";
+import { useEffect, useState } from "react";
+import "./styles/global.css";
 
 function App(): JSX.Element {
   const [chatID, setChatID] = useState(1);
-  const [persona, setPersona] = useState<PersonaRow>();
+  const [persona, setPersona] = useState<PersonaI>();
   const [chatCards, setChatCards] = useState<ChatCardI[]>([]);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [chatHistory, setChatHistory] = useState<ChatHistoryI>([]);
   const [typing, setTyping] = useState(false);
 
   // Fetch sidebar character cards
@@ -32,31 +28,34 @@ function App(): JSX.Element {
     (async () => {
       const chatCards = await queries.getChatCards();
       if (chatCards.kind == "err") {
-        // TODO: show sonner toast on error
         return;
       }
-      console.log(chatCards.value);
       setChatCards(chatCards.value);
     })();
   }, []);
 
-  // Fetch persona and chat messages
+  useEffect(() => {
+    async () => {
+      const res = await queries.getPersona(chatID);
+      if (res.kind == "err") {
+        return;
+      }
+      setPersona(res.value);
+    };
+  }, [chatID]);
+
   useEffect(() => {
     (async () => {
-      // const persona = await window.api.getPersona(chatID);
-      // const chatHistory = await window.api.getChatHistory(chatID);
-      // setPersona(persona);
-      // setMessages(chatHistory);
+      const res = await queries.getChatHistory(chatID);
+      if (res.kind == "err") {
+        return;
+      }
+      console.log("Chat History: ", res.value);
+      setChatHistory(res.value);
     })();
-  }, []);
+  }, [chatID]);
 
-  // const cardClickHandler = async (chatID: number) => {
-  //   setChatID(chatID);
-  //   const persona = await window.api.getPersona(chatID);
-  //   const chatHistory = await window.api.getChatHistory(chatID);
-  //   setPersona(persona);
-  //   setMessages(chatHistory);
-  // };
+  const cardClickHandler = async (chatID: number) => {};
 
   // Send message handler
   // const sendMessageHandler = async (userInput) => {
@@ -83,7 +82,7 @@ function App(): JSX.Element {
           className="scroll-secondary group/chat-cards my-4 grow overflow-auto scroll-smooth"
         >
           <div className="-mt-2 flex h-full max-h-full flex-col p-2">
-            {chatCards.map((chatCard, idx) => {
+            {chatCards?.map((chatCard, idx) => {
               return (
                 <ChatCard
                   key={idx}
@@ -91,6 +90,7 @@ function App(): JSX.Element {
                   avatar=""
                   name={chatCard.name}
                   msg={chatCard.last_message}
+                  onClick={() => setChatID(chatCard.chat_id)}
                 />
               );
             })}
@@ -156,7 +156,22 @@ function App(): JSX.Element {
         {/* Chat Area and Chat Bar Wrapper*/}
         <div className="relative flex h-full flex-auto flex-col pl-8 pt-8">
           {/* Chat Area */}
-          <div className="scroll-primary flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 transition duration-500 ease-out"></div>
+          <div className="scroll-primary flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 transition duration-500 ease-out">
+            {chatHistory?.map((message, idx) => {
+              const iso = time.sqliteToISO(message.timestamp);
+              const relativeTime = time.isoToLLMRelativeTime(iso);
+              return (
+                <Message
+                  key={idx}
+                  avatar={""}
+                  name={persona ? persona.name : ""}
+                  sender={message.sender}
+                  message={message.message}
+                  timestamp={relativeTime}
+                />
+              );
+            })}
+          </div>
           {/* <ChatBar userInput={userInput} setUserInput={setUserInput} typing={true} className="mb-1 mr-5" /> */}
         </div>
       </div>

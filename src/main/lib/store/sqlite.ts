@@ -1,11 +1,13 @@
 import Database from "better-sqlite3";
-import { app } from "electron";
-import { join } from "path";
-import { isError } from "@shared/utils";
+import { dbPath } from "../utils";
 
 let db: Database.Database;
 
-export function run(query: string, params: [] = []) {
+export interface RunResult {
+  changes: number;
+  lastInsertRowid: number | bigint;
+}
+export function run(query: string, params: [] = []): RunResult {
   let stmt = db.prepare(query);
   return stmt.run(...params);
 }
@@ -15,12 +17,19 @@ export function all(query: string, params: [] = []) {
   return stmt.all(...params);
 }
 
+export function get(query: string, params: [] = []) {
+  let stmt = db.prepare(query);
+  const res = stmt.get(...params);
+  if (!res) {
+    throw new Error("No result found");
+  }
+  return res;
+}
+
 /**
  * Initializes the database connection.
  */
 export async function init() {
-  console.log(`Initializing database... ${app.getPath("userData")}/agf.db`);
-  const dbPath = join(app.getPath("userData"), "agf.db");
   db = Database(dbPath);
 
   // TODO: run migrations on install

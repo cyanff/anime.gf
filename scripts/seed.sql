@@ -56,13 +56,12 @@ VALUES
     (1, 2),
     (2, 2);
 
-INSERT INTO messages (chat_id, text, sender_type, num_tokens, is_embedded)
+INSERT INTO messages (chat_id, text, sender_type, num_tokens, is_embedded, inserted_at)
 VALUES
-    (1, 'Hello!', 'character',  8, 0),
-    (1, 'hey, whats up?', 'user',  8, 0),
-    (1, 'nothing much, whats up with you?', 'character',  8, 0),
-    (1, 'none of your business', 'user',  8, 0),
-    (1, 'Hello, how can I assist you today?', 'character',  8, 0),
-    (2, 'Hi there! Let me know if you need any help.', 'character', 12, 0),
-    (3, 'Greetings! I''m here to provide information and answer your questions.', 'character',  14, 0);
-
+(1, 'Hello!', 'character', 8, 0, '2023-04-20 10:00:00'),
+(1, 'hey, whats up?', 'user', 8, 0, '2023-04-20 10:00:05'),
+(1, 'nothing much, whats up with you?', 'character', 8, 0, '2023-04-20 10:00:10'),
+(1, 'none of your business', 'user', 8, 0, '2023-04-20 10:00:15'),
+(1, 'Hello, how can I assist you today?', 'character', 8, 0, '2023-04-20 10:00:20'),
+(2, 'Hi there! Let me know if you need any help.', 'character', 12, 0, '2023-04-20 10:00:25'),
+(3, 'Greetings! I''m here to provide information and answer your questions.', 'character', 14, 0, '2023-04-20 10:00:30');
