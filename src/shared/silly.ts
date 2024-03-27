@@ -1,8 +1,11 @@
 import encode from "png-chunks-encode";
 import extract from "png-chunks-extract";
 import PNGtext from "png-chunk-text";
+import { Buffer } from "buffer";
 
 // TODO: make this non blocking
+// TODO: card spec interface here
+// TODO: read should return a card spec object
 
 /**
  * Writes Character metadata to a PNG image buffer.

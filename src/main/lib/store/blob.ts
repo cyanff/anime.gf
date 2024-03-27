@@ -6,11 +6,7 @@ import { fileExistsAndAccessible } from "../utils";
 import path from "path";
 import { app } from "electron";
 import { Result, isError } from "@shared/utils";
-
-// Root directory for all blob data
-const blobPath = path.join(app.getPath("userData"), "blob");
-// Silly tavern .png cards are stored in blob/cards
-const cardsPath = path.join(blobPath, "cards");
+import { blobPath, cardsPath } from "../utils";
 
 export async function init() {
   const blobDirExists = await fileExistsAndAccessible(blobPath);

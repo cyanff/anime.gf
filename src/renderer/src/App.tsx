@@ -18,11 +18,12 @@ import {
 import { Message as MessageRow, Persona as PersonaRow } from "@shared/db_types";
 import queries from "@/lib/queries";
 import { Result } from "@shared/utils";
+import { ChatCard as ChatCardI } from "@/lib/queries";
 
 function App(): JSX.Element {
   const [chatID, setChatID] = useState(1);
   const [persona, setPersona] = useState<PersonaRow>();
-  const [chatCards, setChatCards] = useState<any[]>([]);
+  const [chatCards, setChatCards] = useState<ChatCardI[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
   const [typing, setTyping] = useState(false);
 
@@ -34,6 +35,7 @@ function App(): JSX.Element {
         // TODO: show sonner toast on error
         return;
       }
+      console.log(chatCards.value);
       setChatCards(chatCards.value);
     })();
   }, []);
@@ -48,39 +50,31 @@ function App(): JSX.Element {
     })();
   }, []);
 
-  const cardClickHandler = async (chatID: number) => {
-    setChatID(chatID);
-    const persona = await window.api.getPersona(chatID);
-    const chatHistory = await window.api.getChatHistory(chatID);
-    setPersona(persona);
-    setMessages(chatHistory);
-  };
+  // const cardClickHandler = async (chatID: number) => {
+  //   setChatID(chatID);
+  //   const persona = await window.api.getPersona(chatID);
+  //   const chatHistory = await window.api.getChatHistory(chatID);
+  //   setPersona(persona);
+  //   setMessages(chatHistory);
+  // };
 
   // Send message handler
-  const sendMessageHandler = async (userInput) => {
-    if (userInput.length == 0) {
-      return;
-    }
+  // const sendMessageHandler = async (userInput) => {
+  //   if (userInput.length == 0) {
+  //     return;
+  //   }
 
-    setMessages((prevMessages) => [...prevMessages, userInput]);
-    await window.api.sendMessage(chatID, userInput, "user");
+  //   setMessages((prevMessages) => [...prevMessages, userInput]);
+  //   await window.api.sendMessage(chatID, userInput, "user");
 
-    const response = await window.api.getResponse(chatID);
-    setMessages((prevMessages) => [...prevMessages, response]);
-    await window.api.sendMessage(chatID, response, "character");
-    setTyping(false);
-  };
+  //   const response = await window.api.getResponse(chatID);
+  //   setMessages((prevMessages) => [...prevMessages, response]);
+  //   await window.api.sendMessage(chatID, response, "character");
+  //   setTyping(false);
+  // };
 
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
-      <button
-        className="absolute right-10 top-10 z-50 h-6 w-12 rounded-sm bg-neutral-500"
-        onClick={async () => {
-          const query = `SELECT * FROM messages`;
-          const messages: MessageRow[] = await window.api.store.all(query);
-          console.log(messages[0].text);
-        }}
-      ></button>
       {/* Sidebar */}
       <Squircle cornerRadius={16} cornerSmoothing={1} className="relative flex h-full w-80 flex-col bg-background">
         {/* Chat Cards */}
@@ -88,7 +82,19 @@ function App(): JSX.Element {
           style={{ scrollbarGutter: "stable" }}
           className="scroll-secondary group/chat-cards my-4 grow overflow-auto scroll-smooth"
         >
-          <div className="-mt-2 flex h-full max-h-full flex-col p-2"></div>
+          <div className="-mt-2 flex h-full max-h-full flex-col p-2">
+            {chatCards.map((chatCard, idx) => {
+              return (
+                <ChatCard
+                  key={idx}
+                  id={chatCard.chat_id.toString()}
+                  avatar=""
+                  name={chatCard.name}
+                  msg={chatCard.last_message}
+                />
+              );
+            })}
+          </div>
           {/* Scrollbar Hover Fade In/Out Hack*/}
           <div className="absolute right-0 top-0 h-full w-2 bg-background transition duration-75 ease-out group-hover/chat-cards:opacity-0"></div>
         </div>

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 db_path="$HOME/.config/agf/agf.db"
+blob_path="$HOME/.config/agf/blob"
 
 if [ ! -f "$db_path" ]; then
   echo "Database already does not exist."
@@ -12,4 +13,6 @@ fi
 # Delete and recreate the database
 rm "$db_path"
 touch "$db_path"
-echo "Database nuked successfully."
+# Delete the blob directory
+rm -rf "$blob_path"
+echo "Database & blob storage nuked successfully."
