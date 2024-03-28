@@ -5,7 +5,7 @@ import icon from "../../resources/icon.png?asset";
 import { init as initQdrant } from "./lib/store/qdrant";
 import { init as initSqlite } from "./lib/store/sqlite";
 import { init as initBlob } from "./lib/store/blob";
-import { run, all } from "./lib/store/sqlite";
+import { get, run, all } from "./lib/store/sqlite";
 import blob from "./lib/store/blob";
 
 // Enable globlal renderer sandboxing
@@ -24,7 +24,7 @@ app.whenReady().then(async () => {
     return all(query, params);
   });
   ipcMain.handle("sqlite.get", async (_, query: string, params: [] = []) => {
-    return run(query, params);
+    return get(query, params);
   });
   ipcMain.handle("blob.cards.get", async (_, card: string) => {
     return await blob.cards.get(card);

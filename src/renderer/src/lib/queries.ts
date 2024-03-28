@@ -113,8 +113,11 @@ async function getCharacterCard(chatID: number): Promise<Result<CardV2, Error>> 
   FROM chats
            JOIN characters ON chats.character_id = characters.id
   WHERE chats.id = ${chatID};
-  `;
+  `.trim();
+
     const row = (await window.api.sqlite.get(query)) as { card: string };
+    console.log("Row:", row);
+
     const res = await window.api.blob.cards.get(row.card);
     if (res.kind == "err") {
       throw res.error;

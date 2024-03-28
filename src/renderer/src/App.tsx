@@ -63,7 +63,7 @@ function App(): JSX.Element {
       if (res.kind == "err") {
         return;
       }
-      console.log("Character Card:", JSON.stringify(res.value));
+      console.log(res.value);
       setCharacterCard(res.value);
     })();
   }, [chatID]);
@@ -175,7 +175,7 @@ function App(): JSX.Element {
                 <Message
                   key={idx}
                   avatar={""}
-                  name={persona ? persona.name : ""}
+                  name={"place holder"}
                   sender={message.sender}
                   message={message.message}
                   timestamp={relativeTime}
