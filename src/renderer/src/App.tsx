@@ -102,6 +102,7 @@ function App(): JSX.Element {
                   avatar=""
                   name={chatCard.name}
                   msg={chatCard.last_message}
+                  active={chatID == chatCard.chat_id}
                   onClick={() => setChatID(chatCard.chat_id)}
                 />
               );
