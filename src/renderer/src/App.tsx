@@ -1,3 +1,4 @@
+import ChatBar from "@/components/ChatBar";
 import ChatCard from "@/components/ChatCard";
 import Message from "@/components/Message";
 import {
@@ -69,19 +70,19 @@ function App(): JSX.Element {
   }, [chatID]);
 
   // Send message handler
-  // const sendMessageHandler = async (userInput) => {
-  //   if (userInput.length == 0) {
-  //     return;
-  //   }
+  const handleSendMessage = async (userInput) => {
+    if (userInput.length == 0) {
+      return;
+    }
 
-  //   setMessages((prevMessages) => [...prevMessages, userInput]);
-  //   await window.api.sendMessage(chatID, userInput, "user");
+    setChatHistory((prevMessages) => [...prevMessages, userInput]);
+    await window.api.sendMessage(chatID, userInput, "user");
 
-  //   const response = await window.api.getResponse(chatID);
-  //   setMessages((prevMessages) => [...prevMessages, response]);
-  //   await window.api.sendMessage(chatID, response, "character");
-  //   setTyping(false);
-  // };
+    const response = await window.api.getResponse(chatID);
+    setChatHistory((prevMessages) => [...prevMessages, response]);
+    await window.api.sendMessage(chatID, response, "character");
+    setTyping(false);
+  };
 
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
@@ -183,7 +184,7 @@ function App(): JSX.Element {
               );
             })}
           </div>
-          {/* <ChatBar userInput={userInput} setUserInput={setUserInput} typing={true} className="mb-1 mr-5" /> */}
+          <ChatBar handleSendMessage={handleSendMessage} typing={typing} className="mb-1 mr-5" />
         </div>
       </div>
     </div>

@@ -6,19 +6,19 @@ import {
   WrenchIcon,
   WrenchScrewdriverIcon
 } from "@heroicons/react/24/solid";
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Typing from "./Typing";
 import { cn } from "@/lib/utils";
 
 interface ChatBarProps {
-  className?: string;
-  userInput: string;
-  setUserInput: (input: string) => void;
+  handleSendMessage: (userInput: string) => void;
   typing: boolean;
-  [x: string]: any;
+  className?: string;
 }
 
-export default function ChatBar({ userInput, setUserInput, typing, className, ...rest }: ChatBarProps) {
+export default function ChatBar({ handleSendMessage, typing, className, ...rest }: ChatBarProps) {
+  const [userInput, setUserInput] = useState("");
+
   // Dynamically expand the text area to fit the user's input
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
@@ -29,14 +29,6 @@ export default function ChatBar({ userInput, setUserInput, typing, className, ..
     textarea.style.height = "24px";
     textarea.style.height = textarea.scrollHeight + "px";
   }, [userInput]);
-
-  // Send message handler
-  async function doSendMessage() {
-    if (userInput.length == 0) {
-      return;
-    }
-    // TODO
-  }
 
   return (
     <div className={className}>
@@ -54,7 +46,7 @@ export default function ChatBar({ userInput, setUserInput, typing, className, ..
           maxLength={1024}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
-              doSendMessage();
+              handleSendMessage(userInput);
               // Prevent inserting a new line on pressing enter
               e.preventDefault();
             }
@@ -64,7 +56,7 @@ export default function ChatBar({ userInput, setUserInput, typing, className, ..
           className="scroll-secondary h-6 max-h-64 w-full resize-none overflow-y-auto bg-inherit px-2 font-[430] leading-6 focus:outline-none"
         />
         {/* Send button */}
-        <button onClick={() => doSendMessage()} className="h-fit w-fit ">
+        <button onClick={() => handleSendMessage(userInput)} className="h-fit w-fit ">
           <PaperAirplaneIcon className="h-7 w-7 fill-neutral-400  transition duration-150 ease-out hover:fill-neutral-200  " />
         </button>
       </div>
