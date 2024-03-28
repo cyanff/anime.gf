@@ -145,10 +145,76 @@ async function insertMessage(chatID: number, message: string, sender_type: "user
   }
 }
 
+export interface Messages
+  extends Array<{
+    sender: "user" | "character";
+    message: string;
+    timestamp: string;
+  }> {}
+
+async function getLatestMessages(chatID: number, contextTokenLimit: number): Promise<Result<Messages, Error>> {
+  const query = `
+  WITH Latest1kMessages AS (
+      SELECT * FROM messages WHERE chat_id = ? ORDER BY id ASC LIMIT 1000
+  ),
+  MessagesWithRunningTotal AS (
+      SELECT *, (SELECT SUM(num_tokens) FROM Latest1kMessages WHERE id <= m.id) AS running_total
+      FROM Latest1kMessages m
+  )
+  SELECT l.content, l.sender_type, l.inserted_at
+  FROM MessagesWithRunningTotal as l
+  WHERE running_total < ?
+  `;
+
+  try {
+    const rows = (await window.api.sqlite.all(query)) as Messages;
+    return { kind: "ok", value: rows };
+  } catch (e) {
+    isError(e);
+    console.error("Error:", e);
+    return { kind: "err", error: e };
+  }
+}
+
+async function getUnembeddedChunk(
+  chatID: number,
+  contextTokenLimit: number,
+  chunkTokenLimit: number
+): Promise<Result<Messages, Error>> {
+  const query = `
+  WITH UnembeddedMessages AS (
+    SELECT * FROM messages WHERE is_embedded = false AND chat_id = ? ORDER BY id DESC
+  ),
+  MessagesWithRunningTotal AS (
+    SELECT *, (SELECT SUM(token_count) FROM UnembeddedMessages WHERE id <= m.id) AS running_total
+    FROM UnembeddedMessages m
+  ),
+  ChunkMessages AS (
+    SELECT * FROM MessagesWithRunningTotal WHERE running_total <= ?
+  ),
+  MessagesWithChunkTotal AS (
+    SELECT *, (SELECT SUM(token_count) FROM ChunkMessages WHERE id <= m.id) AS chunk_total
+    FROM ChunkMessages m
+  )
+  SELECT * FROM MessagesWithChunkTotal WHERE chunk_total <= ?
+  `;
+
+  try {
+    const rows = (await window.api.sqlite.all(query, [chatID, contextTokenLimit, chunkTokenLimit])) as Messages;
+    return { kind: "ok", value: rows };
+  } catch (e) {
+    isError(e);
+    console.error("Error:", e);
+    return { kind: "err", error: e };
+  }
+}
+
 export default {
   getChatCards,
   getPersona,
   getChatHistory,
   getCharacterCard,
-  insertMessage
+  insertMessage,
+  getLatestMessages,
+  getUnembeddedChunk
 };
