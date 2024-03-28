@@ -7,17 +7,17 @@ export interface RunResult {
   changes: number;
   lastInsertRowid: number | bigint;
 }
-export function run(query: string, params: [] = []): RunResult {
+export function run(query: string, params: any[] = []): RunResult {
   let stmt = db.prepare(query);
   return stmt.run(...params);
 }
 
-export function all(query: string, params: [] = []) {
+export function all(query: string, params: any[] = []) {
   let stmt = db.prepare(query);
   return stmt.all(...params);
 }
 
-export function get(query: string, params: [] = []) {
+export function get(query: string, params: any[] = []) {
   let stmt = db.prepare(query);
   const res = stmt.get(...params);
   if (!res) {

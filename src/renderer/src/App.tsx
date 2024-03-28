@@ -76,11 +76,11 @@ function App(): JSX.Element {
     }
 
     setChatHistory((prevMessages) => [...prevMessages, userInput]);
-    await window.api.sendMessage(chatID, userInput, "user");
+    await queries.insertMessage(chatID, userInput, "user");
 
     const response = await window.api.getResponse(chatID);
     setChatHistory((prevMessages) => [...prevMessages, response]);
-    await window.api.sendMessage(chatID, response, "character");
+    await queries.insertMessage(chatID, response, "character");
     setTyping(false);
   };
 
