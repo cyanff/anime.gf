@@ -19,6 +19,7 @@ import "./styles/global.css";
 function App(): JSX.Element {
   const [chatID, setChatID] = useState(1);
   const [persona, setPersona] = useState<PersonaI>();
+  const [character, setCharacter] = useState<CharacterI>();
   const [chatCards, setChatCards] = useState<ChatCardI[]>([]);
   const [chatHistory, setChatHistory] = useState<ChatHistoryI>([]);
   const [typing, setTyping] = useState(false);
@@ -54,8 +55,6 @@ function App(): JSX.Element {
       setChatHistory(res.value);
     })();
   }, [chatID]);
-
-  const cardClickHandler = async (chatID: number) => {};
 
   // Send message handler
   // const sendMessageHandler = async (userInput) => {
