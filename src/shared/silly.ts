@@ -109,9 +109,7 @@ function read(img: Buffer): CardV2 {
   }
 
   const str = Buffer.from(textChunks[index].text, "base64").toString("utf8");
-  const card = JSON.parse(str) as CardV2;
-
-  return card;
+  return JSON.parse(str);
 }
 
 export default {

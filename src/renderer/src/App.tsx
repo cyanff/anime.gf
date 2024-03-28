@@ -64,7 +64,7 @@ function App(): JSX.Element {
       if (res.kind == "err") {
         return;
       }
-      console.log("Character Card:", JSON.stringify(res.value));
+      console.log(res.value);
       setCharacterCard(res.value);
     })();
   }, [chatID]);
@@ -102,6 +102,7 @@ function App(): JSX.Element {
                   avatar=""
                   name={chatCard.name}
                   msg={chatCard.last_message}
+                  active={chatID == chatCard.chat_id}
                   onClick={() => setChatID(chatCard.chat_id)}
                 />
               );
@@ -176,7 +177,7 @@ function App(): JSX.Element {
                 <Message
                   key={idx}
                   avatar={""}
-                  name={persona ? persona.name : ""}
+                  name={"place holder"}
                   sender={message.sender}
                   message={message.message}
                   timestamp={relativeTime}
