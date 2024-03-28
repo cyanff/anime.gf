@@ -1,5 +1,6 @@
 import { Result, isError } from "@shared/utils";
 import silly from "@shared/silly";
+import { CardV2 } from "@shared/silly";
 
 export interface ChatCards
   extends Array<{
@@ -36,7 +37,7 @@ LIMIT 20;
         if (res.kind == "err") {
           throw res.error;
         }
-        const parsed = JSON.parse(silly.read(res.value));
+        const parsed = silly.read(res.value);
 
         return {
           chat_id: row.chat_id,
@@ -93,7 +94,7 @@ async function getChatHistory(
   WHERE ${startID ? `id <= ${startID} AND chat_id = ${chatID}` : `chat_id = ${chatID}`} 
   ORDER BY inserted_at DESC
   LIMIT ${limit};
-  `;
+  `.trim();
 
   try {
     const rows = (await window.api.sqlite.all(query)) as ChatHistory;
@@ -105,13 +106,30 @@ async function getChatHistory(
   }
 }
 
-export interface Character {}
-async function getCharacterFromChat(chatID: number): Promise<Result<Character, Error>> {
-  const queries = ``;
+async function getCharacterCard(chatID: number): Promise<Result<CardV2, Error>> {
+  try {
+    const query = `
+  SELECT characters.card
+  FROM chats
+           JOIN characters ON chats.character_id = characters.id
+  WHERE chats.id = ${chatID};
+  `;
+    const row = (await window.api.sqlite.get(query)) as { card: string };
+    const res = await window.api.blob.cards.get(row.card);
+    if (res.kind == "err") {
+      throw res.error;
+    }
+    return { kind: "ok", value: silly.read(res.value) };
+  } catch (e) {
+    isError(e);
+    console.error("Error:", e);
+    return { kind: "err", error: e };
+  }
 }
 
 export default {
   getChatCards,
   getPersona,
-  getChatHistory
+  getChatHistory,
+  getCharacterCard
 };

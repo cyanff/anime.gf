@@ -6,6 +6,7 @@
     "strict": true,
     "types": ["electron-vite/node"],
     "noUnusedLocals": false,
+    "esModuleInterop": true,
     "paths": {
       "@shared/*": [
         "./src/shared/*"

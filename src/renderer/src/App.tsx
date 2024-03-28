@@ -9,22 +9,23 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import queries, { ChatCard as ChatCardI, ChatHistory as ChatHistoryI, Persona as PersonaI } from "@/lib/queries";
+import queries, { ChatCards as ChatCardsI, ChatHistory as ChatHistoryI, Persona as PersonaI } from "@/lib/queries";
 import time from "@/lib/time";
 import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import { Squircle } from "@squircle-js/react";
 import { useEffect, useState } from "react";
+import { CardV2 } from "@shared/silly";
 import "./styles/global.css";
 
 function App(): JSX.Element {
   const [chatID, setChatID] = useState(1);
   const [persona, setPersona] = useState<PersonaI>();
-  const [character, setCharacter] = useState<CharacterI>();
-  const [chatCards, setChatCards] = useState<ChatCardI[]>([]);
+  const [characterCard, setCharacterCard] = useState<CardV2>();
+  const [chatCards, setChatCards] = useState<ChatCardsI>([]);
   const [chatHistory, setChatHistory] = useState<ChatHistoryI>([]);
   const [typing, setTyping] = useState(false);
 
-  // Fetch sidebar character cards
+  // Fetch sidebar recent chat cards
   useEffect(() => {
     (async () => {
       const chatCards = await queries.getChatCards();
@@ -53,6 +54,17 @@ function App(): JSX.Element {
       }
       console.log("Chat History: ", res.value);
       setChatHistory(res.value);
+    })();
+  }, [chatID]);
+
+  useEffect(() => {
+    (async () => {
+      const res = await queries.getCharacterCard(chatID);
+      if (res.kind == "err") {
+        return;
+      }
+      console.log("Character Card:", JSON.stringify(res.value));
+      setCharacterCard(res.value);
     })();
   }, [chatID]);
 
