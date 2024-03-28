@@ -105,6 +105,11 @@ async function getChatHistory(
   }
 }
 
+export interface Character {}
+async function getCharacterFromChat(chatID: number): Promise<Result<Character, Error>> {
+  const queries = ``;
+}
+
 export default {
   getChatCards,
   getPersona,
