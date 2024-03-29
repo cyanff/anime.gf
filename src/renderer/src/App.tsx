@@ -15,13 +15,14 @@ import time from "@/lib/time";
 import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import { Squircle } from "@squircle-js/react";
 import { useEffect, useState } from "react";
-import { CardV2 } from "@shared/silly";
+import { CharacterCard } from "@shared/silly";
 import "./styles/global.css";
+import { test } from "@/lib/provider/openai";
 
 function App(): JSX.Element {
   const [chatID, setChatID] = useState(1);
   const [persona, setPersona] = useState<PersonaI>();
-  const [characterCard, setCharacterCard] = useState<CardV2>();
+  const [characterCard, setCharacterCard] = useState<CharacterCard>();
   const [chatCards, setChatCards] = useState<ChatCardsI>([]);
   const [chatHistory, setChatHistory] = useState<ChatHistoryI>([]);
   const [typing, setTyping] = useState(false);
@@ -53,7 +54,6 @@ function App(): JSX.Element {
       if (res.kind == "err") {
         return;
       }
-      console.log("Chat History: ", res.value);
       setChatHistory(res.value);
     })();
   }, [chatID]);
@@ -64,28 +64,35 @@ function App(): JSX.Element {
       if (res.kind == "err") {
         return;
       }
-      console.log(res.value);
       setCharacterCard(res.value);
     })();
   }, [chatID]);
 
   // Send message handler
-  const handleSendMessage = async (userInput) => {
-    if (userInput.length == 0) {
-      return;
-    }
+  // const handleSendMessage = async (userInput) => {
+  //   if (userInput.length == 0) {
+  //     return;
+  //   }
 
-    setChatHistory((prevMessages) => [...prevMessages, userInput]);
-    await window.api.sendMessage(chatID, userInput, "user");
+  //   setChatHistory((prevMessages) => [...prevMessages, userInput]);
+  //   await window.api.sendMessage(chatID, userInput, "user");
 
-    const response = await window.api.getResponse(chatID);
-    setChatHistory((prevMessages) => [...prevMessages, response]);
-    await window.api.sendMessage(chatID, response, "character");
-    setTyping(false);
-  };
+  //   const response = await window.api.getResponse(chatID);
+  //   setChatHistory((prevMessages) => [...prevMessages, response]);
+  //   await window.api.sendMessage(chatID, response, "character");
+  //   setTyping(false);
+  // };
 
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
+      <button
+        className="h-10 w-10 bg-neutral-200"
+        onClick={async () => {
+          await test();
+        }}
+      >
+        Test
+      </button>
       {/* Sidebar */}
       <Squircle cornerRadius={16} cornerSmoothing={1} className="relative flex h-full w-80 flex-col bg-background">
         {/* Chat Cards */}
@@ -185,7 +192,7 @@ function App(): JSX.Element {
               );
             })}
           </div>
-          <ChatBar handleSendMessage={handleSendMessage} typing={typing} className="mb-1 mr-5" />
+          <ChatBar handleSendMessage={() => {}} typing={typing} className="mb-1 mr-5" />
         </div>
       </div>
     </div>

@@ -11,6 +11,7 @@ export const migrationsDir =
 export const blobPath = path.join(app.getPath("userData"), "blob");
 // Silly tavern .png cards are stored in blob/cards
 export const cardsPath = path.join(blobPath, "cards");
+export const secretsPath = path.join(app.getPath("userData"), "secrets.json");
 
 export async function fileExistsAndAccessible(path): Promise<boolean> {
   try {

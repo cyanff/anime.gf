@@ -1,4 +1,4 @@
-export default {
+const config = {
   vss: {
     LIMIT: 5
   },
@@ -6,3 +6,5 @@ export default {
   CONTEXT_TOKEN_LIMIT: 1024,
   CHUNK_TOKEN_LIMIT: 512
 };
+
+export default config;

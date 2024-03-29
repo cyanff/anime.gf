@@ -7,7 +7,7 @@ import { Buffer } from "buffer";
 // TODO: card spec interface here
 // TODO: read should return a card spec object
 
-export interface CardV2 {
+export interface CharacterCard {
   spec: "chara_card_v2";
   spec_version: "2.0";
   data: {
@@ -65,7 +65,7 @@ export interface CharacterBook {
  * @returns PNG image buffer with metadata
  */
 
-function write(img: Buffer, data: string): Buffer {
+function set(img: Buffer, data: string): Buffer {
   const chunks = extract(img);
   const tEXtChunks = chunks.filter((chunk) => chunk.name === "tEXt");
 
@@ -85,7 +85,7 @@ function write(img: Buffer, data: string): Buffer {
  * @param img PNG image buffer
  * @returns Character data
  */
-function read(img: Buffer): CardV2 {
+function get(img: Buffer): CharacterCard {
   const chunks = extract(img);
 
   const textChunks = chunks
@@ -113,6 +113,6 @@ function read(img: Buffer): CardV2 {
 }
 
 export default {
-  write,
-  read
+  write: set,
+  read: get
 };

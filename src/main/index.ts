@@ -2,10 +2,9 @@ import { app, shell, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
-import { init as initQdrant } from "./lib/store/qdrant";
-import { init as initSqlite } from "./lib/store/sqlite";
-import { init as initBlob } from "./lib/store/blob";
-import { get, run, all } from "./lib/store/sqlite";
+import secret from "./lib/store/secret";
+import sqlite from "./lib/store/sqlite";
+import qdrant from "./lib/store/qdrant";
 import blob from "./lib/store/blob";
 
 // Enable globlal renderer sandboxing
@@ -13,18 +12,19 @@ app.enableSandbox();
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId("com.electron");
 
-  await initSqlite();
-  await initQdrant();
-  await initBlob();
+  qdrant.init();
+  await sqlite.init();
+  await blob.init();
+  await secret.init();
 
   ipcMain.handle("sqlite.run", async (_, query: string, params: [] = []) => {
-    return run(query, params);
+    return sqlite.run(query, params);
   });
   ipcMain.handle("sqlite.all", async (_, query: string, params: [] = []) => {
-    return all(query, params);
+    return sqlite.all(query, params);
   });
   ipcMain.handle("sqlite.get", async (_, query: string, params: [] = []) => {
-    return get(query, params);
+    return sqlite.get(query, params);
   });
   ipcMain.handle("blob.cards.get", async (_, card: string) => {
     return await blob.cards.get(card);
@@ -58,7 +58,7 @@ app.whenReady().then(async () => {
 });
 
 function createWindow(): void {
-  const mainWindow = new BrowserWindow({
+  const win = new BrowserWindow({
     width: 900,
     height: 670,
     minWidth: 960,
@@ -76,19 +76,32 @@ function createWindow(): void {
     }
   });
 
-  mainWindow.on("ready-to-show", () => {
-    mainWindow.show();
+  // Disable CORS
+  win.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
+    callback({ requestHeaders: { Origin: "*", ...details.requestHeaders } });
+  });
+  win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        "Access-Control-Allow-Origin": ["*"],
+        ...details.responseHeaders
+      }
+    });
   });
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
+  win.on("ready-to-show", () => {
+    win.show();
+  });
+
+  win.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url);
     return { action: "deny" };
   });
 
   // Load vite dev server in development or static files in production
   if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
-    mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
+    win.loadURL(process.env["ELECTRON_RENDERER_URL"]);
   } else {
-    mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
+    win.loadFile(join(__dirname, "../renderer/index.html"));
   }
 }

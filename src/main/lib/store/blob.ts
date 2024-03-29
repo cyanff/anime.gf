@@ -4,11 +4,10 @@
 import fs from "fs/promises";
 import { fileExistsAndAccessible } from "../utils";
 import path from "path";
-import { app } from "electron";
 import { Result, isError } from "@shared/utils";
 import { blobPath, cardsPath } from "../utils";
 
-export async function init() {
+async function init() {
   const blobDirExists = await fileExistsAndAccessible(blobPath);
   if (!blobDirExists) {
     await fs.mkdir(blobPath);
@@ -39,5 +38,6 @@ export namespace cards {
 }
 
 export default {
+  init,
   cards
 };

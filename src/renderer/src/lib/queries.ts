@@ -1,6 +1,11 @@
 import { Result, isError } from "@shared/utils";
 import silly from "@shared/silly";
-import { CardV2 } from "@shared/silly";
+import { CharacterCard } from "@shared/silly";
+
+// todo split this up into multiple files
+// this should probably be named page_queries or something
+// organize queries by groups
+// page on their page dependent
 
 export interface ChatCards
   extends Array<{
@@ -106,7 +111,7 @@ async function getChatHistory(
   }
 }
 
-async function getCharacterCard(chatID: number): Promise<Result<CardV2, Error>> {
+async function getCharacterCard(chatID: number): Promise<Result<CharacterCard, Error>> {
   try {
     const query = `
   SELECT characters.card

@@ -7,17 +7,18 @@ export interface RunResult {
   changes: number;
   lastInsertRowid: number | bigint;
 }
-export function run(query: string, params: [] = []): RunResult {
+
+function run(query: string, params: [] = []): RunResult {
   let stmt = db.prepare(query);
   return stmt.run(...params);
 }
 
-export function all(query: string, params: [] = []) {
+function all(query: string, params: [] = []) {
   let stmt = db.prepare(query);
   return stmt.all(...params);
 }
 
-export function get(query: string, params: [] = []) {
+function get(query: string, params: [] = []) {
   let stmt = db.prepare(query);
   const res = stmt.get(...params);
   if (!res) {
@@ -29,7 +30,7 @@ export function get(query: string, params: [] = []) {
 /**
  * Initializes the database connection.
  */
-export async function init() {
+async function init() {
   db = Database(dbPath);
 
   // TODO: run migrations on install
@@ -39,6 +40,13 @@ export async function init() {
   //   // migrator.migrate();
   // }
 }
+
+export default {
+  init,
+  run,
+  all,
+  get
+};
 
 // interface Migration {
 //   version: string;
