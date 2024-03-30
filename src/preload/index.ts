@@ -5,9 +5,9 @@ import { RunResult } from "../main/lib/store/sqlite";
 // Expose API types to the renderer process
 export interface API {
   sqlite: {
-    run: (query: string, params?: []) => Promise<RunResult>;
-    all: (query: string, params?: []) => Promise<unknown[]>;
-    get: (query: string, params?: []) => Promise<unknown>;
+    run: (query: string, params?: any[]) => Promise<RunResult>;
+    all: (query: string, params?: any[]) => Promise<unknown[]>;
+    get: (query: string, params?: any[]) => Promise<unknown>;
   };
   blob: {
     cards: {

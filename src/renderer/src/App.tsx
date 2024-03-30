@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import queries, { ChatCards as ChatCardsI, ChatHistory as ChatHistoryI, Persona as PersonaI } from "@/lib/queries";
+import { getResponse } from "./lib/response";
 import time from "@/lib/time";
 import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import { Squircle } from "@squircle-js/react";
@@ -74,14 +75,14 @@ function App(): JSX.Element {
   //     return;
   //   }
 
-  //   setChatHistory((prevMessages) => [...prevMessages, userInput]);
-  //   await window.api.sendMessage(chatID, userInput, "user");
+    setChatHistory((prevMessages) => [...prevMessages, userInput]);
+    await queries.insertMessage(chatID, userInput, "user");
 
-  //   const response = await window.api.getResponse(chatID);
-  //   setChatHistory((prevMessages) => [...prevMessages, response]);
-  //   await window.api.sendMessage(chatID, response, "character");
-  //   setTyping(false);
-  // };
+    const response = await getResponse(chatID);
+    setChatHistory((prevMessages) => [...prevMessages, response]);
+    await queries.insertMessage(chatID, response, "character");
+    setTyping(false);
+  };
 
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
