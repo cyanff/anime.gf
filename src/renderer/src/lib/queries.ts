@@ -121,7 +121,6 @@ async function getCharacterCard(chatID: number): Promise<Result<CharacterCard, E
   `.trim();
 
     const row = (await window.api.sqlite.get(query)) as { card: string };
-    console.log("Row:", row);
 
     const res = await window.api.blob.cards.get(row.card);
     if (res.kind == "err") {

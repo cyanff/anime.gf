@@ -6,6 +6,7 @@ import secret from "./lib/store/secret";
 import sqlite from "./lib/store/sqlite";
 import qdrant from "./lib/store/qdrant";
 import blob from "./lib/store/blob";
+import xfetch from "./lib/xfetch";
 
 // Enable globlal renderer sandboxing
 app.enableSandbox();
@@ -28,6 +29,15 @@ app.whenReady().then(async () => {
   });
   ipcMain.handle("blob.cards.get", async (_, card: string) => {
     return await blob.cards.get(card);
+  });
+  ipcMain.handle("secret.get", async (_, k: string) => {
+    return await secret.get(k);
+  });
+  ipcMain.handle("secret.set", async (_, k: string, v: string) => {
+    return await secret.set(k, v);
+  });
+  ipcMain.handle("xfetch.post", async (_, url: string, body: Object, headers: Record<string, string>) => {
+    return await xfetch.post(url, body, headers);
   });
 
   // Open or close DevTools using F12 in development
@@ -74,19 +84,6 @@ function createWindow(): void {
       webviewTag: false,
       webSecurity: true
     }
-  });
-
-  // Disable CORS
-  win.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
-    callback({ requestHeaders: { Origin: "*", ...details.requestHeaders } });
-  });
-  win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-    callback({
-      responseHeaders: {
-        "Access-Control-Allow-Origin": ["*"],
-        ...details.responseHeaders
-      }
-    });
   });
 
   win.on("ready-to-show", () => {

@@ -13,6 +13,11 @@ export const blobPath = path.join(app.getPath("userData"), "blob");
 export const cardsPath = path.join(blobPath, "cards");
 export const secretsPath = path.join(app.getPath("userData"), "secrets.json");
 
+/**
+ * Checks if a file exists and is accessible at the specified path.
+ * @param path - The path to the file.
+ * @returns A promise that resolves to a boolean indicating whether the file exists and is accessible.
+ */
 export async function fileExistsAndAccessible(path): Promise<boolean> {
   try {
     await fs.access(path);

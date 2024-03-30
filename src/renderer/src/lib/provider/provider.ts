@@ -1,33 +1,36 @@
 import { Result } from "@shared/utils";
+import { openAI } from "@/lib/provider/openai";
 // import anthropic from "./anthropic";
 // import mistral from "./mistral";
 // import togetherAI from "./togetherAI";
 
 export interface Provider {
-  // getChatCompletion
-  getChatCompletion(): Promise<Result<string, Error>>;
-  // getTextCompletion
+  getModels(): string[];
+  getChatCompletion(messages: Messages, config: CompletionConfig): Promise<Result<string, Error>>;
+  streamChatCompletion(): any;
   getTextCompletion(): Promise<Result<string, Error>>;
 }
 
-export enum ProviderEnum {
-  OPEN_AI = "OpenAI",
-  ANTHROPIC = "Anthropic",
-  MISTRAL = "Mistral",
-  TOGETHER_AI = "TogetherAI"
-}
+type ProviderStr = "openai" | "anthropic" | "mistral" | "together_ai";
 
-export function getProvider(providerEnum: ProviderEnum): Provider {
-  switch (providerEnum) {
-    //   case ProviderEnum.OPEN_AI:
-    //     return provider;
-    // case ProviderEnum.ANTHROPIC:
-    //   return anthropic;
-    // case ProviderEnum.MISTRAL:
-    //   return mistral;
-    // case ProviderEnum.TOGETHER_AI:
-    //   return togetherAI;
+export function getProvider(provider: ProviderStr): Provider {
+  switch (provider) {
+    case "openai":
+      return openAI;
     default:
       throw new Error("Invalid provider enum");
   }
+}
+
+export interface Messages extends Array<{ role: "user" | "assistant"; content: string }> {}
+
+export interface CompletionConfig {
+  apiKey: string;
+  model: string;
+  system: string;
+  stop: string[];
+  max_tokens: number;
+  tempature: number;
+  top_p: number;
+  top_k: number;
 }

@@ -2,7 +2,7 @@ import { contextBridge, ipcRenderer } from "electron";
 import { Result } from "@shared/utils";
 import { RunResult } from "../main/lib/store/sqlite";
 
-// Declare API types so that type checking works in the renderer process
+// Expose API types to the renderer process
 export interface API {
   sqlite: {
     run: (query: string, params?: []) => Promise<RunResult>;
@@ -14,6 +14,13 @@ export interface API {
       get: (card: string) => Promise<Result<Buffer, Error>>;
     };
   };
+  secret: {
+    get: (k: string) => Promise<Result<string, Error>>;
+    set: (k: string, v: string) => Promise<Result<void, Error>>;
+  };
+  xfetch: {
+    post: (url: string, body: Object, headers: Record<string, string>) => Promise<Result<any, Error>>;
+  };
 }
 
 const api: API = {
@@ -24,13 +31,16 @@ const api: API = {
   },
   blob: {
     cards: {
-      get: (card: string) => ipcRenderer.invoke("blob.cards.get", card)
+      get: (card) => ipcRenderer.invoke("blob.cards.get", card)
     }
+  },
+  secret: {
+    get: (k) => ipcRenderer.invoke("secret.get", k),
+    set: (k, v) => ipcRenderer.invoke("secret.set", k, v)
+  },
+  xfetch: {
+    post: (url, body, headers) => ipcRenderer.invoke("xfetch.post", url, body, headers)
   }
 };
 
-try {
-  contextBridge.exposeInMainWorld("api", api);
-} catch (error) {
-  console.error(error);
-}
+contextBridge.exposeInMainWorld("api", api);

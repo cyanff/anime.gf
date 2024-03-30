@@ -4,16 +4,11 @@ export interface Headers {
   Authorization?: string;
 }
 
-export async function post(
-  url: string,
-  body: Object = {},
-  headers: Record<string, string> = {}
-): Promise<Result<any, Error>> {
+async function post(url: string, body: Object = {}, headers: Record<string, string> = {}): Promise<Result<any, Error>> {
   // Default Content-Type to application/json
   if (!headers["Content-Type"]) {
     headers["Content-Type"] = "application/json";
   }
-
   try {
     const res = await fetch(url, {
       method: "POST",
@@ -27,10 +22,13 @@ export async function post(
         error: new Error(`Request failed with status ${res.status}. Status text: ${res.statusText}}`)
       };
     }
-
     return { kind: "ok", value: await res.json() };
   } catch (err) {
     isError(err);
     return { kind: "err", error: err };
   }
 }
+
+export default {
+  post
+};
