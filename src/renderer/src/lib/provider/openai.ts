@@ -3,7 +3,6 @@ import { Result } from "@shared/utils";
 import { Messages, CompletionConfig } from "@/lib/provider/provider";
 
 const models = ["gpt-3.5-turbo", "gpt-4.0-turbo-preview"];
-
 interface ChatCompletion {
   id: string;
   object: "chat.completion";
@@ -35,26 +34,33 @@ function getModels(): string[] {
 
 // TODO add system message to the messages array if specifed
 async function getChatCompletion(messages: Messages, config: CompletionConfig): Promise<Result<string, Error>> {
-  const keyRes = await window.api.secret.get("openai");
-  if (keyRes.kind == "err") {
-    return keyRes;
+  const validationRes = await validateConfig(config);
+  if (validationRes.kind == "err") {
+    return validationRes;
   }
+
+  // Get API key from either config or secret store
+  let key;
+  if (!config.apiKey) {
+    const keyRes = await window.api.secret.get("openai");
+    if (keyRes.kind == "err") {
+      return keyRes;
+    }
+    key = keyRes.value;
+  } else {
+    key = config.apiKey;
+  }
+
   const url = "https://api.openai.com/v1/chat/completions";
   const headers = {
-    Authorization: `Bearer ${keyRes.value}`
+    Authorization: `Bearer ${key}`
   };
+
+  // Append a system prompt if specified
+  const reqMessages = config.system ? [{ role: "system", content: config.system }, ...messages] : messages;
   const body = {
-    model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "system",
-        content: "You are a helpful assistant."
-      },
-      {
-        role: "user",
-        content: "Respond by saying hello. And nothing else"
-      }
-    ]
+    model: config.model,
+    messages: reqMessages
   };
 
   const completionRes = await window.api.xfetch.post(url, body, headers);
@@ -72,6 +78,13 @@ async function streamChatCompletion(): Promise<any> {
 
 async function getTextCompletion(): Promise<Result<string, Error>> {
   throw new Error("Not implemented");
+}
+
+async function validateConfig(config: CompletionConfig): Promise<Result<void, Error>> {
+  if (!models.includes(config.model)) {
+    return { kind: "err", error: new Error("Invalid model specified in CompletionConfig") };
+  }
+  return { kind: "ok", value: undefined };
 }
 
 export const openAI: Provider = {

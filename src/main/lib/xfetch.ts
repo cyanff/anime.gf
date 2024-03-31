@@ -29,6 +29,6 @@ async function post(url: string, body: Object = {}, headers: Record<string, stri
   }
 }
 
-export default {
+export const xfetch = {
   post
 };

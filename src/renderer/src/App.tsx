@@ -11,14 +11,13 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import queries, { ChatCards as ChatCardsI, ChatHistory as ChatHistoryI, Persona as PersonaI } from "@/lib/queries";
-import { getResponse } from "./lib/response";
 import time from "@/lib/time";
 import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import { Squircle } from "@squircle-js/react";
 import { useEffect, useState } from "react";
 import { CharacterCard } from "@shared/silly";
 import "./styles/global.css";
-import { test } from "@/lib/provider/openai";
+import { getProvider, ProviderE } from "@/lib/provider/provider";
 
 function App(): JSX.Element {
   const [chatID, setChatID] = useState(1);
@@ -69,27 +68,38 @@ function App(): JSX.Element {
     })();
   }, [chatID]);
 
-  // Send message handler
   // const handleSendMessage = async (userInput) => {
   //   if (userInput.length == 0) {
   //     return;
   //   }
 
-    setChatHistory((prevMessages) => [...prevMessages, userInput]);
-    await queries.insertMessage(chatID, userInput, "user");
+  //   setChatHistory((prevMessages) => [...prevMessages, userInput]);
+  //   await queries.insertMessage(chatID, userInput, "user");
 
-    const response = await getResponse(chatID);
-    setChatHistory((prevMessages) => [...prevMessages, response]);
-    await queries.insertMessage(chatID, response, "character");
-    setTyping(false);
-  };
+  //   const response = await getResponse(chatID);
+  //   setChatHistory((prevMessages) => [...prevMessages, response]);
+  //   await queries.insertMessage(chatID, response, "character");
+  //   setTyping(false);
+  // };
 
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
       <button
         className="h-10 w-10 bg-neutral-200"
         onClick={async () => {
-          await test();
+          const provider = getProvider(ProviderE.OPENAI);
+
+          const messages = [{ role: "user", content: "I'm testing you. Say hello." }];
+          const config = {
+            model: "gpt-3.5-turbo",
+            system: "You are a helpful assistant."
+          };
+          const res = await provider.getChatCompletion(messages, config);
+          if (res.kind == "err") {
+            console.error(res.error);
+            return;
+          }
+          console.log(res.value);
         }}
       >
         Test

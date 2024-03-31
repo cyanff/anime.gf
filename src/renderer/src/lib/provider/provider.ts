@@ -12,7 +12,6 @@ export interface Provider {
 }
 
 type ProviderStr = "openai" | "anthropic" | "mistral" | "together_ai";
-
 export function getProvider(provider: ProviderStr): Provider {
   switch (provider) {
     case "openai":
@@ -22,15 +21,15 @@ export function getProvider(provider: ProviderStr): Provider {
   }
 }
 
-export interface Messages extends Array<{ role: "user" | "assistant"; content: string }> {}
+export interface Messages extends Array<{ role: string; content: string }> {}
 
 export interface CompletionConfig {
-  apiKey: string;
+  apiKey?: string;
   model: string;
-  system: string;
-  stop: string[];
-  max_tokens: number;
-  tempature: number;
-  top_p: number;
-  top_k: number;
+  system?: string;
+  stop?: string[];
+  max_tokens?: number;
+  tempature?: number;
+  top_p?: number;
+  top_k?: number;
 }
