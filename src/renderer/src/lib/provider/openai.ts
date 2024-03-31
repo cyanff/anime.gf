@@ -32,9 +32,13 @@ function getModels(): string[] {
   return [...models];
 }
 
-// TODO add system message to the messages array if specifed
-async function getChatCompletion(messages: Messages, config: CompletionConfig): Promise<Result<string, Error>> {
-  const validationRes = await validateConfig(config);
+/**
+ * Sends a request to the OpenAI API to get a chat completion based on the provided messages and configuration.
+ * @param messages - The messages to use as context for the chat completion.
+ * @param config - The configuration options for the chat completion request.
+ * @returns A promise that resolves to a Result containing the chat completion string if successful, or an Error if the request fails.
+ */ async function getChatCompletion(messages: Messages, config: CompletionConfig): Promise<Result<string, Error>> {
+  const validationRes = validateConfig(config);
   if (validationRes.kind == "err") {
     return validationRes;
   }
@@ -80,7 +84,7 @@ async function getTextCompletion(): Promise<Result<string, Error>> {
   throw new Error("Not implemented");
 }
 
-async function validateConfig(config: CompletionConfig): Promise<Result<void, Error>> {
+function validateConfig(config: CompletionConfig): Result<void, Error> {
   if (!models.includes(config.model)) {
     return { kind: "err", error: new Error("Invalid model specified in CompletionConfig") };
   }

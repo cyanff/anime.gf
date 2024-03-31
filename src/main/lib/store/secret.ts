@@ -23,7 +23,7 @@ async function set(k: string, v: string): Promise<Result<void, Error>> {
   try {
     const secrets = JSON.parse(await fs.readFile(secretsPath, "utf-8"));
     secrets[k] = v;
-    await fs.writeFile(secretsPath, JSON.stringify(secrets));
+    await fs.writeFile(secretsPath, JSON.stringify(secrets, null, 2));
     return { kind: "ok", value: undefined };
   } catch (e) {
     isError(e);

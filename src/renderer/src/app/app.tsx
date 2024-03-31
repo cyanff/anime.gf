@@ -11,13 +11,13 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { I, service } from "./app_service";
-import time from "@/lib/time";
+import { time } from "@/lib/time";
 import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import { Squircle } from "@squircle-js/react";
 import { useEffect, useState } from "react";
 import { CharacterCard } from "@shared/silly";
-import "../styles/global.css";
 import { getProvider, ProviderE } from "@/lib/provider/provider";
+import "../styles/global.css";
 
 function App(): JSX.Element {
   const [chatID, setChatID] = useState(1);
@@ -86,10 +86,10 @@ function App(): JSX.Element {
       <button
         className="h-10 w-10 bg-neutral-200"
         onClick={async () => {
-          const provider = getProvider(ProviderE.OPENAI);
+          const provider = getProvider(ProviderE.ANTHROPIC);
           const messages = [{ role: "user", content: "I'm testing you. Say hello." }];
           const config = {
-            model: "gpt-3.5-turbo",
+            model: "claude-3-haiku-20240307",
             system: "You are a helpful assistant."
           };
 

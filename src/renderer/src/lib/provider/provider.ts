@@ -1,6 +1,6 @@
 import { Result } from "@shared/utils";
 import { openAI } from "@/lib/provider/openai";
-// import anthropic from "./anthropic";
+import { anthropic } from "./anthropic";
 // import mistral from "./mistral";
 // import togetherAI from "./togetherAI";
 
@@ -20,10 +20,12 @@ export enum ProviderE {
 
 export function getProvider(provider: ProviderE): Provider {
   switch (provider) {
-    case "openai":
+    case ProviderE.OPENAI:
       return openAI;
+    case ProviderE.ANTHROPIC:
+      return anthropic;
     default:
-      throw new Error("Invalid provider enum");
+      throw new Error("Invalid provider given to getProvider()");
   }
 }
 
@@ -35,7 +37,7 @@ export interface CompletionConfig {
   system?: string;
   stop?: string[];
   max_tokens?: number;
-  tempature?: number;
+  temperature?: number;
   top_p?: number;
   top_k?: number;
 }

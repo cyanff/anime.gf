@@ -8,6 +8,7 @@ import qdrant from "./lib/store/qdrant";
 import blob from "./lib/store/blob";
 import { xfetch } from "./lib/xfetch";
 
+// Enable globlal renderer sandboxing
 app.enableSandbox();
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId("com.electron");

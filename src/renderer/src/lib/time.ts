@@ -1,3 +1,9 @@
+/**
+ * Converts a SQLite time string to ISO 8601 format.
+ *
+ * @param time - The SQLite time string to convert.
+ * @returns The converted time string in ISO 8601 format.
+ */
 function sqliteToISO(time: string) {
   return time.replace(" ", "T") + "Z";
 }
@@ -93,7 +99,7 @@ function isoToLLMRelativeTime(iso: string) {
   return `${value} ${unit} ago`;
 }
 
-export default {
+export const time = {
   isoToUserRelativeTime,
   isoToLLMRelativeTime,
   sqliteToISO
