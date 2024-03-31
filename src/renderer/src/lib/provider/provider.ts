@@ -11,8 +11,14 @@ export interface Provider {
   getTextCompletion(): Promise<Result<string, Error>>;
 }
 
-type ProviderStr = "openai" | "anthropic" | "mistral" | "together_ai";
-export function getProvider(provider: ProviderStr): Provider {
+export enum ProviderE {
+  OPENAI = "openai",
+  ANTHROPIC = "anthropic",
+  MISTRAL = "mistral",
+  TOGETHER_AI = "together_ai"
+}
+
+export function getProvider(provider: ProviderE): Provider {
   switch (provider) {
     case "openai":
       return openAI;

@@ -10,27 +10,27 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import queries, { ChatCards as ChatCardsI, ChatHistory as ChatHistoryI, Persona as PersonaI } from "@/lib/queries";
+import { I, service } from "./app_service";
 import time from "@/lib/time";
 import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import { Squircle } from "@squircle-js/react";
 import { useEffect, useState } from "react";
 import { CharacterCard } from "@shared/silly";
-import "./styles/global.css";
+import "../styles/global.css";
 import { getProvider, ProviderE } from "@/lib/provider/provider";
 
 function App(): JSX.Element {
   const [chatID, setChatID] = useState(1);
-  const [persona, setPersona] = useState<PersonaI>();
+  const [persona, setPersona] = useState<I.Persona>();
   const [characterCard, setCharacterCard] = useState<CharacterCard>();
-  const [chatCards, setChatCards] = useState<ChatCardsI>([]);
-  const [chatHistory, setChatHistory] = useState<ChatHistoryI>([]);
+  const [chatCards, setChatCards] = useState<I.ChatCards>([]);
+  const [chatHistory, setChatHistory] = useState<I.ChatHistory>([]);
   const [typing, setTyping] = useState(false);
 
   // Fetch sidebar recent chat cards
   useEffect(() => {
     (async () => {
-      const chatCards = await queries.getChatCards();
+      const chatCards = await service.getChatCards();
       if (chatCards.kind == "err") {
         return;
       }
@@ -40,7 +40,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     async () => {
-      const res = await queries.getPersona(chatID);
+      const res = await service.getPersona(chatID);
       if (res.kind == "err") {
         return;
       }
@@ -50,7 +50,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     (async () => {
-      const res = await queries.getChatHistory(chatID);
+      const res = await service.getChatHistory(chatID);
       if (res.kind == "err") {
         return;
       }
@@ -60,7 +60,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     (async () => {
-      const res = await queries.getCharacterCard(chatID);
+      const res = await service.getCharacterCard(chatID);
       if (res.kind == "err") {
         return;
       }
@@ -68,19 +68,18 @@ function App(): JSX.Element {
     })();
   }, [chatID]);
 
-  // const handleSendMessage = async (userInput) => {
-  //   if (userInput.length == 0) {
-  //     return;
-  //   }
-
-  //   setChatHistory((prevMessages) => [...prevMessages, userInput]);
-  //   await queries.insertMessage(chatID, userInput, "user");
-
-  //   const response = await getResponse(chatID);
-  //   setChatHistory((prevMessages) => [...prevMessages, response]);
-  //   await queries.insertMessage(chatID, response, "character");
-  //   setTyping(false);
-  // };
+  const handleSendMessage = async (userInput) => {
+    // if (userInput.length == 0) {
+    //   return;
+    // }
+    // setChatHistory((prevMessages) => [...prevMessages, userInput]);
+    // await queries.insertMessage(chatID, userInput, "user");
+    // setTyping(true);
+    // const response = await getResponse(chatID);
+    // setChatHistory((prevMessages) => [...prevMessages, response]);
+    // await queries.insertMessage(chatID, response, "character");
+    // setTyping(false);
+  };
 
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
@@ -88,12 +87,12 @@ function App(): JSX.Element {
         className="h-10 w-10 bg-neutral-200"
         onClick={async () => {
           const provider = getProvider(ProviderE.OPENAI);
-
           const messages = [{ role: "user", content: "I'm testing you. Say hello." }];
           const config = {
             model: "gpt-3.5-turbo",
             system: "You are a helpful assistant."
           };
+
           const res = await provider.getChatCompletion(messages, config);
           if (res.kind == "err") {
             console.error(res.error);
