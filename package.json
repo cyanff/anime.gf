@@ -42,10 +42,12 @@
     "clsx": "^2.1.0",
     "electron-updater": "^6.1.7",
     "framer-motion": "^11.0.12",
-    "mustache": "^4.2.0",
+    "handlebars": "^4.7.8",
+    "next-themes": "^0.3.0",
     "png-chunk-text": "^1.0.0",
     "png-chunks-encode": "^1.0.0",
     "png-chunks-extract": "^1.0.0",
+    "sonner": "^1.4.41",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7"
   },

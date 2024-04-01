@@ -10,13 +10,15 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { I, service } from "./app_service";
+import { service } from "./app_service";
+import { I } from "./I";
 import { time } from "@/lib/time";
 import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import { Squircle } from "@squircle-js/react";
 import { useEffect, useState } from "react";
 import { CharacterCard } from "@shared/silly";
 import { getProvider, ProviderE } from "@/lib/provider/provider";
+import { toast } from "sonner";
 import "../styles/global.css";
 
 function App(): JSX.Element {
@@ -84,21 +86,20 @@ function App(): JSX.Element {
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
       <button
-        className="h-10 w-10 bg-neutral-200"
+        className="h-8 w-12 bg-neutral-500"
         onClick={async () => {
-          const provider = getProvider(ProviderE.MISTRAL);
-          const messages = [{ role: "user", content: "I'm testing you. Say hello." }];
+          const provider = getProvider(ProviderE.ANTHROPIC);
+          const messages = [{ role: "user", content: "I'm testing you. State which company created you in one word." }];
           const config = {
-            model: "mistral-small-latest",
+            model: "claude-3-haiku-20240307",
             system: "You are a helpful assistant."
           };
-
           const res = await provider.getChatCompletion(messages, config);
           if (res.kind == "err") {
             console.error(res.error);
             return;
           }
-          console.log(res.value);
+          toast(res.value);
         }}
       >
         Test

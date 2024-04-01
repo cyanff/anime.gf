@@ -2,6 +2,7 @@ import encode from "png-chunks-encode";
 import extract from "png-chunks-extract";
 import PNGtext from "png-chunk-text";
 import { Buffer } from "buffer";
+import { deepFreeze } from "@shared/utils";
 
 // TODO: make this non blocking
 // TODO: card spec interface here
@@ -112,7 +113,5 @@ function get(img: Buffer): CharacterCard {
   return JSON.parse(str);
 }
 
-export default {
-  write: set,
-  read: get
-};
+export const silly = { set, get };
+deepFreeze(silly);

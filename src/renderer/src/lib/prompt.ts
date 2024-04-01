@@ -1,8 +1,11 @@
-// import config from "../../../../config";
-// import { ChatHistory, Persona } from "@/lib/queries";
-// import { CharacterCard } from "@shared/silly";
-// /*
-// Manages prompt templating
+import { CharacterCard } from "@shared/silly";
+import { Persona, ChatHistory, Messages } from "@/lib/types";
+
+interface Params {
+  chatHistory: ChatHistory;
+  persona: Persona;
+  characterCard: CharacterCard;
+}
 
 // In:
 // - global config

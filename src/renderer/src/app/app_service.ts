@@ -1,38 +1,10 @@
 import { Result, isError } from "@shared/utils";
-import silly from "@shared/silly";
+import { silly } from "@shared/silly";
 import { CharacterCard } from "@shared/silly";
-
-export namespace I {
-  export interface ChatCards
-    extends Array<{
-      chat_id: number;
-      last_message: string;
-      name: string;
-    }> {}
-
-  export interface Persona {
-    name: string;
-    avatar?: string;
-    metadata?: any;
-  }
-
-  export interface ChatHistory
-    extends Array<{
-      sender: "user" | "character";
-      message: string;
-      timestamp: string;
-    }> {}
-
-  export interface Messages
-    extends Array<{
-      sender: "user" | "character";
-      message: string;
-      timestamp: string;
-    }> {}
-}
+import { ChatCards, Persona, ChatHistory, Messages } from "@/lib/types";
 
 // TODO, pagination
-async function getChatCards(): Promise<Result<I.ChatCards, Error>> {
+async function getChatCards(): Promise<Result<ChatCards, Error>> {
   const query = `
   SELECT
   c.id AS chat_id,
@@ -59,7 +31,7 @@ LIMIT 20;
         if (res.kind == "err") {
           throw res.error;
         }
-        const parsed = silly.read(res.value);
+        const parsed = silly.get(res.value);
 
         return {
           chat_id: row.chat_id,
@@ -76,7 +48,7 @@ LIMIT 20;
   }
 }
 
-async function getPersona(chatID: number): Promise<Result<I.Persona, Error>> {
+async function getPersona(chatID: number): Promise<Result<Persona, Error>> {
   const query = `
   SELECT id, name, metadata
   FROM personas
@@ -84,7 +56,7 @@ async function getPersona(chatID: number): Promise<Result<I.Persona, Error>> {
   `.trim();
 
   try {
-    const row = (await window.api.sqlite.get(query)) as I.Persona;
+    const row = (await window.api.sqlite.get(query)) as Persona;
     return { kind: "ok", value: row };
   } catch (e) {
     isError(e);
@@ -97,7 +69,7 @@ async function getChatHistory(
   chatID: number,
   startID?: number,
   limit: number = 25
-): Promise<Result<I.ChatHistory, Error>> {
+): Promise<Result<ChatHistory, Error>> {
   const query = `
   SELECT text as message,  sender_type as sender, inserted_at as timestamp
   FROM messages
@@ -107,7 +79,7 @@ async function getChatHistory(
   `.trim();
 
   try {
-    const rows = (await window.api.sqlite.all(query)) as I.ChatHistory;
+    const rows = (await window.api.sqlite.all(query)) as ChatHistory;
     return { kind: "ok", value: rows };
   } catch (e) {
     isError(e);
@@ -131,7 +103,7 @@ async function getCharacterCard(chatID: number): Promise<Result<CharacterCard, E
     if (res.kind == "err") {
       throw res.error;
     }
-    return { kind: "ok", value: silly.read(res.value) };
+    return { kind: "ok", value: silly.get(res.value) };
   } catch (e) {
     isError(e);
     console.error("Error:", e);
@@ -154,7 +126,7 @@ async function insertMessage(chatID: number, message: string, sender_type: "user
   }
 }
 
-async function getLatestMessages(chatID: number, contextTokenLimit: number): Promise<Result<I.Messages, Error>> {
+async function getLatestMessages(chatID: number, contextTokenLimit: number): Promise<Result<Messages, Error>> {
   const query = `
   WITH Latest1kMessages AS (
       SELECT * FROM messages WHERE chat_id = ? ORDER BY id ASC LIMIT 1000
@@ -169,7 +141,7 @@ async function getLatestMessages(chatID: number, contextTokenLimit: number): Pro
   `;
 
   try {
-    const rows = (await window.api.sqlite.all(query)) as I.Messages;
+    const rows = (await window.api.sqlite.all(query)) as Messages;
     return { kind: "ok", value: rows };
   } catch (e) {
     isError(e);
@@ -182,7 +154,7 @@ async function getUnembeddedChunk(
   chatID: number,
   contextTokenLimit: number,
   chunkTokenLimit: number
-): Promise<Result<I.Messages, Error>> {
+): Promise<Result<Messages, Error>> {
   const query = `
   WITH UnembeddedMessages AS (
     SELECT * FROM messages WHERE is_embedded = false AND chat_id = ? ORDER BY id DESC
@@ -202,7 +174,7 @@ async function getUnembeddedChunk(
   `;
 
   try {
-    const rows = (await window.api.sqlite.all(query, [chatID, contextTokenLimit, chunkTokenLimit])) as I.Messages;
+    const rows = (await window.api.sqlite.all(query, [chatID, contextTokenLimit, chunkTokenLimit])) as Messages;
     return { kind: "ok", value: rows };
   } catch (e) {
     isError(e);

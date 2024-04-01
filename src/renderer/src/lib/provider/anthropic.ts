@@ -61,6 +61,21 @@ async function getChatCompletion(messages: Messages, config: CompletionConfig): 
   if (config.system) {
     body.system = config.system;
   }
+  if (config.max_tokens !== undefined) {
+    body.max_tokens = config.max_tokens;
+  }
+  if (config.stop !== undefined) {
+    body.stop_sequences = config.stop;
+  }
+  if (config.temperature !== undefined) {
+    body.temperature = config.temperature;
+  }
+  if (config.top_p !== undefined) {
+    body.top_p = config.top_p;
+  }
+  if (config.top_k !== undefined) {
+    body.top_p = config.top_p;
+  }
 
   console.log(headers);
   console.log(body);

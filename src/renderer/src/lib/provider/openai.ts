@@ -62,10 +62,22 @@ function getModels(): string[] {
 
   // Append a system prompt if specified
   const reqMessages = config.system ? [{ role: "system", content: config.system }, ...messages] : messages;
-  const body = {
+  const body: any = {
     model: config.model,
     messages: reqMessages
   };
+  if (config.max_tokens !== undefined) {
+    body.max_tokens = config.max_tokens;
+  }
+  if (config.stop !== undefined) {
+    body.stop = config.stop;
+  }
+  if (config.temperature !== undefined) {
+    body.temperature = config.temperature;
+  }
+  if (config.top_p !== undefined) {
+    body.top_p = config.top_p;
+  }
 
   const completionRes = await window.api.xfetch.post(url, body, headers);
   if (completionRes.kind == "err") {
