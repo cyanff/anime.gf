@@ -1,8 +1,8 @@
 import { Result } from "@shared/utils";
 import { openAI } from "@/lib/provider/openai";
 import { anthropic } from "./anthropic";
-// import mistral from "./mistral";
-// import togetherAI from "./togetherAI";
+import { togetherAI } from "@/lib/provider/together_ai";
+import { mistral } from "./mistral";
 
 export interface Provider {
   getModels(): string[];
@@ -24,11 +24,14 @@ export function getProvider(provider: ProviderE): Provider {
       return openAI;
     case ProviderE.ANTHROPIC:
       return anthropic;
+    case ProviderE.TOGETHER_AI:
+      return togetherAI;
+    case ProviderE.MISTRAL:
+      return mistral;
     default:
       throw new Error("Invalid provider given to getProvider()");
   }
 }
-
 export interface Messages extends Array<{ role: string; content: string }> {}
 
 export interface CompletionConfig {

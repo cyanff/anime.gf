@@ -86,10 +86,10 @@ function App(): JSX.Element {
       <button
         className="h-10 w-10 bg-neutral-200"
         onClick={async () => {
-          const provider = getProvider(ProviderE.ANTHROPIC);
+          const provider = getProvider(ProviderE.MISTRAL);
           const messages = [{ role: "user", content: "I'm testing you. Say hello." }];
           const config = {
-            model: "claude-3-haiku-20240307",
+            model: "mistral-small-latest",
             system: "You are a helpful assistant."
           };
 

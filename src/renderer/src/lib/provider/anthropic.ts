@@ -36,7 +36,7 @@ async function getChatCompletion(messages: Messages, config: CompletionConfig): 
   }
 
   // Get API key from either config or secret store
-  let key;
+  let key: string;
   if (!config.apiKey) {
     const keyRes = await window.api.secret.get("anthropic");
     if (keyRes.kind == "err") {
@@ -50,16 +50,20 @@ async function getChatCompletion(messages: Messages, config: CompletionConfig): 
   const url = "https://api.anthropic.com/v1/messages";
   const headers = {
     "x-api-key": key,
-    "anthropic-version": "2023-06-01",
-    "content-type": "application/json"
+    "anthropic-version": "2023-06-01"
   };
 
-  const body = {
+  const body: any = {
     model: config.model,
-    // TODO: get default max token value from config.ts
-    max_tokens: config.max_tokens || 1024,
-    messages: messages
+    messages: messages,
+    max_tokens: config.max_tokens || 1024
   };
+  if (config.system) {
+    body.system = config.system;
+  }
+
+  console.log(headers);
+  console.log(body);
 
   const completionRes = await window.api.xfetch.post(url, body, headers);
   if (completionRes.kind == "err") {

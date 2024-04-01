@@ -2,28 +2,24 @@ import { Provider } from "@/lib/provider/provider";
 import { Result } from "@shared/utils";
 import { Messages, CompletionConfig } from "@/lib/provider/provider";
 
-const models = ["mistral-small-latest", "mistral-medium-latest", "mistral-large-latest"];
+const models = ["mistralai/Mixtral-8x7B-Instruct-v0.1", "NousResearch/Nous-Hermes-2-Mixtral-8x7B-SFT"];
 
 interface ChatCompletion {
   id: string;
-  object: string;
-  created: number;
-  model: string;
   choices: Choice[];
   usage: Usage;
+  created: number;
+  model: string;
 }
-
 interface Choice {
-  index: number;
   message: Message;
   finish_reason: string;
+  index: number;
 }
-
 interface Message {
-  role: "user" | "assistant";
   content: string;
+  role: string;
 }
-
 interface Usage {
   prompt_tokens: number;
   completion_tokens: number;
@@ -43,7 +39,7 @@ async function getChatCompletion(messages: Messages, config: CompletionConfig): 
   // Get API key from either config or secret store
   let key: string;
   if (!config.apiKey) {
-    const keyRes = await window.api.secret.get("mistral");
+    const keyRes = await window.api.secret.get("together_ai");
     if (keyRes.kind == "err") {
       return keyRes;
     }
@@ -52,12 +48,10 @@ async function getChatCompletion(messages: Messages, config: CompletionConfig): 
     key = config.apiKey;
   }
 
-  const url = "https://api.mistral.ai/v1/chat/completions";
+  const url = "https://api.together.xyz/v1/chat/completions";
   const headers = {
-    Accept: "application/json",
     Authorization: `Bearer ${key}`
   };
-
   const reqMessages = config.system ? [{ role: "system", content: config.system }, ...messages] : messages;
   const body: any = {
     model: config.model,
@@ -75,12 +69,14 @@ async function getChatCompletion(messages: Messages, config: CompletionConfig): 
   if (config.top_p !== undefined) {
     body.top_p = config.top_p;
   }
+  if (config.top_k !== undefined) {
+    body.top_k = config.top_k;
+  }
 
   const completionRes = await window.api.xfetch.post(url, body, headers);
   if (completionRes.kind == "err") {
     return completionRes;
   }
-
   const completion = completionRes.value as ChatCompletion;
   return { kind: "ok", value: completion.choices[0].message.content };
 }
@@ -93,8 +89,6 @@ async function getTextCompletion(): Promise<Result<string, Error>> {
   throw new Error("Not implemented");
 }
 
-// TODO, validate config further
-// ex: mistral doens't have top_k
 function validateConfig(config: CompletionConfig): Result<void, Error> {
   if (!models.includes(config.model)) {
     return { kind: "err", error: new Error("Invalid model specified in CompletionConfig") };
@@ -102,7 +96,7 @@ function validateConfig(config: CompletionConfig): Result<void, Error> {
   return { kind: "ok", value: undefined };
 }
 
-export const mistral: Provider = {
+export const togetherAI: Provider = {
   getModels,
   getChatCompletion,
   streamChatCompletion,
