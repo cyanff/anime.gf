@@ -8,6 +8,15 @@ import qdrant from "./lib/store/qdrant";
 import blob from "./lib/store/blob";
 import { xfetch } from "./lib/xfetch";
 
+// (async () => {
+//   const res = await blob.cards.get("one");
+//   if (res.kind == "err") {
+//     throw res.error;
+//   }
+//   const data = res.value;
+//   console.log(JSON.stringify(data, null, 2));
+// })();
+
 // Enable globlal renderer sandboxing
 app.enableSandbox();
 app.whenReady().then(async () => {

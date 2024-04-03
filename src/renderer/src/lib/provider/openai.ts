@@ -1,6 +1,8 @@
+import Handlebars from "handlebars";
 import { Provider } from "@/lib/provider/provider";
-import { Result } from "@shared/utils";
+import { Result, isError } from "@shared/utils";
 import { Messages, CompletionConfig } from "@/lib/provider/provider";
+import { PromptCtx } from "@/lib/provider/provider";
 
 const models = ["gpt-3.5-turbo", "gpt-4.0-turbo-preview"];
 interface ChatCompletion {
@@ -96,6 +98,37 @@ async function getTextCompletion(): Promise<Result<string, Error>> {
   throw new Error("Not implemented");
 }
 
+function renderSysPrompt(ctx: PromptCtx): Result<string, Error> {
+  const source = `
+  ### Instruction
+
+  ### Character Info
+  Character Name: {{card.character.name}}
+  {{card.character.description}}}
+
+  ### World Info
+  {{card.world.description}}
+
+  ### User Info
+  User's name: {{card.user.name}}
+
+  ### Character Memory
+  {{characterMemory}}
+
+  ### Messages Examples
+  {{card.character.msg_examples}}
+
+  `.trim();
+  try {
+    const template = Handlebars.compile(source);
+    const prompt = template(ctx);
+    return { kind: "ok", value: prompt };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
 function validateConfig(config: CompletionConfig): Result<void, Error> {
   if (!models.includes(config.model)) {
     return { kind: "err", error: new Error("Invalid model specified in CompletionConfig") };
@@ -107,5 +140,6 @@ export const openAI: Provider = {
   getModels,
   getChatCompletion,
   streamChatCompletion,
-  getTextCompletion
+  getTextCompletion,
+  renderSysPrompt
 };

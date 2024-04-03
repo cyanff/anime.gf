@@ -11,22 +11,23 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { service } from "./app_service";
-import { I } from "./I";
 import { time } from "@/lib/time";
 import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import { Squircle } from "@squircle-js/react";
 import { useEffect, useState } from "react";
-import { CharacterCard } from "@shared/silly";
 import { getProvider, ProviderE } from "@/lib/provider/provider";
 import { toast } from "sonner";
+import { Persona, Message as MessageI } from "@/lib/types";
+import { Card } from "@shared/types";
+import { ChatCard as ChatCardI } from "./app_service";
 import "../styles/global.css";
 
 function App(): JSX.Element {
   const [chatID, setChatID] = useState(1);
-  const [persona, setPersona] = useState<I.Persona>();
-  const [characterCard, setCharacterCard] = useState<CharacterCard>();
-  const [chatCards, setChatCards] = useState<I.ChatCards>([]);
-  const [chatHistory, setChatHistory] = useState<I.ChatHistory>([]);
+  const [persona, setPersona] = useState<Persona>();
+  const [card, setCard] = useState<Card>();
+  const [chatCards, setChatCards] = useState<ChatCardI[]>([]);
+  const [chatHistory, setChatHistory] = useState<MessageI[]>([]);
   const [typing, setTyping] = useState(false);
 
   // Fetch sidebar recent chat cards
@@ -62,11 +63,11 @@ function App(): JSX.Element {
 
   useEffect(() => {
     (async () => {
-      const res = await service.getCharacterCard(chatID);
+      const res = await service.getCard(chatID);
       if (res.kind == "err") {
         return;
       }
-      setCharacterCard(res.value);
+      setCard(res.value);
     })();
   }, [chatID]);
 
@@ -117,7 +118,7 @@ function App(): JSX.Element {
                 <ChatCard
                   key={idx}
                   id={chatCard.chat_id.toString()}
-                  avatar=""
+                  avatar={`data:image/png;base64,${chatCard.avatar}`}
                   name={chatCard.name}
                   msg={chatCard.last_message}
                   active={chatID == chatCard.chat_id}

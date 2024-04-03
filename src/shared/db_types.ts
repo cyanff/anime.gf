@@ -2,15 +2,14 @@ export interface Persona {
   id: number;
   name: string;
   avatar?: string;
-  metadata?: any;
+  description?: string;
   inserted_at: string;
   updated_at?: string;
 }
 
 export interface Character {
   id: number;
-  card: string;
-  hash: string;
+  fileName: string;
   inserted_at: string;
   updated_at?: string;
 }
@@ -18,7 +17,7 @@ export interface Character {
 export interface Chat {
   id: number;
   persona_id: number;
-  character_id: number;
+  card_id: number;
   inserted_at: string;
   updated_at?: string;
 }

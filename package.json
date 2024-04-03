@@ -43,6 +43,7 @@
     "electron-updater": "^6.1.7",
     "framer-motion": "^11.0.12",
     "handlebars": "^4.7.8",
+    "jszip": "^3.10.1",
     "next-themes": "^0.3.0",
     "png-chunk-text": "^1.0.0",
     "png-chunks-encode": "^1.0.0",

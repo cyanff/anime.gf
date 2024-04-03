@@ -1,11 +1,9 @@
-import { CharacterCard } from "@shared/silly";
-import { Persona, ChatHistory, Messages } from "@/lib/types";
-
-interface Params {
-  chatHistory: ChatHistory;
+/*
+interface PromptParams {
   persona: Persona;
   characterCard: CharacterCard;
 }
+*/
 
 // In:
 // - global config

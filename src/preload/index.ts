@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { Result } from "@shared/utils";
 import { RunResult } from "../main/lib/store/sqlite";
+import { Card } from "@shared/types";
 
 // Expose API types to the renderer process
 export interface API {
@@ -11,7 +12,7 @@ export interface API {
   };
   blob: {
     cards: {
-      get: (card: string) => Promise<Result<Buffer, Error>>;
+      get: (card: string) => Promise<Result<Card, Error>>;
     };
   };
   secret: {
