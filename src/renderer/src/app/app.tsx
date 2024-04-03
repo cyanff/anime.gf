@@ -89,18 +89,20 @@ function App(): JSX.Element {
       <button
         className="h-8 w-12 bg-neutral-500"
         onClick={async () => {
-          const provider = getProvider(ProviderE.ANTHROPIC);
-          const messages = [{ role: "user", content: "I'm testing you. State which company created you in one word." }];
-          const config = {
-            model: "claude-3-haiku-20240307",
-            system: "You are a helpful assistant."
-          };
-          const res = await provider.getChatCompletion(messages, config);
-          if (res.kind == "err") {
-            console.error(res.error);
-            return;
-          }
-          toast(res.value);
+          // const provider = getProvider(ProviderE.ANTHROPIC);
+          // const messages = [{ role: "user", content: "I'm testing you. State which company created you in one word." }];
+          // const config = {
+          //   model: "claude-3-haiku-20240307",
+          //   system: "You are a helpful assistant."
+          // };
+          // const res = await provider.getChatCompletion(messages, config);
+          // if (res.kind == "err") {
+          //   console.error(res.error);
+          //   return;
+          // }
+          // toast(res.value);
+
+          console.log(card?.card);
         }}
       >
         Test
