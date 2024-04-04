@@ -1,12 +1,12 @@
 import { Result, isError } from "@shared/utils";
 import { Persona, Message } from "@/lib/types";
-import { Card } from "@shared/types";
+import { CardBundle } from "@shared/types";
 
 export interface ChatCard {
   chat_id: number;
   last_message: string;
   name: string;
-  avatar: string;
+  avatarURI?: string;
 }
 
 // TODO, pagination
@@ -46,7 +46,7 @@ LIMIT 20;
           chat_id: row.chat_id,
           last_message: row.last_message,
           name: "test",
-          avatar: res.value.avatar
+          avatarURI: res.value.avatarURI
         };
       })
     );
@@ -94,7 +94,7 @@ async function getChatHistory(chatID: number, startID?: number, limit: number = 
   }
 }
 
-async function getCard(chatID: number): Promise<Result<Card, Error>> {
+async function getCard(chatID: number): Promise<Result<CardBundle, Error>> {
   try {
     const query = `
   SELECT cards.fileName

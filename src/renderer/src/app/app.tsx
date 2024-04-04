@@ -18,14 +18,14 @@ import { useEffect, useState } from "react";
 import { getProvider, ProviderE } from "@/lib/provider/provider";
 import { toast } from "sonner";
 import { Persona, Message as MessageI } from "@/lib/types";
-import { Card } from "@shared/types";
+import { CardBundle } from "@shared/types";
 import { ChatCard as ChatCardI } from "./app_service";
 import "../styles/global.css";
 
 function App(): JSX.Element {
   const [chatID, setChatID] = useState(1);
   const [persona, setPersona] = useState<Persona>();
-  const [card, setCard] = useState<Card>();
+  const [card, setCard] = useState<CardBundle>();
   const [chatCards, setChatCards] = useState<ChatCardI[]>([]);
   const [chatHistory, setChatHistory] = useState<MessageI[]>([]);
   const [typing, setTyping] = useState(false);
@@ -86,25 +86,7 @@ function App(): JSX.Element {
 
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
-      <button
-        className="h-8 w-12 bg-neutral-500"
-        onClick={async () => {
-          // const provider = getProvider(ProviderE.ANTHROPIC);
-          // const messages = [{ role: "user", content: "I'm testing you. State which company created you in one word." }];
-          // const config = {
-          //   model: "claude-3-haiku-20240307",
-          //   system: "You are a helpful assistant."
-          // };
-          // const res = await provider.getChatCompletion(messages, config);
-          // if (res.kind == "err") {
-          //   console.error(res.error);
-          //   return;
-          // }
-          // toast(res.value);
-
-          console.log(card?.card);
-        }}
-      >
+      <button className="h-8 w-12 bg-neutral-500" onClick={async () => {}}>
         Test
       </button>
       {/* Sidebar */}
@@ -120,7 +102,7 @@ function App(): JSX.Element {
                 <ChatCard
                   key={idx}
                   id={chatCard.chat_id.toString()}
-                  avatar={`data:image/png;base64,${chatCard.avatar}`}
+                  avatarURI={chatCard.avatarURI || ""}
                   name={chatCard.name}
                   msg={chatCard.last_message}
                   active={chatID == chatCard.chat_id}

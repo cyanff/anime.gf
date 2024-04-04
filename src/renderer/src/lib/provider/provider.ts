@@ -3,7 +3,7 @@ import { openAI } from "@/lib/provider/openai";
 import { anthropic } from "./anthropic";
 import { togetherAI } from "@/lib/provider/together_ai";
 import { mistral } from "./mistral";
-import { CardJSON } from "@shared/types";
+import { CardData } from "@shared/types";
 import { Persona } from "@/lib/types";
 
 export interface Messages extends Array<{ role: string; content: string }> {}
@@ -19,7 +19,7 @@ export interface CompletionConfig {
   top_k?: number;
 }
 export interface PromptCtx {
-  card: CardJSON;
+  card: CardData;
   persona: Persona;
   characterMemory: string;
 }

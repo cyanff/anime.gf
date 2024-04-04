@@ -2,20 +2,19 @@
 // This includes silly tavern cards, images, audio, base weights, lora adapters, and other binary data.
 
 import fs from "fs/promises";
-import { fileExistsAndAccessible } from "../utils";
+import { attainable } from "../utils";
 import path from "path";
 import { Result, isError } from "@shared/utils";
 import { blobPath, cardsPath } from "../utils";
-import { Card } from "@shared/types";
-import JSZip from "jszip";
+import { CardBundle } from "@shared/types";
 
 async function init() {
-  const blobDirExists = await fileExistsAndAccessible(blobPath);
+  const blobDirExists = await attainable(blobPath);
   if (!blobDirExists) {
     await fs.mkdir(blobPath);
   }
 
-  const cardsDirExists = await fileExistsAndAccessible(cardsPath);
+  const cardsDirExists = await attainable(cardsPath);
   if (!cardsDirExists) {
     await fs.mkdir(cardsPath);
   }
@@ -23,50 +22,51 @@ async function init() {
 
 export namespace cards {
   /**
-   * Gets card data from a card zip file given a file name (not including file extension).
+   * Gets card data under the appData/blob/cards directory given a card dir name.
    *
-   * Looks for a zip file with the given name in the cardsPath.
-   * The following files are expected to be in the zip:
+   * Looks for a directory with the given name in the cardsPath.
+   * The following files are expected to be in the directory:
    * - card.json
    * - avatar.png
    * - banner.png
    *
-   * @param name The name of the card to get.
-   * @returns A result object containing the CardData if successful, else error.
+   * @param name The name of the card directory to get.
+   * @returns A result object containing the CardResources if successful, else error.
    *
    */
-  export async function get(name: string): Promise<Result<Card, Error>> {
-    const zipPath = path.join(cardsPath, `${name}.zip`);
-    const zipExists = await fileExistsAndAccessible(zipPath);
-    if (!zipExists) {
-      return { kind: "err", error: new Error(`Card "${name}" not found`) };
+  export async function get(name: string): Promise<Result<CardBundle, Error>> {
+    const dirPath = path.join(cardsPath, name);
+    if (!(await attainable(dirPath))) {
+      return { kind: "err", error: new Error(`Card folder "${name}" not found`) };
     }
-    const zip = await JSZip.loadAsync(await fs.readFile(zipPath));
 
-    const cardFile = zip.file("card.json");
-    if (!cardFile) {
-      return { kind: "err", error: new Error(`card.json not found in "${name}.zip"`) };
+    const dataFilePath = path.join(dirPath, "data.json");
+    if (!(await attainable(dataFilePath))) {
+      return { kind: "err", error: new Error(`data.json not found in "${name}" folder`) };
     }
-    const card = JSON.parse(await cardFile.async("text"));
 
-    const avatarFile = zip.file("avatar.png");
-    if (!avatarFile) {
-      return { kind: "err", error: new Error(`avatar.png not found in "${name}.zip"`) };
+    let data;
+    try {
+      data = JSON.parse(await fs.readFile(dataFilePath, "utf8"));
+    } catch (e) {
+      isError(e);
+      return { kind: "err", error: e };
     }
-    const avatar = await avatarFile.async("base64");
 
-    const bannerFile = zip.file("banner.png");
-    if (!bannerFile) {
-      return { kind: "err", error: new Error(`banner.png not found in "${name}.zip"`) };
-    }
-    const banner = await bannerFile.async("base64");
+    const uriPrefix = "agf:///cards/";
+    const avatarFilePath = path.join(dirPath, "avatar.png");
+    const avatarFileExists = await attainable(avatarFilePath);
+    const avatarURI = avatarFileExists ? uriPrefix + name + "/avatar.png" : undefined;
+    const bannerFilePath = path.join(dirPath, "banner.png");
+    const bannerFileExists = await attainable(bannerFilePath);
+    const bannerURI = bannerFileExists ? uriPrefix + name + "/banner.png" : undefined;
 
     return {
       kind: "ok",
       value: {
-        card,
-        avatar,
-        banner
+        data: data,
+        avatarURI,
+        bannerURI
       }
     };
   }

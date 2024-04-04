@@ -1,15 +1,17 @@
-export interface CardJSON {
+// TODO, namespace all of these in to Card
+export interface CardData {
   spec: string;
   spec_version: string;
   character: Character;
   world: World;
   meta: {
     title: string;
-    card_creator: string;
-    character_creator: string;
-    world_creator: string;
+    creator: {
+      card: string;
+      character: string;
+      world: string;
+    };
     notes?: string;
-    avatar: string;
     tagline: string;
     tags: string[];
   };
@@ -21,8 +23,6 @@ export interface Character {
   greeting: string;
   alt_greetings: string[];
   msg_examples: string;
-  avatar: string;
-  banner: string;
 }
 
 export interface World {
@@ -30,10 +30,8 @@ export interface World {
 }
 
 // Contents of the card's zip archive
-export interface Card {
-  card: CardJSON;
-  // Base64
-  avatar: string;
-  // Base64
-  banner: string;
+export interface CardBundle {
+  data: CardData;
+  avatarURI?: string;
+  bannerURI?: string;
 }

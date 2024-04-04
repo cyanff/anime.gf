@@ -1,9 +1,9 @@
 import fs from "fs/promises";
-import { fileExistsAndAccessible, secretsPath } from "../utils";
+import { attainable, secretsPath } from "../utils";
 import { Result, isError } from "@shared/utils";
 
 async function init() {
-  const secretsFileExists = await fileExistsAndAccessible(secretsPath);
+  const secretsFileExists = await attainable(secretsPath);
   if (!secretsFileExists) {
     await fs.writeFile(secretsPath, JSON.stringify({}));
   }

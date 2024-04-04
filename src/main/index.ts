@@ -1,5 +1,5 @@
-import { app, shell, BrowserWindow, ipcMain } from "electron";
-import { join } from "path";
+import { app, shell, BrowserWindow, ipcMain, net, protocol } from "electron";
+import path, { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import secret from "./lib/store/secret";
@@ -7,20 +7,70 @@ import sqlite from "./lib/store/sqlite";
 import qdrant from "./lib/store/qdrant";
 import blob from "./lib/store/blob";
 import { xfetch } from "./lib/xfetch";
+import { cardsPath } from "./lib/utils";
 
-// (async () => {
-//   const res = await blob.cards.get("one");
-//   if (res.kind == "err") {
-//     throw res.error;
-//   }
-//   const data = res.value;
-//   console.log(JSON.stringify(data, null, 2));
-// })();
-
-// Enable globlal renderer sandboxing
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: "agf",
+    privileges: {
+      standard: true,
+      secure: true,
+      bypassCSP: true,
+      supportFetchAPI: false
+    }
+  }
+]);
 app.enableSandbox();
+
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId("com.electron");
+
+  /**
+   * An electron protocol that handles requests from the renderer process to agf:///host/path
+   * https://www.electronjs.org/docs/latest/api/protocol
+   * Currently only supports the "cards" host agf:///cards/path
+   *
+   * The renderer process cannot access the filesystem.
+   * This is a problem when you want to display images stored on disk.
+   *
+   * You could serialize an image through electron IPC but this is slow.
+   *
+   * You should use this protocol to display images instead.
+   *
+   * Note that requests made through fetch are disabled.
+   * So fetch(agf:///cards/whatever/path) will be rejected
+   * Instead use <img src="agf:///host/path"
+   *
+   * @example
+   * Example usage in renderer:
+   * <img src="agf:///cards/some_char/avatar.png"/>
+   * <img src="agf:///cards/some_other_char/banner.png"/>
+   *
+   */
+  protocol.handle("agf", (req) => {
+    const { host, pathname } = new URL(req.url);
+    if (host === "cards") {
+      const resolved = path.resolve(path.join(cardsPath, pathname));
+      // Ensure that only resources inside userData/blob/cards are accessible
+      if (!resolved.startsWith(cardsPath)) {
+        return new Response(
+          `The requested path is unsafe.
+      Path given"${pathname}
+      Resolved to${resolved}
+      Resolved path is outside of the allowed directory: ${cardsPath}"`,
+          { status: 400 }
+        );
+      }
+      return net.fetch(path.join("file://", resolved));
+    }
+
+    return new Response(`Host "${host}" is unsupported.`, {
+      status: 400,
+      headers: {
+        "Content-Type": "text/plain"
+      }
+    });
+  });
 
   qdrant.init();
   await sqlite.init();
