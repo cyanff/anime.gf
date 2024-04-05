@@ -29,7 +29,6 @@ export interface Provider {
   getChatCompletion(messages: Messages, config: CompletionConfig): Promise<Result<string, Error>>;
   streamChatCompletion(): any;
   getTextCompletion(): Promise<Result<string, Error>>;
-  renderSysPrompt(ctx: PromptCtx): Result<string, Error>;
 }
 
 export enum ProviderE {

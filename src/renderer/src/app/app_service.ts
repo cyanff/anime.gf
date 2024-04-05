@@ -1,5 +1,5 @@
 import { Result, isError } from "@shared/utils";
-import { Persona, Message } from "@/lib/types";
+import { Persona, UIMessage } from "@/lib/types";
 import { CardBundle } from "@shared/types";
 
 export interface ChatCard {
@@ -60,7 +60,7 @@ LIMIT 20;
 
 async function getPersona(chatID: number): Promise<Result<Persona, Error>> {
   const query = `
-  SELECT id, name, metadata
+  SELECT id, name, avatar 
   FROM personas
   WHERE personas.id = (SELECT persona_id FROM chats WHERE chats.id = ${chatID});
   `.trim();
@@ -75,7 +75,11 @@ async function getPersona(chatID: number): Promise<Result<Persona, Error>> {
   }
 }
 
-async function getChatHistory(chatID: number, startID?: number, limit: number = 25): Promise<Result<Message[], Error>> {
+async function getChatHistory(
+  chatID: number,
+  startID?: number,
+  limit: number = 25
+): Promise<Result<UIMessage[], Error>> {
   const query = `
   SELECT text as message,  sender_type as sender, inserted_at as timestamp
   FROM messages
@@ -85,7 +89,7 @@ async function getChatHistory(chatID: number, startID?: number, limit: number = 
   `.trim();
 
   try {
-    const rows = (await window.api.sqlite.all(query)) as Message[];
+    const rows = (await window.api.sqlite.all(query)) as UIMessage[];
     return { kind: "ok", value: rows };
   } catch (e) {
     isError(e);
@@ -115,22 +119,7 @@ async function getCard(chatID: number): Promise<Result<CardBundle, Error>> {
   }
 }
 
-async function insertMessage(chatID: number, message: string, sender_type: "user" | "character") {
-  try {
-    const query = `
-    INSERT INTO messages (chat_id, content, sender_type, sender_name, num_tokens, is_embedded) 
-    VALUES (?, ?, ?, ?, ?, ?)`;
-
-    const rows = await window.api.sqlite.run(query, [chatID, message, sender_type]);
-    return { kind: "ok", value: rows };
-  } catch (e) {
-    isError(e);
-    console.error("Error:", e);
-    return { kind: "err", error: e };
-  }
-}
-
-async function getLatestMessages(chatID: number, contextTokenLimit: number): Promise<Result<Message[], Error>> {
+async function getLatestMessages(chatID: number, contextTokenLimit: number): Promise<Result<UIMessage[], Error>> {
   const query = `
   WITH Latest1kMessages AS (
       SELECT * FROM messages WHERE chat_id = ? ORDER BY id ASC LIMIT 1000
@@ -145,7 +134,7 @@ async function getLatestMessages(chatID: number, contextTokenLimit: number): Pro
   `;
 
   try {
-    const rows = (await window.api.sqlite.all(query)) as Message[];
+    const rows = (await window.api.sqlite.all(query)) as UIMessage[];
     return { kind: "ok", value: rows };
   } catch (e) {
     isError(e);
@@ -158,7 +147,7 @@ async function getUnembeddedChunk(
   chatID: number,
   contextTokenLimit: number,
   chunkTokenLimit: number
-): Promise<Result<Message[], Error>> {
+): Promise<Result<UIMessage[], Error>> {
   const query = `
   WITH UnembeddedMessages AS (
     SELECT * FROM messages WHERE is_embedded = false AND chat_id = ? ORDER BY id DESC
@@ -178,11 +167,36 @@ async function getUnembeddedChunk(
   `;
 
   try {
-    const rows = (await window.api.sqlite.all(query, [chatID, contextTokenLimit, chunkTokenLimit])) as Message[];
+    const rows = (await window.api.sqlite.all(query, [chatID, contextTokenLimit, chunkTokenLimit])) as UIMessage[];
     return { kind: "ok", value: rows };
   } catch (e) {
     isError(e);
     console.error("Error:", e);
+    return { kind: "err", error: e };
+  }
+}
+
+async function insertMessagePair(
+  chatID: number,
+  userMessage: string,
+  characterMessage: string
+): Promise<Result<void, Error>> {
+  const query = `
+BEGIN TRANSACTION;
+
+INSERT INTO messages (chat_id, text, sender_type, is_embedded)
+VALUES (?, ?, 'user', false);
+
+INSERT INTO messages (chat_id, text, sender_type, is_embedded) 
+VALUES (?, ?, 'character', false);
+
+COMMIT;
+`.trim();
+  try {
+    await window.api.sqlite.run(query, [chatID, userMessage, chatID, characterMessage]);
+    return { kind: "ok", value: undefined };
+  } catch (e) {
+    isError(e);
     return { kind: "err", error: e };
   }
 }
@@ -267,7 +281,7 @@ export const service = {
   getPersona,
   getChatHistory,
   getCard,
-  insertMessage,
+  insertMessagePair,
   getLatestMessages,
   getUnembeddedChunk
 };

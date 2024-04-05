@@ -27,7 +27,6 @@ export interface Message {
   chat_id: number;
   text?: string;
   sender_type: "user" | "character";
-  num_tokens: number;
   is_embedded: boolean;
   inserted_at: string;
   updated_at?: string;

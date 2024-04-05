@@ -1,3 +1,38 @@
+/*
+  Manages the *context* used at inference time.
+  A context includes:
+  - The system prompt
+  - The array of messages (chat history)
+*/
+
+// In:
+// - global config
+//   - global user prompt template
+// - chat history
+// - persona
+// - character card
+//   - system prompt
+//   - ...
+// - chat template
+// */
+
+// // TODO:
+// // clean abstraction for different chat templates
+// // chatml, alpaca, etc
+// // each model has its own template
+
+// // completion apis
+// // - chat
+// // - text
+
+// interface Params {
+//   chatHistory: ChatHistory;
+//   persona: Persona;
+//   characterCard: CharacterCard;
+// }
+
+// function renderPrompt(param: Params) {}
+
 // import { insertData, searchCollection } from "./db/qdrant";
 // import { embed } from "./embed";
 // import { queryData, getLatestMessages, getUnembeddedChunk } from "./db/sqlite";

@@ -1,3 +1,115 @@
+/*
+  Dynamically manages the message[] context window used at inference time.
+  A context includes:
+  - The system prompt
+  - The array of messages 
+*/
+
+import { InferenceMessage, Persona } from "@/lib/types";
+import { CardData } from "@shared/types";
+import Handlebars from "handlebars";
+import { Result, deepFreeze, isError } from "@shared/utils";
+
+type PromptVariant = "xml" | "markdown";
+
+interface PromptParams {
+  persona: Persona;
+  cardData: CardData;
+  characterMemory: string;
+  jailbreak: string;
+  variant: PromptVariant;
+}
+
+interface Context {
+  system?: string;
+  messages: InferenceMessage[];
+}
+
+function getContext(params: PromptParams): Context {
+  const messages = params.messages;
+
+  if (!messages || messages.length === 0) {
+    throw new Error("Message cannot be empty, null, or undefined.");
+  }
+  // Many inference providers enforces the following constraints:
+  // messages MUST alternate between user / character / user / character
+  // messages MUST start with a user message
+
+  // However, since all chats starts with a character greeting
+  // We must check if the first message is from the character or from the user
+  // If the first message is from the character, the system prompt string will be inserted as a user message
+  // IF the first message is from the user, the system prompt string will be a system message as usual
+
+  if (messages[0].sender === "user") {
+    const system = renderSystemPrompt(promptParams);
+    return { system, messages };
+  } else if (messages[0].sender === "character") {
+    messages.unshift({ sender: "user", content: renderSystemPrompt(promptParams) });
+  } else {
+    throw new Error("All messages must have a sender type of 'user' or 'character'");
+  }
+}
+
+/**
+ * Renders the system prompt template using the provided prompt parameters.
+ *
+ * @param params - The prompt parameters, including the card data, persona, character memory, and jailbreak settings.
+ * @returns The rendered system prompt string.
+ */
+function renderSystemPrompt(params: PromptParams): string {
+  const source = getTemplateSource(params.variant);
+  const ctx = {
+    card: params.cardData,
+    persona: params.persona,
+    characterMemory: params.characterMemory,
+    jailbreak: params.jailbreak
+  };
+  const template = Handlebars.compile(source);
+  const systemPrompt = template(ctx);
+  return systemPrompt;
+}
+
+function getTemplateSource(variant: PromptVariant) {
+  console.log("variant: ", variant);
+
+  switch (variant) {
+    case "xml":
+      throw new Error("Not implemented");
+    case "markdown":
+      return `
+### Instruction
+You are now roleplaying as {{card.character.name}}. 
+You are in a chat with {{persona.name}}.
+Remember, you are {{persona.name}}, not yourself.
+
+### Character Info
+Character Name: {{card.character.name}}
+{{card.character.description}}}
+
+### World Info
+{{card.world.description}}
+
+### User Info
+User's name: {{card.user.name}}
+
+### Character Memory
+{{characterMemory}}
+
+### Messages Examples
+{{card.character.msg_examples}}
+
+{{jailbreak}}
+      `.trim();
+    default:
+      throw new Error("Invalid prompt variant");
+  }
+}
+
+export const context = {
+  renderSystemPrompt
+};
+deepFreeze(context);
+
 // import { insertData, searchCollection } from "./db/qdrant";
 // import { embed } from "./embed";
 // import config from "../../../config";
