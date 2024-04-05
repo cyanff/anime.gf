@@ -14,7 +14,7 @@ import { service } from "./app_service";
 import { time } from "@/lib/time";
 import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import { Squircle } from "@squircle-js/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getProvider, ProviderE } from "@/lib/provider/provider";
 import { toast } from "sonner";
 import { Persona, UIMessage as MessageI } from "@/lib/types";
@@ -29,6 +29,7 @@ function App(): JSX.Element {
   const [chatCards, setChatCards] = useState<ChatCardI[]>([]);
   const [chatHistory, setChatHistory] = useState<MessageI[]>([]);
   const [typing, setTyping] = useState(false);
+  const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
   // Toggle this state on changes to the database
   // to trigger a re-fetch of the chat history
@@ -45,6 +46,7 @@ function App(): JSX.Element {
     })();
   }, []);
 
+  // Fetch persona
   useEffect(() => {
     (async () => {
       const res = await service.getPersona(chatID);
@@ -55,6 +57,7 @@ function App(): JSX.Element {
     })();
   }, [chatID]);
 
+  // Fetch chat history
   useEffect(() => {
     (async () => {
       const res = await service.getChatHistory(chatID);
@@ -65,6 +68,14 @@ function App(): JSX.Element {
     })();
   }, [chatID, dbSync]);
 
+  // Scroll chat area to lastest message
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatHistory]);
+
+  // Fetch card
   useEffect(() => {
     (async () => {
       const res = await service.getCard(chatID);
@@ -154,7 +165,7 @@ function App(): JSX.Element {
           className="scroll-secondary group/chat-cards my-4 grow overflow-auto scroll-smooth"
         >
           <div className="-mt-2 flex h-full max-h-full flex-col p-2">
-            {chatCards?.map((chatCard, idx) => {
+            {chatCards?.map((chatCard, idx) => { 
               return (
                 <ChatCard
                   key={idx}
@@ -244,6 +255,7 @@ function App(): JSX.Element {
                 />
               );
             })}
+            <div ref={chatScrollRef} />
           </div>
           <ChatBar handleSendMessage={handleSendMessage} typing={typing} className="mb-1 mr-5" />
         </div>
