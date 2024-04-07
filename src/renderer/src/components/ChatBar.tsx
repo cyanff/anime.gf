@@ -1,23 +1,34 @@
-import { PaperClipIcon } from "@heroicons/react/24/outline";
-import {
-  Bars3Icon,
-  EllipsisVerticalIcon,
-  PaperAirplaneIcon,
-  WrenchIcon,
-  WrenchScrewdriverIcon
-} from "@heroicons/react/24/solid";
-import { useState, useEffect, useRef } from "react";
+import { service } from "@/app/app_service";
+import { PromptVariant, context } from "@/lib/context";
+import { ProviderE, getProvider } from "@/lib/provider/provider";
+import { CoreMessage } from "@/lib/types";
+import { PersonaData } from "@shared/types";
+import { PaperAirplaneIcon, WrenchIcon } from "@heroicons/react/24/solid";
+import { CardData } from "@shared/types";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import Typing from "./Typing";
-import { cn } from "@/lib/utils";
 
 interface ChatBarProps {
-  handleSendMessage: (userInput: string) => void;
-  typing: boolean;
+  chatID: number;
+  persona: PersonaData;
+  cardData: CardData;
+  setChatHistory: (callback: (prevMessages: CoreMessage[]) => CoreMessage[]) => any;
+  syncDB: () => void;
   className?: string;
 }
 
-export default function ChatBar({ handleSendMessage, typing, className, ...rest }: ChatBarProps) {
+export default function ChatBar({
+  chatID,
+  persona,
+  cardData,
+  setChatHistory,
+  syncDB,
+  className,
+  ...rest
+}: ChatBarProps) {
   const [userInput, setUserInput] = useState("");
+  const [typing, setTyping] = useState(false);
 
   // Dynamically expand the text area to fit the user's input
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -29,6 +40,72 @@ export default function ChatBar({ handleSendMessage, typing, className, ...rest 
     textarea.style.height = "24px";
     textarea.style.height = textarea.scrollHeight + "px";
   }, [userInput]);
+
+  const handleSendMessage = async (userInput: string) => {
+    if (userInput.length == 0) {
+      return;
+    }
+    if (persona === undefined) {
+      toast.error("Persona not loaded.");
+      return;
+    }
+    if (cardData === undefined) {
+      toast.error("Card not loaded.");
+      return;
+    }
+    const cachedUserInput = userInput;
+
+    // Optimistically clear userInput and append the user's message to the chat history
+    setUserInput("");
+    setChatHistory((prevMessages: CoreMessage[]) => [
+      ...prevMessages,
+      {
+        sender: "user",
+        message: cachedUserInput,
+        timestamp: new Date().toISOString()
+      }
+    ]);
+
+    const model = "claude-3-haiku-20240307";
+    // Get response from provider and update chat history
+    setTyping(true);
+    const contextParams = {
+      chatID,
+      latestUserMessage: userInput,
+      persona: persona,
+      cardData,
+      jailbreak: "",
+      variant: "markdown" as PromptVariant,
+      model,
+      tokenLimit: 4096
+    };
+
+    const contextResult = await context.getContext(contextParams);
+
+    const completionConfig = {
+      model,
+      system: contextResult.system,
+      max_tokens: 256
+    };
+    const provider = getProvider(ProviderE.ANTHROPIC);
+    const completionRes = await provider.getChatCompletion(contextResult.messages, completionConfig);
+    setTyping(false);
+    if (completionRes.kind == "err") {
+      toast.error(`Failed to get chat completion. 
+        Error ${completionRes.error}`);
+      return;
+    }
+    const characterReply = completionRes.value;
+
+    const insertRes = await service.insertMessagePair(chatID, userInput, characterReply);
+    syncDB();
+
+    if (insertRes.kind == "err") {
+      toast.error(`Failed to insert user and character mesage into database. 
+        Error ${insertRes.error}`);
+      return;
+    }
+  };
 
   return (
     <div className={className}>

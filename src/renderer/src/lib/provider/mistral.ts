@@ -1,6 +1,6 @@
 import { Provider } from "@/lib/provider/provider";
 import { Result } from "@shared/utils";
-import { Messages, CompletionConfig } from "@/lib/provider/provider";
+import { ProviderMessages, CompletionConfig } from "@/lib/provider/provider";
 
 const models = ["mistral-small-latest", "mistral-medium-latest", "mistral-large-latest"];
 
@@ -34,7 +34,7 @@ function getModels(): string[] {
   return [...models];
 }
 
-async function getChatCompletion(messages: Messages, config: CompletionConfig): Promise<Result<string, Error>> {
+async function getChatCompletion(messages: ProviderMessages, config: CompletionConfig): Promise<Result<string, Error>> {
   const validationRes = validateConfig(config);
   if (validationRes.kind == "err") {
     return validationRes;

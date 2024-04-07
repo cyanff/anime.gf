@@ -10,29 +10,26 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { service } from "./app_service";
 import { time } from "@/lib/time";
+import { CoreMessage as MessageI } from "@/lib/types";
 import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
+import { CardBundle, PersonaBundle } from "@shared/types";
 import { Squircle } from "@squircle-js/react";
 import { useEffect, useState } from "react";
-import { getProvider, ProviderE } from "@/lib/provider/provider";
-import { toast } from "sonner";
-import { Persona, UIMessage as MessageI } from "@/lib/types";
-import { CardBundle } from "@shared/types";
-import { ChatCard as ChatCardI } from "./app_service";
 import "../styles/global.css";
+import { ChatCard as ChatCardI, service } from "./app_service";
 
 function App(): JSX.Element {
   const [chatID, setChatID] = useState(1);
-  const [persona, setPersona] = useState<Persona>();
+  const [persona, setPersona] = useState<PersonaBundle>();
   const [card, setCard] = useState<CardBundle>();
   const [chatCards, setChatCards] = useState<ChatCardI[]>([]);
   const [chatHistory, setChatHistory] = useState<MessageI[]>([]);
-  const [typing, setTyping] = useState(false);
+  const [dbSync, setDBSync] = useState(false);
 
-  // Toggle this state on changes to the database
-  // to trigger a re-fetch of the chat history
-  const [dbSync, setDbSync] = useState(false);
+  const syncDB = () => {
+    setDBSync(!dbSync);
+  };
 
   // Fetch sidebar chat cards
   useEffect(() => {
@@ -47,7 +44,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     (async () => {
-      const res = await service.getPersona(chatID);
+      const res = await service.getPersonaBundle(chatID);
       if (res.kind == "err") {
         return;
       }
@@ -67,7 +64,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     (async () => {
-      const res = await service.getCard(chatID);
+      const res = await service.getCardBundle(chatID);
       if (res.kind == "err") {
         return;
       }
@@ -75,75 +72,14 @@ function App(): JSX.Element {
     })();
   }, [chatID]);
 
-  const handleSendMessage = async (userInput: string) => {
-    if (userInput.length == 0) {
-      return;
-    }
-    if (persona === undefined) {
-      toast.error("Persona not loaded.");
-      return;
-    }
-    if (card === undefined) {
-      toast.error("Card not loaded.");
-      return;
-    }
-
-    // Optimistically append the user's message to the chat history
-    setChatHistory((prevMessages) => [
-      ...prevMessages,
-      {
-        sender: "user",
-        message: userInput,
-        timestamp: new Date().toISOString()
-      }
-    ]);
-
-    // Get response from provider and update chat history
-    setTyping(true);
-
-    const roleMappedMsgs = chatHistory.map((m) => ({
-      role: m.sender === "user" ? "user" : "assistant",
-      content: m.message
-    }));
-    const messages = [...roleMappedMsgs, { role: "user", content: userInput }];
-
-    // Some APIs require the first message to be from the user
-    if (messages[0].role === "assistant") {
-      messages.unshift({ role: "user", content: "" });
-    }
-    const config = {
-      model: "claude-3-haiku-20240307",
-      system: card.data.character.description,
-      max_tokens: 256
-    };
-    const provider = getProvider(ProviderE.ANTHROPIC);
-    const completionRes = await provider.getChatCompletion(messages, config);
-    setTyping(false);
-
-    if (completionRes.kind == "err") {
-      toast.error(`Failed to get chat completion. 
-      Error ${completionRes.error}`);
-      return;
-    }
-
-    const insertRes = await service.insertMessagePair(chatID, userInput, completionRes.value);
-    setDbSync(!dbSync);
-
-    if (insertRes.kind == "err") {
-      toast.error(`Failed to insert user and character mesage into database. 
-      Error ${insertRes.error}`);
-      return;
-    }
-  };
+  if (!persona || !card) {
+    // Loading
+    return <div className="h-screen w-screen bg-neutral-800 "></div>;
+  }
 
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
-      <button
-        className="h-8 w-12 bg-neutral-500"
-        onClick={async () => {
-          throw new Error("Test");
-        }}
-      >
+      <button className="h-8 w-12 bg-neutral-500" onClick={async () => {}}>
         Test
       </button>
       {/* Sidebar */}
@@ -236,8 +172,8 @@ function App(): JSX.Element {
               return (
                 <Message
                   key={idx}
-                  avatar={""}
-                  name={"place holder"}
+                  avatar={message.sender === "user" ? persona.avatarURI || "" : card.avatarURI || ""}
+                  name={message.sender === "user" ? persona.data.name : card.data.character.name}
                   sender={message.sender}
                   message={message.message}
                   timestamp={relativeTime}
@@ -245,7 +181,15 @@ function App(): JSX.Element {
               );
             })}
           </div>
-          <ChatBar handleSendMessage={handleSendMessage} typing={typing} className="mb-1 mr-5" />
+
+          <ChatBar
+            chatID={chatID}
+            persona={persona.data}
+            cardData={card.data}
+            setChatHistory={setChatHistory}
+            syncDB={syncDB}
+            className="mb-1 mr-5"
+          />
         </div>
       </div>
     </div>

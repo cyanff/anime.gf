@@ -7,7 +7,7 @@ import sqlite from "./lib/store/sqlite";
 import qdrant from "./lib/store/qdrant";
 import blob from "./lib/store/blob";
 import { xfetch } from "./lib/xfetch";
-import { cardsPath } from "./lib/utils";
+import { cardsPath, personasPath } from "./lib/utils";
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -47,6 +47,7 @@ app.whenReady().then(async () => {
    * <img src="agf:///cards/some_other_char/banner.png"/>
    *
    */
+  // TODO: DRY this up
   protocol.handle("agf", (req) => {
     const { host, pathname } = new URL(req.url);
     if (host === "cards") {
@@ -58,6 +59,22 @@ app.whenReady().then(async () => {
       Path given"${pathname}
       Resolved to${resolved}
       Resolved path is outside of the allowed directory: ${cardsPath}"`,
+          { status: 400 }
+        );
+      }
+      return net.fetch(path.join("file://", resolved));
+    }
+
+    if (host === "personas") {
+      const resolved = path.resolve(path.join(personasPath, pathname));
+      console.log("resolvedpath:", resolved);
+
+      if (!resolved.startsWith(personasPath)) {
+        return new Response(
+          `The requested path is unsafe.
+      Path given"${pathname}
+      Resolved to${resolved}
+      Resolved path is outside of the allowed directory: ${personasPath}"`,
           { status: 400 }
         );
       }
@@ -86,9 +103,18 @@ app.whenReady().then(async () => {
   ipcMain.handle("sqlite.get", async (_, query: string, params: [] = []) => {
     return sqlite.get(query, params);
   });
+  ipcMain.handle("sqlite.runAsTransaction", async (_, queries: string[], params: [][]) => {
+    return sqlite.runAsTransaction(queries, params);
+  });
+
   ipcMain.handle("blob.cards.get", async (_, card: string) => {
     return await blob.cards.get(card);
   });
+
+  ipcMain.handle("blob.personas.get", async (_, persona: string) => {
+    return await blob.personas.get(persona);
+  });
+
   ipcMain.handle("secret.get", async (_, k: string) => {
     return await secret.get(k);
   });

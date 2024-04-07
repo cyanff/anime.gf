@@ -1,3 +1,5 @@
+import { Persona } from "@shared/db_types";
+
 // TODO, namespace all of these in to Card
 export interface CardData {
   spec: string;
@@ -29,9 +31,20 @@ export interface World {
   description: string;
 }
 
-// Contents of the card's zip archive
+// Contents of the card's directory
 export interface CardBundle {
   data: CardData;
   avatarURI?: string;
   bannerURI?: string;
+}
+
+export interface PersonaData extends Pick<Persona, "name" | "description"> {}
+
+// Contents of the persona's directory
+export interface PersonaBundleWithoutData {
+  avatarURI?: string;
+}
+
+export interface PersonaBundle extends PersonaBundleWithoutData {
+  data: PersonaData;
 }
