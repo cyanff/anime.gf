@@ -1,3 +1,8 @@
+-- TODO, implement soft delete for cards and personas
+-- https://claude.ai/chat/35bc35a7-aa38-440a-938d-efd905feb08e
+-- This is so that on deletion, the chat could still reference the persona and card
+
+
 CREATE TABLE IF NOT EXISTS personas 
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,6 +28,8 @@ CREATE TABLE IF NOT EXISTS chats
     card_id INTEGER NOT NULL,
     inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TEXT,
+
+
     FOREIGN KEY(persona_id) REFERENCES personas(id),
     FOREIGN KEY(card_id) REFERENCES cards(id)
 );
@@ -36,7 +43,7 @@ CREATE TABLE IF NOT EXISTS messages
     is_embedded BOOLEAN DEFAULT 0 NOT NULL,
     inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TEXT,
-    FOREIGN KEY(chat_id) REFERENCES chats(id)
+    FOREIGN KEY(chat_id) REFERENCES chats(id) ON DELETE CASCADE
 );
 
 -- TODO: Edit the avatar data to be a base64 image string

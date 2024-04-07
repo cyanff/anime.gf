@@ -20,7 +20,8 @@
     "gen-types": "",
     "new-migration": "node ./scripts/new_migration.js",
     "nuke": "./scripts/nuke.sh",
-    "seed": "electron ./scripts/seed.js"
+    "seed": "electron ./scripts/seed.js",
+    "reset": "npm run nuke && npm run seed"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",

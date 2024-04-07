@@ -8,7 +8,12 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
-import { EllipsisHorizontalIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
+import {
+  ClipboardDocumentIcon,
+  ClipboardIcon,
+  EllipsisHorizontalIcon,
+  WrenchScrewdriverIcon
+} from "@heroicons/react/24/solid";
 
 import {
   DropdownMenu,
@@ -62,7 +67,7 @@ function Message({ className, avatar, name, timestamp, message, sender, ...rest 
                   <DropdownMenuTrigger asChild>
                     <EllipsisHorizontalIcon className="size-6 cursor-pointer opacity-0 transition duration-75 ease-out group-hover/msg:opacity-100" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-44">
+                  <DropdownMenuContent className="w-40">
                     <DropdownMenuGroup>
                       <DropdownMenuItem>Copy</DropdownMenuItem>
                     </DropdownMenuGroup>
@@ -100,31 +105,33 @@ function Message({ className, avatar, name, timestamp, message, sender, ...rest 
             </div>
           </div>
         </ContextMenuTrigger>
-        <ContextMenuContent className="w-44">
-          <ContextMenuItem inset className="">
+        <ContextMenuContent className="w-40">
+          <ContextMenuItem className="">
             Copy
-            <ContextMenuShortcut></ContextMenuShortcut>
+            <ContextMenuShortcut>
+              <ClipboardDocumentIcon className="size-4" />
+            </ContextMenuShortcut>
           </ContextMenuItem>
           <ContextMenuSeparator />
-          <ContextMenuItem inset disabled>
+          <ContextMenuItem disabled>
             Delete
             <ContextMenuShortcut>
               <WrenchScrewdriverIcon className="size-4" />
             </ContextMenuShortcut>
           </ContextMenuItem>
-          <ContextMenuItem inset disabled>
+          <ContextMenuItem disabled>
             Regenerate
             <ContextMenuShortcut>
               <WrenchScrewdriverIcon className="size-4" />
             </ContextMenuShortcut>
           </ContextMenuItem>
-          <ContextMenuItem inset disabled>
+          <ContextMenuItem disabled>
             Rewind
             <ContextMenuShortcut>
               <WrenchScrewdriverIcon className="size-4" />
             </ContextMenuShortcut>
           </ContextMenuItem>
-          <ContextMenuItem inset disabled>
+          <ContextMenuItem disabled>
             Speak
             <ContextMenuShortcut>
               <WrenchScrewdriverIcon className="size-4" />
@@ -137,7 +144,3 @@ function Message({ className, avatar, name, timestamp, message, sender, ...rest 
 }
 
 export default Message;
-
-/*
-
-*/

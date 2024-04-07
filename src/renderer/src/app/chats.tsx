@@ -1,4 +1,3 @@
-import SideBar from "@/components/SideBar";
 import ChatBar from "@/components/ChatBar";
 import Message from "@/components/Message";
 import { time } from "@/lib/time";
@@ -11,67 +10,57 @@ import RecentChats from "@/components/RecentChats";
 
 function ChatsPage(): JSX.Element {
   const [chatID, setChatID] = useState(1);
-  const [persona, setPersona] = useState<PersonaBundle>();
-  const [card, setCard] = useState<CardBundle>();
+  const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
+  const [cardBundle, setCardBundle] = useState<CardBundle>();
   const [chatHistory, setChatHistory] = useState<MessageI[]>([]);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
-  // Toggle this state on changes to the database
-  // to trigger a re-fetch of the chat history
-  const [dbSync, setDBSync] = useState(false);
+  // Sync states with db on load
+  useEffect(() => {
+    syncCardBundle();
+    syncPersonaBundle();
+    syncChatHistory();
+  }, [chatID]);
 
-  // Toggle the dbSync state to force a re-fetch of the chat history
-  const syncDB = () => {
-    setDBSync(!dbSync);
+  const syncCardBundle = async () => {
+    const res = await service.getCardBundle(chatID);
+    if (res.kind == "err") {
+      return;
+    }
+    setCardBundle(res.value);
   };
 
-  useEffect(() => {
-    (async () => {
-      const res = await service.getCardBundle(chatID);
-      if (res.kind == "err") {
-        return;
-      }
-      setCard(res.value);
-    })();
-  }, [chatID]);
+  const syncPersonaBundle = async () => {
+    const res = await service.getPersonaBundle(chatID);
+    if (res.kind == "err") {
+      return;
+    }
+    setPersonaBundle(res.value);
+  };
 
-  // Fetch persona
-  useEffect(() => {
-    (async () => {
-      const res = await service.getPersonaBundle(chatID);
-      if (res.kind == "err") {
-        return;
-      }
-      setPersona(res.value);
-    })();
-  }, [chatID]);
+  const syncChatHistory = async () => {
+    const res = await service.getChatHistory(chatID);
+    if (res.kind == "err") {
+      return;
+    }
+    setChatHistory(res.value);
+  };
 
-  // Fetch chat history
-  useEffect(() => {
-    (async () => {
-      const res = await service.getChatHistory(chatID);
-      if (res.kind == "err") {
-        return;
-      }
-      setChatHistory(res.value);
-    })();
-  }, [chatID, dbSync]);
-
-  // Scroll chat area to lastest message
+  // Scroll to bottom on load
   useEffect(() => {
     if (chatScrollRef.current) {
       chatScrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [chatHistory]);
+  }, []);
 
-  if (!persona || !card) {
+  if (!personaBundle || !cardBundle) {
     // Loading
     return <div className="h-screen w-screen bg-neutral-800 "></div>;
   }
 
   return (
     <>
-      <RecentChats chatID={chatID} setChatID={setChatID}></RecentChats>
+      <RecentChats chatID={chatID} setChatID={setChatID} personaBundle={personaBundle}></RecentChats>
       {/* Main Content */}
       <div className="flex h-full w-full grow flex-row overflow-x-hidden">
         {/* Chat Area and Chat Bar Wrapper*/}
@@ -84,8 +73,8 @@ function ChatsPage(): JSX.Element {
               return (
                 <Message
                   key={idx}
-                  avatar={message.sender === "user" ? persona.avatarURI || "" : card.avatarURI || ""}
-                  name={message.sender === "user" ? persona.data.name : card.data.character.name}
+                  avatar={message.sender === "user" ? personaBundle.avatarURI || "" : cardBundle.avatarURI || ""}
+                  name={message.sender === "user" ? personaBundle.data.name : cardBundle.data.character.name}
                   sender={message.sender}
                   message={message.message}
                   timestamp={relativeTime}
@@ -97,10 +86,10 @@ function ChatsPage(): JSX.Element {
 
           <ChatBar
             chatID={chatID}
-            persona={persona.data}
-            cardData={card.data}
+            persona={personaBundle.data}
+            cardData={cardBundle.data}
             setChatHistory={setChatHistory}
-            syncDB={syncDB}
+            syncChatHistory={syncChatHistory}
             className="mb-1 mr-5"
           />
         </div>

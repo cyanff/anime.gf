@@ -168,7 +168,7 @@ VALUES (?, ?, 'character');
 }
 
 export const service = {
-  getChatCards: getRecentChats,
+  getRecentChats,
   getPersonaBundle: getPersona,
   getChatHistory,
   getCardBundle: getCard,

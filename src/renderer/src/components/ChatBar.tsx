@@ -2,9 +2,8 @@ import { service } from "@/app/app_service";
 import { PromptVariant, context } from "@/lib/context";
 import { ProviderE, getProvider } from "@/lib/provider/provider";
 import { CoreMessage } from "@/lib/types";
-import { PersonaData } from "@shared/types";
 import { PaperAirplaneIcon, WrenchIcon } from "@heroicons/react/24/solid";
-import { CardData } from "@shared/types";
+import { CardData, PersonaData } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import Typing from "./Typing";
@@ -14,7 +13,7 @@ interface ChatBarProps {
   persona: PersonaData;
   cardData: CardData;
   setChatHistory: (callback: (prevMessages: CoreMessage[]) => CoreMessage[]) => any;
-  syncDB: () => void;
+  syncChatHistory: () => void;
   className?: string;
 }
 
@@ -23,7 +22,7 @@ export default function ChatBar({
   persona,
   cardData,
   setChatHistory,
-  syncDB,
+  syncChatHistory,
   className,
   ...rest
 }: ChatBarProps) {
@@ -98,7 +97,7 @@ export default function ChatBar({
     const characterReply = completionRes.value;
 
     const insertRes = await service.insertMessagePair(chatID, userInput, characterReply);
-    syncDB();
+    syncChatHistory();
 
     if (insertRes.kind == "err") {
       toast.error(`Failed to insert user and character mesage into database. 
