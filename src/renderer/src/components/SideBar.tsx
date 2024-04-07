@@ -15,14 +15,14 @@ export default function SideBar({ setPage }) {
         cornerSmoothing={1}
         className="relative mr-4 flex h-full w-20 flex-col items-center bg-background"
       >
-        <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("home")}>
+        <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("chats")}>
           <img src={PlusIcon} alt="Plus" />
         </Button>
-        <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("home")}>
-          <img src={HomeIcon} alt="Home" />
+        <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("chats")}>
+          <img src={HomeIcon} alt="Chat" />
         </Button>
-        <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("chat")}>
-          <img src={ChatIcon} alt="Chat" />
+        <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("collections")}>
+          <img src={ChatIcon} alt="Home" />
         </Button>
         <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("settings")}>
           <img src={SettingsIcon} alt="Settings" />
