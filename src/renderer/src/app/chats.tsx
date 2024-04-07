@@ -7,6 +7,8 @@ import { useEffect, useRef, useState } from "react";
 import "../styles/global.css";
 import { RecentChat as RecentChatI, service } from "./app_service";
 import RecentChats from "@/components/RecentChats";
+import { AlertConfig, useApp } from "@/app/app";
+import { toast } from "sonner";
 
 function ChatsPage(): JSX.Element {
   const [chatID, setChatID] = useState(1);
@@ -14,6 +16,8 @@ function ChatsPage(): JSX.Element {
   const [cardBundle, setCardBundle] = useState<CardBundle>();
   const [chatHistory, setChatHistory] = useState<MessageI[]>([]);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
+
+  const { createAlert } = useApp();
 
   // Sync states with db on load
   useEffect(() => {
@@ -25,6 +29,7 @@ function ChatsPage(): JSX.Element {
   const syncCardBundle = async () => {
     const res = await service.getCardBundle(chatID);
     if (res.kind == "err") {
+      toast.error("Error fetching card bundle.");
       return;
     }
     setCardBundle(res.value);
@@ -33,6 +38,7 @@ function ChatsPage(): JSX.Element {
   const syncPersonaBundle = async () => {
     const res = await service.getPersonaBundle(chatID);
     if (res.kind == "err") {
+      toast.error("Error fetching persona bundle.");
       return;
     }
     setPersonaBundle(res.value);
@@ -41,6 +47,7 @@ function ChatsPage(): JSX.Element {
   const syncChatHistory = async () => {
     const res = await service.getChatHistory(chatID);
     if (res.kind == "err") {
+      toast.error("Error fetching chat history.");
       return;
     }
     setChatHistory(res.value);
@@ -53,14 +60,25 @@ function ChatsPage(): JSX.Element {
     }
   }, []);
 
+  // Loading screen
   if (!personaBundle || !cardBundle) {
-    // Loading
     return <div className="h-screen w-screen bg-neutral-800 "></div>;
   }
 
   return (
     <>
-      <RecentChats chatID={chatID} setChatID={setChatID} personaBundle={personaBundle}></RecentChats>
+      <button
+        className="h-8 w-12 bg-neutral-500"
+        onClick={async () => {
+          throw new Error("Testing");
+        }}
+      ></button>
+      <RecentChats
+        chatID={chatID}
+        setChatID={setChatID}
+        personaBundle={personaBundle}
+        syncChatHistory={syncChatHistory}
+      />
       {/* Main Content */}
       <div className="flex h-full w-full grow flex-row overflow-x-hidden">
         {/* Chat Area and Chat Bar Wrapper*/}

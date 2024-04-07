@@ -1,3 +1,4 @@
+import { AlertConfig, useApp } from "@/app/app";
 import { RecentChat as RecentChatI, service } from "@/app/app_service";
 import {
   ContextMenu,
@@ -31,11 +32,15 @@ import { useEffect, useState } from "react";
 export interface RecentChatsProps {
   chatID: number;
   personaBundle: PersonaBundle;
+  syncChatHistory: () => void;
   setChatID: (id: number) => void;
 }
 
-export default function RecentChats({ chatID, personaBundle, setChatID }: RecentChatsProps) {
+export default function RecentChats({ chatID, personaBundle, syncChatHistory, setChatID }: RecentChatsProps) {
   const [recentChats, setRecentChats] = useState<RecentChatI[]>([]);
+  const [deleteChatDialogOpen, setDeleteChatDialogOpen] = useState(false);
+
+  const { createAlert } = useApp();
 
   // Sync recent chats on load
   useEffect(() => {
@@ -62,12 +67,31 @@ export default function RecentChats({ chatID, personaBundle, setChatID }: Recent
             return (
               <RecentChat
                 key={idx}
-                deleteChat={async () => {
-                  await queries.deleteChatWithID(chat.chat_id);
-                  syncRecentChats();
+                deleteChat={() => {
+                  const alertConfig: AlertConfig = {
+                    title: "Delete Chat",
+                    description: "Are you sure you want to delete this chat?\nThis action cannot be undone.",
+                    // Delete chat, update the recent chats list, and set the chat_id to be another chat
+                    actionLabel: "Delete",
+                    onAction: async () => {
+                      await queries.deleteChat(chat.chat_id);
+                      syncRecentChats();
+                      setChatID(recentChats[0].chat_id);
+                    }
+                  };
+                  createAlert(alertConfig);
                 }}
                 resetChat={() => {
-                  // Reset chat with the given id
+                  const alertConfig: AlertConfig = {
+                    title: "Reset Chat",
+                    description: "Are you sure you want to reset this chat?\nThis action cannot be undone.",
+                    actionLabel: "Reset",
+                    onAction: async () => {
+                      await queries.resetChat(chat.chat_id);
+                      syncChatHistory();
+                    }
+                  };
+                  createAlert(alertConfig);
                 }}
                 cloneChat={() => {
                   // TODO clone chat with the given id

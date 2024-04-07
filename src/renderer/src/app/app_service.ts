@@ -53,7 +53,6 @@ LIMIT 20;
     return { kind: "ok", value: chatCards };
   } catch (e) {
     isError(e);
-    console.error("Error:", e);
     return { kind: "err", error: e };
   }
 }
@@ -87,7 +86,6 @@ async function getPersona(chatID: number): Promise<Result<PersonaBundle, Error>>
     return { kind: "ok", value: personaBundle };
   } catch (e) {
     isError(e);
-    console.error("Error:", e);
     return { kind: "err", error: e };
   }
 }
@@ -110,7 +108,6 @@ async function getChatHistory(
     return { kind: "ok", value: rows };
   } catch (e) {
     isError(e);
-    console.error("Error:", e);
     return { kind: "err", error: e };
   }
 }
@@ -131,7 +128,6 @@ async function getCard(chatID: number): Promise<Result<CardBundle, Error>> {
     return { kind: "ok", value: res.value };
   } catch (e) {
     isError(e);
-    console.error("Error:", e);
     return { kind: "err", error: e };
   }
 }
