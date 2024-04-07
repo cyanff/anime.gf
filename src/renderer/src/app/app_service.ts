@@ -1,6 +1,6 @@
 import { Result, isError } from "@shared/utils";
-import { Persona, UIMessage } from "@/lib/types";
-import { CardBundle } from "@shared/types";
+import { CoreMessage } from "@/lib/types";
+import { CardBundle, PersonaBundle, PersonaBundleWithoutData } from "@shared/types";
 
 export interface ChatCard {
   chat_id: number;
@@ -17,7 +17,7 @@ async function getChatCards(): Promise<Result<ChatCard[], Error>> {
   (SELECT m.text
    FROM messages m
    WHERE m.chat_id = c.id AND m.sender_type = 'character'
-   ORDER BY m.inserted_at DESC
+   ORDER BY m.id DESC
    LIMIT 1) AS last_message,
   ca.fileName
 FROM
@@ -30,12 +30,12 @@ LIMIT 20;
 `.trim();
 
   try {
-    interface Row {
+    interface QueryResult {
       chat_id: number;
       last_message: string;
       fileName: string;
     }
-    const rows = (await window.api.sqlite.all(query)) as Row[];
+    const rows = (await window.api.sqlite.all(query)) as QueryResult[];
     const chatCards = await Promise.all(
       rows.map(async (row) => {
         const res = await window.api.blob.cards.get(row.fileName);
@@ -58,16 +58,33 @@ LIMIT 20;
   }
 }
 
-async function getPersona(chatID: number): Promise<Result<Persona, Error>> {
+async function getPersona(chatID: number): Promise<Result<PersonaBundle, Error>> {
+  interface QueryResult {
+    name: string;
+    description: string;
+  }
+
   const query = `
-  SELECT id, name, avatar 
+  SELECT name, description
   FROM personas
   WHERE personas.id = (SELECT persona_id FROM chats WHERE chats.id = ${chatID});
   `.trim();
 
   try {
-    const row = (await window.api.sqlite.get(query)) as Persona;
-    return { kind: "ok", value: row };
+    const row = (await window.api.sqlite.get(query)) as QueryResult;
+    const res = await window.api.blob.personas.get(row.name);
+    if (res.kind == "err") {
+      throw res.error;
+    }
+    const personaBundle = {
+      data: {
+        name: row.name,
+        description: row.description
+      },
+      avatarURI: res.value.avatarURI
+    };
+
+    return { kind: "ok", value: personaBundle };
   } catch (e) {
     isError(e);
     console.error("Error:", e);
@@ -79,17 +96,17 @@ async function getChatHistory(
   chatID: number,
   startID?: number,
   limit: number = 25
-): Promise<Result<UIMessage[], Error>> {
+): Promise<Result<CoreMessage[], Error>> {
   const query = `
   SELECT text as message,  sender_type as sender, inserted_at as timestamp
   FROM messages
   WHERE ${startID ? `id <= ${startID} AND chat_id = ${chatID}` : `chat_id = ${chatID}`} 
-  ORDER BY inserted_at DESC
+  ORDER BY id
   LIMIT ${limit};
   `.trim();
 
   try {
-    const rows = (await window.api.sqlite.all(query)) as UIMessage[];
+    const rows = (await window.api.sqlite.all(query)) as CoreMessage[];
     return { kind: "ok", value: rows };
   } catch (e) {
     isError(e);
@@ -119,81 +136,30 @@ async function getCard(chatID: number): Promise<Result<CardBundle, Error>> {
   }
 }
 
-async function getLatestMessages(chatID: number, contextTokenLimit: number): Promise<Result<UIMessage[], Error>> {
-  const query = `
-  WITH Latest1kMessages AS (
-      SELECT * FROM messages WHERE chat_id = ? ORDER BY id ASC LIMIT 1000
-  ),
-  MessagesWithRunningTotal AS (
-      SELECT *, (SELECT SUM(num_tokens) FROM Latest1kMessages WHERE id <= m.id) AS running_total
-      FROM Latest1kMessages m
-  )
-  SELECT l.content, l.sender_type, l.inserted_at
-  FROM MessagesWithRunningTotal as l
-  WHERE running_total < ?
-  `;
-
-  try {
-    const rows = (await window.api.sqlite.all(query)) as UIMessage[];
-    return { kind: "ok", value: rows };
-  } catch (e) {
-    isError(e);
-    console.error("Error:", e);
-    return { kind: "err", error: e };
-  }
-}
-
-async function getUnembeddedChunk(
-  chatID: number,
-  contextTokenLimit: number,
-  chunkTokenLimit: number
-): Promise<Result<UIMessage[], Error>> {
-  const query = `
-  WITH UnembeddedMessages AS (
-    SELECT * FROM messages WHERE is_embedded = false AND chat_id = ? ORDER BY id DESC
-  ),
-  MessagesWithRunningTotal AS (
-    SELECT *, (SELECT SUM(token_count) FROM UnembeddedMessages WHERE id <= m.id) AS running_total
-    FROM UnembeddedMessages m
-  ),
-  ChunkMessages AS (
-    SELECT * FROM MessagesWithRunningTotal WHERE running_total <= ?
-  ),
-  MessagesWithChunkTotal AS (
-    SELECT *, (SELECT SUM(token_count) FROM ChunkMessages WHERE id <= m.id) AS chunk_total
-    FROM ChunkMessages m
-  )
-  SELECT * FROM MessagesWithChunkTotal WHERE chunk_total <= ?
-  `;
-
-  try {
-    const rows = (await window.api.sqlite.all(query, [chatID, contextTokenLimit, chunkTokenLimit])) as UIMessage[];
-    return { kind: "ok", value: rows };
-  } catch (e) {
-    isError(e);
-    console.error("Error:", e);
-    return { kind: "err", error: e };
-  }
-}
-
 async function insertMessagePair(
   chatID: number,
   userMessage: string,
   characterMessage: string
 ): Promise<Result<void, Error>> {
-  const query = `
-BEGIN TRANSACTION;
+  const queries: string[] = [];
+  const params: any[][] = [];
 
-INSERT INTO messages (chat_id, text, sender_type, is_embedded)
-VALUES (?, ?, 'user', false);
+  const userMessageQuery = `
+INSERT INTO messages (chat_id, text, sender_type)
+VALUES (?, ?, 'user');
+  `.trim();
+  const userMessageParams = [chatID, userMessage];
+  const characterMessageQuery = `
+INSERT INTO messages (chat_id, text, sender_type)
+VALUES (?, ?, 'character');
+  `.trim();
+  const characterMessageParams = [chatID, characterMessage];
 
-INSERT INTO messages (chat_id, text, sender_type, is_embedded) 
-VALUES (?, ?, 'character', false);
+  queries.push(userMessageQuery, characterMessageQuery);
+  params.push(userMessageParams, characterMessageParams);
 
-COMMIT;
-`.trim();
   try {
-    await window.api.sqlite.run(query, [chatID, userMessage, chatID, characterMessage]);
+    await window.api.sqlite.runAsTransaction(queries, params);
     return { kind: "ok", value: undefined };
   } catch (e) {
     isError(e);
@@ -201,87 +167,10 @@ COMMIT;
   }
 }
 
-// import { getContext, ChatContext } from "./context";
-// import Mustache from "mustache";
-
-// export async function getResponse(chatID) {
-//   let context, prompt, response;
-
-//   try {
-//     // Gather the necessary context
-//     context = await getContext(chatID);
-//   } catch (err) {
-//     console.error(`Failed to get context for chat ID ${chatID}: ${(err as Error).message}`);
-//   }
-
-//   try {
-//     // Construct the prompt
-//     prompt = await constructPrompt(context);
-//   } catch (err) {
-//     console.error(`Failed to construct prompt: ${(err as Error).message}`);
-//   }
-
-//   try {
-//     // Call the LLM
-//     response = await getCompletion(prompt);
-//     console.log(`RESPONSE: ${JSON.stringify(response, null, 2)}`);
-//   } catch (err) {
-//     console.error(`Failed to get completion from LLM: ${(err as Error).message}`);
-//   }
-
-//   return response;
-// }
-
-// /**
-//  * Construct a prompt to be sent to the LLM.
-//  * @param tokenizer The tokenizer used to apply the chat template
-//  * @param context An object containing all the context needed to construct the prompt
-//  * @returns The constructed prompt as a string
-//  */
-// async function constructPrompt(context: ChatContext): Promise<any[]> {
-//   const template = context.character.system_prompt;
-//   const sysPrompt = Mustache.render(template, context);
-
-//   const contextWindow = context.contextWindow.map((message) => {
-//     return {
-//       role: message.sender_type,
-//       content: message.content || ""
-//     };
-//   });
-
-//   // Parse each chunk of relevant context
-//   let relevantContext = context.relevantContext.map((chunk) => {
-//     const payload = chunk.payload;
-//     if (!payload) {
-//       return [];
-//     }
-//     // Parse each message from each chunk
-//     const messages = payload.map((message: any) => {
-//       // TODO: implement conversion of timestamp to natural language before returning
-//       return {
-//         role: message.sender_type,
-//         content: message.content // + " timestamp: " + message.inserted_at
-//       };
-//     });
-//     return messages;
-//   });
-//   relevantContext = relevantContext.flat();
-
-//   const prompt = [{ role: "system", content: sysPrompt }, ...relevantContext, ...contextWindow];
-
-//   console.log(`________________________________________________________________________________`);
-//   console.log(`PROMPT: ${JSON.stringify(prompt, null, 2)}`);
-//   console.log(`________________________________________________________________________________`);
-
-//   return prompt;
-// }
-
 export const service = {
   getChatCards,
-  getPersona,
+  getPersonaBundle: getPersona,
   getChatHistory,
-  getCard,
-  insertMessagePair,
-  getLatestMessages,
-  getUnembeddedChunk
+  getCardBundle: getCard,
+  insertMessagePair
 };

@@ -1,12 +1,11 @@
 // Blob storage manages all non structured data.
 // This includes silly tavern cards, images, audio, base weights, lora adapters, and other binary data.
 
-import fs from "fs/promises";
-import { attainable } from "../utils";
-import path from "path";
+import { CardBundle, PersonaBundleWithoutData } from "@shared/types";
 import { Result, isError } from "@shared/utils";
-import { blobPath, cardsPath } from "../utils";
-import { CardBundle } from "@shared/types";
+import fs from "fs/promises";
+import path from "path";
+import { attainable, blobPath, cardsPath, personasPath } from "../utils";
 
 async function init() {
   const blobDirExists = await attainable(blobPath);
@@ -72,7 +71,30 @@ export namespace cards {
   }
 }
 
+export namespace personas {
+  export async function get(name: string): Promise<Result<PersonaBundleWithoutData, Error>> {
+    const dirPath = path.join(personasPath, name);
+
+    if (!(await attainable(dirPath))) {
+      return { kind: "err", error: new Error(`Persona folder "${name}" not found`) };
+    }
+
+    const uriPrefix = "agf:///personas/";
+    const avatarFilePath = path.join(dirPath, "avatar.png");
+    const avatarFileExists = await attainable(avatarFilePath);
+    const avatarURI = avatarFileExists ? uriPrefix + name + "/avatar.png" : undefined;
+
+    return {
+      kind: "ok",
+      value: {
+        avatarURI
+      }
+    };
+  }
+}
+
 export default {
   init,
-  cards
+  cards,
+  personas
 };

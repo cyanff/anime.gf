@@ -1,4 +1,4 @@
-import Database from "better-sqlite3";
+import Database, { Statement } from "better-sqlite3";
 import { dbPath } from "../utils";
 
 let db: Database.Database;
@@ -26,6 +26,17 @@ export function get(query: string, params: any[] = []) {
   return res;
 }
 
+export function runAsTransaction(queries: string[], params: any[][] = []) {
+  const asTransaction = db.transaction((transactionQueries: string[], transactionParams: any[][]) => {
+    for (let i = 0; i < transactionQueries.length; i++) {
+      const stmt = db.prepare(transactionQueries[i]);
+      stmt.run(...transactionParams[i]);
+    }
+  });
+
+  return asTransaction(queries, params);
+}
+
 /**
  * Initializes the database connection.
  */
@@ -44,7 +55,8 @@ export default {
   init,
   run,
   all,
-  get
+  get,
+  runAsTransaction
 };
 
 // interface Migration {

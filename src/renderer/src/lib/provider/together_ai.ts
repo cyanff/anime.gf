@@ -1,6 +1,6 @@
 import { Provider } from "@/lib/provider/provider";
 import { Result } from "@shared/utils";
-import { Messages, CompletionConfig } from "@/lib/provider/provider";
+import { ProviderMessages, CompletionConfig } from "@/lib/provider/provider";
 
 const models = ["mistralai/Mixtral-8x7B-Instruct-v0.1", "NousResearch/Nous-Hermes-2-Mixtral-8x7B-SFT"];
 
@@ -30,7 +30,7 @@ function getModels(): string[] {
   return [...models];
 }
 
-async function getChatCompletion(messages: Messages, config: CompletionConfig): Promise<Result<string, Error>> {
+async function getChatCompletion(messages: ProviderMessages, config: CompletionConfig): Promise<Result<string, Error>> {
   const validationRes = validateConfig(config);
   if (validationRes.kind == "err") {
     return validationRes;

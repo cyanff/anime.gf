@@ -2,9 +2,6 @@ CREATE TABLE IF NOT EXISTS personas
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    -- We should just store persona avatar as a base64 string *inside* the db
-    -- Because there aren't many of them
-    avatar TEXT,
     description TEXT,
     inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TEXT
@@ -43,10 +40,10 @@ CREATE TABLE IF NOT EXISTS messages
 );
 
 -- TODO: Edit the avatar data to be a base64 image string
-INSERT INTO personas (name, avatar, description)
+INSERT INTO personas (name, description)
 VALUES
-    ('John Doe', 'https://example.com/avatars/john.jpg', 'Nobel laureate in Physics'),
-    ('Jane Smith', 'https://example.com/avatars/jane.jpg', 'Nobel laureate in Chemistry');
+    ('cyan',  'Nobel laureate in Physics'),
+    ('snafu', 'Nobel laureate in Chemistry');
 
 INSERT INTO cards (fileName)
 VALUES

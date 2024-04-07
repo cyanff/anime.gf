@@ -1,53 +1,138 @@
-/*
-  Dynamically manages the message[] context window used at inference time.
-  A context includes:
-  - The system prompt
-  - The array of messages 
-*/
-
-import { InferenceMessage, Persona } from "@/lib/types";
+import Mustache from "mustache";
+import { CorePersona } from "@/lib/types";
 import { CardData } from "@shared/types";
-import Handlebars from "handlebars";
-import { Result, deepFreeze, isError } from "@shared/utils";
+import { ProviderMessages } from "@/lib/provider/provider";
+import { Message as DBMessage } from "@shared/db_types";
+import { getTokenizer } from "@/lib/tokenizer/provider";
+import { deepFreeze } from "@shared/utils";
 
-type PromptVariant = "xml" | "markdown";
+export type PromptVariant = "xml" | "markdown";
 
-interface PromptParams {
-  persona: Persona;
+export interface ContextParams {
+  chatID: number;
+  latestUserMessage: string;
   cardData: CardData;
-  characterMemory: string;
+  persona: CorePersona;
   jailbreak: string;
   variant: PromptVariant;
+  model: string;
+  tokenLimit: number;
+}
+
+interface SystemPromptParams extends Pick<ContextParams, "cardData" | "persona" | "jailbreak" | "variant"> {
+  characterMemory: string;
 }
 
 interface Context {
-  system?: string;
-  messages: InferenceMessage[];
+  system: string;
+  messages: ProviderMessages;
 }
 
-function getContext(params: PromptParams): Context {
-  const messages = params.messages;
+/**
+ * Generates a context object containing the system prompt and an array of messages for a given set of parameters.
+ * A context includes:
+ * - The system prompt
+ * - The array of messages in the context window
+ */
+async function getContext(params: ContextParams): Promise<Context> {
+  const systemPromptParams = {
+    cardData: params.cardData,
+    persona: params.persona,
+    characterMemory: "",
+    jailbreak: params.jailbreak,
+    variant: params.variant
+  };
+  const systemPrompt = renderSystemPrompt(systemPromptParams);
 
-  if (!messages || messages.length === 0) {
-    throw new Error("Message cannot be empty, null, or undefined.");
+  const tokenizer = getTokenizer(params.model);
+  const userMessageTokens = tokenizer.countTokens(params.latestUserMessage);
+  const systemPromptTokens = tokenizer.countTokens(systemPrompt);
+  const remainingTokens = params.tokenLimit - (userMessageTokens + systemPromptTokens);
+
+  if (remainingTokens < 500) {
+    throw new Error(
+      "System prompt and latest user message is taking up too many tokens.  There remains less than 500 tokens for the context window.  Please reduce the size of the system prompt or latest user message."
+    );
   }
-  // Many inference providers enforces the following constraints:
-  // messages MUST alternate between user / character / user / character
-  // messages MUST start with a user message
 
-  // However, since all chats starts with a character greeting
-  // We must check if the first message is from the character or from the user
-  // If the first message is from the character, the system prompt string will be inserted as a user message
-  // IF the first message is from the user, the system prompt string will be a system message as usual
+  // Fetch messages to fill up the context window.
+  let fromID: number | undefined;
+  let contextWindowTokens = 0;
+  let contextWindow: Message[] = [];
+  while (contextWindowTokens < remainingTokens) {
+    const messages = await getMessagesStartingFrom(params.chatID, 100, fromID);
+    // No more messages to fetch.
+    if (messages.length === 0) {
+      break;
+    }
+    for (const message of messages) {
+      const messageTokens = message.text !== undefined ? tokenizer.countTokens(message.text) : 0;
+      // If adding the message would exceed the token limit, break.
+      if (contextWindowTokens + messageTokens > remainingTokens) {
+        break;
+      }
+      contextWindow.push(message);
+      contextWindowTokens += messageTokens;
+      fromID = message.id;
+    }
+  }
 
-  if (messages[0].sender === "user") {
-    const system = renderSystemPrompt(promptParams);
-    return { system, messages };
-  } else if (messages[0].sender === "character") {
-    messages.unshift({ sender: "user", content: renderSystemPrompt(promptParams) });
+  const providerMessages = contextWindow.map((m) => {
+    return {
+      role: m.sender_type === "user" ? "user" : "assistant",
+      content: m.text === undefined ? "" : m.text
+    };
+  });
+
+  // Reverse the messages so that the most recent message is at the end.
+  providerMessages.reverse();
+
+  // Make sure the first message in the context window is a user message by padding
+  if (providerMessages.length > 0 && providerMessages[0].role === "assistant") {
+    providerMessages.unshift({
+      role: "user",
+      content: "Now begin the conversation based on the given instructions above."
+    });
+  }
+  providerMessages.push({
+    role: "user",
+    content: params.latestUserMessage
+  });
+
+  return {
+    system: systemPrompt,
+    messages: providerMessages
+  };
+}
+
+type Message = Pick<DBMessage, "id" | "sender_type" | "text">;
+/**
+ * Fetches a limited number of messages from the database starting from a given message ID for the specified chat.
+ *
+ * @param chatID - The ID of the chat to fetch messages for.
+ * @param limit - The maximum number of messages to fetch.
+ * @param messageID - The ID of the message to start fetching from. If not provided, the most recent messages will be fetched.
+ * @returns An array of `Message` objects containing the fetched messages.
+ */
+async function getMessagesStartingFrom(chatID: number, limit: number, messageID?: number): Promise<Message[]> {
+  let query: string;
+  if (messageID === undefined) {
+    query = `
+    SELECT * FROM messages
+    WHERE chat_id = ${chatID}
+    ORDER BY id desc
+    LIMIT ${limit}
+    `.trim();
   } else {
-    throw new Error("All messages must have a sender type of 'user' or 'character'");
+    query = `
+    SELECT * FROM messages
+    WHERE chat_id = ${chatID} AND id < ${messageID}
+    ORDER BY id desc
+    LIMIT ${limit}
+    `.trim();
   }
+
+  return (await window.api.sqlite.all(query)) as Message[];
 }
 
 /**
@@ -56,49 +141,66 @@ function getContext(params: PromptParams): Context {
  * @param params - The prompt parameters, including the card data, persona, character memory, and jailbreak settings.
  * @returns The rendered system prompt string.
  */
-function renderSystemPrompt(params: PromptParams): string {
-  const source = getTemplateSource(params.variant);
+function renderSystemPrompt(params: SystemPromptParams): string {
+  const template = getTemplate(params.variant);
   const ctx = {
     card: params.cardData,
     persona: params.persona,
     characterMemory: params.characterMemory,
     jailbreak: params.jailbreak
   };
-  const template = Handlebars.compile(source);
-  const systemPrompt = template(ctx);
+
+  const systemPrompt = Mustache.render(template, ctx);
   return systemPrompt;
 }
 
-function getTemplateSource(variant: PromptVariant) {
-  console.log("variant: ", variant);
-
+/**
+ * Returns the template string for the given prompt variant.
+ *
+ * @param variant - The prompt variant to get the template for.
+ * @returns The template string.
+ */
+function getTemplate(variant: PromptVariant) {
   switch (variant) {
     case "xml":
       throw new Error("Not implemented");
     case "markdown":
       return `
 ### Instruction
-You are now roleplaying as {{card.character.name}}. 
-You are in a chat with {{persona.name}}.
-Remember, you are {{persona.name}}, not yourself.
+You are now roleplaying as {{{card.character.name}}}. 
+You are in a chat with {{{persona.name}}}. \
+
+{{#card.character.description}}
 
 ### Character Info
-Character Name: {{card.character.name}}
-{{card.character.description}}}
+{{{card.character.description}}}
+{{/card.character.description}} \
+
+{{#card.world.description}}
 
 ### World Info
-{{card.world.description}}
+{{{card.world.description}}}
+{{/card.world.description}} \
+
+{{#persona.description}}
 
 ### User Info
-User's name: {{card.user.name}}
+User's description: {{{persona.description}}}
+{{/persona.description}} \
+
+{{#characterMemory}}
 
 ### Character Memory
-{{characterMemory}}
+{{{characterMemory}}}
+{{/characterMemory}} \
+
+{{#card.character.msg_examples}}
 
 ### Messages Examples
-{{card.character.msg_examples}}
+{{{card.character.msg_examples}}}
+{{/card.character.msg_examples}} \
 
-{{jailbreak}}
+{{{jailbreak}}}
       `.trim();
     default:
       throw new Error("Invalid prompt variant");
@@ -106,109 +208,7 @@ User's name: {{card.user.name}}
 }
 
 export const context = {
+  getContext,
   renderSystemPrompt
 };
 deepFreeze(context);
-
-// import { insertData, searchCollection } from "./db/qdrant";
-// import { embed } from "./embed";
-// import config from "../../../config";
-// import queries from "@/lib/queries";
-
-// export interface Persona {
-//   display_name: string;
-// }
-
-// export interface Character {
-//   display_name: string;
-//   system_prompt: string;
-// }
-
-// export interface Messages {
-//   content: string | null;
-//   inserted_at: string;
-//   sender_type: "user" | "character";
-// }
-
-// export interface RelevantContext {
-//   id: string | number;
-//   version: number;
-//   score: number;
-//   payload?: Record<string, any> | null;
-//   vector?:
-//     | Record<string, unknown>
-//     | number[]
-//     | { [key: string]: number[] | { indices: number[]; values: number[] } | undefined }
-//     | null;
-// }
-
-// export interface RawChunk {
-//   chat_id: number;
-//   msg: string;
-//   sender_type: string;
-//   inserted_at: string;
-//   updated_at: string;
-//   num_tokens: number;
-//   embedded: boolean;
-// }
-
-// export interface ChatContext {
-//   persona: Persona;
-//   character: Character;
-//   contextWindow: Messages[];
-//   relevantContext: RelevantContext[];
-// }
-
-// export async function getContext(chatID: number): Promise<ChatContext> {
-//   //await chunk(chatID);
-//   const contextWindow = await queries.getLatestMessages(chatID, config.CONTEXT_TOKEN_LIMIT);
-//   const persona = await queries.getPersona(chatID);
-//   const character = await queries.getCharacter(chatID);
-//   // const relevantContext = await getRelevantContext(chatID, contextWindow);
-//   let relevantContext = [];
-
-//   const chatContext: ChatContext = {
-//     persona: {
-//       display_name: persona.display_name
-//     },
-//     character: {
-//       display_name: character.display_name,
-//       system_prompt: character.system_prompt
-//     },
-//     contextWindow: contextWindow,
-//     relevantContext: relevantContext
-//   };
-
-//   return chatContext;
-// }
-
-// /**
-//  * Retrieves a chunk of data for a given chat ID, processes it, and inserts the processed data into the database.
-//  * @param chatID - The ID of the chat.
-//  * @returns A Promise that resolves when the chunk is processed and inserted into the database.
-//  */
-// export async function chunk(chatID: number) {
-//   const rawChunk = await queries.getUnembeddedChunk(chatID, config.CONTEXT_TOKEN_LIMIT, config.CHUNK_TOKEN_LIMIT);
-
-//   if (rawChunk.length === 0) {
-//     return;
-//   }
-
-//   // TODO: format raw chunk for LLM declarative summarization before embedding
-//   const processedChunk = "";
-//   const processedChunkEmbeddings = await embed(processedChunk);
-//   insertData(chatID, processedChunkEmbeddings, { chunk: rawChunk });
-// }
-
-// /**
-//  * Retrieves the relevant context for the chat.
-//  * @param chatID - The ID of the chat.
-//  * @param contextWindow - An array of context window messages.
-//  * @returns A promise that resolves to the relevant context.
-//  */
-// async function getRelevantContext(chatID: number, contextWindow: Messages[]): Promise<RelevantContext[]> {
-//   let embedding = await embed("PLACEHOLDER");
-//   const limit = config.vss.LIMIT;
-//   let relevantContext = await searchCollection(chatID, embedding, limit);
-//   return relevantContext;
-// }

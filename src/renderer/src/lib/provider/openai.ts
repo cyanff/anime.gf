@@ -1,8 +1,6 @@
-import Handlebars from "handlebars";
 import { Provider } from "@/lib/provider/provider";
 import { Result, isError } from "@shared/utils";
-import { Messages, CompletionConfig } from "@/lib/provider/provider";
-import { PromptCtx } from "@/lib/provider/provider";
+import { ProviderMessages, CompletionConfig } from "@/lib/provider/provider";
 
 const models = ["gpt-3.5-turbo", "gpt-4.0-turbo-preview"];
 interface ChatCompletion {
@@ -39,7 +37,10 @@ function getModels(): string[] {
  * @param messages - The messages to use as context for the chat completion.
  * @param config - The configuration options for the chat completion request.
  * @returns A promise that resolves to a Result containing the chat completion string if successful, or an Error if the request fails.
- */ async function getChatCompletion(messages: Messages, config: CompletionConfig): Promise<Result<string, Error>> {
+ */ async function getChatCompletion(
+  messages: ProviderMessages,
+  config: CompletionConfig
+): Promise<Result<string, Error>> {
   const validationRes = validateConfig(config);
   if (validationRes.kind == "err") {
     return validationRes;

@@ -3,10 +3,8 @@ import { openAI } from "@/lib/provider/openai";
 import { anthropic } from "./anthropic";
 import { togetherAI } from "@/lib/provider/together_ai";
 import { mistral } from "./mistral";
-import { CardData } from "@shared/types";
-import { Persona } from "@/lib/types";
 
-export interface Messages extends Array<{ role: string; content: string }> {}
+export interface ProviderMessages extends Array<{ role: string; content: string }> {}
 
 export interface CompletionConfig {
   apiKey?: string;
@@ -18,15 +16,10 @@ export interface CompletionConfig {
   top_p?: number;
   top_k?: number;
 }
-export interface PromptCtx {
-  card: CardData;
-  persona: Persona;
-  characterMemory: string;
-}
 
 export interface Provider {
   getModels(): string[];
-  getChatCompletion(messages: Messages, config: CompletionConfig): Promise<Result<string, Error>>;
+  getChatCompletion(messages: ProviderMessages, config: CompletionConfig): Promise<Result<string, Error>>;
   streamChatCompletion(): any;
   getTextCompletion(): Promise<Result<string, Error>>;
 }

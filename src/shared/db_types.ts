@@ -1,7 +1,6 @@
 export interface Persona {
   id: number;
   name: string;
-  avatar?: string;
   description?: string;
   inserted_at: string;
   updated_at?: string;
