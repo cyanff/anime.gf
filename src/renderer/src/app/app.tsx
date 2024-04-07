@@ -1,3 +1,4 @@
+import SideBar from "@/components/SideBar";
 import ChatBar from "@/components/ChatBar";
 import Message from "@/components/Message";
 import { time } from "@/lib/time";
@@ -14,6 +15,24 @@ function App(): JSX.Element {
   const [card, setCard] = useState<CardBundle>();
   const [recentChats, setRecentChats] = useState<RecentChatI[]>([]);
   const [chatHistory, setChatHistory] = useState<MessageI[]>([]);
+  const [typing, setTyping] = useState(false);
+  const chatScrollRef = useRef<HTMLDivElement | null>(null);
+
+  const [page, setPage] = useState<string>("home");
+
+  const renderPage = () => {
+    switch (page) {
+      case "home":
+        return <Home />;
+      case "chat":
+        return <Chat />;
+      default:
+        return <Home />;
+    }
+  };
+
+  // Toggle this state on changes to the database
+  // to trigger a re-fetch of the chat history
   const [dbSync, setDBSync] = useState(false);
   const [pages, setPage] = useState("fsf");
 
@@ -33,6 +52,7 @@ function App(): JSX.Element {
     })();
   }, []);
 
+  // Fetch persona
   useEffect(() => {
     (async () => {
       const res = await service.getPersonaBundle(chatID);
@@ -43,6 +63,7 @@ function App(): JSX.Element {
     })();
   }, [chatID]);
 
+  // Fetch chat history
   useEffect(() => {
     (async () => {
       const res = await service.getChatHistory(chatID);
@@ -53,6 +74,14 @@ function App(): JSX.Element {
     })();
   }, [chatID, dbSync]);
 
+  // Scroll chat area to lastest message
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatHistory]);
+
+  // Fetch card
   useEffect(() => {
     (async () => {
       const res = await service.getCardBundle(chatID);
@@ -95,6 +124,7 @@ function App(): JSX.Element {
                 />
               );
             })}
+            <div ref={chatScrollRef} />
           </div>
 
           <ChatBar
