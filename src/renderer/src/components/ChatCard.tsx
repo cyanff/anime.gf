@@ -15,7 +15,7 @@ export default function ChatCard({ id, name, avatarURI, msg, active, className, 
       {...rest}
       className={cn(
         `group flex h-[70px] w-full cursor-pointer items-center space-x-3 
-        rounded-md p-1 transition duration-150 ease-out hover:bg-accent 
+        rounded-xl p-1 transition duration-150 ease-out hover:bg-accent 
         ${active ? "bg-neutral-700 text-gray-100" : "text-gray-400"}`,
         className
       )}

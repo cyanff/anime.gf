@@ -1,3 +1,4 @@
+import SideBar from "@/components/SideBar";
 import ChatBar from "@/components/ChatBar";
 import ChatCard from "@/components/ChatCard";
 import Message from "@/components/Message";
@@ -16,6 +17,7 @@ import { Cog8ToothIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid"
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { Squircle } from "@squircle-js/react";
 import { useEffect, useState, useRef } from "react";
+import { BrowserRouter as Router, Link } from "react-router-dom";
 import { getProvider, ProviderE } from "@/lib/provider/provider";
 import { toast } from "sonner";
 import { Persona, UIMessage as MessageI } from "@/lib/types";
@@ -23,6 +25,8 @@ import { CardBundle } from "@shared/types";
 import { ChatCard as ChatCardI } from "./app_service";
 import "../styles/global.css";
 import { ChatCard as ChatCardI, service } from "./app_service";
+import Home from "../app/home";
+import Chat from "../app/chat";
 
 function App(): JSX.Element {
   const [chatID, setChatID] = useState(1);
@@ -32,6 +36,19 @@ function App(): JSX.Element {
   const [chatHistory, setChatHistory] = useState<MessageI[]>([]);
   const [typing, setTyping] = useState(false);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
+
+  const [page, setPage] = useState<string>("home");
+
+  const renderPage = () => {
+    switch (page) {
+      case "home":
+        return <Home />;
+      case "chat":
+        return <Chat />;
+      default:
+        return <Home />;
+    }
+  };
 
   // Toggle this state on changes to the database
   // to trigger a re-fetch of the chat history
@@ -99,9 +116,8 @@ function App(): JSX.Element {
 
   return (
     <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
-      <button className="h-8 w-12 bg-neutral-500" onClick={async () => {}}>
-        Test
-      </button>
+      <SideBar setPage={setPage} />
+      <div>{renderPage()}</div>
       {/* Sidebar */}
       <Squircle cornerRadius={16} cornerSmoothing={1} className="relative flex h-full w-80 flex-col bg-background">
         {/* Chat Cards */}
@@ -110,7 +126,7 @@ function App(): JSX.Element {
           className="scroll-secondary group/chat-cards my-4 grow overflow-auto scroll-smooth"
         >
           <div className="-mt-2 flex h-full max-h-full flex-col p-2">
-            {chatCards?.map((chatCard, idx) => { 
+            {chatCards?.map((chatCard, idx) => {
               return (
                 <ChatCard
                   key={idx}
@@ -129,17 +145,17 @@ function App(): JSX.Element {
         </div>
 
         {/* Utility Bar */}
-        <div className="z-50 flex h-16 w-full shrink-0 flex-row bg-neutral-700 p-3">
-          <div className="relative">
+        <div className="z-50 m-2 flex h-16 shrink-0 flex-row rounded-xl bg-neutral-700">
+          <div className="relative m-3">
             <img src="cyan.png" alt="Avatar" className="h-10 w-10 rounded-full" />
             <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 ring-4 ring-gray-700"></span>
           </div>
           <div className="flex h-full flex-col justify-center p-2">
-            <h3 className="font-semibold text-gray-100 ">cyan</h3>
+            <h3 className="font-semibold text-gray-100">cyan</h3>
             <p className="font-medium text-gray-400">Online</p>
           </div>
           {/* Settings Icon */}
-          <div className="flex grow items-center justify-end">
+          <div className="flex grow items-center justify-end p-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Cog8ToothIcon className=" ml-5 size-6 cursor-pointer text-neutral-400 transition duration-300 ease-out hover:rotate-180 hover:text-neutral-300" />
