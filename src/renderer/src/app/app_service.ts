@@ -1,8 +1,8 @@
-import { Result, isError } from "@shared/utils";
 import { CoreMessage } from "@/lib/types";
-import { CardBundle, PersonaBundle, PersonaBundleWithoutData } from "@shared/types";
+import { CardBundle, PersonaBundle } from "@shared/types";
+import { Result, isError } from "@shared/utils";
 
-export interface ChatCard {
+export interface RecentChat {
   chat_id: number;
   last_message: string;
   name: string;
@@ -10,7 +10,7 @@ export interface ChatCard {
 }
 
 // TODO, pagination
-async function getChatCards(): Promise<Result<ChatCard[], Error>> {
+async function getRecentChats(): Promise<Result<RecentChat[], Error>> {
   const query = `
   SELECT
   c.id AS chat_id,
@@ -168,7 +168,7 @@ VALUES (?, ?, 'character');
 }
 
 export const service = {
-  getChatCards,
+  getChatCards: getRecentChats,
   getPersonaBundle: getPersona,
   getChatHistory,
   getCardBundle: getCard,

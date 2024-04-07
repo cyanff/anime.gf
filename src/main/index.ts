@@ -67,7 +67,6 @@ app.whenReady().then(async () => {
 
     if (host === "personas") {
       const resolved = path.resolve(path.join(personasPath, pathname));
-      console.log("resolvedpath:", resolved);
 
       if (!resolved.startsWith(personasPath)) {
         return new Response(
