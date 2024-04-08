@@ -41,9 +41,10 @@ export default function App() {
 
   return (
     <AppContext.Provider value={{ createAlert }}>
-      <div className="flex h-screen bg-neutral-800 pb-6 pl-6 pt-6 text-sm text-neutral-100 antialiased lg:text-base">
+      <div className="flex h-screen bg-neutral-800 text-sm text-neutral-100 antialiased lg:text-base">
         <SideBar setPage={setPage} />
 
+        {/* Alert confirmation dialog */}
         {alertConfig && (
           <AlertDialog open={alertOpen}>
             <AlertDialogContent
@@ -78,9 +79,11 @@ export default function App() {
             </AlertDialogContent>
           </AlertDialog>
         )}
-        {page === "chats" && <ChatsPage />}
-        {page === "collections" && <CollectionsPage />}
-        {page === "settings" && <SettingsPage />}
+        <div className="flex h-full w-full py-4">
+          {page === "chats" && <ChatsPage />}
+          {page === "collections" && <CollectionsPage />}
+          {page === "settings" && <SettingsPage />}
+        </div>
       </div>
     </AppContext.Provider>
   );

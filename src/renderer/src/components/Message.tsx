@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { Squircle } from "@squircle-js/react";
 import {
   ContextMenu,
   ContextMenuContent,

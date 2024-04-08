@@ -26,6 +26,7 @@ module.exports = {
       backgroundImage: {
         none: "none",
         "grad-magenta": "linear-gradient(45deg, hsl(331, 52%, 51%), hsl(332, 42%, 43%), hsl(331, 32%, 37%))",
+        "grad-magenta-2": "linear-gradient(112.84deg, hsl(334, 75%, 47%) 0%, hsl(331, 52%, 93%) 100%)",
         "grad-gray": "linear-gradient(45deg, hsl(0, 0%, 23%), hsl(0, 0%, 28%))"
       },
       colors: {
