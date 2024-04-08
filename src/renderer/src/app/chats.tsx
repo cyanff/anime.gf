@@ -1,14 +1,14 @@
+import { useApp } from "@/app/app";
 import ChatBar from "@/components/ChatBar";
+import ChatsSidebar from "@/components/ChatsSidebar";
 import Message from "@/components/Message";
 import { time } from "@/lib/time";
 import { CoreMessage as MessageI } from "@/lib/types";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
-import "../styles/global.css";
-import { RecentChat as RecentChatI, service } from "./app_service";
-import RecentChats from "@/components/RecentChats";
-import { AlertConfig, useApp } from "@/app/app";
 import { toast } from "sonner";
+import "../styles/global.css";
+import { service } from "./app_service";
 
 function ChatsPage(): JSX.Element {
   const [chatID, setChatID] = useState(1);
@@ -16,8 +16,6 @@ function ChatsPage(): JSX.Element {
   const [cardBundle, setCardBundle] = useState<CardBundle>();
   const [chatHistory, setChatHistory] = useState<MessageI[]>([]);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
-
-  const { createAlert } = useApp();
 
   // Sync states with db on load
   useEffect(() => {
@@ -67,13 +65,7 @@ function ChatsPage(): JSX.Element {
 
   return (
     <>
-      <button
-        className="h-8 w-12 bg-neutral-500"
-        onClick={async () => {
-          throw new Error("Testing");
-        }}
-      ></button>
-      <RecentChats
+      <ChatsSidebar
         chatID={chatID}
         setChatID={setChatID}
         personaBundle={personaBundle}
