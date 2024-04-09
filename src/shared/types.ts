@@ -7,6 +7,8 @@ export interface CardData {
   world: World;
   meta: {
     title: string;
+    created_at: string;
+    updated_at?: string;
     creator: {
       card: string;
       character: string;

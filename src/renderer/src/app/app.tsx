@@ -82,7 +82,7 @@ export default function App() {
         {/* Modal */}
         {modalContent && (
           <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-            <DialogContent className="">{modalContent}</DialogContent>
+            <DialogContent className="w-fit max-w-none border-none p-0">{modalContent}</DialogContent>
           </Dialog>
         )}
 
