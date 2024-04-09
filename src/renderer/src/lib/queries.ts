@@ -1,7 +1,15 @@
 import { deepFreeze } from "@shared/utils";
-import { CoreMessage } from "@/lib/types";
+import { UIMessage } from "@shared/types";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { Result, isError } from "@shared/utils";
+
+async function deleteMessage(messageID: number): Promise<void> {
+  const query = `
+  DELETE FROM messages WHERE id = ?;
+  `.trim();
+
+  await window.api.sqlite.run(query, [messageID]);
+}
 
 async function deleteChat(chatID: number): Promise<void> {
   const query = `
@@ -172,9 +180,9 @@ async function getChatHistory(
   chatID: number,
   startID?: number,
   limit: number = 25
-): Promise<Result<CoreMessage[], Error>> {
+): Promise<Result<UIMessage[], Error>> {
   const query = `
-  SELECT text as message,  sender_type as sender, inserted_at as timestamp
+  SELECT id, text as message,  sender_type as sender, inserted_at as timestamp
   FROM messages
   WHERE ${startID ? `id <= ${startID} AND chat_id = ${chatID}` : `chat_id = ${chatID}`} 
   ORDER BY id
@@ -182,7 +190,7 @@ async function getChatHistory(
   `.trim();
 
   try {
-    const rows = (await window.api.sqlite.all(query)) as CoreMessage[];
+    const rows = (await window.api.sqlite.all(query)) as UIMessage[];
     return { kind: "ok", value: rows };
   } catch (e) {
     isError(e);

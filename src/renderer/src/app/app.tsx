@@ -12,22 +12,22 @@ import {
 import ChatsPage from "@/app/chats";
 import CollectionsPage from "@/app/collections";
 import SettingsPage from "@/app/settings";
-import { AlertConfig, AppContext } from "@/components/AppContext";
+import { DialogConfig, AppContext } from "@/components/AppContext";
 import SideBar from "@/components/SideBar";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState } from "react";
 
 export default function App() {
   const [page, setPage] = useState<string>("chats");
-  const [alertConfig, setAlertConfig] = useState<AlertConfig>();
-  const [alertOpen, setAlertOpen] = useState<boolean>(false);
+  const [alertConfig, setAlertConfig] = useState<DialogConfig>();
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const [modalContent, setModalContent] = useState<React.ReactNode>();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-  function createAlert(config: AlertConfig) {
+  function createDialog(config: DialogConfig) {
     setAlertConfig(config);
-    setAlertOpen(true);
+    setDialogOpen(true);
   }
 
   function createModal(content: React.ReactNode) {
@@ -39,17 +39,17 @@ export default function App() {
   }
 
   return (
-    <AppContext.Provider value={{ createAlert, createModal, closeModal }}>
+    <AppContext.Provider value={{ createDialog, createModal, closeModal }}>
       <div className="flex h-screen bg-neutral-800 text-sm text-neutral-100 antialiased lg:text-base">
         <SideBar setPage={setPage} />
 
         {/* Confirmation Dialog */}
         {alertConfig && (
-          <AlertDialog open={alertOpen}>
+          <AlertDialog open={dialogOpen}>
             <AlertDialogContent
               onKeyDown={(e) => {
                 if (e.key === "Escape") {
-                  setAlertOpen(false);
+                  setDialogOpen(false);
                 }
               }}
             >
@@ -61,7 +61,7 @@ export default function App() {
                 <AlertDialogCancel
                   onClick={() => {
                     alertConfig.onCancel?.();
-                    setAlertOpen(false);
+                    setDialogOpen(false);
                   }}
                 >
                   {alertConfig.cancelLabel || "Cancel"}
@@ -69,7 +69,7 @@ export default function App() {
                 <AlertDialogAction
                   onClick={() => {
                     alertConfig.onAction();
-                    setAlertOpen(false);
+                    setDialogOpen(false);
                   }}
                 >
                   {alertConfig.actionLabel}
@@ -82,7 +82,7 @@ export default function App() {
         {/* Modal */}
         {modalContent && (
           <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-            <DialogContent className="w-fit max-w-none p-0 border-none">{modalContent}</DialogContent>
+            <DialogContent className="w-fit max-w-none border-none p-0">{modalContent}</DialogContent>
           </Dialog>
         )}
 

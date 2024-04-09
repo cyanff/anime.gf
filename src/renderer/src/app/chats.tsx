@@ -1,19 +1,18 @@
 import ChatBar from "@/components/ChatBar";
 import ChatsSidebar from "@/components/ChatsSidebar";
 import Message from "@/components/Message";
+import { queries } from "@/lib/queries";
 import { time } from "@/lib/time";
-import { CoreMessage as MessageI } from "@/lib/types";
-import { CardBundle, PersonaBundle } from "@shared/types";
+import { CardBundle, PersonaBundle, UIMessage } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import "../styles/global.css";
-import { queries } from "@/lib/queries";
 
 function ChatsPage(): JSX.Element {
   const [chatID, setChatID] = useState(1);
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
   const [cardBundle, setCardBundle] = useState<CardBundle>();
-  const [chatHistory, setChatHistory] = useState<MessageI[]>([]);
+  const [chatHistory, setChatHistory] = useState<UIMessage[]>([]);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
   // Sync states with db on load
@@ -82,6 +81,7 @@ function ChatsPage(): JSX.Element {
               return (
                 <Message
                   key={idx}
+                  messageID={message.id}
                   avatar={message.sender === "user" ? personaBundle.avatarURI || "" : cardBundle.avatarURI || ""}
                   name={message.sender === "user" ? personaBundle.data.name : cardBundle.data.character.name}
                   sender={message.sender}

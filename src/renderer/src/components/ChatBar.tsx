@@ -1,7 +1,7 @@
 import { queries } from "@/lib/queries";
 import { PromptVariant, context } from "@/lib/context";
 import { ProviderE, getProvider } from "@/lib/provider/provider";
-import { CoreMessage } from "@/lib/types";
+import { UIMessage } from "@shared/types";
 import { PaperAirplaneIcon, WrenchIcon } from "@heroicons/react/24/solid";
 import { CardData, PersonaData } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
@@ -12,7 +12,7 @@ interface ChatBarProps {
   chatID: number;
   persona: PersonaData;
   cardData: CardData;
-  setChatHistory: (callback: (prevMessages: CoreMessage[]) => CoreMessage[]) => any;
+  setChatHistory: (callback: (prevMessages: UIMessage[]) => UIMessage[]) => any;
   syncChatHistory: () => void;
   className?: string;
 }
@@ -56,7 +56,7 @@ export default function ChatBar({
 
     // Optimistically clear userInput and append the user's message to the chat history
     setUserInput("");
-    setChatHistory((prevMessages: CoreMessage[]) => [
+    setChatHistory((prevMessages: UIMessage[]) => [
       ...prevMessages,
       {
         sender: "user",

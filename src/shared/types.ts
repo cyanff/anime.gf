@@ -1,6 +1,5 @@
 import { Persona } from "@shared/db_types";
 
-// TODO, namespace all of these in to Card
 export interface CardData {
   spec: string;
   spec_version: string;
@@ -49,4 +48,10 @@ export interface PersonaBundleWithoutData {
 
 export interface PersonaBundle extends PersonaBundleWithoutData {
   data: PersonaData;
+}
+export interface UIMessage {
+  id: number;
+  sender: "user" | "character";
+  message: string;
+  timestamp: string;
 }

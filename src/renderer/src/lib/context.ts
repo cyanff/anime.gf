@@ -1,5 +1,5 @@
 import Mustache from "mustache";
-import { CorePersona } from "@/lib/types";
+import { PersonaData } from "@shared/types";
 import { CardData } from "@shared/types";
 import { ProviderMessages } from "@/lib/provider/provider";
 import { Message as DBMessage } from "@shared/db_types";
@@ -12,7 +12,7 @@ export interface ContextParams {
   chatID: number;
   latestUserMessage: string;
   cardData: CardData;
-  persona: CorePersona;
+  persona: PersonaData;
   jailbreak: string;
   variant: PromptVariant;
   model: string;
@@ -27,6 +27,8 @@ interface Context {
   system: string;
   messages: ProviderMessages;
 }
+
+type Message = Pick<DBMessage, "id" | "sender_type" | "text">;
 
 /**
  * Generates a context object containing the system prompt and an array of messages for a given set of parameters.
@@ -49,9 +51,9 @@ async function getContext(params: ContextParams): Promise<Context> {
   const systemPromptTokens = tokenizer.countTokens(systemPrompt);
   const remainingTokens = params.tokenLimit - (userMessageTokens + systemPromptTokens);
 
-  if (remainingTokens < 500) {
+  if (remainingTokens < 300) {
     throw new Error(
-      "System prompt and latest user message is taking up too many tokens.  There remains less than 500 tokens for the context window.  Please reduce the size of the system prompt or latest user message."
+      "System prompt and latest user message is taking up too many tokens.  There remains less than 300 tokens for the context window.  Please reduce the size of the system prompt or latest user message."
     );
   }
 
@@ -105,7 +107,6 @@ async function getContext(params: ContextParams): Promise<Context> {
   };
 }
 
-type Message = Pick<DBMessage, "id" | "sender_type" | "text">;
 /**
  * Fetches a limited number of messages from the database starting from a given message ID for the specified chat.
  *

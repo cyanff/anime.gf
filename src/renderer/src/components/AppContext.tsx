@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-export interface AlertConfig {
+export interface DialogConfig {
   title: string;
   cancelLabel?: string;
   actionLabel: string;
@@ -10,7 +10,7 @@ export interface AlertConfig {
 }
 
 interface AppContextProps {
-  createAlert: (config: AlertConfig) => void;
+  createDialog: (config: DialogConfig) => void;
   createModal: (config: React.ReactNode) => void;
   closeModal: () => void;
 }
