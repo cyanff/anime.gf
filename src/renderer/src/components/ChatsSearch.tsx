@@ -96,7 +96,7 @@ export default function ChatsSearch({ onSelect, chatSearchItems }: ChatsSearchPr
   }
 
   return (
-    <div className="mb-2 mt-4 flex h-[35rem] w-full flex-col space-y-3 p-2">
+    <div className="mb-2 mt-4 flex h-[35rem] w-[50rem] flex-col space-y-3 p-2">
       {/* Search bar */}
       <div className="flex h-fit w-full shrink-0 items-center space-x-2 rounded-lg bg-neutral-800 p-2">
         <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-neutral-400" />

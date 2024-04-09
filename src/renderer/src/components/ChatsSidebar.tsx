@@ -1,5 +1,4 @@
-import { RecentChat as RecentChatI, service } from "@/app/app_service";
-import { AlertConfig, useApp } from "@/components/AppContext";
+import { DialogConfig, useApp } from "@/components/AppContext";
 import ChatsSearch from "@/components/ChatsSearch";
 import {
   ContextMenu,
@@ -17,7 +16,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { ChatSearchItem, queries } from "@/lib/queries";
+import { ChatSearchItem, queries, RecentChat as RecentChatI } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 import {
   ArrowPathIcon,
@@ -41,10 +40,9 @@ export interface ChatsSideBarProps {
 
 export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, setChatID }: ChatsSideBarProps) {
   const [recentChats, setRecentChats] = useState<RecentChatI[]>([]);
-  const [searchInput, setSearchInput] = useState<string>("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [chatSearchItems, setChatSearchItems] = useState<ChatSearchItem[]>([]);
-  const { createModal, closeModal, createAlert } = useApp();
+  const { createModal, closeModal, createDialog: createAlert } = useApp();
 
   useEffect(() => {
     syncRecentChats();
@@ -91,15 +89,16 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
           {/*Top Section */}
           <div className="flex grow flex-col px-2 py-3">
             {/* Search Bar */}
-            <div className="mb-2 flex w-full items-center space-x-2 overflow-hidden rounded-full bg-neutral-700 p-0.5">
+            <div
+              className="mb-2 flex w-full cursor-pointer items-center space-x-2 overflow-hidden rounded-lg bg-neutral-700 p-1"
+              onClick={() => {
+                createModal(<ChatsSearch onSelect={onSelect} chatSearchItems={chatSearchItems} />);
+              }}
+            >
               <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-neutral-400" />
               <input
-                className="h-9 w-full grow bg-neutral-700 text-gray-100 caret-white focus:outline-none"
+                className="h-9 w-full grow cursor-pointer bg-neutral-700 text-gray-100 caret-transparent placeholder:font-medium focus:outline-none"
                 placeholder="Search for a chat"
-                value={searchInput}
-                onClick={() => {
-                  createModal(<ChatsSearch onSelect={onSelect} chatSearchItems={chatSearchItems} />);
-                }}
               ></input>
             </div>
 
@@ -109,7 +108,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
                   <RecentChat
                     key={idx}
                     deleteChat={() => {
-                      const alertConfig: AlertConfig = {
+                      const alertConfig: DialogConfig = {
                         title: "Delete Chat",
                         description: "Are you sure you want to delete this chat?\nThis action cannot be undone.",
                         // Delete chat, update the recent chats list, and set the chat_id to be another chat
@@ -124,7 +123,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
                       createAlert(alertConfig);
                     }}
                     resetChat={() => {
-                      const alertConfig: AlertConfig = {
+                      const alertConfig: DialogConfig = {
                         title: "Reset Chat",
                         description: "Are you sure you want to reset this chat?\nThis action cannot be undone.",
                         actionLabel: "Reset",
