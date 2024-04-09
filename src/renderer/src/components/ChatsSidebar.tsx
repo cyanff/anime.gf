@@ -57,7 +57,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
   };
 
   const syncRecentChats = async () => {
-    const chatCards = await service.getRecentChats();
+    const chatCards = await queries.getRecentChats();
     if (chatCards.kind == "err") {
       return;
     }

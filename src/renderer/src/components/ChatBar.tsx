@@ -1,4 +1,4 @@
-import { service } from "@/app/app_service";
+import { queries } from "@/lib/queries";
 import { PromptVariant, context } from "@/lib/context";
 import { ProviderE, getProvider } from "@/lib/provider/provider";
 import { CoreMessage } from "@/lib/types";
@@ -96,7 +96,7 @@ export default function ChatBar({
     }
     const characterReply = completionRes.value;
 
-    const insertRes = await service.insertMessagePair(chatID, userInput, characterReply);
+    const insertRes = await queries.insertMessagePair(chatID, userInput, characterReply);
     syncChatHistory();
 
     if (insertRes.kind == "err") {
