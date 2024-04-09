@@ -8,7 +8,7 @@ import { CardBundle, PersonaBundle } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import "../styles/global.css";
-import { service } from "./app_service";
+import { queries } from "@/lib/queries";
 
 function ChatsPage(): JSX.Element {
   const [chatID, setChatID] = useState(1);
@@ -25,7 +25,7 @@ function ChatsPage(): JSX.Element {
   }, [chatID]);
 
   const syncCardBundle = async () => {
-    const res = await service.getCardBundle(chatID);
+    const res = await queries.getCardBundle(chatID);
     if (res.kind == "err") {
       toast.error("Error fetching card bundle.");
       return;
@@ -34,7 +34,7 @@ function ChatsPage(): JSX.Element {
   };
 
   const syncPersonaBundle = async () => {
-    const res = await service.getPersonaBundle(chatID);
+    const res = await queries.getPersonaBundle(chatID);
     if (res.kind == "err") {
       toast.error("Error fetching persona bundle.");
       return;
@@ -43,7 +43,7 @@ function ChatsPage(): JSX.Element {
   };
 
   const syncChatHistory = async () => {
-    const res = await service.getChatHistory(chatID);
+    const res = await queries.getChatHistory(chatID);
     if (res.kind == "err") {
       toast.error("Error fetching chat history.");
       return;
