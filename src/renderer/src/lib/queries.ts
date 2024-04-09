@@ -210,20 +210,22 @@ async function getCardBundle(chatID: number): Promise<Result<CardBundle, Error>>
   }
 }
 
-async function getCardBundles(chatID: number): Promise<Result<CardBundle, Error>> {
+async function getCardBundles(): Promise<Result<CardBundle[], Error>> {
   try {
     const query = `
-  SELECT cards.fileName
-  FROM chats
-           JOIN cards ON chats.card_id = cards.id
-  WHERE chats.id = ${chatID};
-  `.trim();
-    const row = (await window.api.sqlite.get(query)) as { fileName: string };
-    const res = await window.api.blob.cards.get(row.fileName);
-    if (res.kind == "err") {
-      throw res.error;
+      SELECT cards.fileName
+      FROM cards
+    `.trim();
+    const rows = (await window.api.sqlite.all(query)) as { fileName: string }[];
+    const cardBundles: CardBundle[] = [];
+    for (const row of rows) {
+      const res = await window.api.blob.cards.get(row.fileName);
+      if (res.kind == "err") {
+        throw res.error;
+      }
+      cardBundles.push(res.value);
     }
-    return { kind: "ok", value: res.value };
+    return { kind: "ok", value: cardBundles };
   } catch (e) {
     isError(e);
     return { kind: "err", error: e };
@@ -269,8 +271,8 @@ export const queries = {
   getPersonaBundle,
   getChatHistory,
   getCardBundle,
+  getCardBundles,
   insertMessagePair
-  
 };
 
 deepFreeze(queries);
