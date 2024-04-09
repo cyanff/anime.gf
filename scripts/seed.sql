@@ -56,6 +56,9 @@ INSERT INTO cards (fileName)
 VALUES
     ('zephyr'),
     ('eliza'),
+    ('astro'),
+    ('zephyr'),
+    ('eliza'),
     ('astro');
 
 INSERT INTO chats (persona_id, card_id)

@@ -1,5 +1,4 @@
 import { AlertConfig, useApp } from "@/app/app";
-import { RecentChat as RecentChatI, service } from "@/app/app_service";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -16,7 +15,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { queries } from "@/lib/queries";
+import { RecentChat as RecentChatI, queries } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 import {
   ArrowPathIcon,
@@ -50,7 +49,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
   }, []);
 
   const syncRecentChats = async () => {
-    const chatCards = await service.getRecentChats();
+    const chatCards = await queries.getRecentChats();
     if (chatCards.kind == "err") {
       return;
     }
