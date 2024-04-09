@@ -3,8 +3,12 @@ import { queries } from "@/lib/queries";
 import { toast } from "sonner";
 import { CardBundle } from "@shared/types";
 import Card from "@/components/Card";
+import CardDetails from "@/components/CardDetails";
+import { useApp } from "@/components/AppContext";
+
 export default function CollectionsPage() {
   const [cardBundles, setCardBundles] = useState<CardBundle[]>([]);
+  const { createModal } = useApp();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,7 +28,16 @@ export default function CollectionsPage() {
       {/* Collection Area */}
       <div className="scroll-primary flex flex-wrap overflow-y-scroll scroll-smooth transition duration-500 ease-out">
         {cardBundles?.map((cardBundle, idx) => {
-          return <Card key={idx} avatar={cardBundle.avatarURI || ""} name={cardBundle.data.character.name} />;
+          return (
+            <Card
+              key={idx}
+              avatar={cardBundle.avatarURI || ""}
+              name={cardBundle.data.character.name}
+              onClick={() => {
+                createModal(<CardDetails cardBundle={cardBundle} />);
+              }}
+            />
+          );
         })}
       </div>
     </div>
