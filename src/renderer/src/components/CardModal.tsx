@@ -1,11 +1,11 @@
-import React from "react";
+import { useState } from "react";
 import { CardBundle } from "@shared/types";
 
-interface CharacterModalProps {
+interface Props {
   cardBundle: CardBundle;
 }
 
-const CharacterModal: React.FC<CharacterModalProps> = ({ cardBundle }) => {
+function CardModal({ cardBundle }: Props) {
   return (
     <div className="flex w-[45rem] items-center justify-center">
       <div className="scroll-primary h-[60rem] overflow-y-scroll rounded-lg">
@@ -26,8 +26,8 @@ const CharacterModal: React.FC<CharacterModalProps> = ({ cardBundle }) => {
         <div className="px-6 pb-6 pt-12">
           <div className="flex flex-row">
             <div className="w-[30rem] pr-10">
-              <div className="text-2xl font-semibold pb-2">{cardBundle.data.character.name}</div>
-              <div className="whitespace-nowrap text-neutral-400 italic">
+              <div className="pb-2 text-2xl font-semibold">{cardBundle.data.character.name}</div>
+              <div className="whitespace-nowrap italic text-neutral-400">
                 {`created ${cardBundle.data.meta.created_at}${cardBundle.data.meta.updated_at ? ` - updated ${cardBundle.data.meta.updated_at}` : ""}`}
               </div>
             </div>
@@ -57,15 +57,15 @@ const CharacterModal: React.FC<CharacterModalProps> = ({ cardBundle }) => {
       </div>
     </div>
   );
-};
+}
 
 interface DropdownProps {
   label: string;
   content: string;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, content }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+function Dropdown({ label, content }: DropdownProps) {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="mb-2">
@@ -78,11 +78,14 @@ const Dropdown: React.FC<DropdownProps> = ({ label, content }) => {
           <img src="/button/arrow.svg" className="rotate-180 transform" alt="description" />
         ) : (
           <img src="/button/arrow.svg" alt="description" />
-        )}{" "}
+        )}
       </button>
-      {isOpen && <div className="px-4 pb-2 pt-4 text-sm text-gray-200">{content}</div>}
+      <div 
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96' : 'max-h-0'}`}
+      >
+        <div className="px-4 pb-2 pt-4 text-sm text-gray-200">{content}</div>
+      </div>
     </div>
   );
-};
-
-export default CharacterModal;
+}
+export default CardModal;
