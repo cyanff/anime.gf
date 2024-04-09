@@ -55,10 +55,10 @@ export namespace cards {
     const uriPrefix = "agf:///cards/";
     const avatarFilePath = path.join(dirPath, "avatar.png");
     const avatarFileExists = await attainable(avatarFilePath);
-    const avatarURI = avatarFileExists ? uriPrefix + name + "/avatar.png" : undefined;
+    const avatarURI = avatarFileExists ? uriPrefix + name + "/avatar.png" : "";
     const bannerFilePath = path.join(dirPath, "banner.png");
     const bannerFileExists = await attainable(bannerFilePath);
-    const bannerURI = bannerFileExists ? uriPrefix + name + "/banner.png" : undefined;
+    const bannerURI = bannerFileExists ? uriPrefix + name + "/banner.png" : "";
 
     return {
       kind: "ok",
@@ -74,16 +74,13 @@ export namespace cards {
 export namespace personas {
   export async function get(name: string): Promise<Result<PersonaBundleWithoutData, Error>> {
     const dirPath = path.join(personasPath, name);
-
     if (!(await attainable(dirPath))) {
       return { kind: "err", error: new Error(`Persona folder "${name}" not found`) };
     }
-
     const uriPrefix = "agf:///personas/";
     const avatarFilePath = path.join(dirPath, "avatar.png");
     const avatarFileExists = await attainable(avatarFilePath);
-    const avatarURI = avatarFileExists ? uriPrefix + name + "/avatar.png" : undefined;
-
+    const avatarURI = avatarFileExists ? uriPrefix + name + "/avatar.png" : "";
     return {
       kind: "ok",
       value: {

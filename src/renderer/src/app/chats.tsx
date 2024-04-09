@@ -1,4 +1,3 @@
-import { useApp } from "@/app/app";
 import ChatBar from "@/components/ChatBar";
 import ChatsSidebar from "@/components/ChatsSidebar";
 import Message from "@/components/Message";

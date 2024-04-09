@@ -50,7 +50,7 @@ async function getChatSearchItems(): Promise<ChatSearchItem[]> {
      FROM messages m
      WHERE m.chat_id = c.id AND m.sender_type = 'character'
      ORDER BY m.id DESC
-     LIMIT 1) AS last_message,
+     LIMIT 1) AS lastMessage,
     ca.fileName
 FROM
     chats c

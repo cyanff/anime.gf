@@ -34,15 +34,15 @@ export interface World {
 // Contents of the card's directory
 export interface CardBundle {
   data: CardData;
-  avatarURI?: string;
-  bannerURI?: string;
+  avatarURI: string;
+  bannerURI: string;
 }
 
 export interface PersonaData extends Pick<Persona, "name" | "description"> {}
 
 // Contents of the persona's directory
 export interface PersonaBundleWithoutData {
-  avatarURI?: string;
+  avatarURI: string;
 }
 
 export interface PersonaBundle extends PersonaBundleWithoutData {

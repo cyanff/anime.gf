@@ -1,5 +1,6 @@
-import { AlertConfig, useApp } from "@/app/app";
 import { RecentChat as RecentChatI, service } from "@/app/app_service";
+import { AlertConfig, useApp } from "@/components/AppContext";
+import ChatsSearch from "@/components/ChatsSearch";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -16,7 +17,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { queries } from "@/lib/queries";
+import { ChatSearchItem, queries } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 import {
   ArrowPathIcon,
@@ -42,12 +43,18 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
   const [recentChats, setRecentChats] = useState<RecentChatI[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { createAlert } = useApp();
+  const [chatSearchItems, setChatSearchItems] = useState<ChatSearchItem[]>([]);
+  const { createModal, closeModal, createAlert } = useApp();
 
-  // Sync recent chats on load
   useEffect(() => {
     syncRecentChats();
+    syncChatSearchItems();
   }, []);
+
+  const syncChatSearchItems = async () => {
+    const res = await queries.getChatSearchItems();
+    setChatSearchItems(res);
+  };
 
   const syncRecentChats = async () => {
     const chatCards = await service.getRecentChats();
@@ -56,6 +63,11 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
     }
     setRecentChats(chatCards.value);
   };
+
+  function onSelect(selected: ChatSearchItem) {
+    toast("Selected: " + selected.characterName);
+    closeModal();
+  }
 
   const sidebarVariants = {
     open: { width: "20rem", display: "block", overflow: "visible", opacity: 1 },
@@ -85,13 +97,8 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
                 className="h-9 w-full grow bg-neutral-700 text-gray-100 caret-white focus:outline-none"
                 placeholder="Search for a chat"
                 value={searchInput}
-                onChange={(e) => {
-                  setSearchInput(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") {
-                    toast("Escape key pressed");
-                  }
+                onClick={() => {
+                  createModal(<ChatsSearch onSelect={onSelect} chatSearchItems={chatSearchItems} />);
                 }}
               ></input>
             </div>

@@ -12,39 +12,38 @@ import {
 import ChatsPage from "@/app/chats";
 import CollectionsPage from "@/app/collections";
 import SettingsPage from "@/app/settings";
+import { AlertConfig, AppContext } from "@/components/AppContext";
 import SideBar from "@/components/SideBar";
-import { createContext, useContext, useState } from "react";
-
-export interface AlertConfig {
-  title: string;
-  cancelLabel?: string;
-  actionLabel: string;
-  description: string;
-  onCancel?: () => void;
-  onAction: () => void;
-}
-
-interface AppContextProps {
-  createAlert: (config: AlertConfig) => void;
-}
-const AppContext = createContext<AppContextProps | undefined>(undefined);
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useState } from "react";
 
 export default function App() {
   const [page, setPage] = useState<string>("chats");
   const [alertConfig, setAlertConfig] = useState<AlertConfig>();
   const [alertOpen, setAlertOpen] = useState<boolean>(false);
 
+  const [modalContent, setModalContent] = useState<React.ReactNode>();
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
   function createAlert(config: AlertConfig) {
     setAlertConfig(config);
     setAlertOpen(true);
   }
 
+  function createModal(content: React.ReactNode) {
+    setModalContent(content);
+    setModalOpen(true);
+  }
+  function closeModal() {
+    setModalOpen(false);
+  }
+
   return (
-    <AppContext.Provider value={{ createAlert }}>
+    <AppContext.Provider value={{ createAlert, createModal, closeModal }}>
       <div className="flex h-screen bg-neutral-800 text-sm text-neutral-100 antialiased lg:text-base">
         <SideBar setPage={setPage} />
 
-        {/* Alert confirmation dialog */}
+        {/* Confirmation Dialog */}
         {alertConfig && (
           <AlertDialog open={alertOpen}>
             <AlertDialogContent
@@ -79,6 +78,14 @@ export default function App() {
             </AlertDialogContent>
           </AlertDialog>
         )}
+
+        {/* Modal */}
+        {modalContent && (
+          <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+            <DialogContent>{modalContent}</DialogContent>
+          </Dialog>
+        )}
+
         <div className="flex h-full w-full py-4">
           {page === "chats" && <ChatsPage />}
           {page === "collections" && <CollectionsPage />}
@@ -88,11 +95,3 @@ export default function App() {
     </AppContext.Provider>
   );
 }
-
-export const useApp = (): AppContextProps => {
-  const context = useContext(AppContext);
-  if (context === undefined) {
-    throw new Error("useApp must be used within an App Provider");
-  }
-  return context;
-};
