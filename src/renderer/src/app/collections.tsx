@@ -3,7 +3,7 @@ import { queries } from "@/lib/queries";
 import { toast } from "sonner";
 import { CardBundle } from "@shared/types";
 import Card from "@/components/Card";
-import CardDetails from "@/components/CardDetails";
+import CardModal from "@/components/CardModal";
 import { useApp } from "@/components/AppContext";
 
 export default function CollectionsPage() {
@@ -34,7 +34,7 @@ export default function CollectionsPage() {
               avatar={cardBundle.avatarURI || ""}
               name={cardBundle.data.character.name}
               onClick={() => {
-                createModal(<CardDetails cardBundle={cardBundle} />);
+                createModal(<CardModal cardBundle={cardBundle} />);
               }}
             />
           );
