@@ -4,7 +4,10 @@ import { anthropic } from "./anthropic";
 import { togetherAI } from "@/lib/provider/together_ai";
 import { mistral } from "./mistral";
 
-export interface ProviderMessages extends Array<{ role: string; content: string }> {}
+export interface ProviderMessage {
+  role: string;
+  content: string;
+}
 
 export interface CompletionConfig {
   apiKey?: string;
@@ -19,7 +22,7 @@ export interface CompletionConfig {
 
 export interface Provider {
   getModels(): string[];
-  getChatCompletion(messages: ProviderMessages, config: CompletionConfig): Promise<Result<string, Error>>;
+  getChatCompletion(messages: ProviderMessage[], config: CompletionConfig): Promise<Result<string, Error>>;
   streamChatCompletion(): any;
   getTextCompletion(): Promise<Result<string, Error>>;
 }

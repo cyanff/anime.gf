@@ -33,12 +33,12 @@ interface MessageProps {
   avatar: string | null;
   name: string;
   timestamp: string;
-  message: string;
+  text: string;
   sender: "user" | "character";
   [rest: string]: any;
 }
 
-function Message({ className, avatar, name, timestamp, message, sender, ...rest }: MessageProps) {
+function Message({ className, avatar, name, timestamp, text, sender, ...rest }: MessageProps) {
   const byUser = sender === "user";
   const roleAlign = byUser ? "self-end" : "self-start";
   const roleColor = byUser ? "bg-[#87375f]" : "bg-grad-gray";
@@ -48,7 +48,7 @@ function Message({ className, avatar, name, timestamp, message, sender, ...rest 
   const { createDialog } = useApp();
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(message);
+    navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard!");
   };
 
@@ -114,7 +114,7 @@ function Message({ className, avatar, name, timestamp, message, sender, ...rest 
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              <p className="text-left">{message}</p>
+              <p className="text-left">{text}</p>
             </div>
           </div>
         </ContextMenuTrigger>

@@ -52,17 +52,17 @@ async function getChatSearchItems(): Promise<ChatSearchItem[]> {
   interface QueryResult {
     id: number;
     lastMessage: string;
-    fileName: string;
+    dirName: string;
   }
   const query = `
   SELECT
     c.id,
     (SELECT m.text
      FROM messages m
-     WHERE m.chat_id = c.id AND m.sender_type = 'character'
+     WHERE m.chat_id = c.id AND m.sender = 'character'
      ORDER BY m.id DESC
      LIMIT 1) AS lastMessage,
-    ca.fileName
+    ca.dirName
 FROM
     chats c
         JOIN
@@ -73,7 +73,7 @@ ORDER BY c.id DESC
   const rows = (await window.api.sqlite.all(query)) as QueryResult[];
   const ret = await Promise.all(
     rows.map(async (row) => {
-      const res = await window.api.blob.cards.get(row.fileName);
+      const res = await window.api.blob.cards.get(row.dirName);
       if (res.kind === "err") {
         throw res.error;
       }
@@ -102,10 +102,10 @@ async function getRecentChats(): Promise<Result<RecentChat[], Error>> {
   c.id AS chat_id,
   (SELECT m.text
    FROM messages m
-   WHERE m.chat_id = c.id AND m.sender_type = 'character'
+   WHERE m.chat_id = c.id AND m.sender = 'character'
    ORDER BY m.id DESC
    LIMIT 1) AS last_message,
-  ca.fileName
+  ca.dirName
 FROM
   chats c
       JOIN
@@ -119,12 +119,12 @@ LIMIT 20;
     interface QueryResult {
       chat_id: number;
       last_message: string;
-      fileName: string;
+      dirName: string;
     }
     const rows = (await window.api.sqlite.all(query)) as QueryResult[];
     const chatCards = await Promise.all(
       rows.map(async (row) => {
-        const res = await window.api.blob.cards.get(row.fileName);
+        const res = await window.api.blob.cards.get(row.dirName);
         if (res.kind == "err") {
           throw res.error;
         }
@@ -182,7 +182,7 @@ async function getChatHistory(
   limit: number = 25
 ): Promise<Result<UIMessage[], Error>> {
   const query = `
-  SELECT id, text as message,  sender_type as sender, inserted_at as timestamp
+  SELECT id, text, sender, inserted_at
   FROM messages
   WHERE ${startID ? `id <= ${startID} AND chat_id = ${chatID}` : `chat_id = ${chatID}`} 
   ORDER BY id
@@ -201,13 +201,13 @@ async function getChatHistory(
 async function getCardBundle(chatID: number): Promise<Result<CardBundle, Error>> {
   try {
     const query = `
-  SELECT cards.fileName
+  SELECT cards.dirName
   FROM chats
            JOIN cards ON chats.card_id = cards.id
   WHERE chats.id = ${chatID};
   `.trim();
-    const row = (await window.api.sqlite.get(query)) as { fileName: string };
-    const res = await window.api.blob.cards.get(row.fileName);
+    const row = (await window.api.sqlite.get(query)) as { dirName: string };
+    const res = await window.api.blob.cards.get(row.dirName);
     if (res.kind == "err") {
       throw res.error;
     }
@@ -221,13 +221,13 @@ async function getCardBundle(chatID: number): Promise<Result<CardBundle, Error>>
 async function getCardBundles(): Promise<Result<CardBundle[], Error>> {
   try {
     const query = `
-      SELECT cards.fileName
+      SELECT cards.dirName
       FROM cards
     `.trim();
-    const rows = (await window.api.sqlite.all(query)) as { fileName: string }[];
+    const rows = (await window.api.sqlite.all(query)) as { dirName: string }[];
     const cardBundles: CardBundle[] = [];
     for (const row of rows) {
-      const res = await window.api.blob.cards.get(row.fileName);
+      const res = await window.api.blob.cards.get(row.dirName);
       if (res.kind == "err") {
         throw res.error;
       }
@@ -249,12 +249,12 @@ async function insertMessagePair(
   const params: any[][] = [];
 
   const userMessageQuery = `
-INSERT INTO messages (chat_id, text, sender_type)
+INSERT INTO messages (chat_id, text, sender)
 VALUES (?, ?, 'user');
   `.trim();
   const userMessageParams = [chatID, userMessage];
   const characterMessageQuery = `
-INSERT INTO messages (chat_id, text, sender_type)
+INSERT INTO messages (chat_id, text, sender)
 VALUES (?, ?, 'character');
   `.trim();
   const characterMessageParams = [chatID, characterMessage];

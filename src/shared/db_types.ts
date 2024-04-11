@@ -1,14 +1,14 @@
 export interface Persona {
   id: number;
   name: string;
-  description?: string;
+  description: string;
   inserted_at: string;
   updated_at?: string;
 }
 
-export interface Character {
+export interface Card {
   id: number;
-  fileName: string;
+  dirName: string;
   inserted_at: string;
   updated_at?: string;
 }
@@ -24,8 +24,8 @@ export interface Chat {
 export interface Message {
   id: number;
   chat_id: number;
-  text?: string;
-  sender_type: "user" | "character";
+  text: string;
+  sender: "user" | "character";
   is_embedded: boolean;
   inserted_at: string;
   updated_at?: string;

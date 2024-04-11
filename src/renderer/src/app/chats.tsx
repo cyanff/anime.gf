@@ -76,7 +76,7 @@ function ChatsPage(): JSX.Element {
           {/* Chat Area */}
           <div className="scroll-primary flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 transition duration-500 ease-out">
             {chatHistory?.map((message, idx) => {
-              const iso = time.sqliteToISO(message.timestamp);
+              const iso = time.sqliteToISO(message.inserted_at);
               const relativeTime = time.isoToLLMRelativeTime(iso);
               return (
                 <Message
@@ -85,7 +85,7 @@ function ChatsPage(): JSX.Element {
                   avatar={message.sender === "user" ? personaBundle.avatarURI || "" : cardBundle.avatarURI || ""}
                   name={message.sender === "user" ? personaBundle.data.name : cardBundle.data.character.name}
                   sender={message.sender}
-                  message={message.message}
+                  text={message.text}
                   timestamp={relativeTime}
                 />
               );

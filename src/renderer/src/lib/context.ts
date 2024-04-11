@@ -1,7 +1,7 @@
 import Mustache from "mustache";
 import { PersonaData } from "@shared/types";
 import { CardData } from "@shared/types";
-import { ProviderMessages } from "@/lib/provider/provider";
+import { ProviderMessage } from "@/lib/provider/provider";
 import { Message as DBMessage } from "@shared/db_types";
 import { getTokenizer } from "@/lib/tokenizer/provider";
 import { deepFreeze } from "@shared/utils";
@@ -25,10 +25,10 @@ interface SystemPromptParams extends Pick<ContextParams, "cardData" | "persona" 
 
 interface Context {
   system: string;
-  messages: ProviderMessages;
+  messages: ProviderMessage[];
 }
 
-type Message = Pick<DBMessage, "id" | "sender_type" | "text">;
+type Message = Pick<DBMessage, "id" | "sender" | "text">;
 
 /**
  * Generates a context object containing the system prompt and an array of messages for a given set of parameters.
@@ -68,7 +68,7 @@ async function getContext(params: ContextParams): Promise<Context> {
       break;
     }
     for (const message of messages) {
-      const messageTokens = message.text !== undefined ? tokenizer.countTokens(message.text) : 0;
+      const messageTokens = tokenizer.countTokens(message.text);
       // If adding the message would exceed the token limit, break.
       if (contextWindowTokens + messageTokens > remainingTokens) {
         break;
@@ -78,33 +78,61 @@ async function getContext(params: ContextParams): Promise<Context> {
       fromID = message.id;
     }
   }
-
-  const providerMessages = contextWindow.map((m) => {
-    return {
-      role: m.sender_type === "user" ? "user" : "assistant",
-      content: m.text === undefined ? "" : m.text
-    };
-  });
-
-  // Reverse the messages so that the most recent message is at the end.
-  providerMessages.reverse();
-
-  // Make sure the first message in the context window is a user message by padding
-  if (providerMessages.length > 0 && providerMessages[0].role === "assistant") {
-    providerMessages.unshift({
-      role: "user",
-      content: "Now begin the conversation based on the given instructions above."
-    });
-  }
-  providerMessages.push({
-    role: "user",
-    content: params.latestUserMessage
-  });
+  contextWindow.reverse();
+  const providerMessages = toProviderMessages(contextWindow, params.latestUserMessage);
 
   return {
     system: systemPrompt,
     messages: providerMessages
   };
+}
+
+function toProviderMessages(messages: Message[], latestUserMessage: string): ProviderMessage[] {
+  // Providers expect messages to conform to the following rules:
+  // The first message must be a user message.
+  // The message's role must be either "user" or "assistant".
+  // The messages MUST alternate between user and assistant roles.
+
+  let ret = messages.map((m) => {
+    return {
+      role: m.sender === "user" ? "user" : "assistant",
+      content: m.text
+    };
+  });
+
+  // Guarantees that first message in the context window is a user message
+  if (ret.length > 0 && ret[0].role === "assistant") {
+    ret.unshift({
+      role: "user",
+      content: "Now begin the conversation based on the given instructions above."
+    });
+  }
+
+  // The latest user message is always the last message
+  ret.push({
+    role: "user",
+    content: latestUserMessage
+  });
+
+  // Merge non alternating message roles
+  // Ex:
+  // user / user / assistant / assistant / user
+  // -> user / assistant / user
+  let slow = 0;
+  let fast = 1;
+  while (slow < fast && fast <= ret.length) {
+    // Merge messages if they have the same role
+    if (ret[slow].role === ret[fast].role) {
+      ret[slow].content += "\n" + ret[fast].content;
+      ret[fast] = null as any;
+      fast++;
+    } else {
+      slow = fast;
+      fast++;
+    }
+  }
+  ret = ret.filter((msg) => msg !== null);
+  return ret;
 }
 
 /**
