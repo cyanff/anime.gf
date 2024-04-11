@@ -15,15 +15,32 @@ import SettingsPage from "@/app/settings";
 import { DialogConfig, AppContext } from "@/components/AppContext";
 import SideBar from "@/components/SideBar";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList
+} from "@/components/ui/command";
+import { handleA, handleB, handleC } from "@/lib/cmd";
 
 export default function App() {
   const [page, setPage] = useState<string>("chats");
   const [alertConfig, setAlertConfig] = useState<DialogConfig>();
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-
   const [modalContent, setModalContent] = useState<React.ReactNode>();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [cmdOpen, setCmdOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "k" && e.ctrlKey) {
+        setCmdOpen(true);
+      }
+    });
+  }, []);
 
   function createDialog(config: DialogConfig) {
     setAlertConfig(config);
@@ -84,6 +101,42 @@ export default function App() {
           <Dialog open={modalOpen} onOpenChange={setModalOpen}>
             <DialogContent className="w-fit max-w-none border-none p-0">{modalContent}</DialogContent>
           </Dialog>
+        )}
+
+        {/* Development Command Runner */}
+        {import.meta.env.DEV && (
+          <CommandDialog open={cmdOpen} onOpenChange={setCmdOpen}>
+            <CommandInput placeholder="Type a command or search..." />
+            <CommandList>
+              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandGroup heading="Commands">
+                <CommandItem
+                  onSelect={() => {
+                    handleA();
+                    setCmdOpen(false);
+                  }}
+                >
+                  Run A
+                </CommandItem>
+                <CommandItem
+                  onSelect={() => {
+                    handleB();
+                    setCmdOpen(false);
+                  }}
+                >
+                  Run B
+                </CommandItem>
+                <CommandItem
+                  onSelect={() => {
+                    handleC();
+                    setCmdOpen(false);
+                  }}
+                >
+                  Run C
+                </CommandItem>
+              </CommandGroup>
+            </CommandList>
+          </CommandDialog>
         )}
 
         <div className="flex h-full w-full py-4">

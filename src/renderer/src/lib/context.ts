@@ -87,7 +87,7 @@ async function getContext(params: ContextParams): Promise<Context> {
   };
 }
 
-function toProviderMessages(messages: Message[], latestUserMessage: string): ProviderMessage[] {
+export function toProviderMessages(messages: Message[], latestUserMessage: string): ProviderMessage[] {
   // Providers expect messages to conform to the following rules:
   // The first message must be a user message.
   // The message's role must be either "user" or "assistant".
@@ -120,7 +120,7 @@ function toProviderMessages(messages: Message[], latestUserMessage: string): Pro
   // -> user / assistant / user
   let slow = 0;
   let fast = 1;
-  while (slow < fast && fast <= ret.length) {
+  while (slow < fast && fast < ret.length) {
     // Merge messages if they have the same role
     if (ret[slow].role === ret[fast].role) {
       ret[slow].content += "\n" + ret[fast].content;

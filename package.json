@@ -44,6 +44,7 @@
     "buffer": "^6.0.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "cmdk": "^1.0.0",
     "electron-updater": "^6.1.7",
     "framer-motion": "^11.0.12",
     "mustache": "^4.2.0",
