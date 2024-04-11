@@ -14,6 +14,7 @@ function ChatsPage(): JSX.Element {
   const [cardBundle, setCardBundle] = useState<CardBundle>();
   const [chatHistory, setChatHistory] = useState<UIMessage[]>([]);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
+  const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
 
   // Sync states with db on load
   useEffect(() => {
@@ -56,6 +57,21 @@ function ChatsPage(): JSX.Element {
     }
   }, []);
 
+  // Add escape key listener to exit edit mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setEditingMessageID(null);
+      }
+    };
+    if (editingMessageID !== null) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [editingMessageID]);
+
   // Loading screen
   if (!personaBundle || !cardBundle) {
     return <div className="h-screen w-screen bg-neutral-800 "></div>;
@@ -78,6 +94,9 @@ function ChatsPage(): JSX.Element {
             {chatHistory?.map((message, idx) => {
               const iso = time.sqliteToISO(message.inserted_at);
               const relativeTime = time.isoToLLMRelativeTime(iso);
+              const isLatest = idx === chatHistory.length - 1;
+              const isLatestCharacterMessage = message.sender === "character" && idx >= chatHistory.length - 2;
+
               return (
                 <Message
                   key={idx}
@@ -86,7 +105,11 @@ function ChatsPage(): JSX.Element {
                   name={message.sender === "user" ? personaBundle.data.name : cardBundle.data.character.name}
                   sender={message.sender}
                   text={message.text}
-                  timestamp={relativeTime}
+                  timestring={relativeTime}
+                  isLatest={isLatest}
+                  isLatestCharacterMessage={isLatestCharacterMessage}
+                  isEditing={editingMessageID === message.id}
+                  setEditingMessageID={setEditingMessageID}
                 />
               );
             })}

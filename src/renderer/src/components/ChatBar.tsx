@@ -59,9 +59,10 @@ export default function ChatBar({
     setChatHistory((prevMessages: UIMessage[]) => [
       ...prevMessages,
       {
+        id: -1,
         sender: "user",
-        message: cachedUserInput,
-        timestamp: new Date().toISOString()
+        text: cachedUserInput,
+        inserted_at: new Date().toISOString()
       }
     ]);
 

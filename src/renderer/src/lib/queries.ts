@@ -271,6 +271,16 @@ VALUES (?, ?, 'character');
   }
 }
 
+async function updateMessage(messageID: number, text: string): Promise<void> {
+  const query = `
+  UPDATE messages
+  SET text = ?
+  WHERE id = ?;
+  `.trim();
+
+  await window.api.sqlite.run(query, [text, messageID]);
+}
+
 export const queries = {
   deleteChat,
   resetChat,
@@ -280,7 +290,8 @@ export const queries = {
   getChatHistory,
   getCardBundle,
   getCardBundles,
-  insertMessagePair
+  insertMessagePair,
+  updateMessage
 };
 
 deepFreeze(queries);
