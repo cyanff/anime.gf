@@ -14,10 +14,10 @@ export interface CompletionConfig {
   model: string;
   system?: string;
   stop?: string[];
-  max_tokens?: number;
+  maxTokens: number;
   temperature?: number;
-  top_p?: number;
-  top_k?: number;
+  topP?: number;
+  topK?: number;
 }
 
 export interface Provider {

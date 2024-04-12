@@ -12,10 +12,8 @@ import {
 import ChatsPage from "@/app/chats";
 import CollectionsPage from "@/app/collections";
 import SettingsPage from "@/app/settings";
-import { DialogConfig, AppContext } from "@/components/AppContext";
+import { AppContext, DialogConfig } from "@/components/AppContext";
 import SideBar from "@/components/SideBar";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useEffect, useState } from "react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -24,7 +22,9 @@ import {
   CommandItem,
   CommandList
 } from "@/components/ui/command";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { handleA, handleB, handleC } from "@/lib/cmd";
+import { useEffect, useState } from "react";
 
 export default function App() {
   const [page, setPage] = useState<string>("chats");

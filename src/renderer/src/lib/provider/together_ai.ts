@@ -57,8 +57,8 @@ async function getChatCompletion(messages: ProviderMessages, config: CompletionC
     model: config.model,
     messages: reqMessages
   };
-  if (config.max_tokens !== undefined) {
-    body.max_tokens = config.max_tokens;
+  if (config.maxTokens !== undefined) {
+    body.max_tokens = config.maxTokens;
   }
   if (config.stop !== undefined) {
     body.stop = config.stop;
@@ -66,11 +66,11 @@ async function getChatCompletion(messages: ProviderMessages, config: CompletionC
   if (config.temperature !== undefined) {
     body.temperature = config.temperature;
   }
-  if (config.top_p !== undefined) {
-    body.top_p = config.top_p;
+  if (config.topP !== undefined) {
+    body.top_p = config.topP;
   }
-  if (config.top_k !== undefined) {
-    body.top_k = config.top_k;
+  if (config.topK !== undefined) {
+    body.top_k = config.topK;
   }
 
   const completionRes = await window.api.xfetch.post(url, body, headers);

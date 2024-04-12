@@ -5,30 +5,27 @@ import { ProviderMessage } from "@/lib/provider/provider";
 import { Message as DBMessage } from "@shared/db_types";
 import { getTokenizer } from "@/lib/tokenizer/provider";
 import { deepFreeze } from "@shared/utils";
+import { CoreMessage } from "@shared/types";
+import { queries } from "@/lib/queries";
 
 export type PromptVariant = "xml" | "markdown";
-
 export interface ContextParams {
   chatID: number;
   latestUserMessage: string;
   cardData: CardData;
-  persona: PersonaData;
+  personaData: PersonaData;
   jailbreak: string;
-  variant: PromptVariant;
   model: string;
   tokenLimit: number;
 }
-
-interface SystemPromptParams extends Pick<ContextParams, "cardData" | "persona" | "jailbreak" | "variant"> {
+interface SystemPromptParams extends Pick<ContextParams, "cardData" | "personaData" | "jailbreak"> {
+  variant: PromptVariant;
   characterMemory: string;
 }
-
 interface Context {
   system: string;
   messages: ProviderMessage[];
 }
-
-type Message = Pick<DBMessage, "id" | "sender" | "text">;
 
 /**
  * Generates a context object containing the system prompt and an array of messages for a given set of parameters.
@@ -36,13 +33,13 @@ type Message = Pick<DBMessage, "id" | "sender" | "text">;
  * - The system prompt
  * - The array of messages in the context window
  */
-async function getContext(params: ContextParams): Promise<Context> {
+async function get(params: ContextParams): Promise<Context> {
   const systemPromptParams = {
     cardData: params.cardData,
-    persona: params.persona,
+    personaData: params.personaData,
     characterMemory: "",
     jailbreak: params.jailbreak,
-    variant: params.variant
+    variant: getPromptVariant(params.model)
   };
   const systemPrompt = renderSystemPrompt(systemPromptParams);
 
@@ -60,9 +57,9 @@ async function getContext(params: ContextParams): Promise<Context> {
   // Fetch messages to fill up the context window.
   let fromID: number | undefined;
   let contextWindowTokens = 0;
-  let contextWindow: Message[] = [];
+  let contextWindow: CoreMessage[] = [];
   while (contextWindowTokens < remainingTokens) {
-    const messages = await getMessagesStartingFrom(params.chatID, 100, fromID);
+    const messages = await queries.getMessagesStartingFrom(params.chatID, 100, fromID);
     // No more messages to fetch.
     if (messages.length === 0) {
       break;
@@ -87,7 +84,18 @@ async function getContext(params: ContextParams): Promise<Context> {
   };
 }
 
-export function toProviderMessages(messages: Message[], latestUserMessage: string): ProviderMessage[] {
+/**
+ * Converts an array of `Message` objects to an array of `ProviderMessage` objects,
+ * Ensuring:
+ * - The first message is a user message
+ * - Messages alternate between user and assistant roles.
+ * - The last message is a user message.
+ *
+ * @param messages - An array of `Message` objects representing the conversation history.
+ * @param latestUserMessage - The latest user message to be added to the end of the `ProviderMessage` array.
+ * @returns An array of `ProviderMessage` objects representing the conversation history in the format expected by the provider.
+ */
+export function toProviderMessages(messages: CoreMessage[], latestUserMessage: string): ProviderMessage[] {
   // Providers expect messages to conform to the following rules:
   // The first message must be a user message.
   // The message's role must be either "user" or "assistant".
@@ -136,35 +144,6 @@ export function toProviderMessages(messages: Message[], latestUserMessage: strin
 }
 
 /**
- * Fetches a limited number of messages from the database starting from a given message ID for the specified chat.
- *
- * @param chatID - The ID of the chat to fetch messages for.
- * @param limit - The maximum number of messages to fetch.
- * @param messageID - The ID of the message to start fetching from. If not provided, the most recent messages will be fetched.
- * @returns An array of `Message` objects containing the fetched messages.
- */
-async function getMessagesStartingFrom(chatID: number, limit: number, messageID?: number): Promise<Message[]> {
-  let query: string;
-  if (messageID === undefined) {
-    query = `
-    SELECT * FROM messages
-    WHERE chat_id = ${chatID}
-    ORDER BY id desc
-    LIMIT ${limit}
-    `.trim();
-  } else {
-    query = `
-    SELECT * FROM messages
-    WHERE chat_id = ${chatID} AND id < ${messageID}
-    ORDER BY id desc
-    LIMIT ${limit}
-    `.trim();
-  }
-
-  return (await window.api.sqlite.all(query)) as Message[];
-}
-
-/**
  * Renders the system prompt template using the provided prompt parameters.
  *
  * @param params - The prompt parameters, including the card data, persona, character memory, and jailbreak settings.
@@ -174,7 +153,7 @@ function renderSystemPrompt(params: SystemPromptParams): string {
   const template = getTemplate(params.variant);
   const ctx = {
     card: params.cardData,
-    persona: params.persona,
+    persona: params.personaData,
     characterMemory: params.characterMemory,
     jailbreak: params.jailbreak
   };
@@ -235,9 +214,17 @@ User's description: {{{persona.description}}}
       throw new Error("Invalid prompt variant");
   }
 }
+function getPromptVariant(model: string): PromptVariant {
+  return "markdown";
+  // if (model.match(/claude/i)) {
+  //   return "xml";
+  // } else {
+  //   return "markdown";
+  // }
+}
 
 export const context = {
-  getContext,
+  get,
   renderSystemPrompt
 };
 deepFreeze(context);

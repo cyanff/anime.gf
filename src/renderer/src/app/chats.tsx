@@ -7,6 +7,7 @@ import { CardBundle, PersonaBundle, UIMessage } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import "../styles/global.css";
+import { reply } from "@/lib/reply";
 
 function ChatsPage(): JSX.Element {
   const [chatID, setChatID] = useState(1);
@@ -15,6 +16,9 @@ function ChatsPage(): JSX.Element {
   const [chatHistory, setChatHistory] = useState<UIMessage[]>([]);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
+  const [editText, setEditText] = useState("");
+  const [userInput, setUserInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
 
   // Sync states with db on load
   useEffect(() => {
@@ -77,6 +81,59 @@ function ChatsPage(): JSX.Element {
     return <div className="h-screen w-screen bg-neutral-800 "></div>;
   }
 
+  const handleEditSubmit = (id: number) => {
+    setEditingMessageID(null);
+    // Optimistic update
+    const newChatHistory = chatHistory.map((msg) => {
+      if (msg.id === id) {
+        return { ...msg, text: editText };
+      }
+      return msg;
+    });
+    setChatHistory(newChatHistory);
+    // Update message in the db
+    queries.updateMessage(id, editText);
+    syncChatHistory();
+  };
+
+  const handleSendMessage = async () => {
+    const cachedUserInput = userInput;
+    // Optimistically clear userInput and append the user's message to the chat history
+    setIsTyping(true);
+    setUserInput("");
+    setChatHistory((prevMessages: UIMessage[]) => [
+      ...prevMessages,
+      {
+        id: -1,
+        sender: "user",
+        text: cachedUserInput,
+        inserted_at: new Date().toISOString()
+      }
+    ]);
+
+    // Generate a reply
+    let characterReply: string;
+    try {
+      characterReply = await reply.generate(chatID, cardBundle.data, personaBundle.data, userInput);
+      const insertRes = await queries.insertMessagePair(chatID, userInput, characterReply);
+      if (insertRes.kind == "err") {
+        toast.error(`Failed to insert user and character mesage into database. 
+        Error ${insertRes.error}`);
+        return;
+      }
+    } catch (e) {
+      toast.error(`Failed to generate a reply. Error: ${e}`);
+      console.error(e);
+      // Restore the user's input
+      setUserInput(cachedUserInput);
+    } finally {
+      setIsTyping(false);
+      syncChatHistory();
+    }
+  };
+
+  const handleRegenerate = () => {};
+
   return (
     <>
       <ChatsSidebar
@@ -90,13 +147,12 @@ function ChatsPage(): JSX.Element {
         {/* Chat Area and Chat Bar Wrapper*/}
         <div className="relative flex h-full flex-auto flex-col pl-8 pt-8">
           {/* Chat Area */}
-          <div className="scroll-primary flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 transition duration-500 ease-out">
+          <div className="scroll-primary flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 py-1 transition duration-500 ease-out">
             {chatHistory?.map((message, idx) => {
               const iso = time.sqliteToISO(message.inserted_at);
               const relativeTime = time.isoToLLMRelativeTime(iso);
               const isLatest = idx === chatHistory.length - 1;
               const isLatestCharacterMessage = message.sender === "character" && idx >= chatHistory.length - 2;
-
               return (
                 <Message
                   key={idx}
@@ -109,7 +165,10 @@ function ChatsPage(): JSX.Element {
                   isLatest={isLatest}
                   isLatestCharacterMessage={isLatestCharacterMessage}
                   isEditing={editingMessageID === message.id}
-                  setEditingMessageID={setEditingMessageID}
+                  handleEdit={() => setEditingMessageID(message.id)}
+                  setEditText={setEditText}
+                  handleEditSubmit={() => handleEditSubmit(message.id)}
+                  handleRegenerate={handleRegenerate}
                 />
               );
             })}
@@ -118,10 +177,12 @@ function ChatsPage(): JSX.Element {
 
           <ChatBar
             chatID={chatID}
-            persona={personaBundle.data}
+            personaData={personaBundle.data}
             cardData={cardBundle.data}
-            setChatHistory={setChatHistory}
-            syncChatHistory={syncChatHistory}
+            isTyping={isTyping}
+            userInput={userInput}
+            setUserInput={setUserInput}
+            handleSendMessage={handleSendMessage}
             className="mb-1 mr-5"
           />
         </div>

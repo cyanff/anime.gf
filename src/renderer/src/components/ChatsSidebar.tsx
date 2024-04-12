@@ -102,7 +102,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
               ></input>
             </div>
 
-            <div className="scroll-secondary my-4 flex h-full max-h-full grow flex-col space-y-1  overflow-auto scroll-smooth">
+            <div className="scroll-secondary my-4 flex h-full max-h-full grow flex-col space-y-1 overflow-auto scroll-smooth">
               {recentChats?.map((chat, idx) => {
                 return (
                   <RecentChat

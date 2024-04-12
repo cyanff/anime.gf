@@ -1,34 +1,34 @@
 import { queries } from "@/lib/queries";
-import { PromptVariant, context } from "@/lib/context";
-import { ProviderE, getProvider } from "@/lib/provider/provider";
 import { UIMessage } from "@shared/types";
 import { PaperAirplaneIcon, WrenchIcon } from "@heroicons/react/24/solid";
 import { CardData, PersonaData } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import Typing from "./Typing";
+import { reply } from "@/lib/reply";
 
 interface ChatBarProps {
   chatID: number;
-  persona: PersonaData;
+  personaData: PersonaData;
   cardData: CardData;
-  setChatHistory: (callback: (prevMessages: UIMessage[]) => UIMessage[]) => any;
-  syncChatHistory: () => void;
+  isTyping: boolean;
+  userInput: string;
+  setUserInput: (input: string) => void;
+  handleSendMessage: () => void;
   className?: string;
 }
 
 export default function ChatBar({
   chatID,
-  persona,
+  personaData,
   cardData,
-  setChatHistory,
-  syncChatHistory,
+  isTyping,
+  userInput,
+  setUserInput,
+  handleSendMessage,
   className,
   ...rest
 }: ChatBarProps) {
-  const [userInput, setUserInput] = useState("");
-  const [typing, setTyping] = useState(false);
-
   // Dynamically expand the text area to fit the user's input
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
@@ -40,77 +40,10 @@ export default function ChatBar({
     textarea.style.height = textarea.scrollHeight + "px";
   }, [userInput]);
 
-  const handleSendMessage = async (userInput: string) => {
-    if (userInput.length == 0) {
-      return;
-    }
-    if (persona === undefined) {
-      toast.error("Persona not loaded.");
-      return;
-    }
-    if (cardData === undefined) {
-      toast.error("Card not loaded.");
-      return;
-    }
-    const cachedUserInput = userInput;
-
-    // Optimistically clear userInput and append the user's message to the chat history
-    setUserInput("");
-    setChatHistory((prevMessages: UIMessage[]) => [
-      ...prevMessages,
-      {
-        id: -1,
-        sender: "user",
-        text: cachedUserInput,
-        inserted_at: new Date().toISOString()
-      }
-    ]);
-
-    const model = "claude-3-haiku-20240307";
-    // Get response from provider and update chat history
-    setTyping(true);
-    const contextParams = {
-      chatID,
-      latestUserMessage: userInput,
-      persona: persona,
-      cardData,
-      jailbreak: "",
-      variant: "markdown" as PromptVariant,
-      model,
-      tokenLimit: 4096
-    };
-
-    const contextResult = await context.getContext(contextParams);
-
-    const completionConfig = {
-      model,
-      system: contextResult.system,
-      max_tokens: 256
-    };
-    const provider = getProvider(ProviderE.ANTHROPIC);
-    const completionRes = await provider.getChatCompletion(contextResult.messages, completionConfig);
-    setTyping(false);
-    if (completionRes.kind == "err") {
-      toast.error(`Failed to get chat completion. 
-        Error ${completionRes.error}`);
-      return;
-    }
-    const characterReply = completionRes.value;
-
-    const insertRes = await queries.insertMessagePair(chatID, userInput, characterReply);
-    syncChatHistory();
-
-    if (insertRes.kind == "err") {
-      toast.error(`Failed to insert user and character mesage into database. 
-        Error ${insertRes.error}`);
-      return;
-    }
-  };
-
   return (
     <div className={className}>
       <div className="flex h-fit w-fit items-center ">
-        <Typing className="mb-1 ml-4 mt-1" name="Saku" typing={typing} />
+        <Typing className="mb-1 ml-4 mt-1" name="Saku" typing={isTyping} />
       </div>
       <div className=" flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-neutral-600 px-4 py-3">
         <button className="flex size-6 items-center justify-center text-neutral-400 hover:text-neutral-300">
@@ -123,7 +56,9 @@ export default function ChatBar({
           maxLength={1024}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
-              handleSendMessage(userInput);
+              if (userInput.length != 0) {
+                handleSendMessage();
+              }
               // Prevent inserting a new line on pressing enter
               e.preventDefault();
             }
@@ -133,7 +68,14 @@ export default function ChatBar({
           className="scroll-secondary h-6 max-h-64 w-full resize-none overflow-y-auto bg-inherit px-2 font-[430] leading-6 focus:outline-none"
         />
         {/* Send button */}
-        <button onClick={() => handleSendMessage(userInput)} className="h-fit w-fit ">
+        <button
+          onClick={() => {
+            if (userInput.length != 0) {
+              handleSendMessage();
+            }
+          }}
+          className="h-fit w-fit "
+        >
           <PaperAirplaneIcon className="h-7 w-7 fill-neutral-400  transition duration-150 ease-out hover:fill-neutral-200  " />
         </button>
       </div>

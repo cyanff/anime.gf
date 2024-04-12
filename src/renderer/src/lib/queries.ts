@@ -1,5 +1,5 @@
 import { deepFreeze } from "@shared/utils";
-import { UIMessage } from "@shared/types";
+import { CoreMessage, UIMessage } from "@shared/types";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { Result, isError } from "@shared/utils";
 
@@ -281,6 +281,47 @@ async function updateMessage(messageID: number, text: string): Promise<void> {
   await window.api.sqlite.run(query, [text, messageID]);
 }
 
+/**
+ * Fetches a limited number of messages from the database starting from a given message ID for the specified chat.
+ *
+ * @param chatID - The ID of the chat to fetch messages for.
+ * @param limit - The maximum number of messages to fetch.
+ * @param messageID - The ID of the message to start fetching from. If not provided, the most recent messages will be fetched.
+ * @returns An array of `Message` objects containing the fetched messages.
+ */
+async function getMessagesStartingFrom(chatID: number, limit: number, messageID?: number): Promise<CoreMessage[]> {
+  let query: string;
+  if (messageID === undefined) {
+    query = `
+    SELECT * FROM messages
+    WHERE chat_id = ${chatID}
+    ORDER BY id desc
+    LIMIT ${limit}
+    `.trim();
+  } else {
+    query = `
+    SELECT * FROM messages
+    WHERE chat_id = ${chatID} AND id < ${messageID}
+    ORDER BY id desc
+    LIMIT ${limit}
+    `.trim();
+  }
+
+  return (await window.api.sqlite.all(query)) as CoreMessage[];
+}
+
+async function getLatestUserMessageStartingFrom(chatID: number, messageID: number): Promise<string> {
+  const query = `
+  SELECT text FROM messages
+  WHERE chat_id = ${chatID} AND id < ${messageID} AND sender = 'user'
+  ORDER BY id DESC
+  LIMIT 1;
+  `.trim();
+
+  const row = (await window.api.sqlite.get(query)) as { text: string };
+  return row.text;
+}
+
 export const queries = {
   deleteChat,
   resetChat,
@@ -291,7 +332,9 @@ export const queries = {
   getCardBundle,
   getCardBundles,
   insertMessagePair,
-  updateMessage
+  updateMessage,
+  getMessagesStartingFrom,
+  getLatestUserMessageStartingFrom
 };
 
 deepFreeze(queries);

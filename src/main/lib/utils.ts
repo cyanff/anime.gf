@@ -15,8 +15,8 @@ export const blobPath = path.join(app.getPath("userData"), "blob");
 // Silly tavern .png cards are stored in blob/cards
 export const cardsPath = path.join(blobPath, "cards");
 export const personasPath = path.join(blobPath, "personas");
-
 export const secretsPath = path.join(app.getPath("userData"), "secrets.json");
+export const settingsPath = path.join(app.getPath("userData"), "settings.json");
 
 /**
  * Checks if a file exists and is accessible at the specified path.

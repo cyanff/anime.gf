@@ -1,3 +1,4 @@
+import { ProviderE } from "@/lib/provider/provider";
 import { Message, Persona } from "@shared/db_types";
 
 // Card
@@ -56,3 +57,19 @@ export interface PersonaBundle extends PersonaBundleWithoutData {
 // =====================================
 
 export interface UIMessage extends Pick<Message, "id" | "sender" | "text" | "inserted_at"> {}
+export interface CoreMessage extends Pick<Message, "id" | "sender" | "text"> {}
+
+// Settings from settings.json
+export interface Settings {
+  chat: {
+    provider: ProviderE;
+    model: string;
+    temperature: number;
+    topP: number;
+    topK: number;
+    maxReplyTokens: number;
+    maxContextTokens: number;
+    jailbreak: string;
+    streaming: boolean;
+  };
+}

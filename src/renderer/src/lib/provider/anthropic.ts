@@ -1,6 +1,6 @@
 import { Provider } from "@/lib/provider/provider";
 import { Result } from "@shared/utils";
-import { ProviderMessages, CompletionConfig } from "@/lib/provider/provider";
+import { ProviderMessage, CompletionConfig } from "@/lib/provider/provider";
 
 const models = ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229"];
 
@@ -29,7 +29,10 @@ function getModels(): string[] {
   return [...models];
 }
 
-async function getChatCompletion(messages: ProviderMessages, config: CompletionConfig): Promise<Result<string, Error>> {
+async function getChatCompletion(
+  messages: ProviderMessage[],
+  config: CompletionConfig
+): Promise<Result<string, Error>> {
   const validationRes = validateConfig(config);
   if (validationRes.kind == "err") {
     return validationRes;
@@ -56,13 +59,13 @@ async function getChatCompletion(messages: ProviderMessages, config: CompletionC
   const body: any = {
     model: config.model,
     messages: messages,
-    max_tokens: config.max_tokens || 1024
+    max_tokens: config.maxTokens || 1024
   };
   if (config.system) {
     body.system = config.system;
   }
-  if (config.max_tokens !== undefined) {
-    body.max_tokens = config.max_tokens;
+  if (config.maxTokens !== undefined) {
+    body.max_tokens = config.maxTokens;
   }
   if (config.stop !== undefined) {
     body.stop_sequences = config.stop;
@@ -70,11 +73,11 @@ async function getChatCompletion(messages: ProviderMessages, config: CompletionC
   if (config.temperature !== undefined) {
     body.temperature = config.temperature;
   }
-  if (config.top_p !== undefined) {
-    body.top_p = config.top_p;
+  if (config.topP !== undefined) {
+    body.top_p = config.topP;
   }
-  if (config.top_k !== undefined) {
-    body.top_p = config.top_p;
+  if (config.topK !== undefined) {
+    body.top_p = config.topP;
   }
 
   console.log(headers);

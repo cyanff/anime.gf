@@ -69,8 +69,8 @@ function getModels(): string[] {
     model: config.model,
     messages: reqMessages
   };
-  if (config.max_tokens !== undefined) {
-    body.max_tokens = config.max_tokens;
+  if (config.maxTokens !== undefined) {
+    body.max_tokens = config.maxTokens;
   }
   if (config.stop !== undefined) {
     body.stop = config.stop;
@@ -78,8 +78,8 @@ function getModels(): string[] {
   if (config.temperature !== undefined) {
     body.temperature = config.temperature;
   }
-  if (config.top_p !== undefined) {
-    body.top_p = config.top_p;
+  if (config.topP !== undefined) {
+    body.top_p = config.topP;
   }
 
   const completionRes = await window.api.xfetch.post(url, body, headers);

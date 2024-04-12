@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, net, protocol } from "electron";
+import { app, shell, BrowserWindow, ipcMain, net, protocol, globalShortcut } from "electron";
 import path, { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
@@ -8,6 +8,7 @@ import qdrant from "./lib/store/qdrant";
 import blob from "./lib/store/blob";
 import { xfetch } from "./lib/xfetch";
 import { cardsPath, personasPath } from "./lib/utils";
+import setting from "./lib/store/setting";
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -92,6 +93,7 @@ app.whenReady().then(async () => {
   await sqlite.init();
   await blob.init();
   await secret.init();
+  await setting.init();
 
   ipcMain.handle("sqlite.run", async (_, query: string, params: [] = []) => {
     return sqlite.run(query, params);
@@ -122,6 +124,14 @@ app.whenReady().then(async () => {
   });
   ipcMain.handle("xfetch.post", async (_, url: string, body: Object, headers: Record<string, string>) => {
     return await xfetch.post(url, body, headers);
+  });
+
+  ipcMain.handle("setting.get", async () => {
+    return await setting.get();
+  });
+
+  ipcMain.handle("setting.set", async (_, settings: any) => {
+    return await setting.set(settings);
   });
 
   // Open or close DevTools using F12 in development

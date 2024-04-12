@@ -1,3 +1,12 @@
+/*
+  A message component that displays a message in the chat. The message can be from the user or a character.
+  User messages are displayed on the right side of the chat area, while character messages are displayed on the left side.
+  User messages have a magenta background, while character messages have a gray gradient background.
+  Users can copy, edit, regenerate, and rewind messages. 
+  Users can only use "regenerate" on the latest message sent by a character.
+  Users can only use "rewind" on any message that is not the latest message.
+*/
+
 import { cn } from "@/lib/utils";
 import {
   ContextMenu,
@@ -20,8 +29,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { useApp } from "@/components/AppContext";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { queries } from "@/lib/queries";
 
 interface MessageProps {
   className?: string;
@@ -34,7 +43,10 @@ interface MessageProps {
   isLatest: boolean;
   isLatestCharacterMessage: boolean;
   isEditing: boolean;
-  setEditingMessageID: (id: number | null) => void;
+  handleEdit: () => void;
+  setEditText: (text: string) => void;
+  handleEditSubmit: () => void;
+  handleRegenerate: () => void;
   [rest: string]: any;
 }
 
@@ -49,16 +61,16 @@ function Message({
   isLatest,
   isLatestCharacterMessage,
   isEditing,
-  setEditingMessageID,
+  handleEdit,
+  setEditText,
+  handleEditSubmit,
+  handleRegenerate,
   ...rest
 }: MessageProps) {
   const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
   const roleColorStyles = sender === "user" ? "bg-[#87375f] outline-neutral-400" : "bg-grad-gray outline-neutral-500";
   const editingStyles = isEditing ? "outline-2 outline-dashed" : "";
   const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-90 transition duration-200 ease-in text-neutral-200 rounded-3xl`;
-
-  const { createDialog } = useApp();
-  const [editText, setEditText] = useState("");
   const editFieldRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = () => {
@@ -66,10 +78,10 @@ function Message({
     toast.success("Copied to clipboard!");
   };
 
-  const handleEdit = () => {
+  useEffect(() => {
+    if (!isEditing) return;
     setEditText(text);
-    setEditingMessageID(messageID);
-    // Execute after the next render
+    // Focus on the edit field after it is rendered
     setTimeout(() => {
       if (editFieldRef.current !== null) {
         // Focus on the edit field
@@ -84,14 +96,8 @@ function Message({
         selection?.addRange(range);
       }
     }, 0);
-  };
+  }, [isEditing]);
 
-  const handleEditSubmit = () => {
-    setEditingMessageID(null);
-    // Update the message
-  };
-
-  const handleRegenerate = () => {};
   const handleRewind = () => {};
 
   return (
@@ -132,16 +138,17 @@ function Message({
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       handleEditSubmit();
-                      return;
+                      e.preventDefault();
                     }
                   }}
                   onInput={(e) => setEditText(e.currentTarget.textContent!)}
                   contentEditable={true}
+                  suppressContentEditableWarning={true}
                 >
                   {text}
                 </div>
               ) : (
-                <p className="text-left">{text}</p>
+                <p className="break-normal">{text}</p>
               )}
             </div>
           </div>
@@ -194,7 +201,7 @@ function MessageDropdownMenu({
             </DropdownMenuShortcut>
           </DropdownMenuItem>
           {isLatestCharacterMessage && (
-            <DropdownMenuItem disabled>
+            <DropdownMenuItem onSelect={handleRegenerate}>
               Regenerate
               <DropdownMenuShortcut>
                 <WrenchScrewdriverIcon className="size-4" />
@@ -203,7 +210,7 @@ function MessageDropdownMenu({
           )}
 
           {!isLatest && (
-            <DropdownMenuItem disabled>
+            <DropdownMenuItem onSelect={handleRewind}>
               Rewind
               <DropdownMenuShortcut>
                 <WrenchScrewdriverIcon className="size-4" />
@@ -241,7 +248,7 @@ function MessageContextMenuContent({
       </ContextMenuItem>
 
       {isLatestCharacterMessage && (
-        <ContextMenuItem disabled>
+        <ContextMenuItem onSelect={handleRegenerate}>
           Regenerate
           <ContextMenuShortcut>
             <WrenchScrewdriverIcon className="size-4" />
@@ -250,7 +257,7 @@ function MessageContextMenuContent({
       )}
 
       {!isLatest && (
-        <ContextMenuItem disabled>
+        <ContextMenuItem onSelect={handleRewind}>
           Rewind
           <ContextMenuShortcut>
             <WrenchScrewdriverIcon className="size-4" />

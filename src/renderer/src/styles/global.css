@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* TODO, when we have multiple pages, refactor specialized styles into *.module.css files */
-
 /* ==================== Custom ==================== */
 @font-face {
   font-family: 'Inter';
