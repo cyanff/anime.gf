@@ -47,6 +47,7 @@ interface MessageProps {
   setEditText: (text: string) => void;
   handleEditSubmit: () => void;
   handleRegenerate: () => void;
+  handleDelete: () => void;
   [rest: string]: any;
 }
 
@@ -65,6 +66,7 @@ function Message({
   setEditText,
   handleEditSubmit,
   handleRegenerate,
+  handleDelete,
   ...rest
 }: MessageProps) {
   const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
@@ -129,6 +131,7 @@ function Message({
                   handleEdit={handleEdit}
                   handleRegenerate={handleRegenerate}
                   handleRewind={handleRewind}
+                  handleDelete={handleDelete}
                 />
               </div>
               {isEditing ? (
@@ -159,6 +162,7 @@ function Message({
             handleEdit={handleEdit}
             handleRegenerate={handleRegenerate}
             handleRewind={handleRewind}
+            handleDelete={handleDelete}
           />
         </ContextMenuTrigger>
       </ContextMenu>
@@ -173,6 +177,7 @@ interface MenuProps {
   handleEdit: () => void;
   handleRegenerate: () => void;
   handleRewind: () => void;
+  handleDelete: () => void;
 }
 
 function MessageDropdownMenu({
@@ -181,7 +186,8 @@ function MessageDropdownMenu({
   handleCopy,
   handleEdit,
   handleRegenerate,
-  handleRewind
+  handleRewind,
+  handleDelete
 }: MenuProps) {
   return (
     <DropdownMenu>
@@ -217,6 +223,13 @@ function MessageDropdownMenu({
               </DropdownMenuShortcut>
             </DropdownMenuItem>
           )}
+
+          <DropdownMenuItem onSelect={handleDelete}>
+            Delete
+            <DropdownMenuShortcut>
+              <WrenchScrewdriverIcon className="size-4" />
+            </DropdownMenuShortcut>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -229,7 +242,8 @@ function MessageContextMenuContent({
   handleCopy,
   handleEdit,
   handleRegenerate,
-  handleRewind
+  handleRewind,
+  handleDelete
 }: MenuProps) {
   return (
     <ContextMenuContent className="w-36">
@@ -264,6 +278,13 @@ function MessageContextMenuContent({
           </ContextMenuShortcut>
         </ContextMenuItem>
       )}
+
+      <ContextMenuItem onSelect={handleDelete}>
+        Delete
+        <ContextMenuShortcut>
+          <WrenchScrewdriverIcon className="size-4" />
+        </ContextMenuShortcut>
+      </ContextMenuItem>
     </ContextMenuContent>
   );
 }

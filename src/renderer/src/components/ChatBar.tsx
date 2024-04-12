@@ -1,11 +1,7 @@
-import { queries } from "@/lib/queries";
-import { UIMessage } from "@shared/types";
 import { PaperAirplaneIcon, WrenchIcon } from "@heroicons/react/24/solid";
 import { CardData, PersonaData } from "@shared/types";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import { useEffect, useRef } from "react";
 import Typing from "./Typing";
-import { reply } from "@/lib/reply";
 
 interface ChatBarProps {
   chatID: number;

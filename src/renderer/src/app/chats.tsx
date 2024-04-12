@@ -4,27 +4,38 @@ import Message from "@/components/Message";
 import { queries } from "@/lib/queries";
 import { time } from "@/lib/time";
 import { CardBundle, PersonaBundle, UIMessage } from "@shared/types";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import "../styles/global.css";
 import { reply } from "@/lib/reply";
+import { AppContext, DialogConfig } from "@/components/AppContext";
+import useShiftKey from "@/components/hooks/useShiftKey";
 
 function ChatsPage(): JSX.Element {
   const [chatID, setChatID] = useState(1);
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
   const [cardBundle, setCardBundle] = useState<CardBundle>();
   const [chatHistory, setChatHistory] = useState<UIMessage[]>([]);
-  const chatScrollRef = useRef<HTMLDivElement | null>(null);
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
   const [userInput, setUserInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const { createDialog } = useContext(AppContext);
+  const isShiftKeyPressed = useShiftKey();
 
   // Sync states with db on load
   useEffect(() => {
     syncCardBundle();
     syncPersonaBundle();
     syncChatHistory();
+    // Scroll to the bottom of the chat on load
+    // There's a race condition here, won't fix :)
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ block: "start", behavior: "smooth" });
+      }
+    }, 50);
   }, [chatID]);
 
   const syncCardBundle = async () => {
@@ -53,13 +64,6 @@ function ChatsPage(): JSX.Element {
     }
     setChatHistory(res.value);
   };
-
-  // Scroll to bottom on load
-  useEffect(() => {
-    if (chatScrollRef.current) {
-      chatScrollRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, []);
 
   // Add escape key listener to exit edit mode
   useEffect(() => {
@@ -134,6 +138,25 @@ function ChatsPage(): JSX.Element {
 
   const handleRegenerate = () => {};
 
+  const handleDelete = (messageID: number) => {
+    // If shift key is pressed, delete the message without confirmation
+    if (isShiftKeyPressed) {
+      queries.deleteMessage(messageID);
+      syncChatHistory();
+    } else {
+      const config: DialogConfig = {
+        title: "Delete Message",
+        actionLabel: "Delete",
+        description: "Are you sure you want to delete this message?",
+        onAction: () => {
+          queries.deleteMessage(messageID);
+          syncChatHistory();
+        }
+      };
+      createDialog(config);
+    }
+  };
+
   return (
     <>
       <ChatsSidebar
@@ -169,10 +192,13 @@ function ChatsPage(): JSX.Element {
                   setEditText={setEditText}
                   handleEditSubmit={() => handleEditSubmit(message.id)}
                   handleRegenerate={handleRegenerate}
+                  handleDelete={() => {
+                    handleDelete(message.id);
+                  }}
                 />
               );
             })}
-            <div ref={chatScrollRef} />
+            <div ref={messagesEndRef} className="invisible -mt-2 h-0" />
           </div>
 
           <ChatBar

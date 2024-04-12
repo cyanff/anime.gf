@@ -334,7 +334,8 @@ export const queries = {
   insertMessagePair,
   updateMessage,
   getMessagesStartingFrom,
-  getLatestUserMessageStartingFrom
+  getLatestUserMessageStartingFrom,
+  deleteMessage
 };
 
 deepFreeze(queries);
