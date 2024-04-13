@@ -95,7 +95,7 @@ async function get(params: ContextParams): Promise<Context> {
  * @param latestUserMessage - The latest user message to be added to the end of the `ProviderMessage` array.
  * @returns An array of `ProviderMessage` objects representing the conversation history in the format expected by the provider.
  */
-export function toProviderMessages(messages: CoreMessage[], latestUserMessage: string): ProviderMessage[] {
+function toProviderMessages(messages: CoreMessage[], latestUserMessage: string): ProviderMessage[] {
   let ret = messages.map((m) => {
     return {
       role: m.sender === "user" ? "user" : "assistant",

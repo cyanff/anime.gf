@@ -301,7 +301,7 @@ VALUES (?, ?, 'character');
   }
 }
 
-async function updateMessage(messageID: number, text: string): Promise<void> {
+async function updateMessageText(messageID: number, text: string): Promise<void> {
   const query = `
   UPDATE messages
   SET text = ?
@@ -373,6 +373,26 @@ async function setCandidateMessageAsPrime(messageID: number, candidateID: number
   await window.api.sqlite.run(query, [candidateID, messageID]);
 }
 
+async function updateCandidateMessage(candidateID: number, text: string): Promise<void> {
+  const query = `
+  UPDATE message_candidates
+  SET text = ?
+  WHERE id = ?;
+  `.trim();
+
+  await window.api.sqlite.run(query, [text, candidateID]);
+}
+
+async function updateMessagePrimeCandidate(messageID: number, candidateID: number | null): Promise<void> {
+  const query = `
+  UPDATE messages
+  SET prime_candidate_id = ?
+  WHERE id = ?;
+  `.trim();
+
+  await window.api.sqlite.run(query, [candidateID, messageID]);
+}
+
 export const queries = {
   deleteChat,
   resetChat,
@@ -383,12 +403,14 @@ export const queries = {
   getCardBundle,
   getCardBundles,
   insertMessagePair,
-  updateMessage,
+  updateMessageText,
   getMessagesStartingFrom,
   getLatestUserMessageStartingFrom,
   deleteMessage,
   insertCandidateMessage,
-  setCandidateMessageAsPrime
+  setCandidateMessageAsPrime,
+  updateCandidateMessage,
+  updateMessagePrimeCandidate
 };
 
 deepFreeze(queries);

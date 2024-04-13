@@ -94,6 +94,15 @@ function Message({
     setIDX(messageAndCandidatesIDX);
   }, [messageAndCandidatesIDX]);
 
+  // When the index changes, update the primary candidate ID in the database
+  useEffect(() => {
+    if (idx === 0) {
+      queries.updateMessagePrimeCandidate(messageID, null);
+    } else {
+      queries.updateMessagePrimeCandidate;
+    }
+  }, [idx]);
+
   const handleCopy = () => {
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard!");
@@ -110,7 +119,7 @@ function Message({
 
   useEffect(() => {
     if (!isEditing) return;
-    setEditText(text);
+    setEditText(messageAndCandidates[idx]);
     // Focus on the edit field after it is rendered
     setTimeout(() => {
       if (editFieldRef.current !== null) {
@@ -188,7 +197,7 @@ function Message({
                     contentEditable={true}
                     suppressContentEditableWarning={true}
                   >
-                    {text}
+                    {messageAndCandidates[idx]}
                   </div>
                 ) : (
                   // Display the appropriate message or candidate message

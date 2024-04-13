@@ -16,6 +16,7 @@ function ChatsPage(): JSX.Element {
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
   const [cardBundle, setCardBundle] = useState<CardBundle>();
   const [chatHistory, setChatHistory] = useState<UIMessage[]>([]);
+  // Keep track of which message is being edited, only one message can be edited at a time
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
   const [userInput, setUserInput] = useState("");
@@ -88,19 +89,30 @@ function ChatsPage(): JSX.Element {
     return <div className="h-screen w-screen bg-neutral-800 "></div>;
   }
 
-  const handleEditSubmit = (id: number) => {
+  const handleEditSubmit = (messageID?: number, candidateID?: number) => {
+    if (!messageID && !candidateID) {
+      return;
+    }
+    if (messageID && candidateID) {
+      return;
+    }
+    // Clear the editing state
     setEditingMessageID(null);
-    // Optimistic update
-    const newChatHistory = chatHistory.map((msg) => {
-      if (msg.id === id) {
-        return { ...msg, text: editText };
+    try {
+      // Editing a main message
+      if (messageID) {
+        queries.updateMessageText(messageID, editText);
       }
-      return msg;
-    });
-    setChatHistory(newChatHistory);
-    // Update message in the db
-    queries.updateMessage(id, editText);
-    syncChatHistory();
+      // Editing a candidate message
+      else if (candidateID) {
+        queries.updateCandidateMessage(candidateID, editText);
+      }
+    } catch (e) {
+      toast.error(`Failed to edit the message. Error: ${e}`);
+      console.error(e);
+    } finally {
+      syncChatHistory();
+    }
   };
 
   const handleSendMessage = async () => {
@@ -168,7 +180,7 @@ function ChatsPage(): JSX.Element {
     }
   };
 
-  const handleDelete = (messageID: number) => {
+  const handleDelete = (messageID) => {
     // If shift key is pressed, delete the message without confirmation
     if (isShiftKeyPressed) {
       queries.deleteMessage(messageID);
@@ -209,13 +221,15 @@ function ChatsPage(): JSX.Element {
               const relativeTime = time.isoToLLMRelativeTime(iso);
               const isLatest = idx === chatHistory.length - 1;
               const isLatestCharacterMessage = message.sender === "character" && idx >= chatHistory.length - 2;
+
+              // Combine the main message and its candidates
               let messageAndCandidates = [message.text];
               messageAndCandidates = messageAndCandidates.concat(message.candidates.map((candidate) => candidate.text));
+
+              // If there are no prime candidates, set the index to be the main message
               const primeCandidateIDX = message.candidates.findIndex((c) => c.id === message.prime_candidate_id);
               const messageAndCandidatesIDX = primeCandidateIDX === -1 ? 0 : primeCandidateIDX + 1;
-
-              console.log("primeCandidateIDX", primeCandidateIDX);
-              console.log("messageAndCandidatesIDX", messageAndCandidatesIDX);
+              const isMainMessage = messageAndCandidatesIDX === 0;
 
               return (
                 <Message
@@ -233,7 +247,13 @@ function ChatsPage(): JSX.Element {
                   isEditing={editingMessageID === message.id}
                   handleEdit={() => setEditingMessageID(message.id)}
                   setEditText={setEditText}
-                  handleEditSubmit={() => handleEditSubmit(message.id)}
+                  handleEditSubmit={() => {
+                    if (isMainMessage) {
+                      handleEditSubmit(message.id);
+                    } else {
+                      handleEditSubmit(undefined, message.candidates[messageAndCandidatesIDX - 1].id);
+                    }
+                  }}
                   handleRegenerate={() => handleRegenerate(message.id)}
                   handleDelete={() => {
                     handleDelete(message.id);
