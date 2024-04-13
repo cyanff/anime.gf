@@ -16,7 +16,14 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
-import { ClipboardDocumentIcon, EllipsisHorizontalIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowPathIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ClipboardDocumentIcon,
+  EllipsisHorizontalIcon,
+  WrenchScrewdriverIcon
+} from "@heroicons/react/24/solid";
 
 import {
   DropdownMenuContent,
@@ -40,6 +47,7 @@ interface MessageProps {
   timestring: string;
   text: string;
   sender: "user" | "character";
+  isRegenerated: boolean;
   isLatest: boolean;
   isLatestCharacterMessage: boolean;
   isEditing: boolean;
@@ -59,6 +67,7 @@ function Message({
   timestring,
   text,
   sender,
+  isRegenerated,
   isLatest,
   isLatestCharacterMessage,
   isEditing,
@@ -123,47 +132,68 @@ function Message({
         {/* Right Click Menu*/}
         <ContextMenuTrigger>
           {/* Message Component */}
-          <div {...rest} className={cn(baseStyles, editingStyles, roleColorStyles, className)}>
-            <img
-              className="size-11 shrink-0 rounded-full object-cover object-top"
-              src={avatar || "default_avatar.png"}
-              alt="Avatar"
-            />
-            <div className="flex flex-col justify-start space-y-0.5">
-              {/* Username and Timestamp */}
-              <div className="flex h-fit flex-row items-center justify-between space-x-3">
-                <div className=" text-base font-semibold text-white">{name}</div>
-                <MessageDropdownMenu
-                  isLatest={isLatest}
-                  isLatestCharacterMessage={isLatestCharacterMessage}
-                  handleCopy={handleCopy}
-                  handleCopyText={handleCopyText}
-                  handleEdit={handleEdit}
-                  handleRegenerate={handleRegenerate}
-                  handleRewind={handleRewind}
-                  handleDelete={handleDelete}
-                />
+          <div className="flex flex-col">
+            <div {...rest} className={cn(baseStyles, editingStyles, roleColorStyles, className)}>
+              <img
+                className="size-11 shrink-0 rounded-full object-cover object-top"
+                src={avatar || "default_avatar.png"}
+                alt="Avatar"
+              />
+              <div className="flex flex-col justify-start space-y-0.5">
+                {/* Username and Timestamp */}
+                <div className="flex h-fit flex-row items-center justify-between space-x-3">
+                  <div className=" text-base font-semibold text-white">{name}</div>
+                  <MessageDropdownMenu
+                    isLatest={isLatest}
+                    isLatestCharacterMessage={isLatestCharacterMessage}
+                    handleCopy={handleCopy}
+                    handleCopyText={handleCopyText}
+                    handleEdit={handleEdit}
+                    handleRegenerate={handleRegenerate}
+                    handleRewind={handleRewind}
+                    handleDelete={handleDelete}
+                  />
+                </div>
+                {isEditing ? (
+                  <div
+                    ref={editFieldRef}
+                    className="scroll-secondary h-auto w-full overflow-y-scroll text-wrap break-all bg-transparent text-left focus:outline-none"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        handleEditSubmit();
+                        e.preventDefault();
+                      }
+                    }}
+                    onInput={(e) => setEditText(e.currentTarget.textContent!)}
+                    contentEditable={true}
+                    suppressContentEditableWarning={true}
+                  >
+                    {text}
+                  </div>
+                ) : (
+                  <p className="break-normal">{text}</p>
+                )}
               </div>
-              {isEditing ? (
-                <div
-                  ref={editFieldRef}
-                  className="scroll-secondary h-auto w-full overflow-y-scroll text-wrap break-all bg-transparent text-left focus:outline-none"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      handleEditSubmit();
-                      e.preventDefault();
-                    }
-                  }}
-                  onInput={(e) => setEditText(e.currentTarget.textContent!)}
-                  contentEditable={true}
-                  suppressContentEditableWarning={true}
-                >
-                  {text}
+            </div>
+
+            {isLatestCharacterMessage &&
+              (isRegenerated ? (
+                <div className="flex flex-row items-center space-x-2 p-2">
+                  <button className="size-5">
+                    <ChevronLeftIcon className="size-5 fill-neutral-500" />
+                  </button>
+                  <p className="text-sm font-medium">1 / 10</p>
+                  <button className="size-5">
+                    <ChevronRightIcon className="size-5 fill-neutral-500" />
+                  </button>
                 </div>
               ) : (
-                <p className="break-normal">{text}</p>
-              )}
-            </div>
+                <div className="px-2 py-1">
+                  <button className="size-6">
+                    <ArrowPathIcon className="size-6 fill-neutral-500" />
+                  </button>
+                </div>
+              ))}
           </div>
           <MessageContextMenuContent
             isLatest={isLatest}

@@ -181,8 +181,17 @@ async function getChatHistory(
   startID?: number,
   limit: number = 25
 ): Promise<Result<UIMessage[], Error>> {
-  const query = `
-  SELECT id, text, sender, inserted_at
+  interface MessageQueryResult {
+    id: number;
+    text: string;
+    sender: "user" | "character";
+    is_regenerated: number;
+    prime_candidate_id?: number;
+    inserted_at: string;
+  }
+
+  const messageQuery = `
+  SELECT id, text, sender, is_regenerated, prime_candidate_id, inserted_at
   FROM messages
   WHERE ${startID ? `id <= ${startID} AND chat_id = ${chatID}` : `chat_id = ${chatID}`} 
   ORDER BY id
@@ -190,8 +199,30 @@ async function getChatHistory(
   `.trim();
 
   try {
-    const rows = (await window.api.sqlite.all(query)) as UIMessage[];
-    return { kind: "ok", value: rows };
+    const rows = (await window.api.sqlite.all(messageQuery)) as MessageQueryResult[];
+
+    const ret = await Promise.all(
+      rows.map(async (row) => {
+        // For each message, fetch all candidates
+        const candidateQuery = `
+      SELECT id, text
+      FROM message_candidates
+      WHERE message_id = ${row.id};
+      `.trim();
+        const candidates = (await window.api.sqlite.all(candidateQuery)) as { id: number; text: string }[];
+        return {
+          id: row.id,
+          sender: row.sender,
+          text: row.text,
+          is_regenerated: row.is_regenerated,
+          prime_candidate_id: row.prime_candidate_id,
+          inserted_at: row.inserted_at,
+          candidates
+        };
+      })
+    );
+
+    return { kind: "ok", value: ret };
   } catch (e) {
     isError(e);
     return { kind: "err", error: e };

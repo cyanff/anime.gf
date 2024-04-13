@@ -23,6 +23,7 @@ function ChatsPage(): JSX.Element {
   const chatAreaRef = useRef<HTMLDivElement | null>(null);
   const { createDialog } = useContext(AppContext);
   const isShiftKeyPressed = useShiftKey();
+  const [candididateMessageID, setCandidateMessageID] = useState<number | null>(null);
 
   // Sync states with db on load
   useEffect(() => {
@@ -113,6 +114,8 @@ function ChatsPage(): JSX.Element {
         id: -1,
         sender: "user",
         text: cachedUserInput,
+        is_regenerated: 0,
+        candidates: [],
         inserted_at: new Date().toISOString()
       }
     ]);
@@ -182,6 +185,10 @@ function ChatsPage(): JSX.Element {
               const relativeTime = time.isoToLLMRelativeTime(iso);
               const isLatest = idx === chatHistory.length - 1;
               const isLatestCharacterMessage = message.sender === "character" && idx >= chatHistory.length - 2;
+              let text =
+                message.sender === "user"
+                  ? message.text
+                  : message.candidates.find((c) => c.id === candididateMessageID)?.text || message.text;
               return (
                 <Message
                   key={idx}
@@ -189,7 +196,8 @@ function ChatsPage(): JSX.Element {
                   avatar={message.sender === "user" ? personaBundle.avatarURI || "" : cardBundle.avatarURI || ""}
                   name={message.sender === "user" ? personaBundle.data.name : cardBundle.data.character.name}
                   sender={message.sender}
-                  text={message.text}
+                  text={text}
+                  isRegenerated={message.is_regenerated === 1}
                   timestring={relativeTime}
                   isLatest={isLatest}
                   isLatestCharacterMessage={isLatestCharacterMessage}

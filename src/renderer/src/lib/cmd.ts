@@ -64,6 +64,6 @@ export function handleA() {
   console.log("Output:", toProviderMessages(messages6, latestUserMessage6));
 }
 
-export function handleB() {}
+export async function handleB() {}
 
 export function handleC() {}

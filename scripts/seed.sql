@@ -34,6 +34,17 @@ CREATE TABLE IF NOT EXISTS chats
     FOREIGN KEY(card_id) REFERENCES cards(id)
 );
 
+
+CREATE TABLE IF NOT EXISTS message_candidates
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    message_id INTEGER NOT NULL,
+    text TEXT DEFAULT "" NOT NULL ,
+    inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TEXT,
+    FOREIGN KEY(message_id) REFERENCES messages(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS messages
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,9 +52,12 @@ CREATE TABLE IF NOT EXISTS messages
     text TEXT DEFAULT "" NOT NULL ,
     sender TEXT NOT NULL CHECK(sender IN ('user', 'character')),
     is_embedded BOOLEAN DEFAULT 0 NOT NULL,
+    is_regenerated BOOLEAN DEFAULT 0 NOT NULL,
+    prime_candidate_id INTEGER,
     inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TEXT,
-    FOREIGN KEY(chat_id) REFERENCES chats(id) ON DELETE CASCADE
+    FOREIGN KEY(chat_id) REFERENCES chats(id) ON DELETE CASCADE,
+    FOREIGN KEY (prime_candidate_id) REFERENCES message_candidates (id)
 );
 
 INSERT INTO personas (name, description)
@@ -66,7 +80,7 @@ VALUES
     (2, 2),
     (2, 3);
 
-INSERT INTO messages (chat_id, text, sender,  inserted_at)
+INSERT INTO messages (chat_id, text, sender, inserted_at)
 VALUES
 (1, 'Hello!', 'character',   '2023-04-20 10:00:00'),
 (1, 'hey, whats up?', 'user',   '2023-04-20 10:00:05'),
@@ -75,3 +89,11 @@ VALUES
 (1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
 (2, 'Hi there! Let me know if you need any help.', 'character',   '2023-04-20 10:00:25'),
 (3, 'hi', 'character',   '2023-04-20 10:00:25');
+
+
+INSERT INTO message_candidates (message_id, text)
+VALUES
+(5, 'hi how might i help you td?');
+
+UPDATE messages SET is_regenerated = 1 WHERE id = 5;
+UPDATE messages SET prime_candidate_id = 1 WHERE id = 5;

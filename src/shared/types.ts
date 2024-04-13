@@ -56,7 +56,10 @@ export interface PersonaBundle extends PersonaBundleWithoutData {
 }
 // =====================================
 
-export interface UIMessage extends Pick<Message, "id" | "sender" | "text" | "inserted_at"> {}
+export interface UIMessage
+  extends Pick<Message, "id" | "sender" | "text" | "is_regenerated" | "prime_candidate_id" | "inserted_at"> {
+  candidates: { id: number; text: string }[];
+}
 export interface CoreMessage extends Pick<Message, "id" | "sender" | "text"> {}
 
 // Settings from settings.json
