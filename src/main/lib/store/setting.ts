@@ -9,11 +9,11 @@ async function init() {
     chat: {
       provider: "anthropic",
       model: "claude-3-haiku-20240307",
-      maxReplyTokens: 512,
+      maxReplyTokens: 256,
       temperature: 0.7,
       topP: 1,
       topK: 50,
-      maxContextTokens: 4096,
+      maxContextTokens: 2048,
       jailbreak: "",
       streaming: true
     }

@@ -1,15 +1,15 @@
+import { AppContext, DialogConfig } from "@/components/AppContext";
 import ChatBar from "@/components/ChatBar";
 import ChatsSidebar from "@/components/ChatsSidebar";
 import Message from "@/components/Message";
+import { useShiftKey } from "@/lib/hook/useShiftKey";
 import { queries } from "@/lib/queries";
+import { reply } from "@/lib/reply";
 import { time } from "@/lib/time";
 import { CardBundle, PersonaBundle, UIMessage } from "@shared/types";
-import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import "../styles/global.css";
-import { reply } from "@/lib/reply";
-import { AppContext, DialogConfig } from "@/components/AppContext";
-import useShiftKey from "@/components/hooks/useShiftKey";
 
 function ChatsPage(): JSX.Element {
   const [chatID, setChatID] = useState(1);
@@ -20,7 +20,7 @@ function ChatsPage(): JSX.Element {
   const [editText, setEditText] = useState("");
   const [userInput, setUserInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const chatAreaRef = useRef<HTMLDivElement | null>(null);
   const { createDialog } = useContext(AppContext);
   const isShiftKeyPressed = useShiftKey();
 
@@ -30,13 +30,15 @@ function ChatsPage(): JSX.Element {
     syncPersonaBundle();
     syncChatHistory();
     // Scroll to the bottom of the chat on load
-    // There's a race condition here, won't fix :)
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ block: "start", behavior: "smooth" });
-      }
-    }, 50);
+    // Too much of a hassle to fix
+    setTimeout(scrollToBottom, 30);
   }, [chatID]);
+
+  const scrollToBottom = () => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }
+  };
 
   const syncCardBundle = async () => {
     const res = await queries.getCardBundle(chatID);
@@ -102,9 +104,9 @@ function ChatsPage(): JSX.Element {
 
   const handleSendMessage = async () => {
     const cachedUserInput = userInput;
-    // Optimistically clear userInput and append the user's message to the chat history
     setIsTyping(true);
     setUserInput("");
+    scrollToBottom();
     setChatHistory((prevMessages: UIMessage[]) => [
       ...prevMessages,
       {
@@ -132,6 +134,7 @@ function ChatsPage(): JSX.Element {
       setUserInput(cachedUserInput);
     } finally {
       setIsTyping(false);
+      scrollToBottom();
       syncChatHistory();
     }
   };
@@ -170,7 +173,10 @@ function ChatsPage(): JSX.Element {
         {/* Chat Area and Chat Bar Wrapper*/}
         <div className="relative flex h-full flex-auto flex-col pl-8 pt-8">
           {/* Chat Area */}
-          <div className="scroll-primary flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 py-1 transition duration-500 ease-out">
+          <div
+            ref={chatAreaRef}
+            className="scroll-primary flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 py-1 transition duration-500 ease-out"
+          >
             {chatHistory?.map((message, idx) => {
               const iso = time.sqliteToISO(message.inserted_at);
               const relativeTime = time.isoToLLMRelativeTime(iso);
@@ -198,7 +204,6 @@ function ChatsPage(): JSX.Element {
                 />
               );
             })}
-            <div ref={messagesEndRef} className="invisible -mt-2 h-0" />
           </div>
 
           <ChatBar

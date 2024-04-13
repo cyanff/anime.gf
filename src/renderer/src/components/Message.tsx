@@ -72,12 +72,21 @@ function Message({
   const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
   const roleColorStyles = sender === "user" ? "bg-[#87375f] outline-neutral-400" : "bg-grad-gray outline-neutral-500";
   const editingStyles = isEditing ? "outline-2 outline-dashed" : "";
-  const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-90 transition duration-200 ease-in text-neutral-200 rounded-3xl`;
+  const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 transition duration-200 ease-in text-neutral-200 rounded-3xl`;
   const editFieldRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard!");
+  };
+
+  const handleCopyText = () => {
+    const selectedText = window.getSelection()?.toString();
+    if (selectedText) {
+      navigator.clipboard.writeText(selectedText).then(() => {
+        console.log("Text copied to clipboard");
+      });
+    }
   };
 
   useEffect(() => {
@@ -128,6 +137,7 @@ function Message({
                   isLatest={isLatest}
                   isLatestCharacterMessage={isLatestCharacterMessage}
                   handleCopy={handleCopy}
+                  handleCopyText={handleCopyText}
                   handleEdit={handleEdit}
                   handleRegenerate={handleRegenerate}
                   handleRewind={handleRewind}
@@ -159,6 +169,7 @@ function Message({
             isLatest={isLatest}
             isLatestCharacterMessage={isLatestCharacterMessage}
             handleCopy={handleCopy}
+            handleCopyText={handleCopyText}
             handleEdit={handleEdit}
             handleRegenerate={handleRegenerate}
             handleRewind={handleRewind}
@@ -174,6 +185,7 @@ interface MenuProps {
   isLatest: boolean;
   isLatestCharacterMessage: boolean;
   handleCopy: () => void;
+  handleCopyText: () => void;
   handleEdit: () => void;
   handleRegenerate: () => void;
   handleRewind: () => void;
@@ -184,6 +196,7 @@ function MessageDropdownMenu({
   isLatest,
   isLatestCharacterMessage,
   handleCopy,
+  handleCopyText,
   handleEdit,
   handleRegenerate,
   handleRewind,
@@ -224,6 +237,13 @@ function MessageDropdownMenu({
             </DropdownMenuItem>
           )}
 
+          <DropdownMenuItem onSelect={handleCopyText}>
+            Copy Text
+            <DropdownMenuShortcut>
+              <WrenchScrewdriverIcon className="size-4" />
+            </DropdownMenuShortcut>
+          </DropdownMenuItem>
+
           <DropdownMenuItem onSelect={handleDelete}>
             Delete
             <DropdownMenuShortcut>
@@ -240,6 +260,7 @@ function MessageContextMenuContent({
   isLatest,
   isLatestCharacterMessage,
   handleCopy,
+  handleCopyText,
   handleEdit,
   handleRegenerate,
   handleRewind,
@@ -278,6 +299,12 @@ function MessageContextMenuContent({
           </ContextMenuShortcut>
         </ContextMenuItem>
       )}
+      <ContextMenuItem onSelect={handleCopyText}>
+        Copy Text
+        <ContextMenuShortcut>
+          <WrenchScrewdriverIcon className="size-4" />
+        </ContextMenuShortcut>
+      </ContextMenuItem>
 
       <ContextMenuItem onSelect={handleDelete}>
         Delete

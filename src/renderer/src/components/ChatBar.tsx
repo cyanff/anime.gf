@@ -1,7 +1,8 @@
-import { PaperAirplaneIcon, WrenchIcon } from "@heroicons/react/24/solid";
+import { PaperAirplaneIcon, PlusCircleIcon, WrenchIcon } from "@heroicons/react/24/solid";
 import { CardData, PersonaData } from "@shared/types";
 import { useEffect, useRef } from "react";
 import Typing from "./Typing";
+import { toast } from "sonner";
 
 interface ChatBarProps {
   chatID: number;
@@ -43,7 +44,12 @@ export default function ChatBar({
       </div>
       <div className=" flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-neutral-600 px-4 py-3">
         <button className="flex size-6 items-center justify-center text-neutral-400 hover:text-neutral-300">
-          <WrenchIcon className="size-6 fill-neutral-400 transition duration-150 ease-out hover:fill-neutral-200" />
+          <PlusCircleIcon
+            className="size-6 fill-neutral-400 transition duration-150 ease-out hover:fill-neutral-200"
+            onClick={() => {
+              toast("Coming in a future update!");
+            }}
+          />
         </button>
         {/* Textarea wrapper */}
         <textarea
