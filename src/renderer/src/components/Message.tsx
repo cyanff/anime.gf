@@ -49,8 +49,8 @@ interface MessageProps {
   timestring: string;
   text: string;
   sender: "user" | "character";
-  candidates: UIMessageCandidate[];
-  primeCandidateID?: number;
+  messageAndCandidates: string[];
+  messageAndCandidatesIDX: number;
   isLatest: boolean;
   isLatestCharacterMessage: boolean;
   isEditing: boolean;
@@ -70,8 +70,8 @@ function Message({
   timestring,
   text,
   sender,
-  candidates,
-  primeCandidateID,
+  messageAndCandidates,
+  messageAndCandidatesIDX,
   isLatest,
   isLatestCharacterMessage,
   isEditing,
@@ -87,8 +87,8 @@ function Message({
   const editingStyles = isEditing ? "outline-2 outline-dashed" : "";
   const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 transition duration-200 ease-in text-neutral-200 rounded-3xl group/msg`;
   const editFieldRef = useRef<HTMLDivElement>(null);
-  const initialIDX = candidates.findIndex((c) => c.id === primeCandidateID);
-  const [messageSelectIDX, setMessageSelectIDX] = useState(initialIDX);
+
+  const [idx, setIDX] = useState(messageAndCandidatesIDX);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(text);
@@ -127,8 +127,13 @@ function Message({
   const handleRewind = () => {};
 
   const handleChangeMessage = (idx: number) => {
-    const clampedValue = Math.min(Math.max(idx, -1), candidates.length);
-    setMessageSelectIDX(clampedValue);
+    // If the message  change to is out of bounds, regenerate the message
+    if (idx === messageAndCandidates.length) {
+      handleRegenerate();
+      return;
+    }
+    const clampedValue = Math.min(Math.max(idx, 0), messageAndCandidates.length - 1);
+    setIDX(clampedValue);
   };
 
   return (
@@ -182,8 +187,8 @@ function Message({
                     {text}
                   </div>
                 ) : (
-                  // Display the selected candidate message if it exists, or the original message if it doesn't
-                  <p className="break-normal">{candidates[messageSelectIDX]?.text || text}</p>
+                  // Display the appropriate message or candidate message
+                  <p className="break-normal">{messageAndCandidates[idx]}</p>
                 )}
               </div>
             </div>
@@ -211,24 +216,24 @@ function Message({
                 - show message text 
           */}
           {isLatestCharacterMessage &&
-            (candidates.length > 0 ? (
+            /* Show the candidate selector if there are multiple candidates */
+            (messageAndCandidates.length > 1 ? (
               <div className="flex flex-row items-center space-x-2 p-2">
                 {/* Left Arrow */}
                 <button
                   className="size-5"
                   onClick={() => {
-                    handleChangeMessage(messageSelectIDX - 1);
+                    handleChangeMessage(idx - 1);
                   }}
                 >
                   <ChevronLeftIcon className="size-5 fill-neutral-500" />
                 </button>
-                {/* Display the range (-1 -> n) as 1, 2, 3, n+2 */}
-                <p className="text-sm font-medium">{`${messageSelectIDX + 2} / ${candidates.length + 2}`}</p>
+                <p className="text-sm font-medium">{`${idx + 1} / ${messageAndCandidates.length}`}</p>
                 {/* Right Arrow */}
                 <button
                   className="size-5"
                   onClick={() => {
-                    handleChangeMessage(messageSelectIDX + 1);
+                    handleChangeMessage(idx + 1);
                   }}
                 >
                   <ChevronRightIcon className="size-5 fill-neutral-500" />

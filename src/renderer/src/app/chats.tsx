@@ -141,7 +141,12 @@ function ChatsPage(): JSX.Element {
     }
   };
 
-  const handleRegenerate = () => {};
+  const handleRegenerate = async (messageID: number) => {
+    const characterReply = await reply.regenerate(chatID, messageID, cardBundle.data, personaBundle.data);
+    const candidateID = await queries.insertCandidateMessage(messageID, characterReply);
+    await queries.setCandidateMessageAsPrime(messageID, candidateID);
+    syncChatHistory();
+  };
 
   const handleDelete = (messageID: number) => {
     // If shift key is pressed, delete the message without confirmation
@@ -184,6 +189,11 @@ function ChatsPage(): JSX.Element {
               const relativeTime = time.isoToLLMRelativeTime(iso);
               const isLatest = idx === chatHistory.length - 1;
               const isLatestCharacterMessage = message.sender === "character" && idx >= chatHistory.length - 2;
+              let messageAndCandidates = [message.text];
+              messageAndCandidates = messageAndCandidates.concat(message.candidates.map((candidate) => candidate.text));
+              const primeCandidateIDX = message.candidates.findIndex((c) => c.id === message.prime_candidate_id);
+              const messageAndCandidatesIDX = primeCandidateIDX === -1 ? 0 : primeCandidateIDX + 1;
+
               return (
                 <Message
                   key={idx}
@@ -192,8 +202,8 @@ function ChatsPage(): JSX.Element {
                   name={message.sender === "user" ? personaBundle.data.name : cardBundle.data.character.name}
                   sender={message.sender}
                   text={message.text}
-                  candidates={message.candidates}
-                  primeCandidateID={message.prime_candidate_id}
+                  messageAndCandidates={messageAndCandidates}
+                  messageAndCandidatesIDX={messageAndCandidatesIDX}
                   timestring={relativeTime}
                   isLatest={isLatest}
                   isLatestCharacterMessage={isLatestCharacterMessage}
@@ -201,7 +211,7 @@ function ChatsPage(): JSX.Element {
                   handleEdit={() => setEditingMessageID(message.id)}
                   setEditText={setEditText}
                   handleEditSubmit={() => handleEditSubmit(message.id)}
-                  handleRegenerate={handleRegenerate}
+                  handleRegenerate={() => handleRegenerate(message.id)}
                   handleDelete={() => {
                     handleDelete(message.id);
                   }}

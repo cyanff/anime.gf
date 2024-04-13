@@ -4,6 +4,15 @@ import { deepFreeze } from "@shared/utils";
 import { CardData, PersonaData } from "@shared/types";
 import { queries } from "@/lib/queries";
 
+/**
+ * Generates a response based on the provided chat ID, card data, persona data, and latest user message.
+ *
+ * @param chatID - The unique identifier for the chat.
+ * @param cardData - The data associated with the card being used in the chat.
+ * @param personaData - The data associated with the persona being used in the chat.
+ * @param latestUserMessage - The most recent message sent by the user in the chat.
+ * @returns A promise that resolves to the generated response.
+ */
 async function generate(
   chatID: number,
   cardData: CardData,
@@ -18,7 +27,7 @@ async function generate(
  * Regenerates a response for the specified chat, using the latest user message starting from the provided message ID.
  *
  * @param chatID - The ID of the chat to regenerate the response for.
- * @param messageID - The ID of the message to start retrieving the latest user message from.
+ * @param messageID - The ID of the message to regenerate.
  * @param cardData - The card data to use for generating the response.
  * @param personaData - The persona data to use for generating the response.
  * @returns A promise that resolves to the generated response.
@@ -34,6 +43,15 @@ async function regenerate(
   return res;
 }
 
+/**
+ * Generates a response for the specified chat, using the latest user message, card data, and persona data.
+ *
+ * @param chatID - The ID of the chat to generate the response for.
+ * @param cardData - The card data to use for generating the response.
+ * @param personaData - The persona data to use for generating the response.
+ * @param latestUserMessage - The user message that's at the end of the context window.
+ * @returns A promise that resolves to the generated response.
+ */
 async function _generate(chatID: number, cardData: CardData, personaData: PersonaData, latestUserMessage: string) {
   const settingsRes = await window.api.setting.get();
   if (settingsRes.kind == "err") {
@@ -50,7 +68,6 @@ async function _generate(chatID: number, cardData: CardData, personaData: Person
     tokenLimit: settings.chat.maxContextTokens
   };
   const ctx = await context.get(contextParams);
-
   const provider = getProvider(settings.chat.provider);
   const completionConfig = {
     model: settings.chat.model,

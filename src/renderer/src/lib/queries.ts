@@ -321,7 +321,7 @@ async function updateMessage(messageID: number, text: string): Promise<void> {
  */
 async function getMessagesStartingFrom(chatID: number, limit: number, messageID?: number): Promise<CoreMessage[]> {
   let query: string;
-  if (messageID === undefined) {
+  if (!messageID || messageID === -1) {
     query = `
     SELECT * FROM messages
     WHERE chat_id = ${chatID}
@@ -352,6 +352,27 @@ async function getLatestUserMessageStartingFrom(chatID: number, messageID: numbe
   return row.text;
 }
 
+async function insertCandidateMessage(messageID: number, text: string): Promise<number> {
+  const query = `
+  INSERT INTO message_candidates (message_id, text)
+  VALUES (?, ?);
+  `.trim();
+
+  const res = await window.api.sqlite.run(query, [messageID, text]);
+
+  return res.lastInsertRowid as number;
+}
+
+async function setCandidateMessageAsPrime(messageID: number, candidateID: number): Promise<void> {
+  const query = `
+  UPDATE messages
+  SET prime_candidate_id = ?
+  WHERE id = ?;
+  `.trim();
+
+  await window.api.sqlite.run(query, [candidateID, messageID]);
+}
+
 export const queries = {
   deleteChat,
   resetChat,
@@ -365,7 +386,9 @@ export const queries = {
   updateMessage,
   getMessagesStartingFrom,
   getLatestUserMessageStartingFrom,
-  deleteMessage
+  deleteMessage,
+  insertCandidateMessage,
+  setCandidateMessageAsPrime
 };
 
 deepFreeze(queries);
