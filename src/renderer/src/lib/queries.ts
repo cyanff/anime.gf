@@ -191,7 +191,7 @@ async function getChatHistory(
   }
 
   const messageQuery = `
-  SELECT id, text, sender, is_regenerated, prime_candidate_id, inserted_at
+  SELECT id, text, sender, prime_candidate_id, inserted_at
   FROM messages
   WHERE ${startID ? `id <= ${startID} AND chat_id = ${chatID}` : `chat_id = ${chatID}`} 
   ORDER BY id
@@ -214,7 +214,6 @@ async function getChatHistory(
           id: row.id,
           sender: row.sender,
           text: row.text,
-          is_regenerated: row.is_regenerated,
           prime_candidate_id: row.prime_candidate_id,
           inserted_at: row.inserted_at,
           candidates

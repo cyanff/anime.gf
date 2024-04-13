@@ -96,11 +96,6 @@ async function get(params: ContextParams): Promise<Context> {
  * @returns An array of `ProviderMessage` objects representing the conversation history in the format expected by the provider.
  */
 export function toProviderMessages(messages: CoreMessage[], latestUserMessage: string): ProviderMessage[] {
-  // Providers expect messages to conform to the following rules:
-  // The first message must be a user message.
-  // The message's role must be either "user" or "assistant".
-  // The messages MUST alternate between user and assistant roles.
-
   let ret = messages.map((m) => {
     return {
       role: m.sender === "user" ? "user" : "assistant",

@@ -56,9 +56,13 @@ export interface PersonaBundle extends PersonaBundleWithoutData {
 }
 // =====================================
 
-export interface UIMessage
-  extends Pick<Message, "id" | "sender" | "text" | "is_regenerated" | "prime_candidate_id" | "inserted_at"> {
-  candidates: { id: number; text: string }[];
+export interface UIMessageCandidate {
+  id: number;
+  text: string;
+}
+
+export interface UIMessage extends Pick<Message, "id" | "sender" | "text" | "prime_candidate_id" | "inserted_at"> {
+  candidates: UIMessageCandidate[];
 }
 export interface CoreMessage extends Pick<Message, "id" | "sender" | "text"> {}
 

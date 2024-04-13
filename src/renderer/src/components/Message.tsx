@@ -5,6 +5,7 @@
   Users can copy, edit, regenerate, and rewind messages. 
   Users can only use "regenerate" on the latest message sent by a character.
   Users can only use "rewind" on any message that is not the latest message.
+
 */
 
 import { cn } from "@/lib/utils";
@@ -38,6 +39,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useEffect, useRef, useState } from "react";
 import { queries } from "@/lib/queries";
+import { UIMessageCandidate } from "@shared/types";
 
 interface MessageProps {
   className?: string;
@@ -47,7 +49,8 @@ interface MessageProps {
   timestring: string;
   text: string;
   sender: "user" | "character";
-  isRegenerated: boolean;
+  candidates: UIMessageCandidate[];
+  primeCandidateID?: number;
   isLatest: boolean;
   isLatestCharacterMessage: boolean;
   isEditing: boolean;
@@ -67,7 +70,8 @@ function Message({
   timestring,
   text,
   sender,
-  isRegenerated,
+  candidates,
+  primeCandidateID,
   isLatest,
   isLatestCharacterMessage,
   isEditing,
@@ -81,8 +85,10 @@ function Message({
   const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
   const roleColorStyles = sender === "user" ? "bg-[#87375f] outline-neutral-400" : "bg-grad-gray outline-neutral-500";
   const editingStyles = isEditing ? "outline-2 outline-dashed" : "";
-  const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 transition duration-200 ease-in text-neutral-200 rounded-3xl`;
+  const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 transition duration-200 ease-in text-neutral-200 rounded-3xl group/msg`;
   const editFieldRef = useRef<HTMLDivElement>(null);
+  const initialIDX = candidates.findIndex((c) => c.id === primeCandidateID);
+  const [messageSelectIDX, setMessageSelectIDX] = useState(initialIDX);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(text);
@@ -120,19 +126,24 @@ function Message({
 
   const handleRewind = () => {};
 
+  const handleChangeMessage = (idx: number) => {
+    const clampedValue = Math.min(Math.max(idx, -1), candidates.length);
+    setMessageSelectIDX(clampedValue);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.2 }}
-      className={cn("group/msg max-w-3/4 shrink-0", roleAlignStyles)}
+      className={cn(" max-w-3/4 shrink-0", roleAlignStyles)}
     >
       <ContextMenu>
         {/* Right Click Menu*/}
-        <ContextMenuTrigger>
-          {/* Message Component */}
-          <div className="flex flex-col">
+        <div className="flex flex-col">
+          <ContextMenuTrigger>
+            {/* Message Component */}
             <div {...rest} className={cn(baseStyles, editingStyles, roleColorStyles, className)}>
               <img
                 className="size-11 shrink-0 rounded-full object-cover object-top"
@@ -171,41 +182,67 @@ function Message({
                     {text}
                   </div>
                 ) : (
-                  <p className="break-normal">{text}</p>
+                  // Display the selected candidate message if it exists, or the original message if it doesn't
+                  <p className="break-normal">{candidates[messageSelectIDX]?.text || text}</p>
                 )}
               </div>
             </div>
 
-            {isLatestCharacterMessage &&
-              (isRegenerated ? (
-                <div className="flex flex-row items-center space-x-2 p-2">
-                  <button className="size-5">
-                    <ChevronLeftIcon className="size-5 fill-neutral-500" />
-                  </button>
-                  <p className="text-sm font-medium">1 / 10</p>
-                  <button className="size-5">
-                    <ChevronRightIcon className="size-5 fill-neutral-500" />
-                  </button>
-                </div>
-              ) : (
-                <div className="px-2 py-1">
-                  <button className="size-6">
-                    <ArrowPathIcon className="size-6 fill-neutral-500" />
-                  </button>
-                </div>
-              ))}
-          </div>
-          <MessageContextMenuContent
-            isLatest={isLatest}
-            isLatestCharacterMessage={isLatestCharacterMessage}
-            handleCopy={handleCopy}
-            handleCopyText={handleCopyText}
-            handleEdit={handleEdit}
-            handleRegenerate={handleRegenerate}
-            handleRewind={handleRewind}
-            handleDelete={handleDelete}
-          />
-        </ContextMenuTrigger>
+            <MessageContextMenuContent
+              isLatest={isLatest}
+              isLatestCharacterMessage={isLatestCharacterMessage}
+              handleCopy={handleCopy}
+              handleCopyText={handleCopyText}
+              handleEdit={handleEdit}
+              handleRegenerate={handleRegenerate}
+              handleRewind={handleRewind}
+              handleDelete={handleDelete}
+            />
+          </ContextMenuTrigger>
+
+          {/* Regeneration Controls
+              - if latest character message
+                - if there are candidate messages:
+                  - show <  1 / n  > candidate selector
+                  - default to showing the prime candidate if it exists
+                - else :
+                  - show regenerate button
+              - else:
+                - show message text 
+          */}
+          {isLatestCharacterMessage &&
+            (candidates.length > 0 ? (
+              <div className="flex flex-row items-center space-x-2 p-2">
+                {/* Left Arrow */}
+                <button
+                  className="size-5"
+                  onClick={() => {
+                    handleChangeMessage(messageSelectIDX - 1);
+                  }}
+                >
+                  <ChevronLeftIcon className="size-5 fill-neutral-500" />
+                </button>
+                {/* Display the range (-1 -> n) as 1, 2, 3, n+2 */}
+                <p className="text-sm font-medium">{`${messageSelectIDX + 2} / ${candidates.length + 2}`}</p>
+                {/* Right Arrow */}
+                <button
+                  className="size-5"
+                  onClick={() => {
+                    handleChangeMessage(messageSelectIDX + 1);
+                  }}
+                >
+                  <ChevronRightIcon className="size-5 fill-neutral-500" />
+                </button>
+              </div>
+            ) : (
+              <div className="px-2 py-1">
+                {/* Regenrate */}
+                <button className="size-6">
+                  <ArrowPathIcon className="size-6 fill-neutral-500" onClick={handleRegenerate} />
+                </button>
+              </div>
+            ))}
+        </div>
       </ContextMenu>
     </motion.div>
   );

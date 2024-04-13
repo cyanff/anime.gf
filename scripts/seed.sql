@@ -28,8 +28,6 @@ CREATE TABLE IF NOT EXISTS chats
     card_id INTEGER NOT NULL,
     inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TEXT,
-
-
     FOREIGN KEY(persona_id) REFERENCES personas(id),
     FOREIGN KEY(card_id) REFERENCES cards(id)
 );
@@ -52,7 +50,6 @@ CREATE TABLE IF NOT EXISTS messages
     text TEXT DEFAULT "" NOT NULL ,
     sender TEXT NOT NULL CHECK(sender IN ('user', 'character')),
     is_embedded BOOLEAN DEFAULT 0 NOT NULL,
-    is_regenerated BOOLEAN DEFAULT 0 NOT NULL,
     prime_candidate_id INTEGER,
     inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TEXT,
@@ -93,7 +90,10 @@ VALUES
 
 INSERT INTO message_candidates (message_id, text)
 VALUES
-(5, 'hi how might i help you td?');
+(5, 'hi how might i help you td?'),
+(5, 'heyyyyy how might i help?'),
+(5, 'i am here to help you today, how might i assist you'),
+(5, 'i am here to help'),
+(5, 'i am here to help you personally'),
+(5, 'i am in your walls (the one to the left)');
 
-UPDATE messages SET is_regenerated = 1 WHERE id = 5;
-UPDATE messages SET prime_candidate_id = 1 WHERE id = 5;

@@ -27,7 +27,6 @@ export interface Message {
   text: string;
   sender: "user" | "character";
   is_embedded: number;
-  is_regenerated: number;
   prime_candidate_id?: number;
   inserted_at: string;
   updated_at?: string;
