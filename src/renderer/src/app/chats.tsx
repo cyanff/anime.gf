@@ -23,6 +23,7 @@ function ChatsPage(): JSX.Element {
   const chatAreaRef = useRef<HTMLDivElement | null>(null);
   const { createDialog } = useContext(AppContext);
   const isShiftKeyPressed = useShiftKey();
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Sync states with db on load
   useEffect(() => {
@@ -103,10 +104,15 @@ function ChatsPage(): JSX.Element {
   };
 
   const handleSendMessage = async () => {
+    if (isGenerating) {
+      return;
+    }
+
     const cachedUserInput = userInput;
     setIsTyping(true);
     setUserInput("");
     scrollToBottom();
+    setIsGenerating(true);
     setChatHistory((prevMessages: UIMessage[]) => [
       ...prevMessages,
       {
@@ -135,6 +141,7 @@ function ChatsPage(): JSX.Element {
       // Restore the user's input
       setUserInput(cachedUserInput);
     } finally {
+      setIsGenerating(false);
       setIsTyping(false);
       scrollToBottom();
       syncChatHistory();
@@ -142,10 +149,23 @@ function ChatsPage(): JSX.Element {
   };
 
   const handleRegenerate = async (messageID: number) => {
-    const characterReply = await reply.regenerate(chatID, messageID, cardBundle.data, personaBundle.data);
-    const candidateID = await queries.insertCandidateMessage(messageID, characterReply);
-    await queries.setCandidateMessageAsPrime(messageID, candidateID);
-    syncChatHistory();
+    if (isGenerating) {
+      return;
+    }
+    setIsGenerating(true);
+    setIsTyping(true);
+    try {
+      const characterReply = await reply.regenerate(chatID, messageID, cardBundle.data, personaBundle.data);
+      const candidateID = await queries.insertCandidateMessage(messageID, characterReply);
+      await queries.setCandidateMessageAsPrime(messageID, candidateID);
+    } catch (e) {
+      toast.error(`Failed to regenerate a reply. Error: ${e}`);
+      console.error(e);
+    } finally {
+      setIsTyping(false);
+      setIsGenerating(false);
+      syncChatHistory();
+    }
   };
 
   const handleDelete = (messageID: number) => {
@@ -193,6 +213,9 @@ function ChatsPage(): JSX.Element {
               messageAndCandidates = messageAndCandidates.concat(message.candidates.map((candidate) => candidate.text));
               const primeCandidateIDX = message.candidates.findIndex((c) => c.id === message.prime_candidate_id);
               const messageAndCandidatesIDX = primeCandidateIDX === -1 ? 0 : primeCandidateIDX + 1;
+
+              console.log("primeCandidateIDX", primeCandidateIDX);
+              console.log("messageAndCandidatesIDX", messageAndCandidatesIDX);
 
               return (
                 <Message

@@ -90,6 +90,10 @@ function Message({
 
   const [idx, setIDX] = useState(messageAndCandidatesIDX);
 
+  useEffect(() => {
+    setIDX(messageAndCandidatesIDX);
+  }, [messageAndCandidatesIDX]);
+
   const handleCopy = () => {
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard!");
