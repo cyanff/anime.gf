@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CardBundle } from "@shared/types";
+import Dropdown from "@/components/Dropdown";
 
 interface Props {
   cardBundle: CardBundle;
@@ -8,7 +9,7 @@ interface Props {
 function CardModal({ cardBundle }: Props) {
   return (
     <div className="flex w-[45rem] items-center justify-center">
-      <div className="scroll-primary h-[60rem] overflow-y-scroll rounded-lg">
+      <div className="scroll-secondary h-[60rem] overflow-y-scroll rounded-lg">
         {/* Banner and profile picture */}
         <div className="relative rounded-lg">
           <img
@@ -59,33 +60,4 @@ function CardModal({ cardBundle }: Props) {
   );
 }
 
-interface DropdownProps {
-  label: string;
-  content: string;
-}
-
-function Dropdown({ label, content }: DropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className="mb-2">
-      <button
-        className="flex w-full items-center justify-between rounded-lg bg-neutral-700 px-4 py-2 text-left text-sm font-medium text-gray-200 hover:bg-neutral-600"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span>{label}</span>
-        {isOpen ? (
-          <img src="/button/arrow.svg" className="rotate-180 transform" alt="description" />
-        ) : (
-          <img src="/button/arrow.svg" alt="description" />
-        )}
-      </button>
-      <div 
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96' : 'max-h-0'}`}
-      >
-        <div className="px-4 pb-2 pt-4 text-sm text-gray-200">{content}</div>
-      </div>
-    </div>
-  );
-}
 export default CardModal;

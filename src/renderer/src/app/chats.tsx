@@ -309,6 +309,8 @@ function ChatsPage(): JSX.Element {
                   avatar={message.sender === "user" ? personaBundle.avatarURI || "" : cardBundle.avatarURI || ""}
                   name={message.sender === "user" ? personaBundle.data.name : cardBundle.data.character.name}
                   sender={message.sender}
+                  personaBundle={personaBundle}
+                  cardBundle={cardBundle}
                   candidates={candidates}
                   candidatesIDX={candidatesIDX}
                   timestring={relativeTime}

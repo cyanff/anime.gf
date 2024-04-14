@@ -36,11 +36,11 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { queries } from "@/lib/queries";
-import { UIMessageCandidate } from "@shared/types";
-import { motion } from "framer-motion";
+import { CardBundle, CardData, PersonaBundle, PersonaData, UIMessageCandidate } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import Dropdown from "@/components/Dropdown";
 
 interface MessageProps {
   className?: string;
@@ -49,6 +49,8 @@ interface MessageProps {
   name: string;
   timestring: string;
   sender: "user" | "character";
+  personaBundle: PersonaBundle;
+  cardBundle: CardBundle;
   candidates: UIMessageCandidate[];
   candidatesIDX: number;
   isLatest: boolean;
@@ -70,6 +72,8 @@ function Message({
   name,
   timestring,
   sender,
+  personaBundle,
+  cardBundle,
   candidates,
   candidatesIDX,
   isLatest,
@@ -161,13 +165,7 @@ function Message({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.2 }}
-      className={cn(" max-w-3/4 shrink-0", roleAlignStyles)}
-    >
+    <div className={cn(" max-w-3/4 shrink-0", roleAlignStyles)}>
       <ContextMenu>
         {/* Right Click Menu*/}
         <div className="flex flex-col">
@@ -175,16 +173,14 @@ function Message({
             {/* Message Component */}
             <div {...rest} className={cn(baseStyles, editingStyles, roleColorStyles, className)}>
               <Popover>
-                <PopoverTrigger>
+                <PopoverTrigger className="shrink-0">
                   <img
                     className="size-12  rounded-full object-cover object-top"
                     src={avatar || "default_avatar.png"}
                     alt="Avatar"
                   />
                 </PopoverTrigger>
-                <PopoverContent>
-                  <MessagePopoverContentProps sender={sender} />
-                </PopoverContent>
+                <MessagePopoverContentProps sender={sender} personaBundle={personaBundle} cardBundle={cardBundle} />
               </Popover>
               <div className="flex flex-col justify-start space-y-0.5">
                 {/* Username and Timestamp */}
@@ -281,7 +277,95 @@ function Message({
             ))}
         </div>
       </ContextMenu>
-    </motion.div>
+    </div>
+  );
+}
+
+interface MessagePopoverContentProps {
+  sender: "user" | "character";
+  personaBundle: PersonaBundle;
+  cardBundle: CardBundle;
+}
+
+function MessagePopoverContentProps({ sender, personaBundle, cardBundle }: MessagePopoverContentProps) {
+  if (sender === "user") {
+    const bannerURI = "default_banner.png";
+    const avatarURI = personaBundle.avatarURI || "default_avatar.png";
+
+    return (
+      <PopoverContent className="scroll-secondary max-h-[30rem] w-96 overflow-y-scroll bg-neutral-800 p-0 pb-10">
+        <MessagePopoverBanner bannerURI={bannerURI} avatarURI={avatarURI} />
+        <div className="px-6 pt-12">
+          <div className="flex flex-row">
+            <div className="pr-10">
+              <div className="pb-1.5 text-xl font-semibold">{personaBundle.data.name}</div>
+            </div>
+          </div>
+          {/* Character details dropdowns */}
+          <div className="-mx-2 mt-3 flex flex-col rounded-lg bg-neutral-900 p-3">
+            <h3 className="mb-1 text-lg font-semibold">About</h3>
+            <div className="mb-2 h-[1.3px] w-full bg-neutral-700 brightness-75"></div>
+            <p className="text-sm font-[450]">{personaBundle.data.description} </p>
+          </div>
+        </div>
+      </PopoverContent>
+    );
+  } else {
+    const bannerURI = cardBundle.bannerURI;
+    const avatarURI = cardBundle.avatarURI;
+
+    return (
+      <PopoverContent className="scroll-secondary h-[30rem] w-96 overflow-y-scroll bg-neutral-800 p-0">
+        <MessagePopoverBanner bannerURI={bannerURI} avatarURI={avatarURI} />
+        <div className="pl-4 pr-2 pt-12">
+          <div className="flex flex-row">
+            <div className="pr-10">
+              <div className="pb-1.5 text-xl font-semibold">{cardBundle.data.character.name}</div>
+              <div className="whitespace-nowrap text-xs  text-neutral-400 ">
+                <p className="font-medium">{`Created: ${cardBundle.data.meta.created_at}`}</p>
+                {cardBundle.data.meta.updated_at && (
+                  <p className="font-medium">{`Updated: ${cardBundle.data.meta.updated_at}`}</p>
+                )}
+              </div>
+            </div>
+            {/* Character tags */}
+            <div className="flex flex-col gap-y-2">
+              <div className="text-sm font-semibold">Tags:</div>
+              <div className="flex flex-wrap gap-x-1.5 gap-y-2">
+                {cardBundle.data.meta.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-block rounded-full bg-neutral-700 px-2 py-1.5 text-xs font-[550] text-gray-200"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* Character details dropdowns */}
+          <div className="mt-6">
+            <Dropdown label="Character Description" content={cardBundle.data.character.description} variant="sm" />
+            <Dropdown label="Character Persona" content={cardBundle.data.meta.notes ?? ""} variant="sm" />
+            <Dropdown label="Greeting Message" content={cardBundle.data.character.greeting} variant="sm" />
+            <Dropdown label="Example Messages" content={cardBundle.data.character.msg_examples} variant="sm" />
+          </div>
+        </div>
+      </PopoverContent>
+    );
+  }
+}
+
+function MessagePopoverBanner({ bannerURI, avatarURI }: { bannerURI: string; avatarURI: string }) {
+  return (
+    <div className="relative w-full rounded-lg">
+      <img src={bannerURI} alt="Banner" className="h-36 w-full object-cover" />
+      <img
+        src={avatarURI}
+        alt="Profile"
+        className="absolute -bottom-12 left-4 size-20 rounded-full border-[3px] border-neutral-800 object-cover object-top"
+      />
+    </div>
   );
 }
 
@@ -358,18 +442,6 @@ function MessageDropdownMenu({
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
-
-interface MessagePopoverContentProps {
-  sender: "user" | "character";
-}
-
-function MessagePopoverContentProps({ sender }: MessagePopoverContentProps) {
-  if (sender === "user") {
-    return <PopoverContent>User Popover</PopoverContent>;
-  } else {
-    return <PopoverContent>Character Popover</PopoverContent>;
-  }
 }
 
 function MessageContextMenuContent({
