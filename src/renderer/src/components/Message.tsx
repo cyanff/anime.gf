@@ -8,7 +8,6 @@
 
 */
 
-import { cn } from "@/lib/utils";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -17,6 +16,7 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
+import { cn } from "@/lib/utils";
 import {
   ArrowPathIcon,
   ChevronLeftIcon,
@@ -27,19 +27,19 @@ import {
 } from "@heroicons/react/24/solid";
 
 import {
+  DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuTrigger,
-  DropdownMenu
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { motion } from "framer-motion";
-import { toast } from "sonner";
-import { useEffect, useRef, useState } from "react";
 import { queries } from "@/lib/queries";
 import { UIMessageCandidate } from "@shared/types";
+import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 interface MessageProps {
   className?: string;
@@ -118,10 +118,14 @@ function Message({
     }
   };
 
+  // Focus on the edit field when the user starts editing
   useEffect(() => {
     if (!isEditing) return;
     setEditText(candidate.text);
-    // Focus on the edit field after it is rendered
+    focusEditField();
+  }, [isEditing]);
+
+  const focusEditField = () => {
     setTimeout(() => {
       if (editFieldRef.current !== null) {
         // Focus on the edit field
@@ -136,18 +140,22 @@ function Message({
         selection?.addRange(range);
       }
     }, 0);
-  }, [isEditing]);
+  };
 
   const handleRewind = () => {};
 
   const handleChangeMessage = (idx: number) => {
-    handleEdit(idx);
-
     // If the message  change to is out of bounds, regenerate the message
     if (idx === candidates.length) {
       handleRegenerate();
       return;
     }
+
+    if (isEditing) {
+      setEditText(candidates[idx].text);
+      focusEditField();
+    }
+
     const clampedValue = Math.min(Math.max(idx, 0), candidates.length - 1);
     setIDX(clampedValue);
   };

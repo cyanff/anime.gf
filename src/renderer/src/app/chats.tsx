@@ -23,8 +23,8 @@ function ChatsPage(): JSX.Element {
   const [isTyping, setIsTyping] = useState(false);
   const chatAreaRef = useRef<HTMLDivElement | null>(null);
   const { createDialog } = useContext(AppContext);
-  const isShiftKeyPressed = useShiftKey();
   const [isGenerating, setIsGenerating] = useState(false);
+  const isShiftKeyPressed = useShiftKey();
 
   // Sync states with db on load
   useEffect(() => {
@@ -248,7 +248,7 @@ function ChatsPage(): JSX.Element {
                     if (noCandidates) {
                       handleEditSubmit(message.id);
                     } else {
-                      handleEditSubmit(undefined, message.candidates[candidatesIDX - 1].id);
+                      handleEditSubmit(undefined, message.candidates[candidatesIDX].id);
                     }
                   }}
                   handleRegenerate={() => handleRegenerate(message.id)}
