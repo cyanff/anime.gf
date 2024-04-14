@@ -5,10 +5,7 @@
 
 import { queries } from "./queries";
 
-export async function handleA() {
-  const res = await queries.getContextMessagesStartingFrom(1, 100);
-  console.log(res);
-}
+export async function handleA() {}
 
 export async function handleB() {}
 

@@ -7,25 +7,34 @@ import { queries } from "@/lib/queries";
 import { reply } from "@/lib/reply";
 import { time } from "@/lib/time";
 import { CardBundle, PersonaBundle, UIMessage } from "@shared/types";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import "../styles/global.css";
 
+enum ScrollEvent {
+  SCROLLED_TO_TOP,
+  NEW_CHARACTER_MESSAGE
+}
+
 function ChatsPage(): JSX.Element {
+  const { createDialog } = useContext(AppContext);
   const [chatID, setChatID] = useState(1);
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
   const [cardBundle, setCardBundle] = useState<CardBundle>();
+  const [chatHistoryLimit, setChatHistoryLimit] = useState(20);
   const [chatHistory, setChatHistory] = useState<UIMessage[]>([]);
   // Keep track of which message is being edited, only one message can be edited at a time
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
   const [userInput, setUserInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const chatAreaRef = useRef<HTMLDivElement | null>(null);
-  const { createDialog } = useContext(AppContext);
   const [isGenerating, setIsGenerating] = useState(false);
   const isShiftKeyPressed = useShiftKey();
   const latestCharacterMessageIDX = chatHistory.findLastIndex((m) => m.sender === "character");
+  const chatAreaRef = useRef<HTMLDivElement | null>(null);
+  // Used to keep track of the (old) scroll height so we could restore it
+  const oldScrollHeightRef = useRef(0);
+  const scrollEventRef = useRef<ScrollEvent | null>(null);
 
   // Sync states with db on load
   useEffect(() => {
@@ -33,9 +42,26 @@ function ChatsPage(): JSX.Element {
     syncPersonaBundle();
     syncChatHistory();
     // Scroll to the bottom of the chat on load
-    // Too much of a hassle to fix
-    setTimeout(scrollToBottom, 30);
+    // Race condition, too much of a hassle to fix
+    setTimeout(scrollToBottom, 100);
   }, [chatID]);
+
+  // Sync chat history when the limit changes
+  useEffect(() => {
+    syncChatHistory();
+  }, [chatHistoryLimit]);
+
+  useLayoutEffect(() => {
+    // Scroll to bottom on character message
+    if (scrollEventRef.current === ScrollEvent.NEW_CHARACTER_MESSAGE) {
+      scrollToBottom();
+    }
+    // Restore scroll position after loading more messages
+    else if (scrollEventRef.current === ScrollEvent.SCROLLED_TO_TOP) {
+      const delta = chatAreaRef.current!.scrollHeight - oldScrollHeightRef.current;
+      chatAreaRef.current!.scrollTop = delta;
+    }
+  }, [chatHistory]);
 
   const scrollToBottom = () => {
     if (chatAreaRef.current) {
@@ -62,7 +88,7 @@ function ChatsPage(): JSX.Element {
   };
 
   const syncChatHistory = async () => {
-    const res = await queries.getChatHistory(chatID);
+    const res = await queries.getChatHistory(chatID, chatHistoryLimit);
     if (res.kind == "err") {
       toast.error("Error fetching chat history.");
       return;
@@ -119,11 +145,13 @@ function ChatsPage(): JSX.Element {
       return;
     }
 
-    const cachedUserInput = userInput;
     setIsTyping(true);
     setUserInput("");
     scrollToBottom();
     setIsGenerating(true);
+
+    // Optimistic update
+    const cachedUserInput = userInput;
     setChatHistory((prevMessages: UIMessage[]) => [
       ...prevMessages,
       {
@@ -141,6 +169,7 @@ function ChatsPage(): JSX.Element {
     try {
       characterReply = await reply.generate(chatID, cardBundle.data, personaBundle.data, userInput);
       const insertRes = await queries.insertMessagePair(chatID, userInput, characterReply);
+      scrollEventRef.current = ScrollEvent.NEW_CHARACTER_MESSAGE;
       if (insertRes.kind == "err") {
         toast.error(`Failed to insert user and character mesage into database. 
         Error ${insertRes.error}`);
@@ -179,22 +208,64 @@ function ChatsPage(): JSX.Element {
     }
   };
 
-  const handleDelete = (messageID) => {
-    // If shift key is pressed, delete the message without confirmation
+  const handleDelete = (messageID: number) => {
+    const deleteMessage = async () => {
+      try {
+        await queries.deleteMessage(messageID);
+      } catch (e) {
+        toast.error(`Failed to delete message. Error: ${e}`);
+        console.error(e);
+      } finally {
+        syncChatHistory();
+      }
+    };
+
     if (isShiftKeyPressed) {
-      queries.deleteMessage(messageID);
-      syncChatHistory();
+      deleteMessage();
     } else {
       const config: DialogConfig = {
         title: "Delete Message",
         actionLabel: "Delete",
         description: "Are you sure you want to delete this message?",
-        onAction: () => {
-          queries.deleteMessage(messageID);
-          syncChatHistory();
-        }
+        onAction: deleteMessage
       };
       createDialog(config);
+    }
+  };
+
+  const handleRewind = async (messageID: number) => {
+    const rewind = async () => {
+      try {
+        await queries.resetChatToMessage(chatID, messageID);
+      } catch (e) {
+        toast.error(`Failed to rewind chat. Error: ${e}`);
+        console.error(e);
+      } finally {
+        syncChatHistory();
+      }
+    };
+
+    if (isShiftKeyPressed) {
+      rewind();
+    } else {
+      const config: DialogConfig = {
+        title: "Rewind Chat",
+        actionLabel: "Rewind",
+        description:
+          "Are you sure you want to rewind the chat to this message? Rewinding will delete all messages that were sent after this message.",
+        onAction: rewind
+      };
+      createDialog(config);
+    }
+  };
+
+  const handleScroll = async (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    // User scrolled to top
+    if (e.currentTarget.scrollTop == 0) {
+      // Store the current scroll height so we could restore it later
+      oldScrollHeightRef.current = e.currentTarget.scrollHeight;
+      scrollEventRef.current = ScrollEvent.SCROLLED_TO_TOP;
+      setChatHistoryLimit((prevLimit) => prevLimit + 5);
     }
   };
 
@@ -213,7 +284,8 @@ function ChatsPage(): JSX.Element {
           {/* Chat Area */}
           <div
             ref={chatAreaRef}
-            className="scroll-primary flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll scroll-smooth px-5 py-1 transition duration-500 ease-out"
+            onScroll={handleScroll}
+            className="scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll px-5 py-1 transition duration-500 ease-out"
           >
             {chatHistory?.map((message, idx) => {
               const iso = time.sqliteToISO(message.inserted_at);
@@ -253,6 +325,7 @@ function ChatsPage(): JSX.Element {
                     }
                   }}
                   handleRegenerate={() => handleRegenerate(message.id)}
+                  handleRewind={() => handleRewind(message.id)}
                   handleDelete={() => {
                     handleDelete(message.id);
                   }}

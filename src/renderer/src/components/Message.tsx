@@ -57,6 +57,7 @@ interface MessageProps {
   setEditText: (text: string) => void;
   handleEditSubmit: () => void;
   handleRegenerate: () => void;
+  handleRewind: () => void;
   handleDelete: () => void;
   [rest: string]: any;
 }
@@ -77,6 +78,7 @@ function Message({
   setEditText,
   handleEditSubmit,
   handleRegenerate,
+  handleRewind,
   handleDelete,
   ...rest
 }: MessageProps) {
@@ -140,8 +142,6 @@ function Message({
       }
     }, 0);
   };
-
-  const handleRewind = () => {};
 
   const handleChangeMessage = (idx: number) => {
     // If the message  change to is out of bounds, regenerate the message

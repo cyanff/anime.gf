@@ -67,7 +67,7 @@ export default function ChatBar({
           }}
           value={userInput}
           placeholder={`Message @Saku`}
-          className="scroll-secondary h-6 max-h-64 w-full resize-none overflow-y-auto bg-inherit px-2 font-[430] leading-6 focus:outline-none"
+          className="scroll-secondary h-6 max-h-64 w-full resize-none overflow-y-auto bg-inherit px-2 font-[430] leading-6 placeholder:select-none focus:outline-none"
         />
         {/* Send button */}
         <button

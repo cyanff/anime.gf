@@ -176,11 +176,7 @@ async function getPersonaBundle(chatID: number): Promise<Result<PersonaBundle, E
   }
 }
 
-async function getChatHistory(
-  chatID: number,
-  startID?: number,
-  limit: number = 25
-): Promise<Result<UIMessage[], Error>> {
+async function getChatHistory(chatID: number, limit: number = 10): Promise<Result<UIMessage[], Error>> {
   interface MessageQueryResult {
     id: number;
     text: string;
@@ -191,12 +187,12 @@ async function getChatHistory(
   }
 
   const messageQuery = `
-  SELECT id, text, sender, prime_candidate_id, inserted_at
-  FROM messages
-  WHERE ${startID ? `id <= ${startID} AND chat_id = ${chatID}` : `chat_id = ${chatID}`} 
-  ORDER BY id
-  LIMIT ${limit};
-  `.trim();
+    SELECT id, text, sender, prime_candidate_id, inserted_at
+    FROM messages
+    WHERE chat_id = ${chatID}
+    ORDER BY id DESC
+    LIMIT ${limit};
+    `;
 
   try {
     const rows = (await window.api.sqlite.all(messageQuery)) as MessageQueryResult[];
@@ -221,7 +217,7 @@ async function getChatHistory(
       })
     );
 
-    return { kind: "ok", value: ret };
+    return { kind: "ok", value: ret.reverse() };
   } catch (e) {
     isError(e);
     return { kind: "err", error: e };
@@ -433,6 +429,14 @@ async function updateMessagePrimeCandidate(messageID: number, candidateID: numbe
   await window.api.sqlite.run(query, [candidateID, messageID]);
 }
 
+async function resetChatToMessage(chatID: number, messageID: number): Promise<void> {
+  const query = `
+  DELETE FROM messages
+  WHERE chat_id = ? AND id > ?;
+  `;
+  await window.api.sqlite.run(query, [chatID, messageID]);
+}
+
 export const queries = {
   deleteChat,
   resetChat,
@@ -450,7 +454,8 @@ export const queries = {
   insertCandidateMessage,
   setCandidateMessageAsPrime,
   updateCandidateMessage,
-  updateMessagePrimeCandidate
+  updateMessagePrimeCandidate,
+  resetChatToMessage
 };
 
 deepFreeze(queries);
