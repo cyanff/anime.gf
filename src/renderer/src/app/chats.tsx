@@ -76,13 +76,11 @@ function ChatsPage(): JSX.Element {
         setEditingMessageID(null);
       }
     };
-    if (editingMessageID !== null) {
-      document.addEventListener("keydown", handleKeyDown);
-    }
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [editingMessageID]);
+  }, []);
 
   // Loading screen
   if (!personaBundle || !cardBundle) {
@@ -222,14 +220,14 @@ function ChatsPage(): JSX.Element {
               const isLatest = idx === chatHistory.length - 1;
               const isLatestCharacterMessage = message.sender === "character" && idx >= chatHistory.length - 2;
 
-              // Combine the main message and its candidates
-              let messageAndCandidates = [message.text];
-              messageAndCandidates = messageAndCandidates.concat(message.candidates.map((candidate) => candidate.text));
+              // Combine the main message and its candidates into one candidates array
+              let candidates = [{ id: message.id, text: message.text }];
+              candidates = candidates.concat(message.candidates);
 
               // If there are no prime candidates, set the index to be the main message
               const primeCandidateIDX = message.candidates.findIndex((c) => c.id === message.prime_candidate_id);
-              const messageAndCandidatesIDX = primeCandidateIDX === -1 ? 0 : primeCandidateIDX + 1;
-              const isMainMessage = messageAndCandidatesIDX === 0;
+              const candidatesIDX = primeCandidateIDX === -1 ? 0 : primeCandidateIDX + 1;
+              const noCandidates = message.candidates.length === 1;
 
               return (
                 <Message
@@ -238,9 +236,8 @@ function ChatsPage(): JSX.Element {
                   avatar={message.sender === "user" ? personaBundle.avatarURI || "" : cardBundle.avatarURI || ""}
                   name={message.sender === "user" ? personaBundle.data.name : cardBundle.data.character.name}
                   sender={message.sender}
-                  text={message.text}
-                  messageAndCandidates={messageAndCandidates}
-                  messageAndCandidatesIDX={messageAndCandidatesIDX}
+                  candidates={candidates}
+                  candidatesIDX={candidatesIDX}
                   timestring={relativeTime}
                   isLatest={isLatest}
                   isLatestCharacterMessage={isLatestCharacterMessage}
@@ -248,10 +245,10 @@ function ChatsPage(): JSX.Element {
                   handleEdit={() => setEditingMessageID(message.id)}
                   setEditText={setEditText}
                   handleEditSubmit={() => {
-                    if (isMainMessage) {
+                    if (noCandidates) {
                       handleEditSubmit(message.id);
                     } else {
-                      handleEditSubmit(undefined, message.candidates[messageAndCandidatesIDX - 1].id);
+                      handleEditSubmit(undefined, message.candidates[candidatesIDX - 1].id);
                     }
                   }}
                   handleRegenerate={() => handleRegenerate(message.id)}

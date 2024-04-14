@@ -47,10 +47,9 @@ interface MessageProps {
   avatar: string | null;
   name: string;
   timestring: string;
-  text: string;
   sender: "user" | "character";
-  messageAndCandidates: string[];
-  messageAndCandidatesIDX: number;
+  candidates: UIMessageCandidate[];
+  candidatesIDX: number;
   isLatest: boolean;
   isLatestCharacterMessage: boolean;
   isEditing: boolean;
@@ -68,10 +67,9 @@ function Message({
   avatar,
   name,
   timestring,
-  text,
   sender,
-  messageAndCandidates,
-  messageAndCandidatesIDX,
+  candidates,
+  candidatesIDX,
   isLatest,
   isLatestCharacterMessage,
   isEditing,
@@ -87,24 +85,27 @@ function Message({
   const editingStyles = isEditing ? "outline-2 outline-dashed" : "";
   const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 transition duration-200 ease-in text-neutral-200 rounded-3xl group/msg`;
   const editFieldRef = useRef<HTMLDivElement>(null);
+  const [idx, setIDX] = useState(candidatesIDX);
 
-  const [idx, setIDX] = useState(messageAndCandidatesIDX);
+  const candidate = candidates[idx];
 
+  // Update the index when messageAndCandidatesIDX changes
+  // This is necessary because the useState(initState) is only called once, and not updated when initState changes
   useEffect(() => {
-    setIDX(messageAndCandidatesIDX);
-  }, [messageAndCandidatesIDX]);
+    setIDX(candidatesIDX);
+  }, [candidatesIDX]);
 
   // When the index changes, update the primary candidate ID in the database
   useEffect(() => {
     if (idx === 0) {
       queries.updateMessagePrimeCandidate(messageID, null);
     } else {
-      queries.updateMessagePrimeCandidate;
+      queries.updateMessagePrimeCandidate(messageID, candidate.id);
     }
   }, [idx]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(candidate.text);
     toast.success("Copied to clipboard!");
   };
 
@@ -119,7 +120,7 @@ function Message({
 
   useEffect(() => {
     if (!isEditing) return;
-    setEditText(messageAndCandidates[idx]);
+    setEditText(candidate.text);
     // Focus on the edit field after it is rendered
     setTimeout(() => {
       if (editFieldRef.current !== null) {
@@ -140,12 +141,14 @@ function Message({
   const handleRewind = () => {};
 
   const handleChangeMessage = (idx: number) => {
+    handleEdit(idx);
+
     // If the message  change to is out of bounds, regenerate the message
-    if (idx === messageAndCandidates.length) {
+    if (idx === candidates.length) {
       handleRegenerate();
       return;
     }
-    const clampedValue = Math.min(Math.max(idx, 0), messageAndCandidates.length - 1);
+    const clampedValue = Math.min(Math.max(idx, 0), candidates.length - 1);
     setIDX(clampedValue);
   };
 
@@ -197,11 +200,11 @@ function Message({
                     contentEditable={true}
                     suppressContentEditableWarning={true}
                   >
-                    {messageAndCandidates[idx]}
+                    {candidate.text}
                   </div>
                 ) : (
                   // Display the appropriate message or candidate message
-                  <p className="break-normal">{messageAndCandidates[idx]}</p>
+                  <p className="break-normal">{candidate.text}</p>
                 )}
               </div>
             </div>
@@ -230,7 +233,7 @@ function Message({
           */}
           {isLatestCharacterMessage &&
             /* Show the candidate selector if there are multiple candidates */
-            (messageAndCandidates.length > 1 ? (
+            (candidates.length > 1 ? (
               <div className="flex flex-row items-center space-x-2 p-2">
                 {/* Left Arrow */}
                 <button
@@ -241,7 +244,7 @@ function Message({
                 >
                   <ChevronLeftIcon className="size-5 fill-neutral-500" />
                 </button>
-                <p className="text-sm font-medium">{`${idx + 1} / ${messageAndCandidates.length}`}</p>
+                <p className="text-sm font-medium">{`${idx + 1} / ${candidates.length}`}</p>
                 {/* Right Arrow */}
                 <button
                   className="size-5"
