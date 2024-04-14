@@ -64,7 +64,7 @@ export interface UIMessageCandidate {
 export interface UIMessage extends Pick<Message, "id" | "sender" | "text" | "prime_candidate_id" | "inserted_at"> {
   candidates: UIMessageCandidate[];
 }
-export interface CoreMessage extends Pick<Message, "id" | "sender" | "text"> {}
+export interface ContextMessage extends Pick<Message, "id" | "sender" | "text"> {}
 
 // Settings from settings.json
 export interface Settings {

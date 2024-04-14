@@ -1,5 +1,5 @@
 import { deepFreeze } from "@shared/utils";
-import { CoreMessage, UIMessage } from "@shared/types";
+import { ContextMessage, UIMessage } from "@shared/types";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { Result, isError } from "@shared/utils";
 
@@ -313,31 +313,71 @@ async function updateMessageText(messageID: number, text: string): Promise<void>
 
 /**
  * Fetches a limited number of messages from the database starting from a given message ID for the specified chat.
+ * If there is a prime candidate associated with a message, the prime candidate's text will be fetched instead of the message's text.
  *
  * @param chatID - The ID of the chat to fetch messages for.
  * @param limit - The maximum number of messages to fetch.
  * @param messageID - The ID of the message to start fetching from. If not provided, the most recent messages will be fetched.
  * @returns An array of `Message` objects containing the fetched messages.
  */
-async function getMessagesStartingFrom(chatID: number, limit: number, messageID?: number): Promise<CoreMessage[]> {
+async function getContextMessagesStartingFrom(
+  chatID: number,
+  limit: number,
+  messageID?: number
+): Promise<ContextMessage[]> {
+  interface QueryResult {
+    id: number;
+    text: string;
+    sender: "user" | "character";
+    prime_candidate_id: number | null;
+  }
+  interface CandidateQueryResult {
+    text: string;
+  }
+
   let query: string;
-  if (!messageID || messageID === -1) {
+  // If messageID is not provided, fetch the most recent messages.
+  if (!messageID || messageID <= 0) {
     query = `
-    SELECT * FROM messages
+    SELECT id, text, sender, prime_candidate_id FROM messages
     WHERE chat_id = ${chatID}
     ORDER BY id desc
     LIMIT ${limit}
-    `.trim();
+    `;
   } else {
     query = `
-    SELECT * FROM messages
+    SELECT id, text, sender, prime_candidate_id FROM messages
     WHERE chat_id = ${chatID} AND id < ${messageID}
     ORDER BY id desc
     LIMIT ${limit}
-    `.trim();
+    `;
   }
+  const res = (await window.api.sqlite.all(query)) as QueryResult[];
+  const ret = await Promise.all(
+    res.map(async (row) => {
+      // Query for the candidates of the messagea
+      const candidateQuery = `
+      SELECT text FROM message_candidates
+      WHERE id = ${row.prime_candidate_id}
+      `;
+      const candidateRes = (await window.api.sqlite.all(candidateQuery)) as CandidateQueryResult[];
 
-  return (await window.api.sqlite.all(query)) as CoreMessage[];
+      if (candidateRes.length === 0) {
+        return {
+          id: row.id,
+          text: row.text,
+          sender: row.sender
+        };
+      } else {
+        return {
+          id: row.id,
+          text: candidateRes[0].text,
+          sender: row.sender
+        };
+      }
+    })
+  );
+  return ret;
 }
 
 async function getLatestUserMessageStartingFrom(chatID: number, messageID: number): Promise<string> {
@@ -404,7 +444,7 @@ export const queries = {
   getCardBundles,
   insertMessagePair,
   updateMessageText,
-  getMessagesStartingFrom,
+  getContextMessagesStartingFrom,
   getLatestUserMessageStartingFrom,
   deleteMessage,
   insertCandidateMessage,

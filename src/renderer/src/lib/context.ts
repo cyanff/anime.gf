@@ -5,7 +5,7 @@ import { ProviderMessage } from "@/lib/provider/provider";
 import { Message as DBMessage } from "@shared/db_types";
 import { getTokenizer } from "@/lib/tokenizer/provider";
 import { deepFreeze } from "@shared/utils";
-import { CoreMessage } from "@shared/types";
+import { ContextMessage } from "@shared/types";
 import { queries } from "@/lib/queries";
 
 export type PromptVariant = "xml" | "markdown";
@@ -57,9 +57,9 @@ async function get(params: ContextParams): Promise<Context> {
   // Fetch messages to fill up the context window.
   let fromID: number | undefined;
   let contextWindowTokens = 0;
-  let contextWindow: CoreMessage[] = [];
+  let contextWindow: ContextMessage[] = [];
   while (contextWindowTokens < remainingTokens) {
-    const messages = await queries.getMessagesStartingFrom(params.chatID, 100, fromID);
+    const messages = await queries.getContextMessagesStartingFrom(params.chatID, 100, fromID);
     // No more messages to fetch.
     if (messages.length === 0) {
       break;
@@ -95,7 +95,7 @@ async function get(params: ContextParams): Promise<Context> {
  * @param latestUserMessage - The latest user message to be added to the end of the `ProviderMessage` array.
  * @returns An array of `ProviderMessage` objects representing the conversation history in the format expected by the provider.
  */
-function toProviderMessages(messages: CoreMessage[], latestUserMessage: string): ProviderMessage[] {
+function toProviderMessages(messages: ContextMessage[], latestUserMessage: string): ProviderMessage[] {
   let ret = messages.map((m) => {
     return {
       role: m.sender === "user" ? "user" : "assistant",

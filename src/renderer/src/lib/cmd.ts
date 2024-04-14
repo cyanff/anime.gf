@@ -3,11 +3,13 @@
   Put those snippets here so that you could trigger them using ctrl+k.
 */
 
-import { Message as DBMessage } from "@shared/db_types";
+import { queries } from "./queries";
 
-type Message = Pick<DBMessage, "id" | "sender" | "text">;
-export function handleA() {}
+export async function handleA() {
+  const res = await queries.getContextMessagesStartingFrom(1, 100);
+  console.log(res);
+}
 
 export async function handleB() {}
 
-export function handleC() {}
+export async function handleC() {}

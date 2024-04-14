@@ -106,15 +106,14 @@ function Message({
 
   const handleCopy = () => {
     navigator.clipboard.writeText(candidate.text);
-    toast.success("Copied to clipboard!");
+    toast.success("Message copied to clipboard!");
   };
 
   const handleCopyText = () => {
     const selectedText = window.getSelection()?.toString();
     if (selectedText) {
-      navigator.clipboard.writeText(selectedText).then(() => {
-        console.log("Text copied to clipboard");
-      });
+      navigator.clipboard.writeText(selectedText);
+      toast.success("Selection copied to clipboard!");
     }
   };
 
@@ -174,11 +173,13 @@ function Message({
           <ContextMenuTrigger>
             {/* Message Component */}
             <div {...rest} className={cn(baseStyles, editingStyles, roleColorStyles, className)}>
-              <img
-                className="size-11 shrink-0 rounded-full object-cover object-top"
-                src={avatar || "default_avatar.png"}
-                alt="Avatar"
-              />
+              <button className="size-12 shrink-0 select-none ">
+                <img
+                  className="size-12  rounded-full object-cover object-top"
+                  src={avatar || "default_avatar.png"}
+                  alt="Avatar"
+                />
+              </button>
               <div className="flex flex-col justify-start space-y-0.5">
                 {/* Username and Timestamp */}
                 <div className="flex h-fit flex-row items-center justify-between space-x-3">

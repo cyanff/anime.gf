@@ -25,6 +25,7 @@ function ChatsPage(): JSX.Element {
   const { createDialog } = useContext(AppContext);
   const [isGenerating, setIsGenerating] = useState(false);
   const isShiftKeyPressed = useShiftKey();
+  const latestCharacterMessageIDX = chatHistory.findLastIndex((m) => m.sender === "character");
 
   // Sync states with db on load
   useEffect(() => {
@@ -218,7 +219,7 @@ function ChatsPage(): JSX.Element {
               const iso = time.sqliteToISO(message.inserted_at);
               const relativeTime = time.isoToLLMRelativeTime(iso);
               const isLatest = idx === chatHistory.length - 1;
-              const isLatestCharacterMessage = message.sender === "character" && idx >= chatHistory.length - 2;
+              const isLatestCharacterMessage = idx === latestCharacterMessageIDX;
 
               // Combine the main message and its candidates into one candidates array
               let candidates = [{ id: message.id, text: message.text }];
