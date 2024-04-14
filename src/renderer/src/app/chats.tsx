@@ -265,7 +265,7 @@ function ChatsPage(): JSX.Element {
       // Store the current scroll height so we could restore it later
       oldScrollHeightRef.current = e.currentTarget.scrollHeight;
       scrollEventRef.current = ScrollEvent.SCROLLED_TO_TOP;
-      setChatHistoryLimit((prevLimit) => prevLimit + 5);
+      setChatHistoryLimit((prevLimit) => prevLimit + 20);
     }
   };
 

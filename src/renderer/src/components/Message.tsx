@@ -40,6 +40,7 @@ import { UIMessageCandidate } from "@shared/types";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface MessageProps {
   className?: string;
@@ -173,13 +174,18 @@ function Message({
           <ContextMenuTrigger>
             {/* Message Component */}
             <div {...rest} className={cn(baseStyles, editingStyles, roleColorStyles, className)}>
-              <button className="size-12 shrink-0 select-none ">
-                <img
-                  className="size-12  rounded-full object-cover object-top"
-                  src={avatar || "default_avatar.png"}
-                  alt="Avatar"
-                />
-              </button>
+              <Popover>
+                <PopoverTrigger>
+                  <img
+                    className="size-12  rounded-full object-cover object-top"
+                    src={avatar || "default_avatar.png"}
+                    alt="Avatar"
+                  />
+                </PopoverTrigger>
+                <PopoverContent>
+                  <MessagePopoverContentProps sender={sender} />
+                </PopoverContent>
+              </Popover>
               <div className="flex flex-col justify-start space-y-0.5">
                 {/* Username and Timestamp */}
                 <div className="flex h-fit flex-row items-center justify-between space-x-3">
@@ -196,6 +202,7 @@ function Message({
                   />
                 </div>
                 {isEditing ? (
+                  // Show edit field if editing
                   <div
                     ref={editFieldRef}
                     className="scroll-secondary h-auto w-full overflow-y-scroll text-wrap break-all bg-transparent text-left focus:outline-none"
@@ -212,7 +219,7 @@ function Message({
                     {candidate.text}
                   </div>
                 ) : (
-                  // Display the appropriate message or candidate message
+                  // Show text if not editing
                   <p className="break-normal">{candidate.text}</p>
                 )}
               </div>
@@ -351,6 +358,18 @@ function MessageDropdownMenu({
       </DropdownMenuContent>
     </DropdownMenu>
   );
+}
+
+interface MessagePopoverContentProps {
+  sender: "user" | "character";
+}
+
+function MessagePopoverContentProps({ sender }: MessagePopoverContentProps) {
+  if (sender === "user") {
+    return <PopoverContent>User Popover</PopoverContent>;
+  } else {
+    return <PopoverContent>Character Popover</PopoverContent>;
+  }
 }
 
 function MessageContextMenuContent({
