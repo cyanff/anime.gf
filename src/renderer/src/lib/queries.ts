@@ -104,18 +104,6 @@ ORDER BY c.id DESC
   return ret;
 }
 
-async function getMostRecentChat(): Promise<number> {
-  const query = `
-    SELECT id
-    FROM chats
-    ORDER BY inserted_at DESC
-    LIMIT 1
-  `.trim();
-
-  const row = (await window.api.sqlite.get(query)) as { id: number };
-  return row.id;
-}
-
 export interface RecentChat {
   chat_id: number;
   last_message: string;
@@ -163,7 +151,6 @@ LIMIT 20;
         };
       })
     );
-    console.log(chatCards[0].chat_id)
     return { kind: "ok", value: chatCards };
   } catch (e) {
     isError(e);
