@@ -4,7 +4,7 @@ import Dropdown from "@/components/Dropdown";
 import { Button } from "@/components/ui/button";
 interface Props {
   cardBundle: CardBundle;
-  onCreateChat: (cardID: number) => void;
+  onCreateChat: (cardID: number, greeting: string) => void;
 }
 import { queries } from "@/lib/queries";
 
@@ -57,7 +57,7 @@ function CardModal({ cardBundle, onCreateChat }: Props) {
               variant="outline"
               size="icon"
               className="m-2 h-10 w-16 bg-gradient-to-r from-[#C3407F] to-[#7C405D]"
-              onClick={() => onCreateChat(cardBundle.id)}
+              onClick={() => onCreateChat(cardBundle.id, cardBundle.data.character.greeting)}
             >
               <img src="/button/chat.svg" alt="Settings" />
             </Button>

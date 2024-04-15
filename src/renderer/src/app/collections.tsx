@@ -6,7 +6,7 @@ import Card from "@/components/Card";
 import CardModal from "@/components/CardModal";
 import { useApp } from "@/components/AppContext";
 
-export default function CollectionsPage({setPage, setChatID}) {
+export default function CollectionsPage({ setPage, setChatID }) {
   const [cardBundles, setCardBundles] = useState<CardBundle[]>([]);
   const { createModal, closeModal } = useApp();
 
@@ -23,13 +23,21 @@ export default function CollectionsPage({setPage, setChatID}) {
     fetchData();
   }, []);
 
-  async function onCreateChat(cardID: number) {
+  async function onCreateChat(cardID: number, greeting: string) {
     const res = await queries.createChat(1, cardID);
     if (res.kind == "ok") {
-      setPage("chats");
+      const chatCards = await queries.getRecentChats();
+      console.log(`${chatCards[0].name}`);
+      setChatID(chatCards[0].chat_id);
 
-      const res = await queries.getMostRecentChat();
-      setChatID(res);
+      const message = await queries.insertMessage(chatCards[0].chat_id, greeting, "character");
+      if (message.kind == "err") {
+        toast.error("Error inserting character greeting message.");
+      }
+
+      setPage("chats");
+    } else {
+      toast.error("Error creating new chat.");
     }
     closeModal();
   }

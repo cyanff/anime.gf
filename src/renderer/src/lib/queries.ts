@@ -56,18 +56,6 @@ WHERE chat_id = ?
   await window.api.sqlite.run(query, [chatID, chatID]);
 }
 
-async function getMostRecentChat(): Promise<number> {
-  const query = `
-    SELECT id
-    FROM chats
-    ORDER BY inserted_at DESC
-    LIMIT 1
-  `.trim();
-
-  const row = await window.api.sqlite.get(query) as { id: number };
-  return row.id;
-}
-
 export interface ChatSearchItem {
   id: number;
   characterName: string;
@@ -115,6 +103,19 @@ ORDER BY c.id DESC
   );
   return ret;
 }
+
+async function getMostRecentChat(): Promise<number> {
+  const query = `
+    SELECT id
+    FROM chats
+    ORDER BY inserted_at DESC
+    LIMIT 1
+  `.trim();
+
+  const row = (await window.api.sqlite.get(query)) as { id: number };
+  return row.id;
+}
+
 export interface RecentChat {
   chat_id: number;
   last_message: string;
@@ -125,20 +126,19 @@ export interface RecentChat {
 // TODO, pagination
 async function getRecentChats(): Promise<Result<RecentChat[], Error>> {
   const query = `
-  SELECT
-  c.id AS chat_id,
-  (SELECT m.text
-   FROM messages m
-   WHERE m.chat_id = c.id AND m.sender = 'character'
-   ORDER BY m.id DESC
+  SELECT 
+  chats.id AS chat_id,
+  (SELECT messages.text 
+   FROM messages 
+   WHERE messages.chat_id = chats.id
+   ORDER BY messages.inserted_at DESC
    LIMIT 1) AS last_message,
-  ca.dirName
-FROM
-  chats c
-      JOIN
-  cards as ca ON ca.id = c.id
-ORDER BY
-  COALESCE(c.updated_at, c.inserted_at) DESC
+  cards.dirName AS card_dirName
+FROM 
+  chats
+  JOIN cards ON chats.card_id = cards.id
+ORDER BY 
+  chats.inserted_at DESC
 LIMIT 20;
 `.trim();
 
@@ -146,19 +146,19 @@ LIMIT 20;
     interface QueryResult {
       chat_id: number;
       last_message: string;
-      dirName: string;
+      card_dirName: string;
     }
     const rows = (await window.api.sqlite.all(query)) as QueryResult[];
     const chatCards = await Promise.all(
       rows.map(async (row) => {
-        const res = await window.api.blob.cards.get(row.dirName);
+        const res = await window.api.blob.cards.get(row.card_dirName);
         if (res.kind == "err") {
           throw res.error;
         }
         return {
           chat_id: row.chat_id,
           last_message: row.last_message,
-          name: "test",
+          name: res.value.data.character.name,
           avatarURI: res.value.avatarURI
         };
       })
@@ -299,6 +299,25 @@ async function getCardBundles(): Promise<Result<CardBundle[], Error>> {
   }
 }
 
+async function insertMessage(
+  chatID: number,
+  message: string,
+  sender: "user" | "character"
+): Promise<Result<void, Error>> {
+  const query = `
+    INSERT INTO messages (chat_id, text, sender)
+    VALUES (?, ?, ?);
+  `.trim();
+  const params = [chatID, message, sender];
+
+  try {
+    await window.api.sqlite.run(query, params);
+    return { kind: "ok", value: undefined };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
 
 async function insertMessagePair(
   chatID: number,
@@ -482,6 +501,7 @@ export const queries = {
   getChatHistory,
   getCardBundle,
   getCardBundles,
+  insertMessage,
   insertMessagePair,
   updateMessageText,
   getContextMessagesStartingFrom,
