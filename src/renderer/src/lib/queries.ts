@@ -287,6 +287,29 @@ async function getCardBundles(): Promise<Result<CardBundle[], Error>> {
   }
 }
 
+async function deleteCard(cardID: number): Promise<Result<void, Error>> {
+  try {
+    await window.api.sqlite.run("BEGIN TRANSACTION;");
+
+    let query = "DELETE FROM chats WHERE card_id = ?;";
+    let params = [cardID];
+    await window.api.sqlite.run(query, params);
+
+    query = "DELETE FROM cards WHERE id = ?;";
+    params = [cardID];
+    await window.api.sqlite.run(query, params);
+
+    await window.api.sqlite.run("COMMIT;");
+
+    return { kind: "ok", value: undefined };
+  } catch (e) {
+    await window.api.sqlite.run("ROLLBACK;");
+
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
 async function insertMessage(
   chatID: number,
   message: string,
@@ -488,6 +511,7 @@ export const queries = {
   getChatHistory,
   getCardBundle,
   getCardBundles,
+  deleteCard,
   insertMessage,
   insertMessagePair,
   updateMessageText,

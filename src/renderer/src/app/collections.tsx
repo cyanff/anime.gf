@@ -4,23 +4,23 @@ import { toast } from "sonner";
 import { CardBundle } from "@shared/types";
 import Card from "@/components/Card";
 import CardModal from "@/components/CardModal";
-import { useApp } from "@/components/AppContext";
+import { DialogConfig, useApp } from "@/components/AppContext";
 
 export default function CollectionsPage({ setPage, setChatID }) {
   const [cardBundles, setCardBundles] = useState<CardBundle[]>([]);
-  const { createModal, closeModal } = useApp();
+  const { createModal, closeModal, createDialog: createAlert } = useApp();
+
+  const syncCards = async () => {
+    const res = await queries.getCardBundles();
+    if (res.kind == "err") {
+      toast.error("Error fetching card bundle.");
+      return;
+    }
+    setCardBundles(res.value);
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await queries.getCardBundles();
-      if (res.kind == "err") {
-        toast.error("Error fetching card bundle.");
-        return;
-      }
-      setCardBundles(res.value);
-    };
-
-    fetchData();
+    syncCards();
   }, []);
 
   async function onCreateChat(cardID: number, greeting: string) {
@@ -49,9 +49,21 @@ export default function CollectionsPage({ setPage, setChatID }) {
           return (
             <Card
               key={idx}
+              deleteCard={() => {
+                const alertConfig: DialogConfig = {
+                  title: `Delete ${cardBundle.data.character.name}`,
+                  description: `Are you sure you want to delete ${cardBundle.data.character.name}?\nThis action will also delete corresponding chats with ${cardBundle.data.character.name} and cannot be undone.`,
+                  actionLabel: "Delete",
+                  onAction: async () => {
+                    await queries.deleteCard(cardBundle.id);
+                    syncCards();
+                  }
+                };
+                createAlert(alertConfig);
+              }}
               avatar={cardBundle.avatarURI || ""}
               name={cardBundle.data.character.name}
-              onClick={() => {
+              openCardModal={() => {
                 createModal(<CardModal cardBundle={cardBundle} onCreateChat={onCreateChat} />);
               }}
             />
