@@ -33,6 +33,7 @@ export default function App() {
   const [modalContent, setModalContent] = useState<React.ReactNode>();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [cmdOpen, setCmdOpen] = useState<boolean>(false);
+  const [chatID, setChatID] = useState(1);
 
   useEffect(() => {
     window.addEventListener("keydown", (e) => {
@@ -140,8 +141,8 @@ export default function App() {
         )}
 
         <div className="flex h-full w-full py-4">
-          {page === "chats" && <ChatsPage />}
-          {page === "collections" && <CollectionsPage />}
+          {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID}/>}
+          {page === "collections" && <CollectionsPage setPage={setPage} setChatID={setChatID}/>}
           {page === "settings" && <SettingsPage />}
         </div>
       </div>

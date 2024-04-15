@@ -36,6 +36,7 @@ export interface World {
 }
 // Contents of the card's directory
 export interface CardBundle {
+  id: number;
   data: CardData;
   avatarURI: string;
   bannerURI: string;

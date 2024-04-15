@@ -16,9 +16,8 @@ enum ScrollEvent {
   NEW_CHARACTER_MESSAGE
 }
 
-function ChatsPage(): JSX.Element {
+function ChatsPage({chatID, setChatID}): JSX.Element {
   const { createDialog } = useContext(AppContext);
-  const [chatID, setChatID] = useState(1);
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
   const [cardBundle, setCardBundle] = useState<CardBundle>();
   const [chatHistoryLimit, setChatHistoryLimit] = useState(20);

@@ -6,9 +6,9 @@ import Card from "@/components/Card";
 import CardModal from "@/components/CardModal";
 import { useApp } from "@/components/AppContext";
 
-export default function CollectionsPage() {
+export default function CollectionsPage({setPage, setChatID}) {
   const [cardBundles, setCardBundles] = useState<CardBundle[]>([]);
-  const { createModal } = useApp();
+  const { createModal, closeModal } = useApp();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,6 +23,17 @@ export default function CollectionsPage() {
     fetchData();
   }, []);
 
+  async function onCreateChat(cardID: number) {
+    const res = await queries.createChat(1, cardID);
+    if (res.kind == "ok") {
+      setPage("chats");
+
+      const res = await queries.getMostRecentChat();
+      setChatID(res);
+    }
+    closeModal();
+  }
+
   return (
     <div className="h-full w-full bg-neutral-800 antialiased lg:text-base">
       {/* Collection Area */}
@@ -34,7 +45,7 @@ export default function CollectionsPage() {
               avatar={cardBundle.avatarURI || ""}
               name={cardBundle.data.character.name}
               onClick={() => {
-                createModal(<CardModal cardBundle={cardBundle} />);
+                createModal(<CardModal cardBundle={cardBundle} onCreateChat={onCreateChat} />);
               }}
             />
           );

@@ -11,6 +11,21 @@ async function deleteMessage(messageID: number): Promise<void> {
   await window.api.sqlite.run(query, [messageID]);
 }
 
+async function createChat(personaId: number, cardId: number): Promise<Result<void, Error>> {
+  try {
+    const query = `
+      INSERT INTO chats (persona_id, card_id)
+      VALUES (?, ?);
+    `.trim();
+    const params = [personaId, cardId];
+    await window.api.sqlite.run(query, params);
+    return { kind: "ok", value: undefined };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
 async function deleteChat(chatID: number): Promise<void> {
   const query = `
   DELETE FROM chats WHERE id = ?;
@@ -39,6 +54,18 @@ WHERE chat_id = ?
   `.trim();
 
   await window.api.sqlite.run(query, [chatID, chatID]);
+}
+
+async function getMostRecentChat(): Promise<number> {
+  const query = `
+    SELECT id
+    FROM chats
+    ORDER BY inserted_at DESC
+    LIMIT 1
+  `.trim();
+
+  const row = await window.api.sqlite.get(query) as { id: number };
+  return row.id;
 }
 
 export interface ChatSearchItem {
@@ -247,17 +274,23 @@ async function getCardBundle(chatID: number): Promise<Result<CardBundle, Error>>
 async function getCardBundles(): Promise<Result<CardBundle[], Error>> {
   try {
     const query = `
-      SELECT cards.dirName
+      SELECT cards.id, cards.dirName
       FROM cards
     `.trim();
-    const rows = (await window.api.sqlite.all(query)) as { dirName: string }[];
+    const rows = (await window.api.sqlite.all(query)) as { id: number; dirName: string }[];
     const cardBundles: CardBundle[] = [];
     for (const row of rows) {
       const res = await window.api.blob.cards.get(row.dirName);
       if (res.kind == "err") {
         throw res.error;
       }
-      cardBundles.push(res.value);
+      const cardBundle: CardBundle = {
+        id: row.id,
+        data: res.value.data,
+        avatarURI: res.value.avatarURI,
+        bannerURI: res.value.bannerURI
+      };
+      cardBundles.push(cardBundle);
     }
     return { kind: "ok", value: cardBundles };
   } catch (e) {
@@ -265,6 +298,7 @@ async function getCardBundles(): Promise<Result<CardBundle[], Error>> {
     return { kind: "err", error: e };
   }
 }
+
 
 async function insertMessagePair(
   chatID: number,
@@ -438,8 +472,10 @@ async function resetChatToMessage(chatID: number, messageID: number): Promise<vo
 }
 
 export const queries = {
+  createChat,
   deleteChat,
   resetChat,
+  getMostRecentChat,
   getChatSearchItems,
   getRecentChats,
   getPersonaBundle,

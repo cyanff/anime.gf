@@ -4,7 +4,6 @@ import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import secret from "./lib/store/secret";
 import sqlite from "./lib/store/sqlite";
-import qdrant from "./lib/store/qdrant";
 import blob from "./lib/store/blob";
 import { xfetch } from "./lib/xfetch";
 import { cardsPath, personasPath } from "./lib/utils";
@@ -89,7 +88,6 @@ app.whenReady().then(async () => {
     });
   });
 
-  qdrant.init();
   await sqlite.init();
   await blob.init();
   await secret.init();
