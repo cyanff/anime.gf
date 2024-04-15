@@ -56,7 +56,7 @@ function CardModal({ cardBundle, onCreateChat }: Props) {
             <Button
               variant="outline"
               size="icon"
-              className="m-2 h-10 w-16 bg-gradient-to-r from-[#C3407F] to-[#7C405D]"
+              className="m-2 h-10 w-16 bg-gradient-to-r from-[#C3407F] to-[#7C405D] transition ease-out hover:brightness-90"
               onClick={() => onCreateChat(cardBundle.id, cardBundle.data.character.greeting)}
             >
               <img src="/button/chat.svg" alt="Settings" />

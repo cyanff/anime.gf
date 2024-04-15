@@ -7,7 +7,7 @@ interface Props {
 function Card({ avatar, name, onClick }: Props) {
   return (
     <div
-      className="w-30 justify-top m-4 flex h-52 min-w-max flex-col items-center rounded-xl bg-neutral-700 p-4"
+      className="w-30 justify-top m-4 flex h-52 min-w-max flex-col items-center rounded-xl bg-neutral-700 p-4 transition ease-out hover:brightness-90"
       onClick={onClick}
     >
       <img className="h-32 w-32 rounded-xl object-cover" src={avatar || "default_avatar.png"} />

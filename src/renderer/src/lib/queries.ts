@@ -482,7 +482,6 @@ export const queries = {
   createChat,
   deleteChat,
   resetChat,
-  getMostRecentChat,
   getChatSearchItems,
   getRecentChats,
   getPersonaBundle,
