@@ -27,14 +27,13 @@ export default function CollectionsPage({ setPage, setChatID }) {
     const res = await queries.createChat(1, cardID);
     if (res.kind == "ok") {
       const chatCards = await queries.getRecentChats();
-      console.log(`${chatCards[0].name}`);
-      setChatID(chatCards[0].chat_id);
-
-      const message = await queries.insertMessage(chatCards[0].chat_id, greeting, "character");
-      if (message.kind == "err") {
-        toast.error("Error inserting character greeting message.");
+      if (chatCards.kind == "ok") {
+        const message = await queries.insertMessage(chatCards.value[0].chat_id, greeting, "character");
+        if (message.kind == "err") {
+          toast.error("Error inserting character greeting message.");
+        }
+        setChatID(chatCards.value[0].chat_id);
       }
-
       setPage("chats");
     } else {
       toast.error("Error creating new chat.");

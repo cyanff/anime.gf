@@ -163,6 +163,7 @@ LIMIT 20;
         };
       })
     );
+    console.log(chatCards[0].chat_id)
     return { kind: "ok", value: chatCards };
   } catch (e) {
     isError(e);
