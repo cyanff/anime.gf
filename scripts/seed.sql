@@ -204,7 +204,8 @@ VALUES
 (1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
 (1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
 (2, 'Hi there! Let me know if you need any help.', 'character',   '2023-04-20 10:00:25'),
-(3, 'hi', 'character',   '2023-04-20 10:00:25');
+(3, 'hi', 'character',   '2023-04-20 10:00:25'),
+(3, '**bold** *italics* normal "quotes"', 'user',   '2023-04-20 10:00:25');
 
 
 INSERT INTO message_candidates (message_id, text)

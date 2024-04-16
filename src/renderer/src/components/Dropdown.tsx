@@ -9,8 +9,6 @@ interface DropdownProps {
 export default function Dropdown({ label, content, variant = "md" }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log("variant", variant);
-
   if (variant === "sm") {
     return (
       <div className="mb-2">

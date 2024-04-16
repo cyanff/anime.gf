@@ -26,6 +26,7 @@ import {
   WrenchScrewdriverIcon
 } from "@heroicons/react/24/solid";
 
+import Dropdown from "@/components/Dropdown";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,12 +36,12 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { queries } from "@/lib/queries";
-import { CardBundle, CardData, PersonaBundle, PersonaData, UIMessageCandidate } from "@shared/types";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import Dropdown from "@/components/Dropdown";
+import { queries } from "@/lib/queries";
+import { CardBundle, PersonaBundle, UIMessageCandidate } from "@shared/types";
+import { useEffect, useRef, useState } from "react";
+import ReactMarkdown, { Components } from "react-markdown";
+import { toast } from "sonner";
 
 interface MessageProps {
   className?: string;
@@ -90,10 +91,9 @@ function Message({
   const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
   const roleColorStyles = sender === "user" ? "bg-[#87375f] outline-neutral-400" : "bg-grad-gray outline-neutral-500";
   const editingStyles = isEditing ? "outline-2 outline-dashed" : "";
-  const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 transition duration-200 ease-in text-neutral-200 rounded-3xl group/msg`;
+  const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95  text-neutral-200 rounded-3xl group/msg`;
   const editFieldRef = useRef<HTMLDivElement>(null);
   const [idx, setIDX] = useState(candidatesIDX);
-
   const candidate = candidates[idx];
 
   // Update the index when messageAndCandidatesIDX changes
@@ -215,8 +215,9 @@ function Message({
                     {candidate.text}
                   </div>
                 ) : (
-                  // Show text if not editing
-                  <p className="break-normal">{candidate.text}</p>
+                  <ReactMarkdown components={sender === "user" ? userMarkdown : characterMarkdown}>
+                    {candidate.text}
+                  </ReactMarkdown>
                 )}
               </div>
             </div>
@@ -503,5 +504,46 @@ function MessageContextMenuContent({
     </ContextMenuContent>
   );
 }
+
+const userMarkdown: Partial<Components> = {};
+
+const characterMarkdown: Partial<Components> = {
+  em: ({ children }) => <span className="font-medium italic text-gray-400">{children}</span>,
+  strong: ({ children }) => <span className="font-bold text-gray-200">{children}</span>,
+  blockquote: ({ children }) => {
+    return (
+      <div className="flex items-stretch">
+        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-neutral-600" />
+        <p className="self-center italic text-neutral-300">{children}</p>
+      </div>
+    );
+  },
+  pre: ({ children }) => <span>{children}</span>,
+  p: ({ children }) => {
+    console.log("Children:", children);
+    if (typeof children === "string") {
+      const parts = children.split(/"(.*?)"/);
+
+      console.log("Parts:", parts);
+
+      return (
+        <div>
+          {parts.map((part, index) => {
+            if (index % 2 === 1) {
+              return (
+                <span key={index} className="font-medium text-rose-300">
+                  "{part}"
+                </span>
+              );
+            }
+            return part;
+          })}
+        </div>
+      );
+    }
+
+    return <span>{children}</span>;
+  }
+};
 
 export default Message;

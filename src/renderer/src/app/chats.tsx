@@ -21,7 +21,7 @@ function ChatsPage(): JSX.Element {
   const [chatID, setChatID] = useState(1);
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
   const [cardBundle, setCardBundle] = useState<CardBundle>();
-  const [chatHistoryLimit, setChatHistoryLimit] = useState(20);
+  const [chatHistoryLimit, setChatHistoryLimit] = useState(50);
   const [chatHistory, setChatHistory] = useState<UIMessage[]>([]);
   // Keep track of which message is being edited, only one message can be edited at a time
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
@@ -265,7 +265,7 @@ function ChatsPage(): JSX.Element {
       // Store the current scroll height so we could restore it later
       oldScrollHeightRef.current = e.currentTarget.scrollHeight;
       scrollEventRef.current = ScrollEvent.SCROLLED_TO_TOP;
-      setChatHistoryLimit((prevLimit) => prevLimit + 20);
+      setChatHistoryLimit((prevLimit) => prevLimit + 15);
     }
   };
 
