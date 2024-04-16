@@ -35,7 +35,7 @@ export default function Dropdown({ label, content, variant = "md" }: DropdownPro
   return (
     <div className="mb-2">
       <button
-        className="duration-125 flex w-full items-center justify-between rounded-lg bg-neutral-700 px-4 py-3 text-left text-sm font-medium text-gray-200 transition ease-out hover:brightness-95"
+        className="duration-125 flex w-full items-center justify-between rounded-t-lg bg-neutral-700 px-4 py-2.5 text-left text-sm font-medium text-gray-200 transition ease-out hover:brightness-95"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="font-medium">{label}</span>
@@ -45,7 +45,9 @@ export default function Dropdown({ label, content, variant = "md" }: DropdownPro
           <img src="/button/arrow.svg" alt="description" />
         )}
       </button>
-      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-96" : "max-h-0"}`}>
+      <div
+        className={`overflow-hidden  rounded-b-lg bg-[#212121] transition-all duration-300 ease-in-out ${isOpen ? "max-h-96" : "max-h-0"}`}
+      >
         <div className="px-4 pb-2 pt-4 text-sm text-gray-200">{content}</div>
       </div>
     </div>

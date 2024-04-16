@@ -11,6 +11,21 @@ async function deleteMessage(messageID: number): Promise<void> {
   await window.api.sqlite.run(query, [messageID]);
 }
 
+async function createChat(personaId: number, cardId: number): Promise<Result<void, Error>> {
+  try {
+    const query = `
+      INSERT INTO chats (persona_id, card_id)
+      VALUES (?, ?);
+    `.trim();
+    const params = [personaId, cardId];
+    await window.api.sqlite.run(query, params);
+    return { kind: "ok", value: undefined };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
 async function deleteChat(chatID: number): Promise<void> {
   const query = `
   DELETE FROM chats WHERE id = ?;
@@ -88,6 +103,7 @@ ORDER BY c.id DESC
   );
   return ret;
 }
+
 export interface RecentChat {
   chat_id: number;
   last_message: string;
@@ -98,20 +114,19 @@ export interface RecentChat {
 // TODO, pagination
 async function getRecentChats(): Promise<Result<RecentChat[], Error>> {
   const query = `
-  SELECT
-  c.id AS chat_id,
-  (SELECT m.text
-   FROM messages m
-   WHERE m.chat_id = c.id AND m.sender = 'character'
-   ORDER BY m.id DESC
+  SELECT 
+  chats.id AS chat_id,
+  (SELECT messages.text 
+   FROM messages 
+   WHERE messages.chat_id = chats.id
+   ORDER BY messages.inserted_at DESC
    LIMIT 1) AS last_message,
-  ca.dirName
-FROM
-  chats c
-      JOIN
-  cards as ca ON ca.id = c.id
-ORDER BY
-  COALESCE(c.updated_at, c.inserted_at) DESC
+  cards.dirName AS card_dirName
+FROM 
+  chats
+  JOIN cards ON chats.card_id = cards.id
+ORDER BY 
+  chats.inserted_at DESC
 LIMIT 20;
 `.trim();
 
@@ -119,19 +134,19 @@ LIMIT 20;
     interface QueryResult {
       chat_id: number;
       last_message: string;
-      dirName: string;
+      card_dirName: string;
     }
     const rows = (await window.api.sqlite.all(query)) as QueryResult[];
     const chatCards = await Promise.all(
       rows.map(async (row) => {
-        const res = await window.api.blob.cards.get(row.dirName);
+        const res = await window.api.blob.cards.get(row.card_dirName);
         if (res.kind == "err") {
           throw res.error;
         }
         return {
           chat_id: row.chat_id,
           last_message: row.last_message,
-          name: "test",
+          name: res.value.data.character.name,
           avatarURI: res.value.avatarURI
         };
       })
@@ -247,19 +262,68 @@ async function getCardBundle(chatID: number): Promise<Result<CardBundle, Error>>
 async function getCardBundles(): Promise<Result<CardBundle[], Error>> {
   try {
     const query = `
-      SELECT cards.dirName
+      SELECT cards.id, cards.dirName
       FROM cards
     `.trim();
-    const rows = (await window.api.sqlite.all(query)) as { dirName: string }[];
+    const rows = (await window.api.sqlite.all(query)) as { id: number; dirName: string }[];
     const cardBundles: CardBundle[] = [];
     for (const row of rows) {
       const res = await window.api.blob.cards.get(row.dirName);
       if (res.kind == "err") {
         throw res.error;
       }
-      cardBundles.push(res.value);
+      const cardBundle: CardBundle = {
+        id: row.id,
+        data: res.value.data,
+        avatarURI: res.value.avatarURI,
+        bannerURI: res.value.bannerURI
+      };
+      cardBundles.push(cardBundle);
     }
     return { kind: "ok", value: cardBundles };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
+async function deleteCard(cardID: number): Promise<Result<void, Error>> {
+  try {
+    await window.api.sqlite.run("BEGIN TRANSACTION;");
+
+    let query = "DELETE FROM chats WHERE card_id = ?;";
+    let params = [cardID];
+    await window.api.sqlite.run(query, params);
+
+    query = "DELETE FROM cards WHERE id = ?;";
+    params = [cardID];
+    await window.api.sqlite.run(query, params);
+
+    await window.api.sqlite.run("COMMIT;");
+
+    return { kind: "ok", value: undefined };
+  } catch (e) {
+    await window.api.sqlite.run("ROLLBACK;");
+
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
+async function insertMessage(
+  chatID: number,
+  message: string,
+  sender: "user" | "character"
+): Promise<Result<void, Error>> {
+  const query = `
+    INSERT INTO messages (chat_id, text, sender)
+    VALUES (?, ?, ?);
+  `.trim();
+  const params = [chatID, message, sender];
+
+  try {
+    await window.api.sqlite.run(query, params);
+    return { kind: "ok", value: undefined };
   } catch (e) {
     isError(e);
     return { kind: "err", error: e };
@@ -438,6 +502,7 @@ async function resetChatToMessage(chatID: number, messageID: number): Promise<vo
 }
 
 export const queries = {
+  createChat,
   deleteChat,
   resetChat,
   getChatSearchItems,
@@ -446,6 +511,8 @@ export const queries = {
   getChatHistory,
   getCardBundle,
   getCardBundles,
+  deleteCard,
+  insertMessage,
   insertMessagePair,
   updateMessageText,
   getContextMessagesStartingFrom,
