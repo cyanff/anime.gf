@@ -11,7 +11,7 @@ import {
 
 import ChatsPage from "@/app/chats";
 import CollectionsPage from "@/app/collections";
-import SettingsPage from "@/app/settings";
+import SettingsPage from "@/app/settings/settings";
 import { AppContext, DialogConfig } from "@/components/AppContext";
 import SideBar from "@/components/SideBar";
 import {
@@ -141,8 +141,8 @@ export default function App() {
         )}
 
         <div className="flex h-full w-full py-4">
-          {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID}/>}
-          {page === "collections" && <CollectionsPage setPage={setPage} setChatID={setChatID}/>}
+          {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID} />}
+          {page === "collections" && <CollectionsPage setPage={setPage} setChatID={setChatID} />}
           {page === "settings" && <SettingsPage />}
         </div>
       </div>

@@ -60,6 +60,26 @@ CREATE TABLE IF NOT EXISTS messages
 INSERT INTO personas (name, description)
 VALUES
     ('cyan',  'Nobel laureate in Physics'),
+    ('cyan',  'Nobel laureate in Physics'),
+    ('cyan',  'Nobel laureate in Physics'),
+    ('cyan',  'Nobel laureate in Physics'),
+    ('cyan',  'Nobel laureate in Physics'),
+    ('cyan',  'Nobel laureate in Physics'),
+    ('cyan',  'Nobel laureate in Physics'),
+    ('cyan',  'Nobel laureate in Physics'),
+    ('snafu', 'Nobel laureate in Chemistry'),
+    ('snafu', 'Nobel laureate in Chemistry'),
+    ('cyan',  'Nobel laureate in Physics'),
+    ('snafu', 'Nobel laureate in Chemistry'),
+    ('snafu', 'Nobel laureate in Chemistry'),
+    ('cyan',  'Nobel laureate in Physics'),
+    ('snafu', 'Nobel laureate in Chemistry'),
+    ('snafu', 'Nobel laureate in Chemistry'),
+    ('cyan',  'Nobel laureate in Physics'),
+    ('snafu', 'Nobel laureate in Chemistry'),
+    ('snafu', 'Nobel laureate in Chemistry'),
+    ('snafu', 'Nobel laureate in Chemistry'),
+    ('snafu', 'Nobel laureate in Chemistry'),
     ('snafu', 'Nobel laureate in Chemistry');
 
 INSERT INTO cards (dirName)

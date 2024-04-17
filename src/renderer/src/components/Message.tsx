@@ -175,7 +175,8 @@ function Message({
               <Popover>
                 <PopoverTrigger className="shrink-0">
                   <img
-                    className="size-12  rounded-full object-cover object-top"
+                    className="size-12 rounded-full object-cover object-top"
+                    draggable="false"
                     src={avatar || "default_avatar.png"}
                     alt="Avatar"
                   />
@@ -513,7 +514,7 @@ function MessageContextMenuContent({
 
 const userMarkdown: Partial<Components> = {
   em: ({ children }) => <span className="font-[550] italic text-neutral-300">{children}</span>,
-  strong: ({ children }) => <span className="font-bold text-gray-200">{children}</span>,
+  strong: ({ children }) => <span className="pr-1 font-bold text-gray-200">{children}</span>,
   blockquote: ({ children }) => {
     console.log("children", children);
     return (
@@ -526,8 +527,8 @@ const userMarkdown: Partial<Components> = {
 };
 
 const characterMarkdown: Partial<Components> = {
-  em: ({ children }) => <span className="font-[550] italic text-gray-400">{children}</span>,
-  strong: ({ children }) => <span className="font-bold text-gray-200">{children}</span>,
+  em: ({ children }) => <span className="pr-1 font-[550] italic text-gray-400">{children}</span>,
+  strong: ({ children }) => <span className="pr-1 font-bold text-gray-200">{children}</span>,
   blockquote: ({ children }) => {
     return (
       <div className="flex items-stretch font-medium italic text-neutral-400">

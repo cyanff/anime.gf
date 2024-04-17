@@ -45,7 +45,7 @@ export interface CardBundle {
 
 // Persona
 // =====================================
-export interface PersonaData extends Pick<Persona, "name" | "description"> {}
+export interface PersonaData extends Persona {}
 
 // Contents of the persona's directory
 export interface PersonaBundleWithoutData {

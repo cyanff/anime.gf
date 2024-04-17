@@ -2,6 +2,7 @@ import { deepFreeze } from "@shared/utils";
 import { ContextMessage, UIMessage } from "@shared/types";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { Result, isError } from "@shared/utils";
+import { Persona } from "@shared/db_types";
 
 async function deleteMessage(messageID: number): Promise<void> {
   const query = `
@@ -159,32 +160,52 @@ LIMIT 20;
 }
 
 async function getPersonaBundle(chatID: number): Promise<Result<PersonaBundle, Error>> {
-  interface QueryResult {
-    name: string;
-    description: string;
-  }
-
   const query = `
-  SELECT name, description
+  SELECT * 
   FROM personas
   WHERE personas.id = (SELECT persona_id FROM chats WHERE chats.id = ${chatID});
   `.trim();
 
   try {
-    const row = (await window.api.sqlite.get(query)) as QueryResult;
+    const row = (await window.api.sqlite.get(query)) as Persona;
     const res = await window.api.blob.personas.get(row.name);
     if (res.kind == "err") {
       throw res.error;
     }
     const personaBundle = {
       data: {
-        name: row.name,
-        description: row.description
+        ...row
       },
       avatarURI: res.value.avatarURI
     };
 
     return { kind: "ok", value: personaBundle };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
+async function getAllPersonaBundles(): Promise<Result<PersonaBundle[], Error>> {
+  const query = "SELECT * FROM personas;";
+
+  try {
+    const rows = (await window.api.sqlite.all(query)) as Persona[];
+    const personaBundles = await Promise.all(
+      rows.map(async (row) => {
+        const res = await window.api.blob.personas.get(row.name);
+        if (res.kind == "err") {
+          throw res.error;
+        }
+        return {
+          data: {
+            ...row
+          },
+          avatarURI: res.value.avatarURI
+        };
+      })
+    );
+    return { kind: "ok", value: personaBundles };
   } catch (e) {
     isError(e);
     return { kind: "err", error: e };
@@ -501,6 +522,14 @@ async function resetChatToMessage(chatID: number, messageID: number): Promise<vo
   await window.api.sqlite.run(query, [chatID, messageID]);
 }
 
+async function deletePersona(id: number) {
+  const query = `
+  DELETE FROM personas WHERE id = ?;
+  `.trim();
+
+  await window.api.sqlite.run(query, [id]);
+}
+
 export const queries = {
   createChat,
   deleteChat,
@@ -522,7 +551,9 @@ export const queries = {
   setCandidateMessageAsPrime,
   updateCandidateMessage,
   updateMessagePrimeCandidate,
-  resetChatToMessage
+  resetChatToMessage,
+  getAllPersonaBundles,
+  deletePersona
 };
 
 deepFreeze(queries);
