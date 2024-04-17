@@ -40,7 +40,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { queries } from "@/lib/queries";
 import { CardBundle, PersonaBundle, UIMessageCandidate } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
-import ReactMarkdown, { Components } from "react-markdown";
+import Markdown, { Components } from "react-markdown";
 import { toast } from "sonner";
 
 interface MessageProps {
@@ -215,7 +215,15 @@ function Message({
                     {candidate.text}
                   </div>
                 ) : (
-                  <p className="break-words">{candidate.text}</p>
+                  <Markdown
+                    allowedElements={["p", "blockquote", "strong", "em"]}
+                    unwrapDisallowed
+                    skipHtml
+                    className="whitespace-pre-wrap"
+                    components={sender === "user" ? userMarkdown : characterMarkdown}
+                  >
+                    {candidate.text}
+                  </Markdown>
                 )}
               </div>
             </div>
@@ -503,44 +511,30 @@ function MessageContextMenuContent({
   );
 }
 
-const userMarkdown: Partial<Components> = {};
+const userMarkdown: Partial<Components> = {
+  em: ({ children }) => <span className="font-[550] italic text-neutral-300">{children}</span>,
+  strong: ({ children }) => <span className="font-bold text-gray-200">{children}</span>,
+  blockquote: ({ children }) => {
+    console.log("children", children);
+    return (
+      <div className="flex items-stretch font-medium italic text-neutral-100">
+        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-gray-600" />
+        {children}
+      </div>
+    );
+  }
+};
 
 const characterMarkdown: Partial<Components> = {
-  em: ({ children }) => <span className="font-medium italic text-gray-400">{children}</span>,
+  em: ({ children }) => <span className="font-[550] italic text-gray-400">{children}</span>,
   strong: ({ children }) => <span className="font-bold text-gray-200">{children}</span>,
   blockquote: ({ children }) => {
     return (
-      <div className="flex items-stretch">
-        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-neutral-600" />
-        <p className="self-center italic text-neutral-300">{children}</p>
+      <div className="flex items-stretch font-medium italic text-neutral-400">
+        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-neutral-400" />
+        {children}
       </div>
     );
-  },
-  pre: ({ children }) => <span>{children}</span>,
-  p: ({ children }) => {
-    console.log("Children:", children);
-    if (typeof children === "string") {
-      const parts = children.split(/"(.*?)"/);
-
-      console.log("Parts:", parts);
-
-      return (
-        <div>
-          {parts.map((part, index) => {
-            if (index % 2 === 1) {
-              return (
-                <span key={index} className="font-medium text-rose-300">
-                  "{part}"
-                </span>
-              );
-            }
-            return part;
-          })}
-        </div>
-      );
-    }
-
-    return <span>{children}</span>;
   }
 };
 
