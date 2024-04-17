@@ -21,7 +21,7 @@ export interface CompletionConfig {
 }
 
 export interface Provider {
-  getModels(): string[];
+  getModels(): Promise<string[]>;
   getChatCompletion(messages: ProviderMessage[], config: CompletionConfig): Promise<Result<string, Error>>;
   streamChatCompletion(): any;
   getTextCompletion(): Promise<Result<string, Error>>;

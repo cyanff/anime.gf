@@ -29,6 +29,7 @@ export interface API {
   };
   xfetch: {
     post: (url: string, body: Object, headers: Record<string, string>) => Promise<Result<any, Error>>;
+    get: (url: string, headers: Record<string, string>) => Promise<Result<any, Error>>;
   };
 }
 
@@ -56,8 +57,8 @@ const api: API = {
     set: (settings) => ipcRenderer.invoke("setting.set", settings)
   },
   xfetch: {
-    post: (url, body, headers) => ipcRenderer.invoke("xfetch.post", url, body, headers)
+    post: (url, body, headers) => ipcRenderer.invoke("xfetch.post", url, body, headers),
+    get: (url, headers) => ipcRenderer.invoke("xfetch.get", url, headers)
   }
 };
-
 contextBridge.exposeInMainWorld("api", api);

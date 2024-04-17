@@ -2,8 +2,6 @@ import { Provider } from "@/lib/provider/provider";
 import { Result } from "@shared/utils";
 import { ProviderMessage, CompletionConfig } from "@/lib/provider/provider";
 
-const models = ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229"];
-
 interface ChatCompletion {
   id: string;
   type: "message";
@@ -25,19 +23,14 @@ interface Usage {
   output_tokens: number;
 }
 
-function getModels(): string[] {
-  return [...models];
+function getModels(): Promise<string[]> {
+  return Promise.resolve(["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229"]);
 }
 
 async function getChatCompletion(
   messages: ProviderMessage[],
   config: CompletionConfig
 ): Promise<Result<string, Error>> {
-  const validationRes = validateConfig(config);
-  if (validationRes.kind == "err") {
-    return validationRes;
-  }
-
   // Get API key from either config or secret store
   let key: string;
   if (!config.apiKey) {
@@ -98,13 +91,6 @@ async function streamChatCompletion(): Promise<any> {
 
 async function getTextCompletion(): Promise<Result<string, Error>> {
   throw new Error("Not implemented");
-}
-
-function validateConfig(config: CompletionConfig): Result<void, Error> {
-  if (!models.includes(config.model)) {
-    return { kind: "err", error: new Error("Invalid model specified in CompletionConfig") };
-  }
-  return { kind: "ok", value: undefined };
 }
 
 export const anthropic: Provider = {

@@ -123,6 +123,9 @@ app.whenReady().then(async () => {
   ipcMain.handle("xfetch.post", async (_, url: string, body: Object, headers: Record<string, string>) => {
     return await xfetch.post(url, body, headers);
   });
+  ipcMain.handle("xfetch.get", async (_, url: string, headers: Record<string, string>) => {
+    return await xfetch.get(url, headers);
+  });
 
   ipcMain.handle("setting.get", async () => {
     return await setting.get();

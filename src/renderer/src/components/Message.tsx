@@ -215,9 +215,7 @@ function Message({
                     {candidate.text}
                   </div>
                 ) : (
-                  <ReactMarkdown components={sender === "user" ? userMarkdown : characterMarkdown}>
-                    {candidate.text}
-                  </ReactMarkdown>
+                  <p className="break-words">{candidate.text}</p>
                 )}
               </div>
             </div>
