@@ -1,13 +1,15 @@
--- TODO, implement soft delete for cards and personas
--- https://claude.ai/chat/35bc35a7-aa38-440a-938d-efd905feb08e
--- This is so that on deletion, the chat could still reference the persona and card
-
-
 CREATE TABLE IF NOT EXISTS personas 
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    description TEXT DEFAULT "" NOT NULL ,
+    description TEXT DEFAULT "" NOT NULL,
+    -- The name of the personas directory
+    -- Should be name-uuidv4
+    -- The name should be lowercased, with spaces replaced with hyphens
+    -- Ex: cyan-ea483976-e42c-42bb-9918-6314abc30b18
+    dir_name TEXT NOT NULL,
+    is_deleted BOOLEAN DEFAULT 0 NOT NULL,
+    is_default BOOLEAN DEFAULT 0 NOT NULL,
     inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TEXT
 );
@@ -15,8 +17,12 @@ CREATE TABLE IF NOT EXISTS personas
 CREATE TABLE IF NOT EXISTS cards 
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    -- The name of the card's zip archive (not including file extension)
-    dirName TEXT NOT NULL,
+    -- The name of the card directory
+    -- Should be characterName-sha256
+    -- The characterName should be lowercased, with spaces replaced with hyphens
+    -- Ex: zephyr-ea483976-e42c-42bb-9918-6314abc30b18
+    dir_name TEXT NOT NULL,
+    is_deleted BOOLEAN DEFAULT 0 NOT NULL,
     inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TEXT
 );
@@ -57,39 +63,16 @@ CREATE TABLE IF NOT EXISTS messages
     FOREIGN KEY (prime_candidate_id) REFERENCES message_candidates (id)
 );
 
-INSERT INTO personas (name, description)
+INSERT INTO personas (name, dir_name, description,  is_default)
 VALUES
-    ('cyan',  'Nobel laureate in Physics'),
-    ('cyan',  'Nobel laureate in Physics'),
-    ('cyan',  'Nobel laureate in Physics'),
-    ('cyan',  'Nobel laureate in Physics'),
-    ('cyan',  'Nobel laureate in Physics'),
-    ('cyan',  'Nobel laureate in Physics'),
-    ('cyan',  'Nobel laureate in Physics'),
-    ('cyan',  'Nobel laureate in Physics'),
-    ('snafu', 'Nobel laureate in Chemistry'),
-    ('snafu', 'Nobel laureate in Chemistry'),
-    ('cyan',  'Nobel laureate in Physics'),
-    ('snafu', 'Nobel laureate in Chemistry'),
-    ('snafu', 'Nobel laureate in Chemistry'),
-    ('cyan',  'Nobel laureate in Physics'),
-    ('snafu', 'Nobel laureate in Chemistry'),
-    ('snafu', 'Nobel laureate in Chemistry'),
-    ('cyan',  'Nobel laureate in Physics'),
-    ('snafu', 'Nobel laureate in Chemistry'),
-    ('snafu', 'Nobel laureate in Chemistry'),
-    ('snafu', 'Nobel laureate in Chemistry'),
-    ('snafu', 'Nobel laureate in Chemistry'),
-    ('snafu', 'Nobel laureate in Chemistry');
+    ('cyan', 'cyan',  'Nobel laureate in Physics', 1),
+    ('snafu', 'snafu', 'Nobel laureate in Chemistry', 0);
 
-INSERT INTO cards (dirName)
+INSERT INTO cards (dir_name)
 VALUES
     ('zephyr'),
-    ('eliza'),
     ('astro'),
-    ('zephyr'),
-    ('eliza'),
-    ('astro');
+    ('eliza');
 
 INSERT INTO chats (persona_id, card_id)
 VALUES
@@ -103,64 +86,6 @@ VALUES
 (1, 'hey, whats up?', 'user',   '2023-04-20 10:00:05'),
 (1, 'nothing much, whats up with you?', 'character',   '2023-04-20 10:00:10'),
 (1, 'none of your business', 'user',   '2023-04-20 10:00:15'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
 (1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
 (1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
 (1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
@@ -195,28 +120,6 @@ VALUES
 (1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
 (1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
 (1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'Hello, how can I assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
-(1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
 (1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
 (1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),
 (1, 'hello, how can i assist you today?', 'character',   '2023-04-20 10:00:20'),

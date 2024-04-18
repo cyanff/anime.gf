@@ -6,7 +6,7 @@
     "src/shared/**/*",
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts",
-    "config.ts"
+    "src/shared/config.ts"
 , "src/main/lib/xfetch.ts"  ],
   "compilerOptions": {
     "composite": true,

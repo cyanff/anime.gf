@@ -5,7 +5,6 @@ import SettingsPersona from "@/app/settings/settings_persona";
 
 export default function SettingsPage() {
   const [page, setPage] = useState<string>("chat");
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   // className="rounded-sm px-3 py-2 text-left text-[1.15rem] font-medium hover:bg-accent"
   return (
     <div className="flex h-full w-full  bg-neutral-800 text-neutral-100">

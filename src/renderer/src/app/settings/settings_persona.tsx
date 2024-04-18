@@ -6,7 +6,12 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
-import { EllipsisHorizontalIcon, UserPlusIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
+import {
+  EllipsisHorizontalIcon,
+  PencilSquareIcon,
+  UserPlusIcon,
+  WrenchScrewdriverIcon
+} from "@heroicons/react/24/solid";
 
 import {
   DropdownMenu,
@@ -20,25 +25,57 @@ import {
 import { queries } from "@/lib/queries";
 import { toast } from "sonner";
 import { PersonaBundle } from "@shared/types";
+import { useApp } from "@/components/AppContext";
+import { Checkbox } from "@/components/ui/checkbox";
+import { config } from "@shared/config";
 
 export default function SettingsPersona() {
   const [personaBundles, setPersonaBundles] = useState<PersonaBundle[]>([]);
+  const { createModal, closeModal } = useApp();
 
   useEffect(() => {
     syncAllPersonaBundles();
   }, []);
 
   const syncAllPersonaBundles = async () => {
-    const res = await queries.getAllPersonaBundles();
+    const res = await queries.getAllExtantPersonaBundles();
     if (res.kind == "err") {
       toast.error("Error fetching persona bundle.");
+      console.error(res.error);
       return;
     }
     setPersonaBundles(res.value);
   };
 
-  const handleEdit = (id: number) => {
-    toast.info(`Edit persona with id: ${id}`);
+  const handleEdit = (id: number, name: string, description: string, isDefault: boolean) => {
+    createModal(
+      <PersonaModal
+        title="Edit Persona"
+        initialName={name}
+        initialDescription={description}
+        initialIsDefault={isDefault}
+        submit={{
+          label: "Save",
+          handle: (name, description, isDefault) => {
+            closeModal();
+            try {
+              queries.updatePersona(id, name, description, isDefault);
+            } catch (e) {
+              toast.error(`Error updating persona. Error: ${e}`);
+            } finally {
+              syncAllPersonaBundles();
+            }
+          }
+        }}
+        remove={{
+          label: "Remove",
+          handle: () => {
+            closeModal();
+            handleDelete(id);
+          }
+        }}
+      />
+    );
   };
 
   const handleDelete = async (id: number) => {
@@ -55,31 +92,38 @@ export default function SettingsPersona() {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center space-y-3 bg-background">
       {/* Personas List */}
-      <div className=" flex max-h-[50%] min-h-20 w-[28rem] rounded-2xl border border-neutral-700 bg-neutral-800  py-2">
+      <div className=" flex max-h-[50%] min-h-20 w-[28rem] rounded-2xl border border-neutral-700 bg-neutral-800 py-2">
         <div className="scroll-secondary flex h-full w-full flex-col space-y-2 overflow-y-scroll px-3">
-          {personaBundles.map((personaBundle, idx) => {
+          {personaBundles.map((bundle, idx) => {
             return (
               <ContextMenu key={idx}>
                 <ContextMenuTrigger>
                   <button
-                    className={`group flex h-fit w-full items-center justify-between rounded-lg p-3 
-                   font-[480] text-neutral-100 transition duration-200 ease-out hover:bg-neutral-700`}
-                    onClick={() => handleEdit(personaBundle.data.id)}
+                    className={`group flex h-fit w-full items-center justify-between rounded-lg p-3 font-[480]
+                   text-neutral-100 transition duration-200 ease-out hover:bg-neutral-700 focus:outline-none`}
+                    onClick={() =>
+                      handleEdit(
+                        bundle.data.id,
+                        bundle.data.name,
+                        bundle.data.description,
+                        bundle.data.is_default === 1 ? true : false
+                      )
+                    }
                   >
-                    <div className="mr-3 flex items-center space-x-5">
+                    <div className="mr-3 flex w-full items-center space-x-5">
                       <img
                         draggable="false"
                         className="size-12 rounded-full object-cover object-top"
-                        src={personaBundle.avatarURI || "default_avatar.png"}
+                        src={bundle.avatarURI || "default_avatar.png"}
                         alt="Avatar"
                       />
-                      <div className="flex flex-col">
+                      <div className="flex w-full flex-col">
                         <h3 className="line-clamp-1 w-5/6 text-ellipsis text-left text-[1.07rem] font-[550]">
-                          {personaBundle.data.name}
+                          {bundle.data.name}
                         </h3>
-                        {personaBundle.data.description && personaBundle.data.description.length != 0 && (
+                        {bundle.data.description && bundle.data.description.length != 0 && (
                           <p className="line-clamp-1 text-ellipsis text-left text-[0.88rem] font-[470] text-gray-400">
-                            {personaBundle.data.description}
+                            {bundle.data.description}
                           </p>
                         )}
                       </div>
@@ -90,13 +134,22 @@ export default function SettingsPersona() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-36">
                         <DropdownMenuGroup>
-                          <DropdownMenuItem onSelect={() => handleEdit(personaBundle.data.id)}>
+                          <DropdownMenuItem
+                            onSelect={() =>
+                              handleEdit(
+                                bundle.data.id,
+                                bundle.data.name,
+                                bundle.data.description,
+                                bundle.data.is_default === 1 ? true : false
+                              )
+                            }
+                          >
                             Edit
                             <DropdownMenuShortcut>
                               <WrenchScrewdriverIcon className="size-4" />
                             </DropdownMenuShortcut>
                           </DropdownMenuItem>
-                          <DropdownMenuItem onSelect={() => handleDelete(personaBundle.data.id)}>
+                          <DropdownMenuItem onSelect={() => handleDelete(bundle.data.id)}>
                             Delete
                             <DropdownMenuShortcut>
                               <WrenchScrewdriverIcon className="size-4" />
@@ -109,7 +162,16 @@ export default function SettingsPersona() {
                 </ContextMenuTrigger>
 
                 <ContextMenuContent className="w-36">
-                  <ContextMenuItem onSelect={() => handleEdit(personaBundle.data.id)}>
+                  <ContextMenuItem
+                    onSelect={() =>
+                      handleEdit(
+                        bundle.data.id,
+                        bundle.data.name,
+                        bundle.data.description,
+                        bundle.data.is_default === 1 ? true : false
+                      )
+                    }
+                  >
                     Edit
                     <ContextMenuShortcut>
                       <WrenchScrewdriverIcon className="size-4" />
@@ -118,7 +180,7 @@ export default function SettingsPersona() {
 
                   <ContextMenuItem
                     onSelect={() => {
-                      handleDelete(personaBundle.data.id);
+                      handleDelete(bundle.data.id);
                     }}
                   >
                     Delete
@@ -136,6 +198,136 @@ export default function SettingsPersona() {
         <UserPlusIcon className="size-5" />
         <span className="font-medium text-neutral-200">New</span>
       </button>
+    </div>
+  );
+}
+interface PersonaModalProps {
+  title: string;
+  initialName?: string;
+  initialDescription?: string;
+  initialIsDefault?: boolean;
+  submit: {
+    label: string;
+    handle: (name: string, description: string, isDefault: boolean) => void;
+  };
+  remove?: {
+    label: string;
+    handle: () => void;
+  };
+}
+
+function PersonaModal({
+  title,
+  initialName = "",
+  initialDescription = "",
+  initialIsDefault = false,
+  submit,
+  remove
+}: PersonaModalProps) {
+  const [name, setName] = useState(initialName);
+  const [description, setDescription] = useState(initialDescription);
+  const [isDefault, setisDefault] = useState(false);
+
+  useEffect(() => {
+    setName(initialName);
+  }, [initialName]);
+  useEffect(() => {
+    setDescription(initialDescription);
+  }, [initialDescription]);
+
+  const handleNameInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const maxChars = config.persona.nameMaxChars;
+    if (e.target.value.length > maxChars) {
+      toast.error(`Name cannot exceed ${maxChars} characters.`);
+      return;
+    }
+    setName(e.target.value);
+  };
+
+  const handleDescriptionInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const maxChars = config.persona.descriptionMaxChars;
+    if (e.target.value.length > maxChars) {
+      toast.error(`Description cannot exceed ${maxChars} characters.`);
+      return;
+    }
+    setDescription(e.target.value);
+  };
+
+  return (
+    <div className="flex w-96 flex-col space-y-5 rounded-lg border border-neutral-700 bg-neutral-800 p-6 focus:outline-none">
+      <h3 className="text-lg font-semibold">{title}</h3>
+      {/* Name Input & Avatar */}
+      <div className="flex w-full items-center space-x-6">
+        {/* Name Input*/}
+        <input
+          type="text"
+          className="relative h-12 w-64 select-text rounded-md border border-neutral-600 bg-neutral-700 px-2.5  placeholder:font-[450] focus:outline-none"
+          value={initialName}
+          onChange={handleNameInput}
+          placeholder="Name"
+        />
+        {/* Avatar Display */}
+        <button className="relative shrink-0  focus:outline-none">
+          <div
+            className={`flex size-14 shrink-0 select-none items-center justify-center 
+            rounded-full bg-grad-magenta text-2xl font-bold`}
+            onClick={() => {}}
+          >
+            {initialName.charAt(0)}
+          </div>
+          <PencilSquareIcon className="absolute -right-1 -top-1 size-6 rounded-sm fill-neutral-300 p-0.5" />
+        </button>
+      </div>
+      {/* Description Input */}
+      <textarea
+        placeholder="Description"
+        value={description}
+        onChange={handleDescriptionInput}
+        className="scroll-tertiary flex h-36 w-full resize-none items-start rounded-md border border-neutral-600 bg-neutral-700 p-2.5 placeholder:font-[450] focus:outline-none"
+      />
+
+      {/* Make Default? */}
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          className="rounded-[4px] border-[1px] border-neutral-400"
+          checked={isDefault}
+          onCheckedChange={(checked) => {
+            const checkedState = checked === "indeterminate" ? false : checked;
+            setisDefault(checkedState);
+          }}
+        />
+        <span className="text-sm font-[460] text-neutral-200">Make Default</span>
+      </div>
+
+      {/* Footer Controls*/}
+      <div className="flex w-full justify-end">
+        <div className="flex flex-row space-x-3">
+          {remove && (
+            <button
+              className="flex items-center rounded-sm bg-red-700 px-3 py-2 font-medium text-neutral-200 saturate-[.67]"
+              onClick={remove.handle}
+            >
+              {remove.label}
+            </button>
+          )}
+          <button
+            className="flex items-center rounded-sm bg-neutral-700 px-3 py-2 font-medium text-neutral-200"
+            onClick={() => {
+              if (initialName.length == 0) {
+                toast.error("Name cannot be empty.");
+                return;
+              }
+              if (description.length == 0) {
+                toast.error("Description cannot be empty.");
+                return;
+              }
+              submit.handle(initialName, description, isDefault);
+            }}
+          >
+            {submit.label}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

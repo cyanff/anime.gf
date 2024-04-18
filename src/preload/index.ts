@@ -17,6 +17,7 @@ export interface API {
     };
     personas: {
       get: (persona: string) => Promise<Result<PersonaBundleWithoutData, Error>>;
+      rename: (oldName: string, newName: string) => Promise<Result<void, Error>>;
     };
   };
   secret: {
@@ -45,7 +46,8 @@ const api: API = {
       get: (card) => ipcRenderer.invoke("blob.cards.get", card)
     },
     personas: {
-      get: (persona) => ipcRenderer.invoke("blob.personas.get", persona)
+      get: (persona) => ipcRenderer.invoke("blob.personas.get", persona),
+      rename: (oldName, newName) => ipcRenderer.invoke("blob.personas.rename", oldName, newName)
     }
   },
   secret: {

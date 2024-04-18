@@ -39,6 +39,18 @@
   border-radius: 10px;
 }
 
+/* Secondary scrollbar */
+.scroll-tertiary::-webkit-scrollbar {
+  width: 4px; /* Thin width */
+}
+.scroll-tertiary::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0);;
+}
+.scroll-tertiary::-webkit-scrollbar-thumb {
+  background: theme(colors.neutral.600);
+  border-radius: 10px;
+}
+
 
 /* ==================== Shadcn ==================== */
 

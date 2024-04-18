@@ -1,7 +1,7 @@
 // Blob storage manages all non structured data.
 // This includes silly tavern cards, images, audio, base weights, lora adapters, and other binary data.
 
-import { CardBundle, PersonaBundleWithoutData } from "@shared/types";
+import { CardBundle, CardBundleWithoutID, PersonaBundleWithoutData } from "@shared/types";
 import { Result, isError } from "@shared/utils";
 import fs from "fs/promises";
 import path from "path";
@@ -33,7 +33,7 @@ export namespace cards {
    * @returns A result object containing the CardResources if successful, else error.
    *
    */
-  export async function get(name: string): Promise<Result<CardBundle, Error>> {
+  export async function get(name: string): Promise<Result<CardBundleWithoutID, Error>> {
     const dirPath = path.join(cardsPath, name);
     if (!(await attainable(dirPath))) {
       return { kind: "err", error: new Error(`Card folder "${name}" not found`) };
@@ -87,6 +87,22 @@ export namespace personas {
         avatarURI
       }
     };
+  }
+
+  export async function rename(currentName: string, newName: string): Promise<Result<undefined, Error>> {
+    const currentDir = path.join(personasPath, currentName);
+    if (!(await attainable(currentDir))) {
+      return { kind: "err", error: new Error(`Persona folder "${currentName}" not found or inaccessible`) };
+    }
+
+    const newDir = path.join(personasPath, newName);
+    try {
+      await fs.rename(currentDir, newDir);
+    } catch (e) {
+      isError(e);
+      return { kind: "err", error: e };
+    }
+    return { kind: "ok", value: undefined };
   }
 }
 

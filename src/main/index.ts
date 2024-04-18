@@ -114,6 +114,10 @@ app.whenReady().then(async () => {
     return await blob.personas.get(persona);
   });
 
+  ipcMain.handle("blob.personas.rename", async (_, oldName: string, newName: string) => {
+    return await blob.personas.rename(oldName, newName);
+  });
+
   ipcMain.handle("secret.get", async (_, k: string) => {
     return await secret.get(k);
   });
