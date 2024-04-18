@@ -136,6 +136,10 @@ export default function SettingsPersona() {
                       <DropdownMenuContent className="w-36">
                         <DropdownMenuGroup>
                           <DropdownMenuItem
+                            onClick={(e) => {
+                              // Prevent clicks on the dropdown menu items from triggering the parent button
+                              e.preventDefault();
+                            }}
                             onSelect={() =>
                               handleEdit(
                                 bundle.data.id,
@@ -150,7 +154,13 @@ export default function SettingsPersona() {
                               <WrenchScrewdriverIcon className="size-4" />
                             </DropdownMenuShortcut>
                           </DropdownMenuItem>
-                          <DropdownMenuItem onSelect={() => handleDelete(bundle.data.id)}>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              // Prevent clicks on the dropdown menu items from triggering the parent button
+                              e.preventDefault();
+                            }}
+                            onSelect={() => handleDelete(bundle.data.id)}
+                          >
                             Delete
                             <DropdownMenuShortcut>
                               <WrenchScrewdriverIcon className="size-4" />
