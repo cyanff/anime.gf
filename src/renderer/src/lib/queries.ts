@@ -1,4 +1,4 @@
-import { deepFreeze, isValidName } from "@shared/utils";
+import { deepFreeze, isValidName, toPathEscapedStr } from "@shared/utils";
 import { ContextMessage, UIMessage } from "@shared/types";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { Result, isError } from "@shared/utils";
@@ -526,8 +526,7 @@ async function updatePersona(id: number, name: string, description: string, isDe
   if (!isValidName(name)) {
     throw new Error("Name must only contain alphanumeric characters, spaces, and hyphens.");
   }
-  const processedName = name.toLowerCase().replace(/\s/g, "-");
-  const newDirName = `${processedName}-${crypto.randomUUID()}`;
+  const newDirName = `${toPathEscapedStr(name)}-${crypto.randomUUID()}`;
 
   // IF new name is different from old name, rename the persona folder
   if (name !== oldName) {
@@ -540,6 +539,30 @@ async function updatePersona(id: number, name: string, description: string, isDe
   WHERE id = ?;
   `.trim();
   await window.api.sqlite.run(query, [name, description, newDirName, isDefault ? 1 : 0, id]);
+}
+
+async function insertPersona(name: string, description: string, isDefault: boolean) {
+  if (!isValidName(name)) {
+    throw new Error("Name must only contain alphanumeric characters, spaces, and hyphens.");
+  }
+
+  // If the new persona will be set as default, unset the current default persona
+  if (isDefault) {
+    const currentDefault = (await window.api.sqlite.get("SELECT id FROM personas WHERE is_default = 1;")) as {
+      id: number;
+    };
+    if (currentDefault) {
+      await window.api.sqlite.get("UPDATE personas SET is_default = 0 WHERE id = ?;", [currentDefault.id]);
+    }
+  }
+
+  const dirName = `${toPathEscapedStr(name)}-${crypto.randomUUID()}`;
+
+  const query = `
+  INSERT INTO personas (name, description, is_default, dir_name)
+  VALUES (?, ?, ?);`;
+
+  await window.api.sqlite.run(query, [name, description, isDefault ? 1 : 0]);
 }
 
 export const queries = {
@@ -566,7 +589,8 @@ export const queries = {
   resetChatToMessage,
   getAllExtantPersonaBundles,
   deletePersona,
-  updatePersona
+  updatePersona,
+  insertPersona
 };
 
 deepFreeze(queries);

@@ -302,6 +302,9 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
               const candidatesIDX = primeCandidateIDX === -1 ? 0 : primeCandidateIDX + 1;
               const noCandidates = message.candidates.length === 1;
 
+              console.log("candidates", candidates);
+              console.log("candidatesIDX", candidatesIDX);
+
               return (
                 <Message
                   key={idx}
