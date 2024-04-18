@@ -25,11 +25,10 @@ protocol.registerSchemesAsPrivileged([
 app.enableSandbox();
 
 app.whenReady().then(async () => {
-  // Add React DevTools in development
-  if (is.dev) {
-    const { REACT_DEVELOPER_TOOLS, default: installExtension } = await import("electron-devtools-assembler");
-    await installExtension(REACT_DEVELOPER_TOOLS);
-  }
+  // if (is.dev) {
+  //   const { REACT_DEVELOPER_TOOLS, default: installExtension } = await import("electron-devtools-assembler");
+  //   await installExtension(REACT_DEVELOPER_TOOLS);
+  // }
 
   electronApp.setAppUserModelId("com.electron");
 
