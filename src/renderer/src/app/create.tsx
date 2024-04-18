@@ -1,15 +1,14 @@
-import { useState } from "react";
-import Dropdown from "@/components/Dropdown";
+import { useState, useRef } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { InputArea } from "@/components/ui/input-area";
-
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 const formSchema = z.object({
   name: z.string().min(0).max(200),
   description: z.string().min(0).max(200),
@@ -23,8 +22,8 @@ function CreationPage() {
   const [characterDescription, setCharacterDescription] = useState("");
   const [greetingMessage, setGreetingMessage] = useState("");
   const [exampleMessages, setExampleMessages] = useState("");
+  const fileInput = useRef(null);
 
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,20 +34,51 @@ function CreationPage() {
     }
   });
 
-  // 2. Define a submit handler.
+  //TODO: Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values);
   }
 
+  const handleClick = () => {
+    fileInput.current.click();
+  };
+
+  //TODO: Implement file upload handler.
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+  };
+
   return (
-    <div className="flex w-full items-center justify-center rounded-lg bg-neutral-800">
-      <div className="scroll-secondary overflow-y-scroll rounded-lg">
+    <div className="flex w-full items-center justify-center rounded-lg bg-background">
+      <div className="rounded-lg bg-neutral-800">
         {/* Banner and profile picture */}
         <div className="relative rounded-lg">
-          <div className="h-48 w-full rounded-t-lg bg-neutral-700 object-cover" />
-          <div className="absolute -bottom-12 left-4 h-24 w-24 rounded-full border-4 border-neutral-800 object-cover" />
+          <div
+            className="flex h-48 w-full cursor-pointer items-center justify-center rounded-t-lg bg-gradient-to-br from-neutral-700 to-neutral-500 object-cover"
+            onClick={handleClick}
+          >
+            <input
+              type="file"
+              style={{ display: "none" }}
+              ref={fileInput}
+              onChange={handleFileChange}
+              accept=".jpg,.jpeg,.png"
+            />
+            <PencilSquareIcon className="absolute h-14 w-14 text-neutral-300" />
+          </div>
+          <div
+            className="absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-neutral-700 to-neutral-600 object-cover"
+            onClick={handleClick}
+          >
+            <PencilSquareIcon className="absolute h-8 w-8 text-neutral-300" />
+            <input
+              type="file"
+              style={{ display: "none" }}
+              ref={fileInput}
+              onChange={handleFileChange}
+              accept=".jpg,.jpeg,.png"
+            />
+          </div>
         </div>
         {/* Character details container */}
         <div className="px-6 pb-6 pt-12">
@@ -147,8 +177,6 @@ function CreationPage() {
               <Button type="submit">Submit</Button>
             </form>
           </Form>
-
-          {/* Character details dropdowns */}
         </div>
       </div>
     </div>
