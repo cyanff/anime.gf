@@ -2,6 +2,7 @@ export interface Persona {
   id: number;
   name: string;
   description: string;
+  dir_name: string;
   is_deleted: number;
   is_default: number;
   inserted_at: string;
@@ -10,7 +11,7 @@ export interface Persona {
 
 export interface Card {
   id: number;
-  dirName: string;
+  dir_name: string;
   is_deleted: number;
   inserted_at: string;
   updated_at?: string;

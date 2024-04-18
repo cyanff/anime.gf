@@ -16,7 +16,7 @@ enum ScrollEvent {
   NEW_CHARACTER_MESSAGE
 }
 
-function ChatsPage({chatID, setChatID}): JSX.Element {
+function ChatsPage({ chatID, setChatID }): JSX.Element {
   const { createDialog } = useContext(AppContext);
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
   const [cardBundle, setCardBundle] = useState<CardBundle>();
@@ -81,6 +81,7 @@ function ChatsPage({chatID, setChatID}): JSX.Element {
     const res = await queries.getPersonaBundle(chatID);
     if (res.kind == "err") {
       toast.error("Error fetching persona bundle.");
+      console.error(res.error);
       return;
     }
     setPersonaBundle(res.value);
@@ -277,7 +278,7 @@ function ChatsPage({chatID, setChatID}): JSX.Element {
         syncChatHistory={syncChatHistory}
       />
       {/* Main Content */}
-      <div className="flex h-full w-full grow flex-row overflow-x-hidden">
+      <div className="flex h-full w-full grow flex-row overflow-hidden">
         {/* Chat Area and Chat Bar Wrapper*/}
         <div className="relative flex h-full flex-auto flex-col pl-8 pt-8">
           {/* Chat Area */}

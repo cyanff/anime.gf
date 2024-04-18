@@ -56,12 +56,13 @@ export default function SettingsPersona() {
         initialIsDefault={isDefault}
         submit={{
           label: "Save",
-          handle: (name, description, isDefault) => {
+          handle: async (name, description, isDefault) => {
             closeModal();
             try {
-              queries.updatePersona(id, name, description, isDefault);
+              await queries.updatePersona(id, name, description, isDefault);
             } catch (e) {
               toast.error(`Error updating persona. Error: ${e}`);
+              console.error(e);
             } finally {
               syncAllPersonaBundles();
             }
@@ -235,6 +236,10 @@ function PersonaModal({
     setDescription(initialDescription);
   }, [initialDescription]);
 
+  useEffect(() => {
+    setisDefault(initialIsDefault);
+  }, [initialIsDefault]);
+
   const handleNameInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const maxChars = config.persona.nameMaxChars;
     if (e.target.value.length > maxChars) {
@@ -262,7 +267,7 @@ function PersonaModal({
         <input
           type="text"
           className="relative h-12 w-64 select-text rounded-md border border-neutral-600 bg-neutral-700 px-2.5  placeholder:font-[450] focus:outline-none"
-          value={initialName}
+          value={name}
           onChange={handleNameInput}
           placeholder="Name"
         />
@@ -286,7 +291,7 @@ function PersonaModal({
         className="scroll-tertiary flex h-36 w-full resize-none items-start rounded-md border border-neutral-600 bg-neutral-700 p-2.5 placeholder:font-[450] focus:outline-none"
       />
 
-      {/* Make Default? */}
+      {/* Is Default? */}
       <div className="flex items-center space-x-2">
         <Checkbox
           className="rounded-[4px] border-[1px] border-neutral-400"
@@ -321,7 +326,7 @@ function PersonaModal({
                 toast.error("Description cannot be empty.");
                 return;
               }
-              submit.handle(initialName, description, isDefault);
+              submit.handle(name, description, isDefault);
             }}
           >
             {submit.label}

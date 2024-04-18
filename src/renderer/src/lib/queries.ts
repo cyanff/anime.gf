@@ -168,7 +168,7 @@ async function getPersonaBundle(chatID: number): Promise<Result<PersonaBundle, E
 
   try {
     const row = (await window.api.sqlite.get(query)) as Persona;
-    const res = await window.api.blob.personas.get(row.name);
+    const res = await window.api.blob.personas.get(row.dir_name);
     if (res.kind == "err") {
       throw res.error;
     }
@@ -193,7 +193,7 @@ async function getAllExtantPersonaBundles(): Promise<Result<PersonaBundle[], Err
     const rows = (await window.api.sqlite.all(query)) as Persona[];
     const personaBundles = await Promise.all(
       rows.map(async (row) => {
-        const res = await window.api.blob.personas.get(row.name);
+        const res = await window.api.blob.personas.get(row.dir_name);
         if (res.kind == "err") {
           throw res.error;
         }

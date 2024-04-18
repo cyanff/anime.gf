@@ -140,7 +140,7 @@ export default function App() {
           </CommandDialog>
         )}
 
-        <div className="flex h-full w-full py-4">
+        <div className="flex h-full w-full overflow-hidden py-4">
           {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID} />}
           {page === "collections" && <CollectionsPage setPage={setPage} setChatID={setChatID} />}
           {page === "settings" && <SettingsPage />}
