@@ -29,7 +29,7 @@ function Card({ deleteCard, avatar, name, openCardModal }: Props) {
   return (
     <ContextMenu>
       <ContextMenuTrigger>
-        <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={{ duration: 0.1 }}>
+        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }} transition={{ duration: 0.1 }}>
         <div
           className="group/card w-30 justify-top relative m-2 flex h-52 min-w-max cursor-pointer flex-col items-center rounded-xl bg-neutral-700 p-4 transition ease-out hover:brightness-90"
           onClick={openCardModal}

@@ -9,7 +9,7 @@ export default function SideBar({ setPage }: SideBarProps) {
   return (
     <div className="mr-3.5 flex h-full w-20 flex-col items-center bg-background py-6">
       <LogoButton className="mb-4" />
-      <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => {}}>
+      <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("create")}>
         <img src="/button/plus.svg" alt="" />
       </Button>
       <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("chats")}>

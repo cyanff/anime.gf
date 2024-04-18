@@ -9,6 +9,7 @@ import {
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 
+import CreationPage from "@/app/create";
 import ChatsPage from "@/app/chats";
 import CollectionsPage from "@/app/collections";
 import SettingsPage from "@/app/settings";
@@ -141,8 +142,9 @@ export default function App() {
         )}
 
         <div className="flex h-full w-full py-4">
-          {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID}/>}
-          {page === "collections" && <CollectionsPage setPage={setPage} setChatID={setChatID}/>}
+          {page === "create" && <CreationPage />}
+          {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID} />}
+          {page === "collections" && <CollectionsPage setPage={setPage} setChatID={setChatID} />}
           {page === "settings" && <SettingsPage />}
         </div>
       </div>
