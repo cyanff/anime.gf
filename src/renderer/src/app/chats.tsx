@@ -115,6 +115,8 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
   }
 
   const handleEditSubmit = async (messageID?: number, candidateID?: number) => {
+    console.log("Editing message", messageID, "Editing candidate", candidateID);
+
     if (!messageID && !candidateID) {
       return;
     }
@@ -299,8 +301,7 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
 
               // If there are no prime candidates, set the index to be the main message
               const primeCandidateIDX = message.candidates.findIndex((c) => c.id === message.prime_candidate_id);
-              const candidatesIDX = primeCandidateIDX === -1 ? 0 : primeCandidateIDX + 1;
-              const noCandidates = message.candidates.length === 0;
+              const messageIDX = primeCandidateIDX === -1 ? 0 : primeCandidateIDX + 1;
 
               return (
                 <Message
@@ -311,19 +312,19 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
                   sender={message.sender}
                   personaBundle={personaBundle}
                   cardBundle={cardBundle}
-                  candidates={messages}
-                  candidatesIDX={candidatesIDX}
+                  messages={messages}
+                  messagesIDX={messageIDX}
                   timestring={relativeTime}
                   isLatest={isLatest}
                   isLatestCharacterMessage={isLatestCharacterMessage}
                   isEditing={editingMessageID === message.id}
                   handleEdit={() => setEditingMessageID(message.id)}
                   setEditText={setEditText}
-                  handleEditSubmit={() => {
-                    if (noCandidates) {
-                      handleEditSubmit(message.id);
+                  handleEditSubmit={(isCandidate: boolean, id: number) => {
+                    if (isCandidate) {
+                      handleEditSubmit(undefined, id);
                     } else {
-                      handleEditSubmit(undefined, message.candidates[candidatesIDX].id);
+                      handleEditSubmit(id);
                     }
                   }}
                   handleRegenerate={() => handleRegenerate(message.id)}

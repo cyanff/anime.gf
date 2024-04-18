@@ -52,14 +52,14 @@ interface MessageProps {
   sender: "user" | "character";
   personaBundle: PersonaBundle;
   cardBundle: CardBundle;
-  candidates: UIMessageCandidate[];
-  candidatesIDX: number;
+  messages: UIMessageCandidate[];
+  messagesIDX: number;
   isLatest: boolean;
   isLatestCharacterMessage: boolean;
   isEditing: boolean;
   handleEdit: () => void;
   setEditText: (text: string) => void;
-  handleEditSubmit: () => void;
+  handleEditSubmit: (isCandidate: boolean, id: number) => void;
   handleRegenerate: () => void;
   handleRewind: () => void;
   handleDelete: () => void;
@@ -75,8 +75,8 @@ function Message({
   sender,
   personaBundle,
   cardBundle,
-  candidates,
-  candidatesIDX,
+  messages,
+  messagesIDX,
   isLatest,
   isLatestCharacterMessage,
   isEditing,
@@ -93,26 +93,24 @@ function Message({
   const editingStyles = isEditing ? "outline-2 outline-dashed" : "";
   const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95  text-neutral-200 rounded-3xl group/msg`;
   const editFieldRef = useRef<HTMLDivElement>(null);
-  const [idx, setIDX] = useState(candidatesIDX);
-  const candidate = candidates[idx];
+  const [idx, setIDX] = useState(messagesIDX);
+  const message = messages[idx];
 
-  // Update the index when messageAndCandidatesIDX changes
-  // This is necessary because the useState(initState) is only called once, and not updated when initState changes
   useEffect(() => {
-    setIDX(candidatesIDX);
-  }, [candidatesIDX]);
+    setIDX(messagesIDX);
+  }, [messagesIDX]);
 
-  // When the index changes, update the primary candidate ID in the database
+  // When the user switches between messgaes, update the "prime candidate" column in the database accordingly
   useEffect(() => {
     if (idx === 0) {
       queries.updateMessagePrimeCandidate(messageID, null);
     } else {
-      queries.updateMessagePrimeCandidate(messageID, candidate.id);
+      queries.updateMessagePrimeCandidate(messageID, message.id);
     }
   }, [idx]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(candidate.text);
+    navigator.clipboard.writeText(message.text);
     toast.success("Message copied to clipboard!");
   };
 
@@ -127,7 +125,7 @@ function Message({
   // Focus on the edit field when the user starts editing
   useEffect(() => {
     if (!isEditing) return;
-    setEditText(candidate.text);
+    setEditText(message.text);
     focusEditField();
   }, [isEditing]);
 
@@ -150,17 +148,17 @@ function Message({
 
   const handleChangeMessage = (idx: number) => {
     // If the message  change to is out of bounds, regenerate the message
-    if (idx === candidates.length) {
+    if (idx === messages.length) {
       handleRegenerate();
       return;
     }
 
     if (isEditing) {
-      setEditText(candidates[idx].text);
+      setEditText(messages[idx].text);
       focusEditField();
     }
 
-    const clampedValue = Math.min(Math.max(idx, 0), candidates.length - 1);
+    const clampedValue = Math.min(Math.max(idx, 0), messages.length - 1);
     setIDX(clampedValue);
   };
 
@@ -205,7 +203,7 @@ function Message({
                     className="scroll-secondary h-auto w-full overflow-y-scroll text-wrap break-all bg-transparent text-left focus:outline-none"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
-                        handleEditSubmit();
+                        handleEditSubmit(idx !== 0, messages[idx].id);
                         e.preventDefault();
                       }
                     }}
@@ -213,7 +211,7 @@ function Message({
                     contentEditable={true}
                     suppressContentEditableWarning={true}
                   >
-                    {candidate.text}
+                    {message.text}
                   </div>
                 ) : (
                   <Markdown
@@ -223,7 +221,7 @@ function Message({
                     className="whitespace-pre-wrap"
                     components={sender === "user" ? userMarkdown : characterMarkdown}
                   >
-                    {candidate.text}
+                    {message.text}
                   </Markdown>
                 )}
               </div>
@@ -253,7 +251,7 @@ function Message({
           */}
           {isLatestCharacterMessage &&
             /* Show the candidate selector if there are multiple candidates */
-            (candidates.length > 1 ? (
+            (messages.length > 1 ? (
               <div className="flex flex-row items-center space-x-2 p-2">
                 {/* Left Arrow */}
                 <button
@@ -264,7 +262,7 @@ function Message({
                 >
                   <ChevronLeftIcon className="size-5 fill-neutral-500" />
                 </button>
-                <p className="text-sm font-medium">{`${idx + 1} / ${candidates.length}`}</p>
+                <p className="text-sm font-medium">{`${idx + 1} / ${messages.length}`}</p>
                 {/* Right Arrow */}
                 <button
                   className="size-5"
