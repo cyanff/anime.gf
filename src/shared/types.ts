@@ -41,11 +41,18 @@ export interface CardBundle {
   avatarURI: string;
   bannerURI: string;
 }
+
+export interface CardBundleWithoutID {
+  data: CardData;
+  avatarURI: string;
+  bannerURI: string;
+}
+
 // =====================================
 
 // Persona
 // =====================================
-export interface PersonaData extends Pick<Persona, "name" | "description"> {}
+export interface PersonaData extends Persona {}
 
 // Contents of the persona's directory
 export interface PersonaBundleWithoutData {

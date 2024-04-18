@@ -114,6 +114,10 @@ app.whenReady().then(async () => {
     return await blob.personas.get(persona);
   });
 
+  ipcMain.handle("blob.personas.rename", async (_, oldName: string, newName: string) => {
+    return await blob.personas.rename(oldName, newName);
+  });
+
   ipcMain.handle("secret.get", async (_, k: string) => {
     return await secret.get(k);
   });
@@ -122,6 +126,9 @@ app.whenReady().then(async () => {
   });
   ipcMain.handle("xfetch.post", async (_, url: string, body: Object, headers: Record<string, string>) => {
     return await xfetch.post(url, body, headers);
+  });
+  ipcMain.handle("xfetch.get", async (_, url: string, headers: Record<string, string>) => {
+    return await xfetch.get(url, headers);
   });
 
   ipcMain.handle("setting.get", async () => {

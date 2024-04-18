@@ -3,8 +3,6 @@
   Put those snippets here so that you could trigger them using ctrl+k.
 */
 
-import { queries } from "./queries";
-
 export async function handleA() {}
 
 export async function handleB() {}

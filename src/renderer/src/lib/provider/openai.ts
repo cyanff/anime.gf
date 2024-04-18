@@ -1,6 +1,6 @@
 import { Provider } from "@/lib/provider/provider";
 import { Result, isError } from "@shared/utils";
-import { ProviderMessages, CompletionConfig } from "@/lib/provider/provider";
+import { ProviderMessage, CompletionConfig } from "@/lib/provider/provider";
 
 const models = ["gpt-3.5-turbo", "gpt-4.0-turbo-preview"];
 interface ChatCompletion {
@@ -28,8 +28,8 @@ interface Usage {
   total_tokens: number;
 }
 
-function getModels(): string[] {
-  return [...models];
+function getModels(): Promise<string[]> {
+  return Promise.resolve(["gpt-3.5-turbo", "gpt-4-turbo", "gpt-4"]);
 }
 
 /**
@@ -38,7 +38,7 @@ function getModels(): string[] {
  * @param config - The configuration options for the chat completion request.
  * @returns A promise that resolves to a Result containing the chat completion string if successful, or an Error if the request fails.
  */ async function getChatCompletion(
-  messages: ProviderMessages,
+  messages: ProviderMessage[],
   config: CompletionConfig
 ): Promise<Result<string, Error>> {
   const validationRes = validateConfig(config);

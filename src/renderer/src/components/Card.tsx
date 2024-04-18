@@ -54,4 +54,3 @@ function Card({ deleteCard, avatar, name, openCardModal }: Props) {
 }
 
 export default Card;
-

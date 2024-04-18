@@ -16,11 +16,11 @@ enum ScrollEvent {
   NEW_CHARACTER_MESSAGE
 }
 
-function ChatsPage({chatID, setChatID}): JSX.Element {
+function ChatsPage({ chatID, setChatID }): JSX.Element {
   const { createDialog } = useContext(AppContext);
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
   const [cardBundle, setCardBundle] = useState<CardBundle>();
-  const [chatHistoryLimit, setChatHistoryLimit] = useState(20);
+  const [chatHistoryLimit, setChatHistoryLimit] = useState(50);
   const [chatHistory, setChatHistory] = useState<UIMessage[]>([]);
   // Keep track of which message is being edited, only one message can be edited at a time
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
@@ -81,6 +81,7 @@ function ChatsPage({chatID, setChatID}): JSX.Element {
     const res = await queries.getPersonaBundle(chatID);
     if (res.kind == "err") {
       toast.error("Error fetching persona bundle.");
+      console.error(res.error);
       return;
     }
     setPersonaBundle(res.value);
@@ -264,7 +265,7 @@ function ChatsPage({chatID, setChatID}): JSX.Element {
       // Store the current scroll height so we could restore it later
       oldScrollHeightRef.current = e.currentTarget.scrollHeight;
       scrollEventRef.current = ScrollEvent.SCROLLED_TO_TOP;
-      setChatHistoryLimit((prevLimit) => prevLimit + 20);
+      setChatHistoryLimit((prevLimit) => prevLimit + 15);
     }
   };
 
@@ -277,7 +278,7 @@ function ChatsPage({chatID, setChatID}): JSX.Element {
         syncChatHistory={syncChatHistory}
       />
       {/* Main Content */}
-      <div className="flex h-full w-full grow flex-row overflow-x-hidden">
+      <div className="flex h-full w-full grow flex-row overflow-hidden">
         {/* Chat Area and Chat Bar Wrapper*/}
         <div className="relative flex h-full flex-auto flex-col pl-8 pt-8">
           {/* Chat Area */}

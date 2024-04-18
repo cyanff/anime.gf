@@ -71,5 +71,15 @@ export function isError(error: any): asserts error is Error {
   }
 }
 
+/**
+ * Checks if the given name string is valid.
+ * A valid name must only contain alphanumeric characters, spaces, and hyphens.
+ * @param name The name string to validate.
+ * @returns `true` if the name is valid, `false` otherwise.
+ */
+export function isValidName(name: string): boolean {
+  return /^[\w\-\s]+$/.test(name);
+}
+
 export type Result<T, E> = { kind: "ok"; value: T } | { kind: "err"; error: E };
 export type Option<T> = { kind: "some"; value: T } | { kind: "none" };

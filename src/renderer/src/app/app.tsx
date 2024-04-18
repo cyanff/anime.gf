@@ -12,7 +12,7 @@ import {
 import CreationPage from "@/app/create";
 import ChatsPage from "@/app/chats";
 import CollectionsPage from "@/app/collections";
-import SettingsPage from "@/app/settings";
+import SettingsPage from "@/app/settings/settings";
 import { AppContext, DialogConfig } from "@/components/AppContext";
 import SideBar from "@/components/SideBar";
 import {
@@ -141,10 +141,10 @@ export default function App() {
           </CommandDialog>
         )}
 
-        <div className="flex h-full w-full py-4">
+        <div className="flex h-full w-full overflow-hidden py-4">
           {page === "create" && <CreationPage />}
-          {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID} />}
-          {page === "collections" && <CollectionsPage setPage={setPage} setChatID={setChatID} />}
+          {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID}  />}
+          {page === "collections" && <CollectionsPage setPage={setPage} setChatID={setChatID}  />}
           {page === "settings" && <SettingsPage />}
         </div>
       </div>

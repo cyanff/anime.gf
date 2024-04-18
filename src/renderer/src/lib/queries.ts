@@ -1,7 +1,8 @@
-import { deepFreeze } from "@shared/utils";
+import { deepFreeze, isValidName } from "@shared/utils";
 import { ContextMessage, UIMessage } from "@shared/types";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { Result, isError } from "@shared/utils";
+import { Persona } from "@shared/db_types";
 
 async function deleteMessage(messageID: number): Promise<void> {
   const query = `
@@ -67,7 +68,7 @@ async function getChatSearchItems(): Promise<ChatSearchItem[]> {
   interface QueryResult {
     id: number;
     lastMessage: string;
-    dirName: string;
+    dir_name: string;
   }
   const query = `
   SELECT
@@ -77,7 +78,7 @@ async function getChatSearchItems(): Promise<ChatSearchItem[]> {
      WHERE m.chat_id = c.id AND m.sender = 'character'
      ORDER BY m.id DESC
      LIMIT 1) AS lastMessage,
-    ca.dirName
+    ca.dir_name
 FROM
     chats c
         JOIN
@@ -88,7 +89,7 @@ ORDER BY c.id DESC
   const rows = (await window.api.sqlite.all(query)) as QueryResult[];
   const ret = await Promise.all(
     rows.map(async (row) => {
-      const res = await window.api.blob.cards.get(row.dirName);
+      const res = await window.api.blob.cards.get(row.dir_name);
       if (res.kind === "err") {
         throw res.error;
       }
@@ -121,7 +122,7 @@ async function getRecentChats(): Promise<Result<RecentChat[], Error>> {
    WHERE messages.chat_id = chats.id
    ORDER BY messages.inserted_at DESC
    LIMIT 1) AS last_message,
-  cards.dirName AS card_dirName
+  cards.dir_name AS card_dir_name
 FROM 
   chats
   JOIN cards ON chats.card_id = cards.id
@@ -134,12 +135,12 @@ LIMIT 20;
     interface QueryResult {
       chat_id: number;
       last_message: string;
-      card_dirName: string;
+      card_dir_name: string;
     }
     const rows = (await window.api.sqlite.all(query)) as QueryResult[];
     const chatCards = await Promise.all(
       rows.map(async (row) => {
-        const res = await window.api.blob.cards.get(row.card_dirName);
+        const res = await window.api.blob.cards.get(row.card_dir_name);
         if (res.kind == "err") {
           throw res.error;
         }
@@ -159,32 +160,52 @@ LIMIT 20;
 }
 
 async function getPersonaBundle(chatID: number): Promise<Result<PersonaBundle, Error>> {
-  interface QueryResult {
-    name: string;
-    description: string;
-  }
-
   const query = `
-  SELECT name, description
+  SELECT * 
   FROM personas
   WHERE personas.id = (SELECT persona_id FROM chats WHERE chats.id = ${chatID});
   `.trim();
 
   try {
-    const row = (await window.api.sqlite.get(query)) as QueryResult;
-    const res = await window.api.blob.personas.get(row.name);
+    const row = (await window.api.sqlite.get(query)) as Persona;
+    const res = await window.api.blob.personas.get(row.dir_name);
     if (res.kind == "err") {
       throw res.error;
     }
     const personaBundle = {
       data: {
-        name: row.name,
-        description: row.description
+        ...row
       },
       avatarURI: res.value.avatarURI
     };
 
     return { kind: "ok", value: personaBundle };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
+async function getAllExtantPersonaBundles(): Promise<Result<PersonaBundle[], Error>> {
+  const query = "SELECT * FROM personas WHERE is_deleted = 0;";
+
+  try {
+    const rows = (await window.api.sqlite.all(query)) as Persona[];
+    const personaBundles = await Promise.all(
+      rows.map(async (row) => {
+        const res = await window.api.blob.personas.get(row.dir_name);
+        if (res.kind == "err") {
+          throw res.error;
+        }
+        return {
+          data: {
+            ...row
+          },
+          avatarURI: res.value.avatarURI
+        };
+      })
+    );
+    return { kind: "ok", value: personaBundles };
   } catch (e) {
     isError(e);
     return { kind: "err", error: e };
@@ -242,13 +263,13 @@ async function getChatHistory(chatID: number, limit: number = 10): Promise<Resul
 async function getCardBundle(chatID: number): Promise<Result<CardBundle, Error>> {
   try {
     const query = `
-  SELECT cards.dirName
+  SELECT cards.dir_name
   FROM chats
            JOIN cards ON chats.card_id = cards.id
   WHERE chats.id = ${chatID};
   `.trim();
-    const row = (await window.api.sqlite.get(query)) as { dirName: string };
-    const res = await window.api.blob.cards.get(row.dirName);
+    const row = (await window.api.sqlite.get(query)) as { dir_name: string };
+    const res = await window.api.blob.cards.get(row.dir_name);
     if (res.kind == "err") {
       throw res.error;
     }
@@ -259,16 +280,16 @@ async function getCardBundle(chatID: number): Promise<Result<CardBundle, Error>>
   }
 }
 
-async function getCardBundles(): Promise<Result<CardBundle[], Error>> {
+async function getAllExtantCardBundles(): Promise<Result<CardBundle[], Error>> {
   try {
     const query = `
-      SELECT cards.id, cards.dirName
+      SELECT cards.id, cards.dir_name
       FROM cards
-    `.trim();
-    const rows = (await window.api.sqlite.all(query)) as { id: number; dirName: string }[];
+      WHERE cards.is_deleted = 0;`;
+    const rows = (await window.api.sqlite.all(query)) as { id: number; dir_name: string }[];
     const cardBundles: CardBundle[] = [];
     for (const row of rows) {
-      const res = await window.api.blob.cards.get(row.dirName);
+      const res = await window.api.blob.cards.get(row.dir_name);
       if (res.kind == "err") {
         throw res.error;
       }
@@ -289,22 +310,12 @@ async function getCardBundles(): Promise<Result<CardBundle[], Error>> {
 
 async function deleteCard(cardID: number): Promise<Result<void, Error>> {
   try {
-    await window.api.sqlite.run("BEGIN TRANSACTION;");
-
-    let query = "DELETE FROM chats WHERE card_id = ?;";
-    let params = [cardID];
-    await window.api.sqlite.run(query, params);
-
-    query = "DELETE FROM cards WHERE id = ?;";
-    params = [cardID];
-    await window.api.sqlite.run(query, params);
-
-    await window.api.sqlite.run("COMMIT;");
-
+    const query = `
+    UPDATE cards SET is_deleted = 1 WHERE id = ?;
+    `;
+    await window.api.sqlite.run(query, [cardID]);
     return { kind: "ok", value: undefined };
   } catch (e) {
-    await window.api.sqlite.run("ROLLBACK;");
-
     isError(e);
     return { kind: "err", error: e };
   }
@@ -501,6 +512,36 @@ async function resetChatToMessage(chatID: number, messageID: number): Promise<vo
   await window.api.sqlite.run(query, [chatID, messageID]);
 }
 
+async function deletePersona(id: number) {
+  const query = `UPDATE personas SET is_deleted = 1 WHERE id = ?;`;
+  await window.api.sqlite.run(query, [id]);
+}
+
+async function updatePersona(id: number, name: string, description: string, isDefault: boolean) {
+  const nameQuery = `SELECT name, dir_name FROM personas WHERE id = ?;`;
+  const res = (await window.api.sqlite.get(nameQuery, [id])) as { name: string; dir_name: string };
+  const oldName = res.name;
+  const oldDirName = res.dir_name;
+
+  if (!isValidName(name)) {
+    throw new Error("Name must only contain alphanumeric characters, spaces, and hyphens.");
+  }
+  const processedName = name.toLowerCase().replace(/\s/g, "-");
+  const newDirName = `${processedName}-${crypto.randomUUID()}`;
+
+  // IF new name is different from old name, rename the persona folder
+  if (name !== oldName) {
+    await window.api.blob.personas.rename(oldDirName, newDirName);
+  }
+
+  const query = `
+  UPDATE personas
+  SET name = ?, description = ?, dir_name = ?, is_default = ?
+  WHERE id = ?;
+  `.trim();
+  await window.api.sqlite.run(query, [name, description, newDirName, isDefault ? 1 : 0, id]);
+}
+
 export const queries = {
   createChat,
   deleteChat,
@@ -510,7 +551,7 @@ export const queries = {
   getPersonaBundle,
   getChatHistory,
   getCardBundle,
-  getCardBundles,
+  getAllExtantCardBundles,
   deleteCard,
   insertMessage,
   insertMessagePair,
@@ -522,7 +563,10 @@ export const queries = {
   setCandidateMessageAsPrime,
   updateCandidateMessage,
   updateMessagePrimeCandidate,
-  resetChatToMessage
+  resetChatToMessage,
+  getAllExtantPersonaBundles,
+  deletePersona,
+  updatePersona
 };
 
 deepFreeze(queries);

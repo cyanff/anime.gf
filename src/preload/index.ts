@@ -17,6 +17,7 @@ export interface API {
     };
     personas: {
       get: (persona: string) => Promise<Result<PersonaBundleWithoutData, Error>>;
+      rename: (oldName: string, newName: string) => Promise<Result<void, Error>>;
     };
   };
   secret: {
@@ -29,6 +30,7 @@ export interface API {
   };
   xfetch: {
     post: (url: string, body: Object, headers: Record<string, string>) => Promise<Result<any, Error>>;
+    get: (url: string, headers: Record<string, string>) => Promise<Result<any, Error>>;
   };
 }
 
@@ -44,7 +46,8 @@ const api: API = {
       get: (card) => ipcRenderer.invoke("blob.cards.get", card)
     },
     personas: {
-      get: (persona) => ipcRenderer.invoke("blob.personas.get", persona)
+      get: (persona) => ipcRenderer.invoke("blob.personas.get", persona),
+      rename: (oldName, newName) => ipcRenderer.invoke("blob.personas.rename", oldName, newName)
     }
   },
   secret: {
@@ -56,8 +59,8 @@ const api: API = {
     set: (settings) => ipcRenderer.invoke("setting.set", settings)
   },
   xfetch: {
-    post: (url, body, headers) => ipcRenderer.invoke("xfetch.post", url, body, headers)
+    post: (url, body, headers) => ipcRenderer.invoke("xfetch.post", url, body, headers),
+    get: (url, headers) => ipcRenderer.invoke("xfetch.get", url, headers)
   }
 };
-
 contextBridge.exposeInMainWorld("api", api);

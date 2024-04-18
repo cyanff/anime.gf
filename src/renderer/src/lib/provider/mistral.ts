@@ -1,8 +1,6 @@
 import { Provider } from "@/lib/provider/provider";
 import { Result } from "@shared/utils";
-import { ProviderMessages, CompletionConfig } from "@/lib/provider/provider";
-
-const models = ["mistral-small-latest", "mistral-medium-latest", "mistral-large-latest"];
+import { ProviderMessage, CompletionConfig } from "@/lib/provider/provider";
 
 interface ChatCompletion {
   id: string;
@@ -30,16 +28,20 @@ interface Usage {
   total_tokens: number;
 }
 
-function getModels(): string[] {
-  return [...models];
+function getModels(): Promise<string[]> {
+  return Promise.resolve([
+    "open-mistral-7b",
+    "open-mixtral-8x7b",
+    "mistral-small-latest",
+    "mistral-medium-latest",
+    "mistral-large-latest"
+  ]);
 }
 
-async function getChatCompletion(messages: ProviderMessages, config: CompletionConfig): Promise<Result<string, Error>> {
-  const validationRes = validateConfig(config);
-  if (validationRes.kind == "err") {
-    return validationRes;
-  }
-
+async function getChatCompletion(
+  messages: ProviderMessage[],
+  config: CompletionConfig
+): Promise<Result<string, Error>> {
   // Get API key from either config or secret store
   let key: string;
   if (!config.apiKey) {
@@ -91,15 +93,6 @@ async function streamChatCompletion(): Promise<any> {
 
 async function getTextCompletion(): Promise<Result<string, Error>> {
   throw new Error("Not implemented");
-}
-
-// TODO, validate config further
-// ex: mistral doens't have top_k
-function validateConfig(config: CompletionConfig): Result<void, Error> {
-  if (!models.includes(config.model)) {
-    return { kind: "err", error: new Error("Invalid model specified in CompletionConfig") };
-  }
-  return { kind: "ok", value: undefined };
 }
 
 export const mistral: Provider = {

@@ -11,7 +11,7 @@ export default function CollectionsPage({ setPage, setChatID }) {
   const { createModal, closeModal, createDialog: createAlert } = useApp();
 
   const syncCards = async () => {
-    const res = await queries.getCardBundles();
+    const res = await queries.getAllExtantCardBundles();
     if (res.kind == "err") {
       toast.error("Error fetching card bundle.");
       return;
