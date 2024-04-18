@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/command";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { handleA, handleB, handleC } from "@/lib/cmd";
-import { useEffect, useState } from "react";
+import { Profiler, useEffect, useState } from "react";
 
 export default function App() {
   const [page, setPage] = useState<string>("chats");
@@ -143,8 +143,8 @@ export default function App() {
 
         <div className="flex h-full w-full overflow-hidden py-4">
           {page === "create" && <CreationPage />}
-          {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID}  />}
-          {page === "collections" && <CollectionsPage setPage={setPage} setChatID={setChatID}  />}
+          {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID} />}
+          {page === "collections" && <CollectionsPage setPage={setPage} setChatID={setChatID} />}
           {page === "settings" && <SettingsPage />}
         </div>
       </div>
