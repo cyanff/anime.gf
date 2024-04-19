@@ -106,6 +106,10 @@ app.whenReady().then(async () => {
     return sqlite.runAsTransaction(queries, params);
   });
 
+  ipcMain.handle("blob.image.get", async (_, path: string) => {
+    return await blob.image.get(path);
+  });
+
   ipcMain.handle("blob.cards.get", async (_, card: string) => {
     return await blob.cards.get(card);
   });

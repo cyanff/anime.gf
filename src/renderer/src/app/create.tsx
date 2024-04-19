@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { InputArea } from "@/components/ui/input-area";
 import { PencilSquareIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import { CardData } from "@shared/types";
+import { nativeImage } from "electron";
 
 const formSchema = z.object({
   tags: z.string().min(0).max(200),
@@ -24,10 +26,10 @@ function CreationPage() {
   const [characterDescription, setCharacterDescription] = useState("");
   const [greetingMessage, setGreetingMessage] = useState("");
   const [exampleMessages, setExampleMessages] = useState("");
-  const [bannerImage, setBannerImage] = useState<File | null>(null);
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const bannerInput = useRef(null);
-  const profileInput = useRef(null);
+  const [bannerImage, setBannerImage] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const bannerInput = useRef<HTMLInputElement>(null);
+  const profileInput = useRef<HTMLInputElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,39 +42,91 @@ function CreationPage() {
   });
 
   //TODO: Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    // // Create CardData object
+    // const cardData: CardData = {
+    //   spec: "spec",
+    //   spec_version: "spec_version",
+    //   character: {
+    //     name: values.name,
+    //     description: values.description,
+    //     greeting: values.greeting,
+    //     msg_examples: values.message_example
+    //   },
+    //   world: {
+    //     description: "description"
+    //   },
+    //   meta: {
+    //     title: values.name,
+    //     created_at: new Date().toISOString(),
+    //     creator: {
+    //       card: "card",
+    //       character: "character",
+    //       world: "world"
+    //     },
+    //     tagline: "tagline",
+    //     tags: values.tags.split(",")
+    //   }
+    // };
+    // // Save CardData to JSON
+    // const json = JSON.stringify(cardData, null, 2);
+    // const blob = new Blob([json], { type: "application/json" });
+    // const file = new File([blob], `${values.name}.json`, { type: "application/json" });
+    // await window.api.blob.post("scripts/blob/cards", file);
+    // // Rename and save images
+    // if (bannerImage) {
+    //   const bannerFile = new File([bannerImage], "banner.png", { type: "image/png" });
+    //   await window.api.blob.post(`${values.name}`, bannerFile);
+    // }
+    // if (profileImage) {
+    //   const avatarFile = new File([profileImage], "avatar.png", { type: "image/png" });
+    //   await window.api.blob.post(`${values.name}`, avatarFile);
+    // }
   }
 
   const handleBannerClick = () => {
-    bannerInput.current.click();
+    if (bannerInput.current) {
+      bannerInput.current.click();
+    }
   };
 
   const handleProfileClick = () => {
-    profileInput.current.click();
+    if (profileInput.current) {
+      profileInput.current.click();
+    }
   };
 
-  const handleBannerChange = (event) => {
+  const handleBannerChange = async (event) => {
     const file = event.target.files[0];
-    setBannerImage(file);
+    const res = await window.api.blob.image.get(file.path);
+
+    if (res.kind === "ok") {
+      const dataUrl = res.value.toDataURL();
+      setBannerImage(dataUrl);
+    }
   };
 
-  const handleProfileChange = (event) => {
+  const handleProfileChange = async (event) => {
     const file = event.target.files[0];
-    setProfileImage(file);
+    const res = await window.api.blob.image.get(file.path);
+
+    if (res.kind === "ok") {
+      const dataUrl = res.value.toDataURL();
+      setProfileImage(dataUrl);
+    }
   };
 
   return (
-    <div className="flex w-full items-center justify-center rounded-lg bg-background">
+    <div className="scroll-primary flex w-full items-center justify-center overflow-y-auto rounded-lg bg-background">
       <div className="w-[46rem] rounded-lg bg-neutral-800">
         {/* Banner and profile picture */}
         <div className="relative rounded-lg">
           <div
-            className="flex h-48 w-full  cursor-pointer items-center justify-center overflow-hidden rounded-t-lg bg-gradient-to-br from-neutral-700 to-neutral-500 object-cover"
+            className="flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden rounded-t-lg bg-gradient-to-br from-neutral-700 to-neutral-500"
             onClick={handleBannerClick}
           >
-            {profileImage ? (
-              <img src={URL.createObjectURL(profileImage)} alt="Profile" className="absolute" />
+            {bannerImage ? (
+              <img src={bannerImage ?? ""} alt="Profile" className="" />
             ) : (
               <PencilSquareIcon className="absolute h-12 w-12 text-neutral-300" />
             )}
@@ -90,11 +144,11 @@ function CreationPage() {
             onClick={handleProfileClick}
           >
             {profileImage ? (
-              <img src={URL.createObjectURL(profileImage)} alt="Profile" className="absolute" />
+              <img src={profileImage} alt="Profile" className="" />
             ) : (
               <PencilSquareIcon className="absolute h-8 w-8 text-neutral-300" />
             )}
-            <div className="absolute  inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-30"></div>
+            <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-30"></div>
             <input
               type="file"
               style={{ display: "none" }}
