@@ -6,6 +6,7 @@ import { Result, isError } from "@shared/utils";
 import fs from "fs/promises";
 import path from "path";
 import { attainable, blobPath, cardsPath, personasPath } from "../utils";
+import { nativeImage } from "electron";
 
 async function init() {
   const blobDirExists = await attainable(blobPath);
@@ -16,6 +17,18 @@ async function init() {
   const cardsDirExists = await attainable(cardsPath);
   if (!cardsDirExists) {
     await fs.mkdir(cardsPath);
+  }
+}
+
+/**
+  * Retrieves an image from the specified path.
+  * @param path - The path to the image file.
+  * @returns A promise that resolves to a Result object containing the image or an error.
+  */
+export namespace image {
+  export async function get(path: string): Promise<Result<any, Error>> {
+    const image = nativeImage.createFromPath(path);
+    return { kind: "ok", value: image };
   }
 }
 
@@ -108,6 +121,7 @@ export namespace personas {
 
 export default {
   init,
+  image,
   cards,
   personas
 };

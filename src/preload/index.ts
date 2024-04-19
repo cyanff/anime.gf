@@ -12,6 +12,9 @@ export interface API {
     runAsTransaction: (queries: string[], params: any[][]) => Promise<void>;
   };
   blob: {
+    image:{
+      get: (path: string) => Promise<Result<any, Error>>;
+    }
     cards: {
       get: (card: string) => Promise<Result<CardBundle, Error>>;
     };
@@ -42,6 +45,9 @@ const api: API = {
     runAsTransaction: (queries, params) => ipcRenderer.invoke("sqlite.runAsTransaction", queries, params)
   },
   blob: {
+    image:{
+      get: (path) => ipcRenderer.invoke("blob.image.get", path)
+    },
     cards: {
       get: (card) => ipcRenderer.invoke("blob.cards.get", card)
     },

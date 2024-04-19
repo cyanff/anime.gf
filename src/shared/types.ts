@@ -28,7 +28,7 @@ export interface Character {
   name: string;
   description: string;
   greeting: string;
-  alt_greetings: string[];
+  alt_greetings?: string[];
   msg_examples: string;
 }
 export interface World {
