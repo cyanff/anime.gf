@@ -114,7 +114,9 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
     return <div className="h-screen w-screen bg-neutral-800 "></div>;
   }
 
-  const handleEditSubmit = (messageID?: number, candidateID?: number) => {
+  const handleEditSubmit = async (messageID?: number, candidateID?: number) => {
+    console.log("Editing message", messageID, "Editing candidate", candidateID);
+
     if (!messageID && !candidateID) {
       return;
     }
@@ -126,11 +128,11 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
     try {
       // Editing a main message
       if (messageID) {
-        queries.updateMessageText(messageID, editText);
+        await queries.updateMessageText(messageID, editText);
       }
       // Editing a candidate message
       else if (candidateID) {
-        queries.updateCandidateMessage(candidateID, editText);
+        await queries.updateCandidateMessage(candidateID, editText);
       }
     } catch (e) {
       toast.error(`Failed to edit the message. Error: ${e}`);
@@ -293,14 +295,13 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
               const isLatest = idx === chatHistory.length - 1;
               const isLatestCharacterMessage = idx === latestCharacterMessageIDX;
 
-              // Combine the main message and its candidates into one candidates array
-              let candidates = [{ id: message.id, text: message.text }];
-              candidates = candidates.concat(message.candidates);
+              // Combine the main message and its candidates into one messages array
+              let messages = [{ id: message.id, text: message.text }];
+              messages = messages.concat(message.candidates);
 
               // If there are no prime candidates, set the index to be the main message
               const primeCandidateIDX = message.candidates.findIndex((c) => c.id === message.prime_candidate_id);
-              const candidatesIDX = primeCandidateIDX === -1 ? 0 : primeCandidateIDX + 1;
-              const noCandidates = message.candidates.length === 1;
+              const messageIDX = primeCandidateIDX === -1 ? 0 : primeCandidateIDX + 1;
 
               return (
                 <Message
@@ -311,19 +312,19 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
                   sender={message.sender}
                   personaBundle={personaBundle}
                   cardBundle={cardBundle}
-                  candidates={candidates}
-                  candidatesIDX={candidatesIDX}
+                  messages={messages}
+                  messagesIDX={messageIDX}
                   timestring={relativeTime}
                   isLatest={isLatest}
                   isLatestCharacterMessage={isLatestCharacterMessage}
                   isEditing={editingMessageID === message.id}
                   handleEdit={() => setEditingMessageID(message.id)}
                   setEditText={setEditText}
-                  handleEditSubmit={() => {
-                    if (noCandidates) {
-                      handleEditSubmit(message.id);
+                  handleEditSubmit={(isCandidate: boolean, id: number) => {
+                    if (isCandidate) {
+                      handleEditSubmit(undefined, id);
                     } else {
-                      handleEditSubmit(undefined, message.candidates[candidatesIDX].id);
+                      handleEditSubmit(id);
                     }
                   }}
                   handleRegenerate={() => handleRegenerate(message.id)}

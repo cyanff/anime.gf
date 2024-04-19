@@ -47,6 +47,28 @@ export default function SettingsPersona() {
     setPersonaBundles(res.value);
   };
 
+  const handleNew = () => {
+    createModal(
+      <PersonaModal
+        title="New Persona"
+        submit={{
+          label: "Create",
+          handle: async (name, description, isDefault) => {
+            closeModal();
+            try {
+              await queries.insertPersona(name, description, isDefault);
+            } catch (e) {
+              toast.error(`Error creating persona. Error: ${e}`);
+              console.error(e);
+            } finally {
+              syncAllPersonaBundles();
+            }
+          }
+        }}
+      />
+    );
+  };
+
   const handleEdit = (id: number, name: string, description: string, isDefault: boolean) => {
     createModal(
       <PersonaModal
@@ -205,7 +227,7 @@ export default function SettingsPersona() {
           })}
         </div>
       </div>
-      <button className="flex items-center space-x-2 rounded-md bg-neutral-700 px-4 py-2">
+      <button className="flex items-center space-x-2 rounded-md bg-neutral-700 px-4 py-2" onClick={handleNew}>
         <UserPlusIcon className="size-5" />
         <span className="font-medium text-neutral-200">New</span>
       </button>
@@ -288,7 +310,7 @@ function PersonaModal({
             rounded-full bg-grad-magenta text-2xl font-bold`}
             onClick={() => {}}
           >
-            {initialName.charAt(0)}
+            {name.charAt(0)}
           </div>
           <PencilSquareIcon className="absolute -right-1 -top-1 size-6 rounded-sm fill-neutral-300 p-0.5" />
         </button>
@@ -328,7 +350,7 @@ function PersonaModal({
           <button
             className="flex items-center rounded-sm bg-neutral-700 px-3 py-2 font-medium text-neutral-200"
             onClick={() => {
-              if (initialName.length == 0) {
+              if (name.length == 0) {
                 toast.error("Name cannot be empty.");
                 return;
               }
