@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getProvidersNameAndValue } from "@/lib/provider/provider";
-import { EyeClosedIcon, EyeOpenIcon } from "@radix-ui/react-icons";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -56,11 +56,13 @@ export default function SettingsKeys() {
           <Label className="text-white">Provider</Label>
           <Select onValueChange={(v) => setProvider(v)} value={provider}>
             <SelectTrigger className="h-12 bg-neutral-700 text-white">
-              <SelectValue placeholder={provider} />
+              <SelectValue placeholder={provider === "" ? "Select a provider" : provider} />
             </SelectTrigger>
             <SelectContent className="bg-neutral-700">
-              {providerNameAndValue.map((nameAndValue) => (
-                <SelectItem value={nameAndValue.value}>{nameAndValue.name}</SelectItem>
+              {providerNameAndValue.map((nameAndValue, idx) => (
+                <SelectItem key={idx} value={nameAndValue.value}>
+                  {nameAndValue.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -71,16 +73,16 @@ export default function SettingsKeys() {
           <div className="flex items-center space-x-4">
             <Input
               type={isApiKeyVisible ? "text" : "password"}
-              className="h-12 grow bg-neutral-700 text-white"
+              className="h-12 grow bg-neutral-700 font-mono font-[540] text-white"
               onChange={(e) => setApiKey(e.target.value)}
               value={apiKey}
               placeholder="Enter your API key here..."
             />
-            <button className="size-4" onClick={() => setIsApiKeyVisible(!isApiKeyVisible)}>
+            <button className="size-4 focus:outline-none" onClick={() => setIsApiKeyVisible(!isApiKeyVisible)}>
               {isApiKeyVisible ? (
-                <EyeClosedIcon className="size-4 text-white hover:scale-110" />
+                <EyeSlashIcon className="size-5 text-neutral-200 hover:scale-110" />
               ) : (
-                <EyeOpenIcon className="size-4 text-white hover:scale-110" />
+                <EyeIcon className="size-5 text-neutral-200 hover:scale-110" />
               )}
             </button>
           </div>

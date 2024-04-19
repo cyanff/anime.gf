@@ -173,7 +173,7 @@ function Message({
               <Popover>
                 <PopoverTrigger className="shrink-0">
                   <img
-                    className="size-12 rounded-full object-cover object-top"
+                    className="size-12 select-none rounded-full object-cover object-top"
                     draggable="false"
                     src={avatar || "default_avatar.png"}
                     alt="Avatar"

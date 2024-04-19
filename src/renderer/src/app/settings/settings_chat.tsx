@@ -39,13 +39,9 @@ export default function SettingsChat() {
 
   // Shows the user an error message if there are any errors in the form
   useEffect(() => {
-    if (!errors) {
-      return;
-    }
     Object.entries(errors).forEach(([key, value]) => {
       toast.error(`Error in field ${key}: ${value!.message}`);
     });
-    console.log("errors", errors);
   }, [errors]);
 
   const providerNameAndValue = getProvidersNameAndValue();
@@ -95,8 +91,7 @@ export default function SettingsChat() {
         <form>
           {/* Card Wrapper*/}
           <div className=" h-[37rem] w-[32rem] rounded-2xl border border-neutral-700 bg-neutral-800 py-2.5">
-            {/* Card Content*/}
-            <div className="scroll-secondary flex h-full w-full flex-col space-y-9 overflow-y-auto px-8 py-6">
+            <div className="scroll-secondary flex h-full w-full flex-col space-y-8 overflow-y-auto px-8 py-6">
               {/* Provider & Model Section */}
               <div className="space-y-3">
                 <h3 className="text-lg font-semibold text-white">Provider & Model</h3>
@@ -113,18 +108,19 @@ export default function SettingsChat() {
                         return (
                           <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger className="h-12 bg-neutral-700 text-white">
-                              {/* Show the first provider in the array as a placeholder */}
                               <SelectValue placeholder={field.value} />
                             </SelectTrigger>
                             <SelectContent className="bg-neutral-700">
-                              {providerNameAndValue.map((nameAndValue) => (
-                                <SelectItem value={nameAndValue.value}>{nameAndValue.name}</SelectItem>
+                              {providerNameAndValue.map((nameAndValue, idx) => (
+                                <SelectItem key={idx} value={nameAndValue.value}>
+                                  {nameAndValue.name}
+                                </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         );
                       }}
-                    ></Controller>
+                    />
                   </div>
                   <div className="flex flex-col space-y-1">
                     <Label className="text-white" htmlFor="model">
@@ -146,107 +142,104 @@ export default function SettingsChat() {
                     />
                   </div>
                 </div>
-                {/* Generation Section */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-white">Generation</h3>
+              </div>
+              {/* Generation Section */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-white">Generation</h3>
 
-                  {/* Generation Content*/}
-                  <div className="ml-6 space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-white" htmlFor="reply-max-tokens">
-                        Reply max tokens
-                      </Label>
-                      <Input
-                        {...register("maxReplyTokens", { valueAsNumber: true })}
-                        type="number"
-                        className="h-10 bg-neutral-700 text-white"
-                        placeholder={defaultSettings.maxReplyTokens.toString()}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-white" htmlFor="reply-max-tokens">
-                        Context max tokens
-                      </Label>
-                      <Input
-                        {...register("maxContextTokens", { valueAsNumber: true })}
-                        type="number"
-                        className="h-10 bg-neutral-700 text-white"
-                        placeholder={defaultSettings.maxContextTokens.toString()}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-white" htmlFor="temperature">
-                        Temperature
-                      </Label>
-                      <Input
-                        {...register("temperature", { valueAsNumber: true })}
-                        type="number"
-                        className="h-10 bg-neutral-700 text-white"
-                        placeholder={defaultSettings.temperature.toString()}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-white" htmlFor="top-p">
-                        Top P
-                      </Label>
-                      <Input
-                        {...register("topP", { valueAsNumber: true })}
-                        type="number"
-                        className="h-10 bg-neutral-700 text-white"
-                        placeholder={defaultSettings.topP.toString()}
-                      />
-                    </div>
+                {/* Generation Content*/}
+                <div className="ml-6 space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-white" htmlFor="reply-max-tokens">
+                      Reply max tokens
+                    </Label>
+                    <Input
+                      {...register("maxReplyTokens", { valueAsNumber: true })}
+                      type="number"
+                      className="h-10 bg-neutral-700 text-white"
+                      placeholder={defaultSettings.maxReplyTokens.toString()}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white" htmlFor="reply-max-tokens">
+                      Context max tokens
+                    </Label>
+                    <Input
+                      {...register("maxContextTokens", { valueAsNumber: true })}
+                      type="number"
+                      className="h-10 bg-neutral-700 text-white"
+                      placeholder={defaultSettings.maxContextTokens.toString()}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white" htmlFor="temperature">
+                      Temperature
+                    </Label>
+                    <Input
+                      {...register("temperature", { valueAsNumber: true })}
+                      type="number"
+                      className="h-10 bg-neutral-700 text-white"
+                      placeholder={defaultSettings.temperature.toString()}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white" htmlFor="top-p">
+                      Top P
+                    </Label>
+                    <Input
+                      {...register("topP", { valueAsNumber: true })}
+                      type="number"
+                      className="h-10 bg-neutral-700 text-white"
+                      placeholder={defaultSettings.topP.toString()}
+                    />
+                  </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-white" htmlFor="top-p">
-                        Top K
-                      </Label>
-                      <Input
-                        {...register("topK", { valueAsNumber: true })}
-                        type="number"
-                        className="h-10 bg-neutral-700 text-white"
-                        placeholder={defaultSettings.topK.toString()}
-                      />
-                    </div>
-                    <div className="ml-1.5 flex items-center space-x-2 pt-5">
-                      <Controller
-                        control={control}
-                        name="streaming"
-                        render={({ field }) => (
-                          console.log("field.value", field.value),
-                          (
-                            <Checkbox
-                              className="rounded-[4px] border-[1px]"
-                              id="message-streaming"
-                              checked={field.value}
-                              onCheckedChange={(checked) => {
-                                setValue("streaming", checked);
-                              }}
-                            />
-                          )
-                        )}
-                      />
+                  <div className="space-y-2">
+                    <Label className="text-white" htmlFor="top-p">
+                      Top K
+                    </Label>
+                    <Input
+                      {...register("topK", { valueAsNumber: true })}
+                      type="number"
+                      className="h-10 bg-neutral-700 text-white"
+                      placeholder={defaultSettings.topK.toString()}
+                    />
+                  </div>
+                  <div className="ml-1.5 flex items-center space-x-2 pt-5">
+                    <Controller
+                      control={control}
+                      name="streaming"
+                      render={({ field }) => (
+                        <Checkbox
+                          className="rounded-[4px] border-[1px]"
+                          id="message-streaming"
+                          checked={field.value}
+                          onCheckedChange={(checked) => {
+                            setValue("streaming", checked);
+                          }}
+                        />
+                      )}
+                    />
 
-                      <Label className="text-white" htmlFor="message-streaming">
-                        Enable Message Streaming
-                      </Label>
-                    </div>
+                    <Label className="text-white" htmlFor="message-streaming">
+                      Enable Message Streaming
+                    </Label>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-white">Extras</h3>
-                  <div className="ml-6 space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-white" htmlFor="jailbreak">
-                        Jailbreak
-                      </Label>
-                      <Textarea
-                        {...register("jailbreak")}
-                        className="scroll-tertiary h-36 resize-none bg-neutral-700 text-white"
-                        id="jailbreak"
-                        placeholder="Enter your jailbreak prompt here"
-                      />
-                    </div>
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-white">Extras</h3>
+                <div className="ml-6 space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-white" htmlFor="jailbreak">
+                      Jailbreak
+                    </Label>
+                    <Textarea
+                      {...register("jailbreak")}
+                      className="scroll-tertiary h-36 resize-none bg-neutral-700 text-white"
+                      id="jailbreak"
+                      placeholder="Enter your jailbreak prompt here"
+                    />
                   </div>
                 </div>
               </div>

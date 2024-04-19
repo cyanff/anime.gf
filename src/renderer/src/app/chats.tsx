@@ -10,6 +10,7 @@ import { CardBundle, PersonaBundle, UIMessage } from "@shared/types";
 import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import "../styles/global.css";
+import { motion } from "framer-motion";
 
 enum ScrollEvent {
   SCROLLED_TO_TOP,
@@ -34,15 +35,23 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
   // Used to keep track of the (old) scroll height so we could restore it
   const oldScrollHeightRef = useRef(0);
   const scrollEventRef = useRef<ScrollEvent | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Sync states with db on load
   useEffect(() => {
-    syncCardBundle();
-    syncPersonaBundle();
-    syncChatHistory();
-    // Scroll to the bottom of the chat on load
-    // Race condition, too much of a hassle to fix
-    setTimeout(scrollToBottom, 100);
+    (async () => {
+      try {
+        await syncCardBundle();
+        await syncPersonaBundle();
+        await syncChatHistory();
+      } catch (e) {
+      } finally {
+        // Scroll to the bottom of the chat on load
+        // Race condition, too much of a hassle to fix
+        setTimeout(scrollToBottom, 100);
+        setIsLoading(false);
+      }
+    })();
   }, [chatID]);
 
   // Sync chat history when the limit changes
@@ -110,8 +119,8 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
   }, []);
 
   // Loading screen
-  if (!personaBundle || !cardBundle) {
-    return <div className="h-screen w-screen bg-neutral-800 "></div>;
+  if (isLoading || !personaBundle || !cardBundle) {
+    return <div className="flex h-screen w-screen items-center justify-center "></div>;
   }
 
   const handleEditSubmit = async (messageID?: number, candidateID?: number) => {
@@ -270,7 +279,12 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
   };
 
   return (
-    <>
+    <motion.div
+      className="flex h-full w-full"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.13, delay: 0.12 }}
+    >
       <ChatsSidebar
         chatID={chatID}
         setChatID={setChatID}
@@ -347,7 +361,7 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
           />
         </div>
       </div>
-    </>
+    </motion.div>
   );
 }
 
