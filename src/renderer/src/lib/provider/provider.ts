@@ -47,3 +47,17 @@ export function getProvider(provider: ProviderE): Provider {
       throw new Error("Invalid provider given to getProvider()");
   }
 }
+
+export interface NameAndValue {
+  name: string;
+  value: ProviderE;
+}
+
+export function getProvidersNameAndValue(): NameAndValue[] {
+  return [
+    { name: "OpenAI", value: ProviderE.OPENAI },
+    { name: "Anthropic", value: ProviderE.ANTHROPIC },
+    { name: "Mistral", value: ProviderE.MISTRAL },
+    { name: "Together AI", value: ProviderE.TOGETHER_AI }
+  ];
+}

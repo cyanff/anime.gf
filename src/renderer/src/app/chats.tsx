@@ -115,8 +115,6 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
   }
 
   const handleEditSubmit = async (messageID?: number, candidateID?: number) => {
-    console.log("Editing message", messageID, "Editing candidate", candidateID);
-
     if (!messageID && !candidateID) {
       return;
     }

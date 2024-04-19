@@ -514,7 +514,6 @@ const userMarkdown: Partial<Components> = {
   em: ({ children }) => <span className="font-[550] italic text-neutral-300">{children}</span>,
   strong: ({ children }) => <span className="pr-1 font-bold text-gray-200">{children}</span>,
   blockquote: ({ children }) => {
-    console.log("children", children);
     return (
       <div className="flex items-stretch font-medium italic text-neutral-100">
         <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-gray-600" />

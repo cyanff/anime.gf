@@ -9,6 +9,7 @@ module.exports = {
   ],
   rules: {
     "@typescript-eslint/no-explicit-any": "off",
-    "react-refresh/only-export-components": "warn"
+    "react-refresh/only-export-components": "warn",
+    "no-unused-expressions": "warn"
   }
 };
