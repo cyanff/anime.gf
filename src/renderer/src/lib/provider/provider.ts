@@ -53,6 +53,12 @@ export interface NameAndValue {
   value: ProviderE;
 }
 
+/**
+ * Returns an array of `NameAndValue` objects representing the available providers.
+ * Each object has a `name` property with the human-readable name of the provider,
+ * and a `value` property with the corresponding `ProviderE` enum value.
+ * @returns {NameAndValue[]} An array of `NameAndValue` objects.
+ */
 export function getProvidersNameAndValue(): NameAndValue[] {
   return [
     { name: "OpenAI", value: ProviderE.OPENAI },

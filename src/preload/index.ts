@@ -17,7 +17,11 @@ export interface API {
     };
     cards: {
       get: (card: string) => Promise<Result<CardBundle, Error>>;
-      post: (cardData: CardData, bannerImage: string | null, avatarImage: string | null) => Promise<Result<string, Error>>;
+      post: (
+        cardData: CardData,
+        bannerImage: string | null,
+        avatarImage: string | null
+      ) => Promise<Result<string, Error>>;
       exportToZip: (card: string) => Promise<Result<void, Error>>;
       importFromZip: (zip: string) => Promise<Result<void, Error>>;
     };
@@ -83,4 +87,5 @@ const api: API = {
     openURL: (url) => ipcRenderer.invoke("utils.openURL", url)
   }
 };
+
 contextBridge.exposeInMainWorld("api", api);
