@@ -12,11 +12,13 @@ export interface API {
     runAsTransaction: (queries: string[], params: any[][]) => Promise<void>;
   };
   blob: {
-    image:{
+    image: {
       get: (path: string) => Promise<Result<any, Error>>;
-    }
+    };
     cards: {
       get: (card: string) => Promise<Result<CardBundle, Error>>;
+      exportToZip: (card: string) => Promise<Result<void, Error>>;
+      importFromZip: (zip: string) => Promise<Result<void, Error>>;
     };
     personas: {
       get: (persona: string) => Promise<Result<PersonaBundleWithoutData, Error>>;
@@ -45,11 +47,13 @@ const api: API = {
     runAsTransaction: (queries, params) => ipcRenderer.invoke("sqlite.runAsTransaction", queries, params)
   },
   blob: {
-    image:{
+    image: {
       get: (path) => ipcRenderer.invoke("blob.image.get", path)
     },
     cards: {
-      get: (card) => ipcRenderer.invoke("blob.cards.get", card)
+      get: (card) => ipcRenderer.invoke("blob.cards.get", card),
+      exportToZip: (card) => ipcRenderer.invoke("blob.cards.exportToZip", card),
+      importFromZip: (zip) => ipcRenderer.invoke("blob.cards.importFromZip", zip)
     },
     personas: {
       get: (persona) => ipcRenderer.invoke("blob.personas.get", persona),

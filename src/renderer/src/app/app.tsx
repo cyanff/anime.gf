@@ -26,6 +26,7 @@ import {
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { handleA, handleB, handleC } from "@/lib/cmd";
 import { Profiler, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function App() {
   const [page, setPage] = useState<string>("chats");
@@ -57,9 +58,45 @@ export default function App() {
     setModalOpen(false);
   }
 
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const numFiles = e.dataTransfer.files.length;
+
+    if (numFiles > 1) {
+      toast.info(`Importing ${numFiles} cards all at once.`);
+    }
+    const files = e.dataTransfer.files;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      // Reject files that are not .zip
+      if (file.type !== "application/zip") {
+        toast.error(`${file.name} is not a zip file, skipping...`);
+        continue;
+      }
+      // Reject files larger than 50MB
+      if (file.size > 5e7) {
+        toast.error(`${file.name} is larger than 50MB, skipping...`);
+        continue;
+      }
+
+      const path = file.path;
+      const res = await window.api.blob.cards.importFromZip(path);
+      console.log("Res", res);
+    }
+  };
+
   return (
     <AppContext.Provider value={{ createDialog, createModal, closeModal }}>
-      <div className="flex h-screen bg-neutral-800 text-sm text-neutral-100 antialiased lg:text-base">
+      <div
+        className="flex h-screen bg-neutral-800 text-sm text-neutral-100 antialiased lg:text-base"
+        onDrop={handleDrop}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
         <SideBar setPage={setPage} />
 
         {/* Confirmation Dialog */}
