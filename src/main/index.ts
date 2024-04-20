@@ -127,6 +127,14 @@ app.whenReady().then(async () => {
     return await blob.cards.post(cardData, bannerImage, avatarImage);
   });
 
+  ipcMain.handle("blob.cards.exportToZip", async (_, card: string) => {
+    return await blob.cards.exportToZip(card);
+  });
+
+  ipcMain.handle("blob.cards.importFromZip", async (_, zip: string) => {
+    return await blob.cards.importFromZip(zip);
+  });
+
   ipcMain.handle("blob.personas.get", async (_, persona: string) => {
     return await blob.personas.get(persona);
   });

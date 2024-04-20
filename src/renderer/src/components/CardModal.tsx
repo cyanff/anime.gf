@@ -1,14 +1,33 @@
-import { useState } from "react";
-import { CardBundle } from "@shared/types";
 import Dropdown from "@/components/Dropdown";
 import { Button } from "@/components/ui/button";
+import { ArrowUpOnSquareIcon, ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid";
+import { CardBundle } from "@shared/types";
+import { queries } from "../lib/queries";
+import { toast } from "sonner";
 interface Props {
   cardBundle: CardBundle;
   onCreateChat: (cardID: number, greeting: string) => void;
 }
-import { queries } from "@/lib/queries";
 
 function CardModal({ cardBundle, onCreateChat }: Props) {
+  const handleExport = async () => {
+    const cardDirRes = await queries.getCardDir(cardBundle.id);
+
+    if (cardDirRes.kind === "err") {
+      toast.error("Error fetching card directory to start the export process.");
+      console.error(cardDirRes.error);
+      return;
+    }
+
+    const res = await window.api.blob.cards.exportToZip(cardDirRes.value);
+    if (res.kind === "err") {
+      toast.error("Error exporting card bundle to zip.");
+      console.error(res.error);
+      return;
+    }
+    toast.success("Card successfully exported to zip!");
+  };
+
   return (
     <div className="flex w-[45rem] items-center justify-center rounded-lg bg-neutral-800">
       <div className="scroll-secondary h-[60rem] overflow-y-scroll rounded-lg">
@@ -17,12 +36,14 @@ function CardModal({ cardBundle, onCreateChat }: Props) {
           <img
             src={cardBundle.bannerURI}
             alt="Banner"
-            className="h-48 w-full rounded-t-lg bg-neutral-700 object-cover"
+            draggable="false"
+            className="h-48 w-full select-none rounded-t-lg bg-neutral-700 object-cover"
           />
           <img
             src={cardBundle.avatarURI}
             alt="Profile"
-            className="absolute -bottom-12 left-4 h-24 w-24 rounded-full border-4 border-neutral-800 object-cover"
+            draggable="false"
+            className="absolute -bottom-12 left-4 h-24 w-24 select-none rounded-full border-4 border-neutral-800 object-cover"
           />
         </div>
         {/* Character details container */}
@@ -52,14 +73,23 @@ function CardModal({ cardBundle, onCreateChat }: Props) {
               </div>
             </div>
           </div>
-          <div className="mt-6 flex justify-end border-b border-t border-neutral-600">
+          <div className="mt-6 flex justify-end space-x-4 border-b border-t border-neutral-700">
             <Button
               variant="outline"
               size="icon"
               className="m-2 h-10 w-16 bg-gradient-to-r from-[#C3407F] to-[#7C405D] transition ease-out hover:brightness-90"
               onClick={() => onCreateChat(cardBundle.id, cardBundle.data.character.greeting)}
             >
-              <img src="/button/chat.svg" alt="Settings" />
+              <ChatBubbleLeftRightIcon className="size-6 text-neutral-200" />
+            </Button>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="m-2 h-10 w-16 bg-gradient-to-r from-[#C3407F] to-[#7C405D] transition ease-out hover:brightness-90"
+              onClick={handleExport}
+            >
+              <ArrowUpOnSquareIcon className="size-6 text-neutral-200" />
             </Button>
           </div>
           {/* Character details dropdowns */}

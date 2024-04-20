@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
 import { useState } from "react";
 import SettingsPersona from "@/app/settings/settings_persona";
+import SettingsChat from "@/app/settings/settings_chat";
+import SettingsKeys from "@/app/settings/settings_keys";
 
 export default function SettingsPage() {
   const [page, setPage] = useState<string>("chat");
@@ -29,16 +29,20 @@ export default function SettingsPage() {
         <button
           className={`group flex w-full cursor-pointer items-center space-x-3 
           rounded-md p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent
-          ${page === "privacy" ? "bg-neutral-700 text-gray-200" : "text-gray-400"}`}
-          onClick={() => setPage("privacy")}
+          ${page === "key" ? "bg-neutral-700 text-gray-200" : "text-gray-400"}`}
+          onClick={() => setPage("key")}
         >
-          Privacy
+          Keys
         </button>
       </div>
 
       {/*Settings Content*/}
 
-      <div className="grow">{page === "persona" && <SettingsPersona />}</div>
+      <div className="grow">
+        {page === "persona" && <SettingsPersona />}
+        {page === "chat" && <SettingsChat />}
+        {page === "key" && <SettingsKeys />}
+      </div>
     </div>
   );
 }

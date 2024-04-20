@@ -113,7 +113,8 @@ export default function SettingsPersona() {
   };
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center space-y-3 bg-background">
+    <div className="flex h-full w-full flex-col items-center justify-center space-y-8">
+      <h1 className="text-2xl font-bold tracking-wide">Persona Settings</h1>
       {/* Personas List */}
       <div className=" flex max-h-[50%] min-h-20 w-[28rem] rounded-2xl border border-neutral-700 bg-neutral-800 py-2">
         <div className="scroll-secondary flex h-full w-full flex-col space-y-2 overflow-y-scroll px-3">

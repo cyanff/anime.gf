@@ -19,7 +19,8 @@ function sqliteToISO(time: string) {
  * const iso = "2021-08-01T12:00:00Z";
  * const timezone = "America/New_York";
  * const userRelativeTime = isoToUserRelativeTime(iso, timezone);
- * console.log(userRelativeTime); // "Yesterday at 08:00"
+ *
+ * userRelativeTime // "Yesterday at 08:00"
  * ```
  */
 function isoToUserRelativeTime(iso: string, timezone: string) {
@@ -59,7 +60,8 @@ function isoToUserRelativeTime(iso: string, timezone: string) {
  * ```ts
  * const iso = "2021-08-01T12:00:00Z";
  * const relativeTime = isoToLLMRelativeTime(iso);
- * console.log(relativeTime); // "2 weeks ago"
+ *
+ * relativeTime // "2 weeks ago"
  * ```
  */
 function isoToLLMRelativeTime(iso: string) {

@@ -2,22 +2,11 @@ import fs from "fs/promises";
 import { attainable, settingsPath } from "../utils";
 import { Result, isError } from "@shared/utils";
 import { Settings } from "@shared/types";
+import { config } from "@shared/config";
 
 async function init() {
   const settingsFileExists = await attainable(settingsPath);
-  const defaultSettings: Settings = {
-    chat: {
-      provider: "anthropic",
-      model: "claude-3-haiku-20240307",
-      maxReplyTokens: 256,
-      temperature: 0.7,
-      topP: 1,
-      topK: 50,
-      maxContextTokens: 2048,
-      jailbreak: "",
-      streaming: true
-    }
-  };
+  const defaultSettings: Settings = config.defaultSettings;
   if (!settingsFileExists) {
     await fs.writeFile(settingsPath, JSON.stringify(defaultSettings));
   }

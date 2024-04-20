@@ -50,7 +50,14 @@
   background: theme(colors.neutral.600);
   border-radius: 10px;
 }
-
+/* Disable number input up / down arrows  */
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
 
 /* ==================== Shadcn ==================== */
 

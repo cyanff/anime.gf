@@ -73,9 +73,6 @@ async function getChatCompletion(
     body.top_p = config.topP;
   }
 
-  console.log(headers);
-  console.log(body);
-
   const completionRes = await window.api.xfetch.post(url, body, headers);
   if (completionRes.kind == "err") {
     return completionRes;
