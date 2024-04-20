@@ -6,8 +6,7 @@ import { Persona } from "@shared/db_types";
 
 async function deleteMessage(messageID: number): Promise<void> {
   const query = `
-  DELETE FROM messages WHERE id = ?;
-  `.trim();
+  DELETE FROM messages WHERE id = ?;`;
 
   await window.api.sqlite.run(query, [messageID]);
 }
@@ -16,8 +15,7 @@ async function createChat(personaId: number, cardId: number): Promise<Result<voi
   try {
     const query = `
       INSERT INTO chats (persona_id, card_id)
-      VALUES (?, ?);
-    `.trim();
+      VALUES (?, ?);`;
     const params = [personaId, cardId];
     await window.api.sqlite.run(query, params);
     return { kind: "ok", value: undefined };
@@ -29,8 +27,7 @@ async function createChat(personaId: number, cardId: number): Promise<Result<voi
 
 async function deleteChat(chatID: number): Promise<void> {
   const query = `
-  DELETE FROM chats WHERE id = ?;
-  `.trim();
+  DELETE FROM chats WHERE id = ?;`;
 
   await window.api.sqlite.run(query, [chatID]);
 }
@@ -51,8 +48,7 @@ WHERE chat_id = ?
     WHERE chat_id = ?
     ORDER BY id
     LIMIT 1
-  );
-  `.trim();
+  );`;
 
   await window.api.sqlite.run(query, [chatID, chatID]);
 }
@@ -83,8 +79,7 @@ FROM
     chats c
         JOIN
     cards as ca ON ca.id = c.id
-ORDER BY c.id DESC
-  `.trim();
+ORDER BY c.id DESC`;
 
   const rows = (await window.api.sqlite.all(query)) as QueryResult[];
   const ret = await Promise.all(
@@ -128,8 +123,7 @@ FROM
   JOIN cards ON chats.card_id = cards.id
 ORDER BY 
   chats.inserted_at DESC
-LIMIT 20;
-`.trim();
+LIMIT 20;`;
 
   try {
     interface QueryResult {
@@ -163,8 +157,7 @@ async function getPersonaBundle(chatID: number): Promise<Result<PersonaBundle, E
   const query = `
   SELECT * 
   FROM personas
-  WHERE personas.id = (SELECT persona_id FROM chats WHERE chats.id = ${chatID});
-  `.trim();
+  WHERE personas.id = (SELECT persona_id FROM chats WHERE chats.id = ${chatID});`;
 
   try {
     const row = (await window.api.sqlite.get(query)) as Persona;
@@ -239,8 +232,7 @@ async function getChatHistory(chatID: number, limit: number = 10): Promise<Resul
         const candidateQuery = `
       SELECT id, text
       FROM message_candidates
-      WHERE message_id = ${row.id};
-      `.trim();
+      WHERE message_id = ${row.id};`;
         const candidates = (await window.api.sqlite.all(candidateQuery)) as { id: number; text: string }[];
         return {
           id: row.id,
@@ -266,8 +258,7 @@ async function getCardBundle(chatID: number): Promise<Result<CardBundle, Error>>
   SELECT cards.dir_name
   FROM chats
            JOIN cards ON chats.card_id = cards.id
-  WHERE chats.id = ${chatID};
-  `.trim();
+  WHERE chats.id = ${chatID};`;
     const row = (await window.api.sqlite.get(query)) as { dir_name: string };
     const res = await window.api.blob.cards.get(row.dir_name);
     if (res.kind == "err") {
@@ -328,8 +319,7 @@ async function insertMessage(
 ): Promise<Result<void, Error>> {
   const query = `
     INSERT INTO messages (chat_id, text, sender)
-    VALUES (?, ?, ?);
-  `.trim();
+    VALUES (?, ?, ?);`;
   const params = [chatID, message, sender];
 
   try {
@@ -351,13 +341,11 @@ async function insertMessagePair(
 
   const userMessageQuery = `
 INSERT INTO messages (chat_id, text, sender)
-VALUES (?, ?, 'user');
-  `.trim();
+VALUES (?, ?, 'user');`;
   const userMessageParams = [chatID, userMessage];
   const characterMessageQuery = `
 INSERT INTO messages (chat_id, text, sender)
-VALUES (?, ?, 'character');
-  `.trim();
+VALUES (?, ?, 'character');`;
   const characterMessageParams = [chatID, characterMessage];
 
   queries.push(userMessageQuery, characterMessageQuery);
@@ -376,8 +364,7 @@ async function updateMessageText(messageID: number, text: string): Promise<void>
   const query = `
   UPDATE messages
   SET text = ?
-  WHERE id = ?;
-  `.trim();
+  WHERE id = ?;`;
 
   await window.api.sqlite.run(query, [text, messageID]);
 }
@@ -456,8 +443,7 @@ async function getLatestUserMessageStartingFrom(chatID: number, messageID: numbe
   SELECT text FROM messages
   WHERE chat_id = ${chatID} AND id < ${messageID} AND sender = 'user'
   ORDER BY id DESC
-  LIMIT 1;
-  `.trim();
+  LIMIT 1;`;
 
   const row = (await window.api.sqlite.get(query)) as { text: string };
   return row.text;
@@ -466,8 +452,7 @@ async function getLatestUserMessageStartingFrom(chatID: number, messageID: numbe
 async function insertCandidateMessage(messageID: number, text: string): Promise<number> {
   const query = `
   INSERT INTO message_candidates (message_id, text)
-  VALUES (?, ?);
-  `.trim();
+  VALUES (?, ?);`;
 
   const res = await window.api.sqlite.run(query, [messageID, text]);
 
@@ -478,8 +463,7 @@ async function setCandidateMessageAsPrime(messageID: number, candidateID: number
   const query = `
   UPDATE messages
   SET prime_candidate_id = ?
-  WHERE id = ?;
-  `.trim();
+  WHERE id = ?;`;
 
   await window.api.sqlite.run(query, [candidateID, messageID]);
 }
@@ -488,8 +472,7 @@ async function updateCandidateMessage(candidateID: number, text: string): Promis
   const query = `
   UPDATE message_candidates
   SET text = ?
-  WHERE id = ?;
-  `.trim();
+  WHERE id = ?;`;
 
   await window.api.sqlite.run(query, [text, candidateID]);
 }
@@ -498,8 +481,7 @@ async function updateMessagePrimeCandidate(messageID: number, candidateID: numbe
   const query = `
   UPDATE messages
   SET prime_candidate_id = ?
-  WHERE id = ?;
-  `.trim();
+  WHERE id = ?;`;
 
   await window.api.sqlite.run(query, [candidateID, messageID]);
 }
@@ -536,8 +518,7 @@ async function updatePersona(id: number, name: string, description: string, isDe
   const query = `
   UPDATE personas
   SET name = ?, description = ?, dir_name = ?, is_default = ?
-  WHERE id = ?;
-  `.trim();
+  WHERE id = ?;`;
   await window.api.sqlite.run(query, [name, description, newDirName, isDefault ? 1 : 0, id]);
 }
 
@@ -562,7 +543,18 @@ async function insertPersona(name: string, description: string, isDefault: boole
   INSERT INTO personas (name, description, is_default, dir_name)
   VALUES (?, ?, ?);`;
 
-  await window.api.sqlite.run(query, [name, description, isDefault ? 1 : 0]);
+  await window.api.sqlite.run(query, [name, description, isDefault ? 1 : 0, dirName]);
+}
+
+async function getCardDir(cardID: number): Promise<Result<string, Error>> {
+  const query = `
+  SELECT dir_name FROM cards WHERE id = ?;`;
+  try {
+    const row = (await window.api.sqlite.get(query, [cardID])) as { dir_name: string };
+    return { kind: "ok", value: row.dir_name };
+  } catch (e) {
+    return { kind: "err", error: e };
+  }
 }
 
 export const queries = {
@@ -590,7 +582,8 @@ export const queries = {
   getAllExtantPersonaBundles,
   deletePersona,
   updatePersona,
-  insertPersona
+  insertPersona,
+  getCardDir
 };
 
 deepFreeze(queries);

@@ -1,27 +1,19 @@
-import { useEffect, useState } from "react";
 import { queries } from "@/lib/queries";
 import { toast } from "sonner";
-import { CardBundle } from "@shared/types";
 import Card from "@/components/Card";
 import CardModal from "@/components/CardModal";
 import { DialogConfig, useApp } from "@/components/AppContext";
+import { CardBundle } from "@shared/types";
 
-export default function CollectionsPage({ setPage, setChatID }) {
-  const [cardBundles, setCardBundles] = useState<CardBundle[]>([]);
+interface CollectionsPageProps {
+  setPage: (page: string) => void;
+  setChatID: (chatID: number) => void;
+  cardBundles: CardBundle[];
+  syncCardBundles: () => void;
+}
+
+export default function CollectionsPage({ setPage, setChatID, cardBundles, syncCardBundles }: CollectionsPageProps) {
   const { createModal, closeModal, createDialog: createAlert } = useApp();
-
-  const syncCards = async () => {
-    const res = await queries.getAllExtantCardBundles();
-    if (res.kind == "err") {
-      toast.error("Error fetching card bundle.");
-      return;
-    }
-    setCardBundles(res.value);
-  };
-
-  useEffect(() => {
-    syncCards();
-  }, []);
 
   async function onCreateChat(cardID: number, greeting: string) {
     const res = await queries.createChat(1, cardID);
@@ -56,7 +48,7 @@ export default function CollectionsPage({ setPage, setChatID }) {
                   actionLabel: "Delete",
                   onAction: async () => {
                     await queries.deleteCard(cardBundle.id);
-                    syncCards();
+                    syncCardBundles();
                   }
                 };
                 createAlert(alertConfig);

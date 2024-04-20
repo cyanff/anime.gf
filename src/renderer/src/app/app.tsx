@@ -9,9 +9,9 @@ import {
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 
-import CreationPage from "@/app/create";
 import ChatsPage from "@/app/chats";
 import CollectionsPage from "@/app/collections";
+import CreationPage from "@/app/create";
 import SettingsPage from "@/app/settings/settings";
 import { AppContext, DialogConfig } from "@/components/AppContext";
 import SideBar from "@/components/SideBar";
@@ -25,8 +25,10 @@ import {
 } from "@/components/ui/command";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { handleA, handleB, handleC } from "@/lib/cmd";
-import { Profiler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { CardBundle } from "@shared/types";
+import { queries } from "@/lib/queries";
 
 export default function App() {
   const [page, setPage] = useState<string>("chats");
@@ -36,7 +38,22 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [cmdOpen, setCmdOpen] = useState<boolean>(false);
   const [chatID, setChatID] = useState(1);
+  const [cardBundles, setCardBundles] = useState<CardBundle[]>([]);
 
+  useEffect(() => {
+    syncCardBundles();
+  }, []);
+
+  const syncCardBundles = async () => {
+    const res = await queries.getAllExtantCardBundles();
+    if (res.kind == "err") {
+      toast.error("Error fetching card bundle.");
+      return;
+    }
+    setCardBundles(res.value);
+  };
+
+  // Open command dialog with Ctrl + K
   useEffect(() => {
     window.addEventListener("keydown", (e) => {
       if (e.key === "k" && e.ctrlKey) {
@@ -68,22 +85,34 @@ export default function App() {
     }
     const files = e.dataTransfer.files;
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      // Reject files that are not .zip
-      if (file.type !== "application/zip") {
-        toast.error(`${file.name} is not a zip file, skipping...`);
-        continue;
-      }
-      // Reject files larger than 50MB
-      if (file.size > 5e7) {
-        toast.error(`${file.name} is larger than 50MB, skipping...`);
-        continue;
-      }
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        // Reject files that are not .zip
+        if (file.type !== "application/zip") {
+          toast.error(`${file.name} is not a zip file, skipping...`);
+          continue;
+        }
+        // Reject files larger than 50MB
+        if (file.size > 5e7) {
+          toast.error(`${file.name} is larger than 50MB, skipping...`);
+          continue;
+        }
 
-      const path = file.path;
-      const res = await window.api.blob.cards.importFromZip(path);
-      console.log("Res", res);
+        const path = file.path;
+        const res = await window.api.blob.cards.importFromZip(path);
+
+        if (res.kind === "err") {
+          toast.error(`Error importing ${file.name}`);
+          console.error("Error importing cards", res.error);
+          continue;
+        }
+      }
+      toast.success(`Imported ${numFiles} cards.`);
+      syncCardBundles();
+    } catch (e) {
+      console.error("Error importing cards", e);
+      toast.error(`Error importing cards.`);
     }
   };
 
@@ -181,7 +210,14 @@ export default function App() {
         <div className="flex h-full w-full overflow-hidden py-4">
           {page === "create" && <CreationPage />}
           {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID} />}
-          {page === "collections" && <CollectionsPage setPage={setPage} setChatID={setChatID} />}
+          {page === "collections" && (
+            <CollectionsPage
+              setPage={setPage}
+              setChatID={setChatID}
+              cardBundles={cardBundles}
+              syncCardBundles={syncCardBundles}
+            />
+          )}
           {page === "settings" && <SettingsPage />}
         </div>
       </div>

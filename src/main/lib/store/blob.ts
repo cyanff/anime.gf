@@ -110,7 +110,7 @@ export namespace cards {
     });
 
     if (zipFilePath.canceled || !zipFilePath.filePath) {
-      return { kind: "err", error: new Error("User cancelled the export save path dialog.") };
+      return { kind: "ok", value: undefined };
     }
 
     // Zip the card directory
@@ -201,14 +201,14 @@ export namespace cards {
 
     // Insert an entry for the card into the database
     try {
-      const query = `INSERT INTO cards (dirName) VALUES (?);`;
+      const query = `INSERT INTO cards (dir_name) VALUES (?);`;
       sqlite.run(query, [cardDirName]);
 
       return { kind: "ok", value: undefined };
     } catch (e) {
       // Roll back on error
-      await fsp.rmdir(cardDirPath, { recursive: true });
-      return { kind: "err", error: new Error(`Failed to insert card "${cardDirName}" into the database.`) };
+      await fsp.rm(cardDirPath, { recursive: true });
+      return { kind: "err", error: e };
     }
   }
 }
