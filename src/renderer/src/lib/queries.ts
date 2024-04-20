@@ -1,4 +1,4 @@
-import { deepFreeze, isValidName, toPathEscapedStr } from "@shared/utils";
+import { deepFreeze, isValidFileName, toPathEscapedStr } from "@shared/utils";
 import { ContextMessage, UIMessage } from "@shared/types";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { Result, isError } from "@shared/utils";
@@ -523,7 +523,7 @@ async function updatePersona(id: number, name: string, description: string, isDe
   const oldName = res.name;
   const oldDirName = res.dir_name;
 
-  if (!isValidName(name)) {
+  if (!isValidFileName(name)) {
     throw new Error("Name must only contain alphanumeric characters, spaces, and hyphens.");
   }
   const newDirName = `${toPathEscapedStr(name)}-${crypto.randomUUID()}`;
@@ -542,7 +542,7 @@ async function updatePersona(id: number, name: string, description: string, isDe
 }
 
 async function insertPersona(name: string, description: string, isDefault: boolean) {
-  if (!isValidName(name)) {
+  if (!isValidFileName(name)) {
     throw new Error("Name must only contain alphanumeric characters, spaces, and hyphens.");
   }
 

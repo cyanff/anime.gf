@@ -1,15 +1,15 @@
 // Blob storage manages all non structured data.
 // This includes silly tavern cards, images, audio, base weights, lora adapters, and other binary data.
 import { CardBundleWithoutID, CardData, PersonaBundleWithoutData } from "@shared/types";
-import { Result, isError, isValidName, toPathEscapedStr } from "@shared/utils";
+import { Result, isError, isValidFileName, toPathEscapedStr } from "@shared/utils";
+import archiver from "archiver";
+import crypto from "crypto";
+import { app, dialog, nativeImage } from "electron";
 import fs from "fs";
 import fsp from "fs/promises";
-import archiver from "archiver";
-import { app, dialog, nativeImage } from "electron";
-import path, { parse } from "path";
-import { attainable, blobPath, cardsPath, extractZipToDir, personasPath } from "../utils";
 import JSZip from "jszip";
-import crypto from "crypto";
+import path from "path";
+import { attainable, blobPath, cardsPath, extractZipToDir, personasPath } from "../utils";
 import sqlite from "./sqlite";
 
 async function init() {
@@ -72,6 +72,7 @@ export namespace cards {
       return { kind: "err", error: e };
     }
 
+    // TODO: Promise.all() to fetch both URIs asynchronously
     const uriPrefix = "agf:///cards/";
     const avatarFilePath = path.join(dirPath, "avatar.png");
     const avatarFileExists = await attainable(avatarFilePath);
@@ -93,11 +94,12 @@ export namespace cards {
   /**
    * Given a card directory name, zips the directory, and display a save dialog to save the zip file.
    * @param name The name of the card directory to export
+   * @returns A void Result object
    */
-  export async function exportToZip(name: string) {
+  export async function exportToZip(name: string): Promise<Result<void, Error>> {
     const cardDirPath = path.join(cardsPath, name);
     if (!(await attainable(cardDirPath))) {
-      throw new Error(`Card folder "${name}" not found`);
+      return { kind: "err", error: new Error(`Card folder "${name}" not found`) };
     }
 
     // Show the user a dialog to select the save location
@@ -108,36 +110,43 @@ export namespace cards {
     });
 
     if (zipFilePath.canceled || !zipFilePath.filePath) {
-      return;
+      return { kind: "err", error: new Error("User cancelled the export save path dialog.") };
     }
 
     // Zip the card directory
     try {
       const output = fs.createWriteStream(zipFilePath.filePath);
       const archive = archiver("zip", {
-        // Sets the compression level.
         zlib: { level: 5 }
       });
       archive.pipe(output);
       archive.directory(cardDirPath, false);
       await archive.finalize();
+      return { kind: "ok", value: undefined };
     } catch (e) {
       isError(e);
-      throw e;
+      return { kind: "err", error: e };
     }
   }
 
+  /**
+   * Validates the contents of a zip file and extracts the card's data.json
+   *
+   * @param zip - The path to the zip file containing the card data.
+   * @returns A `Result` containing the parsed card data or an error if the zip file is invalid.
+   */
   async function _validateAndGetCardData(zip: string): Promise<Result<CardData, Error>> {
     const zipData = await fs.promises.readFile(zip);
     const jszip = await JSZip.loadAsync(zipData);
 
+    // Validates that the zip contains a data.json
     const dataJSONFile = jszip.file("data.json");
     if (!dataJSONFile) {
       return { kind: "err", error: new Error("data.json not found in card's zip") };
     }
 
+    // Validates that data.json is valid JSON
     const dataJSONContent = await dataJSONFile.async("string");
-
     let parsedData: CardData;
     try {
       parsedData = JSON.parse(dataJSONContent);
@@ -145,13 +154,19 @@ export namespace cards {
       return { kind: "err", error: new Error("data.json is not valid JSON and could not be parsed.") };
     }
 
+    // Validates that the data.json conforms to the anime.gf spec
     if (parsedData.spec !== "anime.gf") {
       return { kind: "err", error: new Error("data.json card spec is not conformant to anime.gf.") };
     }
-
     return { kind: "ok", value: parsedData };
   }
 
+  /**
+   * Imports a card from a zip file and inserts it into the database.
+   *
+   * @param zip - The path to the zip file containing the card data.
+   * @returns A `Result` object indicating success or failure, and an optional error.
+   */
   export async function importFromZip(zip: string): Promise<Result<void, Error>> {
     if (!(await attainable(zip))) {
       return { kind: "err", error: new Error(`Zip file "${zip}" not accessible.`) };
@@ -162,8 +177,9 @@ export namespace cards {
       return validateRes;
     }
 
+    // Validate the character name
     const charName = validateRes.value.character.name;
-    if (!isValidName(charName)) {
+    if (!isValidFileName(charName)) {
       return {
         kind: "err",
         error: new Error(
@@ -183,14 +199,14 @@ export namespace cards {
       return extractRes;
     }
 
-    // Insert the card into the database
+    // Insert an entry for the card into the database
     try {
       const query = `INSERT INTO cards (dirName) VALUES (?);`;
       sqlite.run(query, [cardDirName]);
 
       return { kind: "ok", value: undefined };
     } catch (e) {
-      // Clean up the card directory if the query fails
+      // Roll back on error
       await fsp.rmdir(cardDirPath, { recursive: true });
       return { kind: "err", error: new Error(`Failed to insert card "${cardDirName}" into the database.`) };
     }
@@ -218,10 +234,25 @@ export namespace personas {
     };
   }
 
-  export async function rename(currentName: string, newName: string): Promise<Result<undefined, Error>> {
+  /**
+   * Renames a persona folder with the given current name to the new name.
+   *
+   * @param currentName - The current name of the persona folder.
+   * @param newName - The new name to rename the persona folder to.
+   * @returns A `Result` object indicating whether the operation was successful or not.
+   */
+  export async function rename(currentName: string, newName: string): Promise<Result<void, Error>> {
     const currentDir = path.join(personasPath, currentName);
     if (!(await attainable(currentDir))) {
       return { kind: "err", error: new Error(`Persona folder "${currentName}" not found or inaccessible`) };
+    }
+
+    if (!isValidFileName) {
+      return {
+        kind: "err",
+        error: new Error(`Persona folder "${newName}" has an invalid name. 
+      File and directory names must only contain alphanumeric characters, spaces and hyphens.`)
+      };
     }
 
     const newDir = path.join(personasPath, newName);

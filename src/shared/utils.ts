@@ -72,12 +72,13 @@ export function isError(error: any): asserts error is Error {
 }
 
 /**
- * Checks if the given name string is valid.
- * A valid name must only contain alphanumeric characters, spaces, and hyphens.
+ * Checks if the given file name string is valid.
+ * A valid file name MUST only contain alphanumeric characters, spaces, and hyphens.
+ * This is critical to mitigate directory traversal.
  * @param name The name string to validate.
  * @returns `true` if the name is valid, `false` otherwise.
  */
-export function isValidName(name: string): boolean {
+export function isValidFileName(name: string): boolean {
   return /^[\w\-\s]+$/.test(name);
 }
 
