@@ -1,16 +1,5 @@
 // Blob storage manages all non structured data.
 // This includes silly tavern cards, images, audio, base weights, lora adapters, and other binary data.
-<<<<<<< HEAD
-
-import { CardData, CardBundleWithoutID, PersonaBundleWithoutData } from "@shared/types";
-import { Result, isError } from "@shared/utils";
-import fs from "fs/promises";
-||||||| 2bc6052
-
-import { CardBundle, CardBundleWithoutID, PersonaBundleWithoutData } from "@shared/types";
-import { Result, isError } from "@shared/utils";
-import fs from "fs/promises";
-=======
 import { CardBundleWithoutID, CardData, PersonaBundleWithoutData } from "@shared/types";
 import { Result, isError, isValidFileName, toPathEscapedStr } from "@shared/utils";
 import archiver from "archiver";
@@ -19,18 +8,9 @@ import { app, dialog, nativeImage } from "electron";
 import fs from "fs";
 import fsp from "fs/promises";
 import JSZip from "jszip";
->>>>>>> dd4d8a915c67d0dee551346f3d705e47a17dcb07
 import path from "path";
-<<<<<<< HEAD
-import { attainable, blobPath, cardsPath, personasPath } from "../utils";
-import { nativeImage, app } from "electron";
-||||||| 2bc6052
-import { attainable, blobPath, cardsPath, personasPath } from "../utils";
-import { nativeImage } from "electron";
-=======
-import { attainable, blobPath, cardsPath, extractZipToDir, personasPath } from "../utils";
+import { attainable, blobPath, cardsPath, personasPath, extractZipToDir } from "../utils";
 import sqlite from "./sqlite";
->>>>>>> dd4d8a915c67d0dee551346f3d705e47a17dcb07
 
 async function init() {
   const blobDirExists = await attainable(blobPath);
@@ -110,36 +90,6 @@ export namespace cards {
       }
     };
   }
-<<<<<<< HEAD
-
-  export async function post(
-    cardData: CardData,
-    bannerImage: string | null,
-    avatarImage: string | null
-  ): Promise<Result<string, Error>> {
-    try {
-      const newDirPath = path.join(cardsPath, cardData.character.name);
-
-      await fs.mkdir(newDirPath, { recursive: true });
-
-      await fs.writeFile(path.join(newDirPath, "data.json"), JSON.stringify(cardData));
-
-      if (avatarImage) {
-        await fs.copyFile(avatarImage, path.join(newDirPath, "avatar.png"));
-      }
-      if (bannerImage) {
-        await fs.copyFile(bannerImage, path.join(newDirPath, "banner.png"));
-      }
-
-      return { kind: "ok", value: newDirPath };
-    } catch (e) {
-      isError(e);
-      return { kind: "err", error: e };
-    }
-  }
-||||||| 2bc6052
-=======
-
   /**
    * Given a card directory name, zips the directory, and display a save dialog to save the zip file.
    * @param name The name of the card directory to export
@@ -260,7 +210,47 @@ export namespace cards {
       return { kind: "err", error: e };
     }
   }
->>>>>>> dd4d8a915c67d0dee551346f3d705e47a17dcb07
+
+  /**
+   * Saves the card data, banner image, and avatar image to the file system.
+   * @param cardData - The data of the card to be saved.
+   * @param bannerImage - The path to the banner image file, or null if no banner image is provided.
+   * @param avatarImage - The path to the avatar image file, or null if no avatar image is provided.
+   * @returns A promise that resolves to a Result object containing the path to the saved directory on success, or an error on failure.
+   */
+  export async function post(
+    cardData: CardData,
+    bannerImage: string | null,
+    avatarImage: string | null
+  ): Promise<Result<undefined, Error>> {
+    
+    const pathEscapedCharName = toPathEscapedStr(cardData.character.name);
+    const cardDirName = `${pathEscapedCharName}-${crypto.randomUUID()}`;
+    const cardDirPath = path.join(cardsPath, cardDirName);
+
+    await fsp.mkdir(cardDirPath, { recursive: true });
+
+    await fsp.writeFile(path.join(cardDirPath, "data.json"), JSON.stringify(cardData));
+
+    if (avatarImage) {
+      await fsp.copyFile(avatarImage, path.join(cardDirPath, "avatar.png"));
+    }
+    if (bannerImage) {
+      await fsp.copyFile(bannerImage, path.join(cardDirPath, "banner.png"));
+    }
+
+    // Insert an entry for the card into the database
+    try {
+      const query = `INSERT INTO cards (dir_name) VALUES (?);`;
+      sqlite.run(query, [cardDirName]);
+
+      return { kind: "ok", value: undefined };
+    } catch (e) {
+      // Roll back on error
+      await fsp.rm(cardDirPath, { recursive: true });
+      return { kind: "err", error: e };
+    }
+  }
 }
 
 // =====================================================================

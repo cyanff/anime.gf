@@ -20,7 +20,11 @@ const formSchema = z.object({
   message_example: z.string().min(0).max(200)
 });
 
-function CreationPage() {
+interface CreationPageProps {
+  syncCardBundles: () => void;
+}
+
+export default function CreationPage({ syncCardBundles }: CreationPageProps) {
   const [bannerNativeImage, setBannerNativeImage] = useState<string | null>(null);
   const [avatarNativeImage, setAvatarNativeImage] = useState<string | null>(null);
   const [bannerImage, setBannerImage] = useState<string | null>(null);
@@ -70,6 +74,7 @@ function CreationPage() {
     const result = await window.api.blob.cards.post(cardData, bannerImage, avatarImage);
     if (result.kind === "ok") {
       console.log("Post function ran successfully. File path:", result.value);
+      syncCardBundles();
     } else {
       console.error("An error occurred while running the post function:", result.error);
     }
@@ -259,5 +264,3 @@ function CreationPage() {
     </div>
   );
 }
-
-export default CreationPage;
