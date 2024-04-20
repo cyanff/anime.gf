@@ -150,6 +150,10 @@ app.whenReady().then(async () => {
     return await xfetch.get(url, headers);
   });
 
+  ipcMain.handle("utils.openURL", async (_, url: string) => {
+    return await shell.openExternal(url);
+  });
+
   ipcMain.handle("setting.get", async () => {
     return await setting.get();
   });

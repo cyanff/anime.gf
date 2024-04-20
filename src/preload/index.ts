@@ -37,6 +37,10 @@ export interface API {
     post: (url: string, body: Object, headers: Record<string, string>) => Promise<Result<any, Error>>;
     get: (url: string, headers: Record<string, string>) => Promise<Result<any, Error>>;
   };
+
+  utils: {
+    openURL: (url: string) => void;
+  };
 }
 
 const api: API = {
@@ -71,6 +75,9 @@ const api: API = {
   xfetch: {
     post: (url, body, headers) => ipcRenderer.invoke("xfetch.post", url, body, headers),
     get: (url, headers) => ipcRenderer.invoke("xfetch.get", url, headers)
+  },
+  utils: {
+    openURL: (url) => ipcRenderer.invoke("utils.openURL", url)
   }
 };
 contextBridge.exposeInMainWorld("api", api);

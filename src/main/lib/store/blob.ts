@@ -203,7 +203,6 @@ export namespace cards {
     try {
       const query = `INSERT INTO cards (dir_name) VALUES (?);`;
       sqlite.run(query, [cardDirName]);
-
       return { kind: "ok", value: undefined };
     } catch (e) {
       // Roll back on error

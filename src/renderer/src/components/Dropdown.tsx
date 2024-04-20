@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 
 interface DropdownProps {
@@ -17,11 +18,7 @@ export default function Dropdown({ label, content, variant = "md" }: DropdownPro
           onClick={() => setIsOpen(!isOpen)}
         >
           <span className="text-xs font-medium">{label}</span>
-          {isOpen ? (
-            <img src="/button/arrow.svg" className="rotate-180 transform" alt="description" />
-          ) : (
-            <img src="/button/arrow.svg" alt="description" />
-          )}
+          <ChevronDownIcon className={`size-5  transition ease-out ${isOpen ? "rotate-180 transform" : ""}`} />
         </button>
         <div
           className={`overflow-hidden rounded-b-lg bg-[#212121] transition-all duration-300 ease-in-out ${isOpen ? "max-h-96" : "max-h-0"}`}
@@ -39,11 +36,10 @@ export default function Dropdown({ label, content, variant = "md" }: DropdownPro
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="font-medium">{label}</span>
-        {isOpen ? (
-          <img src="/button/arrow.svg" className="rotate-180 transform" alt="description" />
-        ) : (
-          <img src="/button/arrow.svg" alt="description" />
-        )}
+
+        <ChevronDownIcon
+          className={`duration-125 size-5 transition ease-out ${isOpen ? "rotate-180 transform" : ""}`}
+        />
       </button>
       <div
         className={`overflow-hidden  rounded-b-lg bg-[#212121] transition-all duration-300 ease-in-out ${isOpen ? "max-h-96" : "max-h-0"}`}
