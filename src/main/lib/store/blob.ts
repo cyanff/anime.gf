@@ -1,12 +1,12 @@
 // Blob storage manages all non structured data.
 // This includes silly tavern cards, images, audio, base weights, lora adapters, and other binary data.
 
-import { CardBundle, CardBundleWithoutID, PersonaBundleWithoutData } from "@shared/types";
+import { CardData, CardBundleWithoutID, PersonaBundleWithoutData } from "@shared/types";
 import { Result, isError } from "@shared/utils";
 import fs from "fs/promises";
 import path from "path";
 import { attainable, blobPath, cardsPath, personasPath } from "../utils";
-import { nativeImage } from "electron";
+import { nativeImage, app } from "electron";
 
 async function init() {
   const blobDirExists = await attainable(blobPath);
@@ -21,10 +21,10 @@ async function init() {
 }
 
 /**
-  * Retrieves an image from the specified path.
-  * @param path - The path to the image file.
-  * @returns A promise that resolves to a Result object containing the image or an error.
-  */
+ * Retrieves an image from the specified path.
+ * @param path - The path to the image file.
+ * @returns A promise that resolves to a Result object containing the image or an error.
+ */
 export namespace image {
   export async function get(path: string): Promise<Result<any, Error>> {
     const image = nativeImage.createFromPath(path);
@@ -81,6 +81,32 @@ export namespace cards {
         bannerURI
       }
     };
+  }
+
+  export async function post(
+    cardData: CardData,
+    bannerImage: string | null,
+    avatarImage: string | null
+  ): Promise<Result<string, Error>> {
+    try {
+      const newDirPath = path.join(cardsPath, cardData.character.name);
+
+      await fs.mkdir(newDirPath, { recursive: true });
+
+      await fs.writeFile(path.join(newDirPath, "data.json"), JSON.stringify(cardData));
+
+      if (avatarImage) {
+        await fs.copyFile(avatarImage, path.join(newDirPath, "avatar.png"));
+      }
+      if (bannerImage) {
+        await fs.copyFile(bannerImage, path.join(newDirPath, "banner.png"));
+      }
+
+      return { kind: "ok", value: newDirPath };
+    } catch (e) {
+      isError(e);
+      return { kind: "err", error: e };
+    }
   }
 }
 

@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { Result } from "@shared/utils";
 import { RunResult } from "../main/lib/store/sqlite";
-import { CardBundle, PersonaBundleWithoutData, Settings } from "@shared/types";
+import { CardBundle, CardData, PersonaBundleWithoutData, Settings } from "@shared/types";
 
 // Expose API types to the renderer process
 export interface API {
@@ -12,11 +12,12 @@ export interface API {
     runAsTransaction: (queries: string[], params: any[][]) => Promise<void>;
   };
   blob: {
-    image:{
+    image: {
       get: (path: string) => Promise<Result<any, Error>>;
-    }
+    };
     cards: {
       get: (card: string) => Promise<Result<CardBundle, Error>>;
+      post: (cardData: CardData, bannerImage: string | null, avatarImage: string | null) => Promise<Result<string, Error>>;
     };
     personas: {
       get: (persona: string) => Promise<Result<PersonaBundleWithoutData, Error>>;
@@ -45,11 +46,13 @@ const api: API = {
     runAsTransaction: (queries, params) => ipcRenderer.invoke("sqlite.runAsTransaction", queries, params)
   },
   blob: {
-    image:{
+    image: {
       get: (path) => ipcRenderer.invoke("blob.image.get", path)
     },
     cards: {
-      get: (card) => ipcRenderer.invoke("blob.cards.get", card)
+      get: (card) => ipcRenderer.invoke("blob.cards.get", card),
+      post: (cardData, bannerImage, avatarImage) =>
+        ipcRenderer.invoke("blob.cards.post", cardData, bannerImage, avatarImage)
     },
     personas: {
       get: (persona) => ipcRenderer.invoke("blob.personas.get", persona),
