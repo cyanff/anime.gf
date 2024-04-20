@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { Result } from "@shared/utils";
 import { RunResult } from "../main/lib/store/sqlite";
-import { CardBundle, PersonaBundleWithoutData, Settings } from "@shared/types";
+import { CardBundle, CardData, PersonaBundleWithoutData, Settings } from "@shared/types";
 
 // Expose API types to the renderer process
 export interface API {
@@ -17,6 +17,7 @@ export interface API {
     };
     cards: {
       get: (card: string) => Promise<Result<CardBundle, Error>>;
+      post: (cardData: CardData, bannerImage: string | null, avatarImage: string | null) => Promise<Result<string, Error>>;
       exportToZip: (card: string) => Promise<Result<void, Error>>;
       importFromZip: (zip: string) => Promise<Result<void, Error>>;
     };
@@ -56,6 +57,8 @@ const api: API = {
     },
     cards: {
       get: (card) => ipcRenderer.invoke("blob.cards.get", card),
+      post: (cardData, bannerImage, avatarImage) =>
+        ipcRenderer.invoke("blob.cards.post", cardData, bannerImage, avatarImage),
       exportToZip: (card) => ipcRenderer.invoke("blob.cards.exportToZip", card),
       importFromZip: (zip) => ipcRenderer.invoke("blob.cards.importFromZip", zip)
     },

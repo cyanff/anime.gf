@@ -9,7 +9,7 @@ import fs from "fs";
 import fsp from "fs/promises";
 import JSZip from "jszip";
 import path from "path";
-import { attainable, blobPath, cardsPath, extractZipToDir, personasPath } from "../utils";
+import { attainable, blobPath, cardsPath, personasPath, extractZipToDir } from "../utils";
 import sqlite from "./sqlite";
 
 async function init() {
@@ -90,7 +90,6 @@ export namespace cards {
       }
     };
   }
-
   /**
    * Given a card directory name, zips the directory, and display a save dialog to save the zip file.
    * @param name The name of the card directory to export
@@ -203,6 +202,47 @@ export namespace cards {
     try {
       const query = `INSERT INTO cards (dir_name) VALUES (?);`;
       sqlite.run(query, [cardDirName]);
+      return { kind: "ok", value: undefined };
+    } catch (e) {
+      // Roll back on error
+      await fsp.rm(cardDirPath, { recursive: true });
+      return { kind: "err", error: e };
+    }
+  }
+
+  /**
+   * Saves the card data, banner image, and avatar image to the file system.
+   * @param cardData - The data of the card to be saved.
+   * @param bannerImage - The path to the banner image file, or null if no banner image is provided.
+   * @param avatarImage - The path to the avatar image file, or null if no avatar image is provided.
+   * @returns A promise that resolves to a Result object containing the path to the saved directory on success, or an error on failure.
+   */
+  export async function post(
+    cardData: CardData,
+    bannerImage: string | null,
+    avatarImage: string | null
+  ): Promise<Result<undefined, Error>> {
+    
+    const pathEscapedCharName = toPathEscapedStr(cardData.character.name);
+    const cardDirName = `${pathEscapedCharName}-${crypto.randomUUID()}`;
+    const cardDirPath = path.join(cardsPath, cardDirName);
+
+    await fsp.mkdir(cardDirPath, { recursive: true });
+
+    await fsp.writeFile(path.join(cardDirPath, "data.json"), JSON.stringify(cardData));
+
+    if (avatarImage) {
+      await fsp.copyFile(avatarImage, path.join(cardDirPath, "avatar.png"));
+    }
+    if (bannerImage) {
+      await fsp.copyFile(bannerImage, path.join(cardDirPath, "banner.png"));
+    }
+
+    // Insert an entry for the card into the database
+    try {
+      const query = `INSERT INTO cards (dir_name) VALUES (?);`;
+      sqlite.run(query, [cardDirName]);
+
       return { kind: "ok", value: undefined };
     } catch (e) {
       // Roll back on error

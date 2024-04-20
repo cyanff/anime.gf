@@ -13,23 +13,24 @@ import { CardData } from "@shared/types";
 import { nativeImage } from "electron";
 
 const formSchema = z.object({
-  tags: z.string().min(0).max(200),
   name: z.string().min(0).max(200),
+  tags: z.string().min(0).max(200),
   description: z.string().min(0).max(200),
   greeting: z.string().min(0).max(200),
   message_example: z.string().min(0).max(200)
 });
 
-function CreationPage() {
-  const [tags, setTags] = useState<string[]>([]);
-  const [characterName, setCharacterName] = useState("");
-  const [characterDescription, setCharacterDescription] = useState("");
-  const [greetingMessage, setGreetingMessage] = useState("");
-  const [exampleMessages, setExampleMessages] = useState("");
+interface CreationPageProps {
+  syncCardBundles: () => void;
+}
+
+export default function CreationPage({ syncCardBundles }: CreationPageProps) {
+  const [bannerNativeImage, setBannerNativeImage] = useState<string | null>(null);
+  const [avatarNativeImage, setAvatarNativeImage] = useState<string | null>(null);
   const [bannerImage, setBannerImage] = useState<string | null>(null);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [avatarImage, setAvatarImage] = useState<string | null>(null);
   const bannerInput = useRef<HTMLInputElement>(null);
-  const profileInput = useRef<HTMLInputElement>(null);
+  const avatarInput = useRef<HTMLInputElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,45 +44,40 @@ function CreationPage() {
 
   //TODO: Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // // Create CardData object
-    // const cardData: CardData = {
-    //   spec: "spec",
-    //   spec_version: "spec_version",
-    //   character: {
-    //     name: values.name,
-    //     description: values.description,
-    //     greeting: values.greeting,
-    //     msg_examples: values.message_example
-    //   },
-    //   world: {
-    //     description: "description"
-    //   },
-    //   meta: {
-    //     title: values.name,
-    //     created_at: new Date().toISOString(),
-    //     creator: {
-    //       card: "card",
-    //       character: "character",
-    //       world: "world"
-    //     },
-    //     tagline: "tagline",
-    //     tags: values.tags.split(",")
-    //   }
-    // };
-    // // Save CardData to JSON
-    // const json = JSON.stringify(cardData, null, 2);
-    // const blob = new Blob([json], { type: "application/json" });
-    // const file = new File([blob], `${values.name}.json`, { type: "application/json" });
-    // await window.api.blob.post("scripts/blob/cards", file);
-    // // Rename and save images
-    // if (bannerImage) {
-    //   const bannerFile = new File([bannerImage], "banner.png", { type: "image/png" });
-    //   await window.api.blob.post(`${values.name}`, bannerFile);
-    // }
-    // if (profileImage) {
-    //   const avatarFile = new File([profileImage], "avatar.png", { type: "image/png" });
-    //   await window.api.blob.post(`${values.name}`, avatarFile);
-    // }
+    // Create CardData object
+    const cardData: CardData = {
+      spec: "spec",
+      spec_version: "spec_version",
+      character: {
+        name: values.name,
+        description: values.description,
+        greeting: values.greeting,
+        msg_examples: values.message_example
+      },
+      world: {
+        description: "description"
+      },
+      meta: {
+        title: values.name,
+        created_at: new Date().toISOString(),
+        creator: {
+          card: "card",
+          character: "character",
+          world: "world"
+        },
+        tagline: "tagline",
+        tags: values.tags.split(",")
+      }
+    };
+
+    // Send the card data to the backend
+    const result = await window.api.blob.cards.post(cardData, bannerImage, avatarImage);
+    if (result.kind === "ok") {
+      console.log("Post function ran successfully. File path:", result.value);
+      syncCardBundles();
+    } else {
+      console.error("An error occurred while running the post function:", result.error);
+    }
   }
 
   const handleBannerClick = () => {
@@ -91,28 +87,30 @@ function CreationPage() {
   };
 
   const handleProfileClick = () => {
-    if (profileInput.current) {
-      profileInput.current.click();
+    if (avatarInput.current) {
+      avatarInput.current.click();
     }
   };
 
   const handleBannerChange = async (event) => {
     const file = event.target.files[0];
-    const res = await window.api.blob.image.get(file.path);
+    setBannerImage(file.path);
 
+    const res = await window.api.blob.image.get(file.path);
     if (res.kind === "ok") {
       const dataUrl = res.value.toDataURL();
-      setBannerImage(dataUrl);
+      setBannerNativeImage(dataUrl);
     }
   };
 
-  const handleProfileChange = async (event) => {
+  const handleAvatarChange = async (event) => {
     const file = event.target.files[0];
-    const res = await window.api.blob.image.get(file.path);
+    setAvatarImage(file.path);
 
+    const res = await window.api.blob.image.get(file.path);
     if (res.kind === "ok") {
       const dataUrl = res.value.toDataURL();
-      setProfileImage(dataUrl);
+      setAvatarNativeImage(dataUrl);
     }
   };
 
@@ -125,8 +123,8 @@ function CreationPage() {
             className="flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden rounded-t-lg bg-gradient-to-br from-neutral-700 to-neutral-500"
             onClick={handleBannerClick}
           >
-            {bannerImage ? (
-              <img src={bannerImage ?? ""} alt="Profile" className="" />
+            {bannerNativeImage ? (
+              <img src={bannerNativeImage ?? ""} alt="Profile" className="" />
             ) : (
               <PencilSquareIcon className="absolute h-12 w-12 text-neutral-300" />
             )}
@@ -143,8 +141,8 @@ function CreationPage() {
             className="absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-neutral-700 to-neutral-600"
             onClick={handleProfileClick}
           >
-            {profileImage ? (
-              <img src={profileImage} alt="Profile" className="" />
+            {avatarNativeImage ? (
+              <img src={avatarNativeImage} alt="Profile" className="" />
             ) : (
               <PencilSquareIcon className="absolute h-8 w-8 text-neutral-300" />
             )}
@@ -152,8 +150,8 @@ function CreationPage() {
             <input
               type="file"
               style={{ display: "none" }}
-              ref={profileInput}
-              onChange={handleProfileChange}
+              ref={avatarInput}
+              onChange={handleAvatarChange}
               accept=".jpg,.jpeg,.png"
             />
           </div>
@@ -266,5 +264,3 @@ function CreationPage() {
     </div>
   );
 }
-
-export default CreationPage;
