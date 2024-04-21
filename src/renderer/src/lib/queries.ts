@@ -61,7 +61,6 @@ export interface ChatSearchItem {
   lastMessage: string;
 }
 
-
 async function getChatSearchItems(): Promise<ChatSearchItem[]> {
   interface QueryResult {
     id: number;
@@ -189,14 +188,18 @@ async function getAllExtantPersonaBundles(): Promise<Result<PersonaBundle[], Err
     const personaBundles = await Promise.all(
       rows.map(async (row) => {
         const res = await window.api.blob.personas.get(row.dir_name);
-        if (res.kind == "err") {
-          throw res.error;
+        let avatarURI;
+
+        if (res.kind == "ok") {
+          avatarURI = res.value.avatarURI;
+        } else {
+          avatarURI = "";
         }
         return {
           data: {
             ...row
           },
-          avatarURI: res.value.avatarURI
+          avatarURI
         };
       })
     );
@@ -284,7 +287,8 @@ async function getAllExtantCardBundles(): Promise<Result<CardBundle[], Error>> {
     for (const row of rows) {
       const res = await window.api.blob.cards.get(row.dir_name);
       if (res.kind == "err") {
-        throw res.error;
+        console.error("Error fetching a card bundle", res.error);
+        continue;
       }
       const cardBundle: CardBundle = {
         id: row.id,
