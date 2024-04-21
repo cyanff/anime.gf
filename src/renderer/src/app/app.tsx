@@ -119,7 +119,7 @@ export default function App() {
   };
 
   return (
-    <AppContext.Provider value={{ createDialog, createModal, closeModal }}>
+    <AppContext.Provider value={{ createDialog, createModal, closeModal, setChatID }}>
       <div
         className="flex h-screen bg-neutral-800 text-sm text-neutral-100 antialiased lg:text-base"
         onDrop={handleDrop}
@@ -211,7 +211,9 @@ export default function App() {
 
         <div className="flex h-full w-full overflow-hidden py-4">
           {page === "create" && <CreationPage setPage={setPage} syncCardBundles={syncCardBundles} />}
-          {page === "edit" && cardBundle && <EditPage setPage={setPage} cardBundle={cardBundle} syncCardBundles={syncCardBundles} />}
+          {page === "edit" && cardBundle && (
+            <EditPage setPage={setPage} cardBundle={cardBundle} syncCardBundles={syncCardBundles} />
+          )}
           {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID} />}
           {page === "collections" && (
             <CollectionsPage

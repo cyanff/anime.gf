@@ -1,5 +1,5 @@
 import { DialogConfig, useApp } from "@/components/AppContext";
-import ChatsSearch from "@/components/ChatsSearch";
+import ChatsSearchModal from "@/components/ChatsSearchModal";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -7,13 +7,12 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
-import { ChatSearchItem, RecentChat as RecentChatI, queries } from "@/lib/queries";
+import { RecentChat as RecentChatI, queries } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 import { ArrowPathIcon, DocumentDuplicateIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { PersonaBundle } from "@shared/types";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 export interface ChatsSideBarProps {
   chatID: number;
@@ -25,19 +24,11 @@ export interface ChatsSideBarProps {
 export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, setChatID }: ChatsSideBarProps) {
   const [recentChats, setRecentChats] = useState<RecentChatI[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [chatSearchItems, setChatSearchItems] = useState<ChatSearchItem[]>([]);
-  const { createModal, closeModal, createDialog: createAlert } = useApp();
+  const { createModal, createDialog } = useApp();
 
   useEffect(() => {
     syncRecentChats();
-    syncChatSearchItems();
   }, []);
-
-  const syncChatSearchItems = async () => {
-    const res = await queries.getChatSearchItems();
-    setChatSearchItems(res);
-  };
-
   const syncRecentChats = async () => {
     const chatCards = await queries.getRecentChats();
     if (chatCards.kind == "err") {
@@ -46,18 +37,12 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
     setRecentChats(chatCards.value);
   };
 
-  function onSelect(selected: ChatSearchItem) {
-    toast("Selected: " + selected.characterName);
-    closeModal();
-  }
-
   const sidebarVariants = {
     open: { width: "20rem", display: "block", overflow: "visible", opacity: 1 },
     closed: { width: "0", opacity: 0.2, overflow: "hidden", transitionEnd: { display: "none" } }
   };
 
   return (
-    // Sidebar Collapse Button Wrapper
     <div className="flex h-full items-center">
       {/* Sidebar Motion Wrapper*/}
       <motion.div
@@ -66,7 +51,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
         }}
         className="h-full"
         animate={sidebarOpen ? "open" : "closed"}
-        transition={{ duration: 0.2, type: "tween" }}
+        transition={{ duration: 0.2 }}
         variants={sidebarVariants}
       >
         <div className="flex h-full w-80 flex-col overflow-hidden rounded-2xl bg-background">
@@ -76,27 +61,27 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
             <div
               className="mb-2 flex w-full cursor-pointer items-center space-x-2 overflow-hidden rounded-lg bg-neutral-700 p-1"
               onClick={() => {
-                createModal(<ChatsSearch onSelect={onSelect} chatSearchItems={chatSearchItems} />);
+                createModal(<ChatsSearchModal />);
               }}
             >
               <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-neutral-400" />
               <input
-                className="h-9 w-full grow cursor-pointer bg-neutral-700 text-gray-100 caret-transparent placeholder:font-medium focus:outline-none"
+                className="h-11 w-full grow cursor-pointer select-none bg-neutral-700 text-gray-100 caret-transparent placeholder:font-[480] placeholder:tracking-wide focus:outline-none"
                 placeholder="Search for a chat"
               ></input>
             </div>
 
-            <div className="scroll-secondary my-4 flex h-full max-h-full grow flex-col space-y-1 overflow-auto scroll-smooth">
+            <div className="scroll-secondary my-4 flex h-full max-h-full grow flex-col space-y-1 overflow-auto">
               {recentChats?.map((chat, idx) => {
                 return (
                   <RecentChat
                     key={idx}
                     deleteChat={() => {
-                      const alertConfig: DialogConfig = {
+                      const config: DialogConfig = {
                         title: "Delete Chat",
                         description: "Are you sure you want to delete this chat?\nThis action cannot be undone.",
-                        // Delete chat, update the recent chats list, and set the chat_id to be another chat
                         actionLabel: "Delete",
+                        // Delete chat, and update the recent chats list, and set the chat_id to be another chat
                         onAction: async () => {
                           await queries.deleteChat(chat.chat_id);
                           syncRecentChats();
@@ -104,10 +89,10 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
                           syncChatHistory();
                         }
                       };
-                      createAlert(alertConfig);
+                      createDialog(config);
                     }}
                     resetChat={() => {
-                      const alertConfig: DialogConfig = {
+                      const config: DialogConfig = {
                         title: "Reset Chat",
                         description: "Are you sure you want to reset this chat?\nThis action cannot be undone.",
                         actionLabel: "Reset",
@@ -116,7 +101,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
                           syncChatHistory();
                         }
                       };
-                      createAlert(alertConfig);
+                      createDialog(config);
                     }}
                     cloneChat={() => {
                       // TODO clone chat with the given id
@@ -192,14 +177,16 @@ function RecentChat({
           className={cn(
             `group flex w-full cursor-pointer items-center space-x-3 
         rounded-lg p-2.5 transition duration-150 ease-out hover:bg-accent 
-        ${active ? "bg-neutral-700 text-gray-100" : "text-gray-400"}`,
+        ${active ? "bg-neutral-700 text-neutral-50" : ""}`,
             className
           )}
         >
           <img className="size-12 shrink-0 rounded-full object-cover object-top" src={avatarURI} alt="avatar" />
-          <div className={`flex h-full max-w-full flex-col justify-center group-hover:text-gray-100`}>
-            <h3 className="line-clamp-1 font-[550]">{name}</h3>
-            <p className="line-clamp-1 text-[15px] font-[430]">{message}</p>
+          <div className={`flex h-full max-w-full flex-col justify-center `}>
+            <h3 className="text-neutra line-clamp-1 text-ellipsis  font-[550] text-neutral-300 group-hover:text-neutral-100">
+              {name}
+            </h3>
+            <p className="line-clamp-1 text-ellipsis text-[14.5px] font-[450] text-neutral-400">{message}</p>
           </div>
         </div>
       </ContextMenuTrigger>

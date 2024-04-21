@@ -13,6 +13,7 @@ interface AppContextProps {
   createDialog: (config: DialogConfig) => void;
   createModal: (config: React.ReactNode) => void;
   closeModal: () => void;
+  setChatID: (id: number) => void;
 }
 
 export const AppContext = createContext<AppContextProps>({} as AppContextProps);

@@ -61,7 +61,7 @@ export interface ChatSearchItem {
   lastMessage: string;
 }
 
-async function getChatSearchItems(): Promise<ChatSearchItem[]> {
+async function getAllChatSearchItems(): Promise<ChatSearchItem[]> {
   interface QueryResult {
     id: number;
     lastMessage: string;
@@ -83,21 +83,23 @@ FROM
 ORDER BY c.id DESC`;
 
   const rows = (await window.api.sqlite.all(query)) as QueryResult[];
-  const ret = await Promise.all(
-    rows.map(async (row) => {
-      const res = await window.api.blob.cards.get(row.dir_name);
-      if (res.kind === "err") {
-        throw res.error;
-      }
-      const cardBundle = res.value;
-      return {
-        id: row.id,
-        characterName: cardBundle.data.character.name,
-        characterAvatarURI: cardBundle.avatarURI || "",
-        lastMessage: row.lastMessage
-      };
-    })
-  );
+
+  const ret: ChatSearchItem[] = [];
+  for (const row of rows) {
+    const res = await window.api.blob.cards.get(row.dir_name);
+    if (res.kind === "err") {
+      console.error("Error fetching card bundle", res.error);
+      continue;
+    }
+    const cardBundle = res.value;
+    ret.push({
+      id: row.id,
+      characterName: cardBundle.data.character.name,
+      characterAvatarURI: cardBundle.avatarURI || "",
+      lastMessage: row.lastMessage
+    });
+  }
+
   return ret;
 }
 
@@ -527,7 +529,7 @@ export const queries = {
   createChat,
   deleteChat,
   resetChat,
-  getChatSearchItems,
+  getAllChatSearchItems,
   getRecentChats,
   getPersonaBundle,
   getChatHistory,
