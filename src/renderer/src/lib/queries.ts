@@ -60,6 +60,7 @@ export interface ChatSearchItem {
   lastMessage: string;
 }
 
+
 async function getChatSearchItems(): Promise<ChatSearchItem[]> {
   interface QueryResult {
     id: number;
