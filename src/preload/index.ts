@@ -24,11 +24,17 @@ export interface API {
     };
     cards: {
       get: (card: string) => Promise<Result<CardBundle, Error>>;
-      post: (
+      create: (
         cardData: CardData,
         bannerImage: string | null,
         avatarImage: string | null
-      ) => Promise<Result<string, Error>>;
+      ) => Promise<Result<undefined, Error>>;
+      update: (
+        cardID: number,
+        cardData: CardData,
+        bannerImage: string | null,
+        avatarImage: string | null
+      ) => Promise<Result<undefined, Error>>;
       exportToZip: (card: string) => Promise<Result<void, Error>>;
       importFromZip: (zip: string) => Promise<Result<void, Error>>;
     };
@@ -70,8 +76,10 @@ const api: API = {
     },
     cards: {
       get: (card) => ipcRenderer.invoke("blob.cards.get", card),
-      post: (cardData, bannerImage, avatarImage) =>
-        ipcRenderer.invoke("blob.cards.post", cardData, bannerImage, avatarImage),
+      create: (cardData, bannerImage, avatarImage) =>
+        ipcRenderer.invoke("blob.cards.create", cardData, bannerImage, avatarImage),
+      update: (cardID, cardData, bannerImage, avatarImage) =>
+        ipcRenderer.invoke("blob.cards.update", cardID, cardData, bannerImage, avatarImage),
       exportToZip: (card) => ipcRenderer.invoke("blob.cards.exportToZip", card),
       importFromZip: (zip) => ipcRenderer.invoke("blob.cards.importFromZip", zip)
     },

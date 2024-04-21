@@ -1,14 +1,14 @@
 import { useMotionTemplate, motion } from "framer-motion";
 
 export function CardPattern({ mouseX, mouseY }: any) {
-    let maskImage = useMotionTemplate`radial-gradient(250px at ${mouseX}px ${mouseY}px, white, transparent)`;
+    let maskImage = useMotionTemplate`radial-gradient(350px at ${mouseX}px ${mouseY}px, white, transparent)`;
     let style = { maskImage, WebkitMaskImage: maskImage };
   
     return (
       <div className="pointer-events-none">
         <div className="absolute inset-0 rounded-2xl  [mask-image:linear-gradient(white,transparent)] group-hover/card:opacity-50"></div>
         <motion.div
-          className="absolute inset-0 rounded-2xl bg-neutral-500 opacity-0 transition duration-200 group-hover/card:opacity-100"
+          className="absolute inset-0 rounded-2xl bg-neutral-600 opacity-0 transition duration-200 group-hover/card:opacity-100"
           style={style}
         />
         <motion.div

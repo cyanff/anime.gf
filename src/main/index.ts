@@ -122,9 +122,16 @@ app.whenReady().then(async () => {
   });
 
   ipcMain.handle(
-    "blob.cards.post",
+    "blob.cards.create",
     async (_, cardData: CardData, bannerImage: string | null, avatarImage: string | null) => {
-      return await blob.cards.post(cardData, bannerImage, avatarImage);
+      return await blob.cards.create(cardData, bannerImage, avatarImage);
+    }
+  );
+
+  ipcMain.handle(
+    "blob.cards.update",
+    async (_, cardID: number, cardData: CardData, bannerImage: string | null, avatarImage: string | null) => {
+      return await blob.cards.update(cardID, cardData, bannerImage, avatarImage);
     }
   );
 

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -7,7 +7,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { InputArea } from "@/components/ui/input-area";
 import { PencilSquareIcon, UserPlusIcon } from "@heroicons/react/24/outline";
-import { CardData } from "@shared/types";
+import { CardBundle, CardData } from "@shared/types";
 import { time } from "@/lib/time";
 
 const formSchema = z.object({
@@ -18,12 +18,13 @@ const formSchema = z.object({
   message_example: z.string().min(0).max(400)
 });
 
-interface CreationPageProps {
+interface EditPageProps {
   setPage: (page: string) => void;
+  cardBundle: CardBundle;
   syncCardBundles: () => void;
 }
 
-export default function CreationPage({ setPage, syncCardBundles }: CreationPageProps) {
+export default function EditPage({ setPage, cardBundle, syncCardBundles }: EditPageProps) {
   const [bannerNativeImage, setBannerNativeImage] = useState<string | null>(null);
   const [avatarNativeImage, setAvatarNativeImage] = useState<string | null>(null);
   const [bannerImage, setBannerImage] = useState<string | null>(null);
@@ -31,15 +32,25 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
   const bannerInput = useRef<HTMLInputElement>(null);
   const avatarInput = useRef<HTMLInputElement>(null);
 
-  // provide default values for properties which are not required in the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      tags: "",
-      greeting: "",
-      message_example: ""
+      name: cardBundle.data.character.name,
+      tags: cardBundle.data.meta.tags.join(", "),
+      description: cardBundle.data.character.description,
+      greeting: cardBundle.data.character.greeting,
+      message_example: cardBundle.data.character.msg_examples
     }
   });
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      setBannerNativeImage(cardBundle.bannerURI);
+      setAvatarNativeImage(cardBundle.avatarURI);
+    };
+
+    fetchImage();
+  }, []);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Create CardData object
@@ -57,7 +68,8 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
       },
       meta: {
         title: values.name,
-        created_at: new Date().toLocaleDateString(),
+        created_at: cardBundle.data.meta.created_at,
+        updated_at: new Date().toLocaleDateString(),
         creator: {
           card: "card",
           character: "character",
@@ -69,14 +81,14 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
     };
 
     // Send the card data to the backend
-    const res = await window.api.blob.cards.create(cardData, bannerImage, avatarImage);
+    const res = await window.api.blob.cards.update(cardBundle.id, cardData, bannerImage, avatarImage);
     if (res.kind === "ok") {
       console.log("Post function ran successfully. File path:", res.value);
+      syncCardBundles();
       setPage("collections");
     } else {
       console.error("An error occurred while running the post function:", res.error);
     }
-    syncCardBundles();
   }
 
   const handleBannerClick = () => {
@@ -127,7 +139,7 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
             ) : (
               <PencilSquareIcon className="absolute h-12 w-12 text-neutral-300" />
             )}
-            <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-30"></div>
+            <div className="absolute  inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-30"></div>
             <input
               type="file"
               style={{ display: "none" }}
@@ -246,13 +258,30 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
                     </FormItem>
                   )}
                 />
-                <div className="flex justify-end">
+                <div className="flex justify-end space-x-4">
+                  <button
+                    className="flex items-center space-x-2 rounded-md bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
+                    type="button"
+                    onClick={() => {
+                      form.reset({
+                        name: cardBundle.data.character.name,
+                        tags: cardBundle.data.meta.tags.join(", "),
+                        description: cardBundle.data.character.description,
+                        greeting: cardBundle.data.character.greeting,
+                        message_example: cardBundle.data.character.msg_examples
+                      });
+                      setBannerNativeImage(cardBundle.bannerURI);
+                      setAvatarNativeImage(cardBundle.avatarURI);
+                    }}
+                  >
+                    <span className="font-medium text-neutral-200">Reset</span>
+                  </button>
                   <button
                     className="flex items-center space-x-2 rounded-md bg-neutral-700 px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
                     type="submit"
                   >
                     <UserPlusIcon className="size-5" />
-                    <span className="font-medium text-neutral-200">Create</span>
+                    <span className="font-medium text-neutral-200">Save Changes</span>
                   </button>
                 </div>
               </form>

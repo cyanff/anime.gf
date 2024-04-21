@@ -72,15 +72,6 @@ INSERT INTO cards (dir_name)
 VALUES
     ('zephyr'),
     ('eliza'),
-    ('astro'),
-    ('zephyr'),
-    ('eliza'),
-    ('astro'),
-    ('zephyr'),
-    ('eliza'),
-    ('astro'),
-    ('zephyr'),
-    ('eliza'),
     ('astro');
 
 INSERT INTO chats (persona_id, card_id)
