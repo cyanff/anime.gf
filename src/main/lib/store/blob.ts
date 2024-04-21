@@ -211,19 +211,20 @@ export namespace cards {
     }
   }
 
+
   /**
-   * Saves the card data, banner image, and avatar image to the file system.
-   * @param cardData - The data of the card to be saved.
-   * @param bannerImage - The path to the banner image file, or null if no banner image is provided.
-   * @param avatarImage - The path to the avatar image file, or null if no avatar image is provided.
-   * @returns A promise that resolves to a Result object containing the path to the saved directory on success, or an error on failure.
+   * Posts a card to the storage.
+   * @param cardData - The data of the card to be posted.
+   * @param bannerImage - The path to the banner image, or null if no banner image is provided.
+   * @param avatarImage - The path to the avatar image, or null if no avatar image is provided.
+   * @returns A promise that resolves to a Result object indicating the success or failure of the operation.
    */
   export async function post(
     cardData: CardData,
     bannerImage: string | null,
     avatarImage: string | null
   ): Promise<Result<undefined, Error>> {
-    
+
     const pathEscapedCharName = toPathEscapedStr(cardData.character.name);
     const cardDirName = `${pathEscapedCharName}-${crypto.randomUUID()}`;
     const cardDirPath = path.join(cardsPath, cardDirName);

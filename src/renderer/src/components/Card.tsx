@@ -13,10 +13,11 @@ interface Props {
   avatar: string | null;
   name: string;
   deleteCard: () => void;
+  editCard: () => void;
   openCardModal: () => void;
 }
 
-function Card({ deleteCard, avatar, name, openCardModal }: Props) {
+function Card({ deleteCard, editCard, avatar, name, openCardModal }: Props) {
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 
@@ -57,6 +58,12 @@ function Card({ deleteCard, avatar, name, openCardModal }: Props) {
       <ContextMenuContent className="w-40 px-1 py-2">
         <ContextMenuItem onSelect={deleteCard}>
           Delete Card
+          <ContextMenuShortcut>
+            <TrashIcon className="size-4" />
+          </ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem onSelect={editCard}>
+          Edit Card
           <ContextMenuShortcut>
             <TrashIcon className="size-4" />
           </ContextMenuShortcut>

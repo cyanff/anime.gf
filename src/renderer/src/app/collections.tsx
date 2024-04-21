@@ -9,10 +9,11 @@ interface CollectionsPageProps {
   setPage: (page: string) => void;
   setChatID: (chatID: number) => void;
   cardBundles: CardBundle[];
+  setCardBundle: (cardBundle: CardBundle) => void;
   syncCardBundles: () => void;
 }
 
-export default function CollectionsPage({ setPage, setChatID, cardBundles, syncCardBundles }: CollectionsPageProps) {
+export default function CollectionsPage({ setPage, setChatID, cardBundles, setCardBundle, syncCardBundles }: CollectionsPageProps) {
   const { createModal, closeModal, createDialog: createAlert } = useApp();
 
   async function onCreateChat(cardID: number, greeting: string) {
@@ -52,6 +53,10 @@ export default function CollectionsPage({ setPage, setChatID, cardBundles, syncC
                   }
                 };
                 createAlert(alertConfig);
+              }}
+              editCard={() => {
+                setCardBundle(cardBundle);
+                setPage("edit");
               }}
               avatar={cardBundle.avatarURI || ""}
               name={cardBundle.data.character.name}
