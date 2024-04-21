@@ -7,25 +7,9 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { ChatSearchItem, queries, RecentChat as RecentChatI } from "@/lib/queries";
+import { ChatSearchItem, RecentChat as RecentChatI, queries } from "@/lib/queries";
 import { cn } from "@/lib/utils";
-import {
-  ArrowPathIcon,
-  Cog8ToothIcon,
-  DocumentDuplicateIcon,
-  MagnifyingGlassIcon,
-  TrashIcon,
-  WrenchScrewdriverIcon
-} from "@heroicons/react/24/solid";
+import { ArrowPathIcon, DocumentDuplicateIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { PersonaBundle } from "@shared/types";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -159,45 +143,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
               <p className="font-medium text-gray-400">Online</p>
             </div>
             {/* Settings Icon */}
-            <div className="flex grow items-center justify-end">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Cog8ToothIcon className=" ml-5 size-6 cursor-pointer text-neutral-400 transition duration-300 ease-out hover:rotate-180 hover:text-neutral-300" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-44">
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem>Placeholder</DropdownMenuItem>
-                  </DropdownMenuGroup>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem disabled>
-                      Placeholder
-                      <DropdownMenuShortcut>
-                        <WrenchScrewdriverIcon className="size-4" />
-                      </DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem disabled>
-                      Placeholder
-                      <DropdownMenuShortcut>
-                        <WrenchScrewdriverIcon className="size-4" />
-                      </DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem disabled>
-                      Placeholder
-                      <DropdownMenuShortcut>
-                        <WrenchScrewdriverIcon className="size-4" />
-                      </DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem disabled>
-                      Placeholder
-                      <DropdownMenuShortcut>
-                        <WrenchScrewdriverIcon className="size-4" />
-                      </DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            <div className="flex grow items-center justify-end"></div>
           </div>
         </div>
       </motion.div>
@@ -259,19 +205,19 @@ function RecentChat({
       </ContextMenuTrigger>
       <ContextMenuContent className="w-40 px-1 py-2">
         <ContextMenuItem onSelect={deleteChat}>
-          Delete Chat
+          Delete
           <ContextMenuShortcut>
             <TrashIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem onSelect={resetChat}>
-          Reset Chat
+          Reset
           <ContextMenuShortcut>
             <ArrowPathIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem disabled>
-          Clone Chat
+          Clone
           <ContextMenuShortcut>
             <DocumentDuplicateIcon className="size-4" />
           </ContextMenuShortcut>
