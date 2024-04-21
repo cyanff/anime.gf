@@ -90,6 +90,84 @@ export namespace cards {
       }
     };
   }
+
+  /**
+   * Posts a card to the storage.
+   * @param cardData - The data of the card to be posted.
+   * @param bannerImage - The path to the banner image, or null if no banner image is provided.
+   * @param avatarImage - The path to the avatar image, or null if no avatar image is provided.
+   * @returns A promise that resolves to a Result object indicating the success or failure of the operation.
+   */
+  export async function create(
+    cardData: CardData,
+    bannerImage: string | null,
+    avatarImage: string | null
+  ): Promise<Result<undefined, Error>> {
+    const pathEscapedCharName = toPathEscapedStr(cardData.character.name);
+    const cardDirName = `${pathEscapedCharName}-${crypto.randomUUID()}`;
+    const cardDirPath = path.join(cardsPath, cardDirName);
+
+    await fsp.mkdir(cardDirPath, { recursive: true });
+
+    await fsp.writeFile(path.join(cardDirPath, "data.json"), JSON.stringify(cardData));
+
+    if (avatarImage) {
+      await fsp.copyFile(avatarImage, path.join(cardDirPath, "avatar.png"));
+    }
+    if (bannerImage) {
+      await fsp.copyFile(bannerImage, path.join(cardDirPath, "banner.png"));
+    }
+
+    // Insert an entry for the card into the database
+    try {
+      const query = `INSERT INTO cards (dir_name) VALUES (?);`;
+      sqlite.run(query, [cardDirName]);
+
+      return { kind: "ok", value: undefined };
+    } catch (e) {
+      // Roll back on error
+      await fsp.rm(cardDirPath, { recursive: true });
+      return { kind: "err", error: e };
+    }
+  }
+
+  /**
+   * Updates the card data and images in the card directory.
+   * @param cardID - The ID of the card to update.
+   * @param cardData - The updated card data.
+   * @param bannerImage - The new banner image, or null if not provided.
+   * @param avatarImage - The new avatar image, or null if not provided.
+   * @returns A promise that resolves to a Result object indicating the success or failure of the update operation.
+   */
+  export async function update(
+    cardID: number,
+    cardData: CardData,
+    bannerImage: string | null,
+    avatarImage: string | null
+  ): Promise<Result<undefined, Error>> {
+    // Retrieve the dir_name of the card from the database using the id
+    const query = `SELECT dir_name FROM cards WHERE id =?;`;
+    const row = (await sqlite.get(query, [cardID])) as { dir_name: string };
+
+    // Construct the path to the card directory
+    const cardDirPath = path.join(cardsPath, row.dir_name);
+
+    // Write the updated card data to the data.json file
+    await fsp.writeFile(path.join(cardDirPath, "data.json"), JSON.stringify(cardData));
+
+    // If a new avatar image is provided, copy it to the card directory
+    if (avatarImage) {
+      await fsp.copyFile(avatarImage, path.join(cardDirPath, "avatar.png"));
+    }
+
+    // If a new banner image is provided, copy it to the card directory
+    if (bannerImage) {
+      await fsp.copyFile(bannerImage, path.join(cardDirPath, "banner.png"));
+    }
+
+    return { kind: "ok", value: undefined };
+  }
+
   /**
    * Given a card directory name, zips the directory, and display a save dialog to save the zip file.
    * @param name The name of the card directory to export
@@ -202,48 +280,6 @@ export namespace cards {
     try {
       const query = `INSERT INTO cards (dir_name) VALUES (?);`;
       sqlite.run(query, [cardDirName]);
-      return { kind: "ok", value: undefined };
-    } catch (e) {
-      // Roll back on error
-      await fsp.rm(cardDirPath, { recursive: true });
-      return { kind: "err", error: e };
-    }
-  }
-
-
-  /**
-   * Posts a card to the storage.
-   * @param cardData - The data of the card to be posted.
-   * @param bannerImage - The path to the banner image, or null if no banner image is provided.
-   * @param avatarImage - The path to the avatar image, or null if no avatar image is provided.
-   * @returns A promise that resolves to a Result object indicating the success or failure of the operation.
-   */
-  export async function post(
-    cardData: CardData,
-    bannerImage: string | null,
-    avatarImage: string | null
-  ): Promise<Result<undefined, Error>> {
-
-    const pathEscapedCharName = toPathEscapedStr(cardData.character.name);
-    const cardDirName = `${pathEscapedCharName}-${crypto.randomUUID()}`;
-    const cardDirPath = path.join(cardsPath, cardDirName);
-
-    await fsp.mkdir(cardDirPath, { recursive: true });
-
-    await fsp.writeFile(path.join(cardDirPath, "data.json"), JSON.stringify(cardData));
-
-    if (avatarImage) {
-      await fsp.copyFile(avatarImage, path.join(cardDirPath, "avatar.png"));
-    }
-    if (bannerImage) {
-      await fsp.copyFile(bannerImage, path.join(cardDirPath, "banner.png"));
-    }
-
-    // Insert an entry for the card into the database
-    try {
-      const query = `INSERT INTO cards (dir_name) VALUES (?);`;
-      sqlite.run(query, [cardDirName]);
-
       return { kind: "ok", value: undefined };
     } catch (e) {
       // Roll back on error

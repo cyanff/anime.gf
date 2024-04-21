@@ -11,11 +11,11 @@ import { CardBundle, CardData } from "@shared/types";
 import { time } from "@/lib/time";
 
 const formSchema = z.object({
-  name: z.string().min(0).max(200),
-  tags: z.string().min(0).max(200),
-  description: z.string().min(0).max(200),
-  greeting: z.string().min(0).max(200),
-  message_example: z.string().min(0).max(200)
+  name: z.string().min(0).max(400),
+  tags: z.string().min(0).max(400),
+  description: z.string().min(0).max(400),
+  greeting: z.string().min(0).max(400),
+  message_example: z.string().min(0).max(400)
 });
 
 interface EditPageProps {
@@ -68,7 +68,8 @@ export default function EditPage({ setPage, cardBundle, syncCardBundles }: EditP
       },
       meta: {
         title: values.name,
-        created_at: new Date().toLocaleDateString(),
+        created_at: cardBundle.data.meta.created_at,
+        updated_at: new Date().toLocaleDateString(),
         creator: {
           card: "card",
           character: "character",
@@ -80,10 +81,11 @@ export default function EditPage({ setPage, cardBundle, syncCardBundles }: EditP
     };
 
     // Send the card data to the backend
-    const res = await window.api.blob.cards.post(cardData, bannerImage, avatarImage);
+    const res = await window.api.blob.cards.update(cardBundle.id, cardData, bannerImage, avatarImage);
     if (res.kind === "ok") {
       console.log("Post function ran successfully. File path:", res.value);
       syncCardBundles();
+      setPage("collections");
     } else {
       console.error("An error occurred while running the post function:", res.error);
     }
