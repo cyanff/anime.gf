@@ -62,7 +62,7 @@ function Card({ deleteCard, editCard, cardBundle, openCardModal }: Props) {
               >
                 {cardBundle.data.meta.notes}
               </div>
-              <div className="absolute -top-2 h-16 space-x-0.5 space-y-1 overflow-hidden pl-5 text-left  text-sm font-semibold">
+              <div className="absolute -top-2 h-16 space-x-0.5 space-y-1 overflow-hidden pl-5 text-left">
                 {cardBundle.data.meta.tags.map((tag) => (
                   <span
                     key={tag}
@@ -72,7 +72,7 @@ function Card({ deleteCard, editCard, cardBundle, openCardModal }: Props) {
                   </span>
                 ))}
               </div>
-              <div className="absolute top-20 z-10 pl-5 text-left text-sm text-neutral-200">
+              <div className="absolute top-20 z-10 pl-5 text-left text-sm text-neutral-400">
                 created by @{cardBundle.data.meta.creator.card}
               </div>
             </div>
