@@ -34,9 +34,7 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
       tags: "",
-      description: "",
       greeting: "",
       message_example: ""
     }
