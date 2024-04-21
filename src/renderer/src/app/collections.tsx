@@ -4,6 +4,8 @@ import Card from "@/components/Card";
 import CardModal from "@/components/CardModal";
 import { DialogConfig, useApp } from "@/components/AppContext";
 import { CardBundle } from "@shared/types";
+import { MagnifyingGlassCircleIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 
 interface CollectionsPageProps {
   setPage: (page: string) => void;
@@ -13,7 +15,14 @@ interface CollectionsPageProps {
   syncCardBundles: () => void;
 }
 
-export default function CollectionsPage({ setPage, setChatID, cardBundles, setCardBundle, syncCardBundles }: CollectionsPageProps) {
+export default function CollectionsPage({
+  setPage,
+  setChatID,
+  cardBundles,
+  setCardBundle,
+  syncCardBundles
+}: CollectionsPageProps) {
+
   const { createModal, closeModal, createDialog: createAlert } = useApp();
 
   async function onCreateChat(cardID: number, greeting: string) {
@@ -35,9 +44,10 @@ export default function CollectionsPage({ setPage, setChatID, cardBundles, setCa
   }
 
   return (
-    <div className="h-full w-full bg-neutral-800 antialiased lg:text-base">
+    <div className="scroll-primary h-full w-full overflow-y-scroll bg-neutral-800 antialiased  lg:text-base">
+
       {/* Collection Area */}
-      <div className="scroll-primary flex flex-wrap overflow-y-scroll scroll-smooth transition duration-500 ease-out">
+      <div className="flex flex-wrap  scroll-smooth transition duration-500 ease-out">
         {cardBundles?.map((cardBundle, idx) => {
           return (
             <Card
@@ -58,8 +68,7 @@ export default function CollectionsPage({ setPage, setChatID, cardBundles, setCa
                 setCardBundle(cardBundle);
                 setPage("edit");
               }}
-              avatar={cardBundle.avatarURI || ""}
-              name={cardBundle.data.character.name}
+              cardBundle={cardBundle}
               openCardModal={() => {
                 createModal(<CardModal cardBundle={cardBundle} onCreateChat={onCreateChat} />);
               }}

@@ -31,6 +31,7 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
   const bannerInput = useRef<HTMLInputElement>(null);
   const avatarInput = useRef<HTMLInputElement>(null);
 
+  // provide default values for properties which are not required in the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
