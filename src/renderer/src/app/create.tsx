@@ -74,10 +74,10 @@ export default function CreationPage({ syncCardBundles }: CreationPageProps) {
     const result = await window.api.blob.cards.post(cardData, bannerImage, avatarImage);
     if (result.kind === "ok") {
       console.log("Post function ran successfully. File path:", result.value);
-      syncCardBundles();
     } else {
       console.error("An error occurred while running the post function:", result.error);
     }
+    syncCardBundles();
   }
 
   const handleBannerClick = () => {
@@ -128,7 +128,7 @@ export default function CreationPage({ syncCardBundles }: CreationPageProps) {
             ) : (
               <PencilSquareIcon className="absolute h-12 w-12 text-neutral-300" />
             )}
-            <div className="absolute  inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-30"></div>
+            <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-30"></div>
             <input
               type="file"
               style={{ display: "none" }}

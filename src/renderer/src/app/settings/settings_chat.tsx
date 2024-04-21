@@ -23,6 +23,7 @@ const schema = z.object({
   streaming: z.boolean().default(false),
   jailbreak: z.string().default("")
 });
+type Schema = z.infer<typeof schema>;
 
 export default function SettingsChat() {
   const defaultSettings = config.defaultSettings.chat;

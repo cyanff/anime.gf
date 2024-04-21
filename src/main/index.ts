@@ -6,9 +6,9 @@ import secret from "./lib/store/secret";
 import sqlite from "./lib/store/sqlite";
 import blob from "./lib/store/blob";
 import { xfetch } from "./lib/xfetch";
-import { cardsPath, personasPath } from "./lib/utils";
+import { cardsRootPath, personasRootPath } from "./lib/utils";
 import setting from "./lib/store/setting";
-import { CardBundleWithoutID, CardData } from "@shared/types";
+import { CardBundleWithoutID, CardData, PersonaBundle, PersonaBundleWithoutData, PersonaFormData } from "@shared/types";
 
 (async () => {})();
 
@@ -55,18 +55,17 @@ app.whenReady().then(async () => {
    * <img src="agf:///cards/some_other_char/banner.png"/>
    *
    */
-  // TODO: DRY this up
   protocol.handle("agf", (req) => {
     const { host, pathname } = new URL(req.url);
     if (host === "cards") {
-      const resolved = path.resolve(path.join(cardsPath, pathname));
+      const resolved = path.resolve(path.join(cardsRootPath, pathname));
       // Ensure that only resources inside userData/blob/cards are accessible
-      if (!resolved.startsWith(cardsPath)) {
+      if (!resolved.startsWith(cardsRootPath)) {
         return new Response(
           `The requested path is unsafe.
       Path given"${pathname}
       Resolved to${resolved}
-      Resolved path is outside of the allowed directory: ${cardsPath}"`,
+      Resolved path is outside of the allowed directory: ${cardsRootPath}"`,
           { status: 400 }
         );
       }
@@ -74,14 +73,14 @@ app.whenReady().then(async () => {
     }
 
     if (host === "personas") {
-      const resolved = path.resolve(path.join(personasPath, pathname));
+      const resolved = path.resolve(path.join(personasRootPath, pathname));
 
-      if (!resolved.startsWith(personasPath)) {
+      if (!resolved.startsWith(personasRootPath)) {
         return new Response(
           `The requested path is unsafe.
       Path given"${pathname}
       Resolved to${resolved}
-      Resolved path is outside of the allowed directory: ${personasPath}"`,
+      Resolved path is outside of the allowed directory: ${personasRootPath}"`,
           { status: 400 }
         );
       }
@@ -140,9 +139,12 @@ app.whenReady().then(async () => {
   ipcMain.handle("blob.personas.get", async (_, persona: string) => {
     return await blob.personas.get(persona);
   });
+  ipcMain.handle("blob.personas.post", async (_, data: PersonaFormData) => {
+    return await blob.personas.post(data);
+  });
 
-  ipcMain.handle("blob.personas.rename", async (_, oldName: string, newName: string) => {
-    return await blob.personas.rename(oldName, newName);
+  ipcMain.handle("blob.personas.put", async (_, id: number, data: PersonaFormData) => {
+    return await blob.personas.put(id, data);
   });
 
   ipcMain.handle("secret.get", async (_, k: string) => {

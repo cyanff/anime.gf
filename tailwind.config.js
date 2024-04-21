@@ -29,6 +29,7 @@ module.exports = {
         "grad-magenta-2": "linear-gradient(112.84deg, hsl(334, 75%, 47%) 0%, hsl(331, 52%, 93%) 100%)",
         "grad-gray": "linear-gradient(45deg, hsl(0, 0%, 23%), hsl(0, 0%, 28%))"
       },
+
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

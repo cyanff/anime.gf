@@ -1,5 +1,7 @@
 import { ProviderE } from "@/lib/provider/provider";
+import { config } from "@shared/config";
 import { Message, Persona } from "@shared/db_types";
+import { z } from "zod";
 
 // Card
 // =====================================
@@ -52,6 +54,13 @@ export interface CardBundleWithoutID {
 
 // Persona
 // =====================================
+/* Todo refactor this
+  PersonaData should be
+  {
+    name: string;
+    description: string;
+  }
+*/
 export interface PersonaData extends Persona {}
 
 // Contents of the persona's directory
@@ -88,3 +97,14 @@ export interface Settings {
     streaming: boolean;
   };
 }
+
+// ===========================================
+export const personaFormSchema = z.object({
+  name: z.string().max(config.persona.nameMaxChars),
+  description: z.string().max(config.persona.descriptionMaxChars),
+  isDefault: z.boolean(),
+  avatarURI: z.string().optional(),
+  // TODO: to be implemented
+  bannerURI: z.string().optional()
+});
+export type PersonaFormData = z.infer<typeof personaFormSchema>;

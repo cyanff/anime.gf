@@ -203,7 +203,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
       </motion.div>
       {/* Sidebar Toggle Button */}
       <button
-        className={`group ${sidebarOpen ? "ml-1.5" : "-ml-2"} flex h-10 w-3.5 items-center justify-center rounded-full`}
+        className={`group ${sidebarOpen ? "ml-1.5" : "-ml-1"} flex h-10 w-3.5 items-center justify-center rounded-full`}
         onClick={() => {
           setSidebarOpen(!sidebarOpen);
         }}

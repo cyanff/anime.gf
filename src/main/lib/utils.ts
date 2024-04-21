@@ -17,10 +17,10 @@ export const secretsPath = path.join(app.getPath("userData"), "secrets.json");
 export const settingsPath = path.join(app.getPath("userData"), "settings.json");
 
 // Root directory for all blob data
-export const blobPath = path.join(app.getPath("userData"), "blob");
+export const blobRootPath = path.join(app.getPath("userData"), "blob");
 // Directories for different types of blob data
-export const cardsPath = path.join(blobPath, "cards");
-export const personasPath = path.join(blobPath, "personas");
+export const cardsRootPath = path.join(blobRootPath, "cards");
+export const personasRootPath = path.join(blobRootPath, "personas");
 
 /**
  * Checks if a file exists and is accessible at the specified path.

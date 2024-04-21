@@ -6,12 +6,7 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
-import {
-  EllipsisHorizontalIcon,
-  PencilSquareIcon,
-  UserPlusIcon,
-  WrenchScrewdriverIcon
-} from "@heroicons/react/24/solid";
+import { EllipsisHorizontalIcon, UserPlusIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 
 import {
   DropdownMenu,
@@ -24,20 +19,19 @@ import {
 
 import { queries } from "@/lib/queries";
 import { toast } from "sonner";
-import { PersonaBundle } from "@shared/types";
+import { PersonaBundle, PersonaFormData } from "@shared/types";
 import { useApp } from "@/components/AppContext";
-import { Checkbox } from "@/components/ui/checkbox";
-import { config } from "@shared/config";
+import { PersonaModal } from "../../components/PersonaModal";
 
 export default function SettingsPersona() {
   const [personaBundles, setPersonaBundles] = useState<PersonaBundle[]>([]);
   const { createModal, closeModal } = useApp();
 
   useEffect(() => {
-    syncAllPersonaBundles();
+    syncPersonaBundles();
   }, []);
 
-  const syncAllPersonaBundles = async () => {
+  const syncPersonaBundles = async () => {
     const res = await queries.getAllExtantPersonaBundles();
     if (res.kind == "err") {
       toast.error("Error fetching persona bundle.");
@@ -47,92 +41,97 @@ export default function SettingsPersona() {
     setPersonaBundles(res.value);
   };
 
+  /* Handles user triggering the "new persona" action. */
   const handleNew = () => {
     createModal(
       <PersonaModal
         title="New Persona"
         submit={{
           label: "Create",
-          handle: async (name, description, isDefault) => {
-            closeModal();
-            try {
-              await queries.insertPersona(name, description, isDefault);
-            } catch (e) {
-              toast.error(`Error creating persona. Error: ${e}`);
-              console.error(e);
-            } finally {
-              syncAllPersonaBundles();
+          handle: async (data: PersonaFormData) => {
+            const res = await window.api.blob.personas.post(data);
+            if (res.kind === "ok") {
+              toast.success("Persona created successfully.");
+              closeModal();
+            } else {
+              toast.error(`Error creating persona. Error: ${res.error}`);
+              console.error(res.error);
             }
+            syncPersonaBundles();
           }
         }}
       />
     );
   };
 
-  const handleEdit = (id: number, name: string, description: string, isDefault: boolean) => {
+  const handleEdit = (bundle: PersonaBundle) => {
+    const name = bundle.data.name;
+    const description = bundle.data.description;
+    const isDefault = bundle.data.is_default === 1 ? true : false;
+    const id = bundle.data.id;
+
     createModal(
       <PersonaModal
         title="Edit Persona"
-        initialName={name}
-        initialDescription={description}
-        initialIsDefault={isDefault}
+        name={name}
+        description={description}
+        isDefault={isDefault}
         submit={{
           label: "Save",
-          handle: async (name, description, isDefault) => {
-            closeModal();
-            try {
-              await queries.updatePersona(id, name, description, isDefault);
-            } catch (e) {
-              toast.error(`Error updating persona. Error: ${e}`);
-              console.error(e);
-            } finally {
-              syncAllPersonaBundles();
+          handle: async (data: PersonaFormData) => {
+            const res = await window.api.blob.personas.put(id, data);
+            if (res.kind === "ok") {
+              toast.success("Persona updated successfully.");
+              closeModal();
+            } else {
+              toast.error(`Error updating persona. Error: ${res.error}`);
+              console.error(res.error);
             }
+            syncPersonaBundles();
           }
         }}
         remove={{
           label: "Remove",
           handle: () => {
             closeModal();
-            handleDelete(id);
+            handleDelete(bundle);
           }
         }}
       />
     );
   };
 
-  const handleDelete = async (id: number) => {
-    try {
-      await queries.deletePersona(id);
+  const handleDelete = async (bundle: PersonaBundle) => {
+    const res = await queries.deletePersona(bundle);
+    if (res.kind === "ok") {
       toast.success("Persona deleted successfully.");
-    } catch (err) {
-      toast.error(`Error deleting persona. Error: ${err}`);
-    } finally {
-      syncAllPersonaBundles();
+    } else {
+      toast.error("Error deleting persona.");
     }
+    syncPersonaBundles();
   };
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center space-y-8">
       <h1 className="text-2xl font-bold tracking-wide">Persona Settings</h1>
       {/* Personas List */}
-      <div className=" flex max-h-[50%] min-h-20 w-[28rem] rounded-2xl border border-neutral-700 bg-neutral-800 py-2">
+      <div className=" flex max-h-[50%] min-h-24 w-[28rem] rounded-2xl border border-neutral-700 bg-neutral-800 py-2">
         <div className="scroll-secondary flex h-full w-full flex-col space-y-2 overflow-y-scroll px-3">
+          {personaBundles.length === 0 && (
+            <div className="flex h-full w-full items-center justify-center">
+              <p className="select-none text-center text-sm font-[650] text-neutral-600">
+                {"You don't have a persona yet..."}
+              </p>
+            </div>
+          )}
+
           {personaBundles.map((bundle, idx) => {
             return (
               <ContextMenu key={idx}>
                 <ContextMenuTrigger>
                   <button
-                    className={`group flex h-fit w-full items-center justify-between rounded-lg p-3 font-[480]
-                   text-neutral-100 transition duration-200 ease-out hover:bg-neutral-700 focus:outline-none`}
-                    onClick={() =>
-                      handleEdit(
-                        bundle.data.id,
-                        bundle.data.name,
-                        bundle.data.description,
-                        bundle.data.is_default === 1 ? true : false
-                      )
-                    }
+                    className={`group flex h-fit w-full items-center justify-between rounded-lg p-3 font-[480] text-neutral-100 transition duration-200 ease-out hover:bg-neutral-700 focus:outline-none`}
+                    onClick={() => handleEdit(bundle)}
                   >
                     <div className="mr-3 flex w-full items-center space-x-5">
                       <img
@@ -161,16 +160,9 @@ export default function SettingsPersona() {
                           <DropdownMenuItem
                             onClick={(e) => {
                               // Prevent clicks on the dropdown menu items from triggering the parent button
-                              e.preventDefault();
+                              e.stopPropagation();
                             }}
-                            onSelect={() =>
-                              handleEdit(
-                                bundle.data.id,
-                                bundle.data.name,
-                                bundle.data.description,
-                                bundle.data.is_default === 1 ? true : false
-                              )
-                            }
+                            onSelect={() => handleEdit(bundle)}
                           >
                             Edit
                             <DropdownMenuShortcut>
@@ -180,9 +172,9 @@ export default function SettingsPersona() {
                           <DropdownMenuItem
                             onClick={(e) => {
                               // Prevent clicks on the dropdown menu items from triggering the parent button
-                              e.preventDefault();
+                              e.stopPropagation();
                             }}
-                            onSelect={() => handleDelete(bundle.data.id)}
+                            onSelect={() => handleDelete(bundle)}
                           >
                             Delete
                             <DropdownMenuShortcut>
@@ -196,16 +188,7 @@ export default function SettingsPersona() {
                 </ContextMenuTrigger>
 
                 <ContextMenuContent className="w-36">
-                  <ContextMenuItem
-                    onSelect={() =>
-                      handleEdit(
-                        bundle.data.id,
-                        bundle.data.name,
-                        bundle.data.description,
-                        bundle.data.is_default === 1 ? true : false
-                      )
-                    }
-                  >
+                  <ContextMenuItem onSelect={() => handleEdit(bundle)}>
                     Edit
                     <ContextMenuShortcut>
                       <WrenchScrewdriverIcon className="size-4" />
@@ -214,7 +197,7 @@ export default function SettingsPersona() {
 
                   <ContextMenuItem
                     onSelect={() => {
-                      handleDelete(bundle.data.id);
+                      handleDelete(bundle);
                     }}
                   >
                     Delete
@@ -232,140 +215,6 @@ export default function SettingsPersona() {
         <UserPlusIcon className="size-5" />
         <span className="font-medium text-neutral-200">New</span>
       </button>
-    </div>
-  );
-}
-interface PersonaModalProps {
-  title: string;
-  initialName?: string;
-  initialDescription?: string;
-  initialIsDefault?: boolean;
-  submit: {
-    label: string;
-    handle: (name: string, description: string, isDefault: boolean) => void;
-  };
-  remove?: {
-    label: string;
-    handle: () => void;
-  };
-}
-
-function PersonaModal({
-  title,
-  initialName = "",
-  initialDescription = "",
-  initialIsDefault = false,
-  submit,
-  remove
-}: PersonaModalProps) {
-  const [name, setName] = useState(initialName);
-  const [description, setDescription] = useState(initialDescription);
-  const [isDefault, setisDefault] = useState(false);
-
-  useEffect(() => {
-    setName(initialName);
-  }, [initialName]);
-  useEffect(() => {
-    setDescription(initialDescription);
-  }, [initialDescription]);
-
-  useEffect(() => {
-    setisDefault(initialIsDefault);
-  }, [initialIsDefault]);
-
-  const handleNameInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const maxChars = config.persona.nameMaxChars;
-    if (e.target.value.length > maxChars) {
-      toast.error(`Name cannot exceed ${maxChars} characters.`);
-      return;
-    }
-    setName(e.target.value);
-  };
-
-  const handleDescriptionInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const maxChars = config.persona.descriptionMaxChars;
-    if (e.target.value.length > maxChars) {
-      toast.error(`Description cannot exceed ${maxChars} characters.`);
-      return;
-    }
-    setDescription(e.target.value);
-  };
-
-  return (
-    <div className="flex w-96 flex-col space-y-5 rounded-lg border border-neutral-700 bg-neutral-800 p-6 focus:outline-none">
-      <h3 className="text-lg font-semibold">{title}</h3>
-      {/* Name Input & Avatar */}
-      <div className="flex w-full items-center space-x-6">
-        {/* Name Input*/}
-        <input
-          type="text"
-          className="relative h-12 w-64 select-text rounded-md border border-neutral-600 bg-neutral-700 px-2.5  placeholder:font-[450] focus:outline-none"
-          value={name}
-          onChange={handleNameInput}
-          placeholder="Name"
-        />
-        {/* Avatar Display */}
-        <button className="relative shrink-0  focus:outline-none">
-          <div
-            className={`flex size-14 shrink-0 select-none items-center justify-center 
-            rounded-full bg-grad-magenta text-2xl font-bold`}
-            onClick={() => {}}
-          >
-            {name.charAt(0)}
-          </div>
-          <PencilSquareIcon className="absolute -right-1 -top-1 size-6 rounded-sm fill-neutral-300 p-0.5" />
-        </button>
-      </div>
-      {/* Description Input */}
-      <textarea
-        placeholder="Description"
-        value={description}
-        onChange={handleDescriptionInput}
-        className="scroll-tertiary flex h-36 w-full resize-none items-start rounded-md border border-neutral-600 bg-neutral-700 p-2.5 placeholder:font-[450] focus:outline-none"
-      />
-
-      {/* Is Default? */}
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          className="rounded-[4px] border-[1px] border-neutral-400"
-          checked={isDefault}
-          onCheckedChange={(checked) => {
-            const checkedState = checked === "indeterminate" ? false : checked;
-            setisDefault(checkedState);
-          }}
-        />
-        <span className="text-sm font-[460] text-neutral-200">Make Default</span>
-      </div>
-
-      {/* Footer Controls*/}
-      <div className="flex w-full justify-end">
-        <div className="flex flex-row space-x-3">
-          {remove && (
-            <button
-              className="flex items-center rounded-sm bg-red-700 px-3 py-2 font-medium text-neutral-200 saturate-[.67]"
-              onClick={remove.handle}
-            >
-              {remove.label}
-            </button>
-          )}
-          <button
-            className="flex items-center rounded-sm bg-neutral-700 px-3 py-2 font-medium text-neutral-200"
-            onClick={() => {
-              if (name.length == 0) {
-                toast.error("Name cannot be empty.");
-                return;
-              }
-              if (description.length == 0) {
-                toast.error("Description cannot be empty.");
-                return;
-              }
-              submit.handle(name, description, isDefault);
-            }}
-          >
-            {submit.label}
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

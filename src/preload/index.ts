@@ -1,7 +1,14 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { Result } from "@shared/utils";
 import { RunResult } from "../main/lib/store/sqlite";
-import { CardBundle, CardData, PersonaBundleWithoutData, Settings } from "@shared/types";
+import {
+  CardBundle,
+  CardData,
+  PersonaBundle,
+  PersonaBundleWithoutData,
+  PersonaFormData,
+  Settings
+} from "@shared/types";
 
 // Expose API types to the renderer process
 export interface API {
@@ -27,6 +34,8 @@ export interface API {
     };
     personas: {
       get: (persona: string) => Promise<Result<PersonaBundleWithoutData, Error>>;
+      post: (data: PersonaFormData) => Promise<Result<void, Error>>;
+      put: (id: number, data: PersonaFormData) => Promise<Result<void, Error>>;
       rename: (oldName: string, newName: string) => Promise<Result<void, Error>>;
     };
   };
@@ -68,6 +77,8 @@ const api: API = {
     },
     personas: {
       get: (persona) => ipcRenderer.invoke("blob.personas.get", persona),
+      post: (data) => ipcRenderer.invoke("blob.personas.post", data),
+      put: (id, data) => ipcRenderer.invoke("blob.personas.put", id, data),
       rename: (oldName, newName) => ipcRenderer.invoke("blob.personas.rename", oldName, newName)
     }
   },

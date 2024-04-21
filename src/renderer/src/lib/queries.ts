@@ -3,6 +3,7 @@ import { ContextMessage, UIMessage } from "@shared/types";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { Result, isError } from "@shared/utils";
 import { Persona } from "@shared/db_types";
+import { rename } from "fs";
 
 async function deleteMessage(messageID: number): Promise<void> {
   const query = `
@@ -494,64 +495,24 @@ async function resetChatToMessage(chatID: number, messageID: number): Promise<vo
   await window.api.sqlite.run(query, [chatID, messageID]);
 }
 
-async function deletePersona(id: number) {
-  const query = `UPDATE personas SET is_deleted = 1 WHERE id = ?;`;
-  await window.api.sqlite.run(query, [id]);
-}
-
-async function updatePersona(id: number, name: string, description: string, isDefault: boolean) {
-  const nameQuery = `SELECT name, dir_name FROM personas WHERE id = ?;`;
-  const res = (await window.api.sqlite.get(nameQuery, [id])) as { name: string; dir_name: string };
-  const oldName = res.name;
-  const oldDirName = res.dir_name;
-
-  if (!isValidFileName(name)) {
-    throw new Error("Name must only contain alphanumeric characters, spaces, and hyphens.");
-  }
-  const newDirName = `${toPathEscapedStr(name)}-${crypto.randomUUID()}`;
-
-  // IF new name is different from old name, rename the persona folder
-  if (name !== oldName) {
-    await window.api.blob.personas.rename(oldDirName, newDirName);
-  }
-
-  const query = `
-  UPDATE personas
-  SET name = ?, description = ?, dir_name = ?, is_default = ?
-  WHERE id = ?;`;
-  await window.api.sqlite.run(query, [name, description, newDirName, isDefault ? 1 : 0, id]);
-}
-
-async function insertPersona(name: string, description: string, isDefault: boolean) {
-  if (!isValidFileName(name)) {
-    throw new Error("Name must only contain alphanumeric characters, spaces, and hyphens.");
-  }
-
-  // If the new persona will be set as default, unset the current default persona
-  if (isDefault) {
-    const currentDefault = (await window.api.sqlite.get("SELECT id FROM personas WHERE is_default = 1;")) as {
-      id: number;
-    };
-    if (currentDefault) {
-      await window.api.sqlite.get("UPDATE personas SET is_default = 0 WHERE id = ?;", [currentDefault.id]);
-    }
-  }
-
-  const dirName = `${toPathEscapedStr(name)}-${crypto.randomUUID()}`;
-
-  const query = `
-  INSERT INTO personas (name, description, is_default, dir_name)
-  VALUES (?, ?, ?);`;
-
-  await window.api.sqlite.run(query, [name, description, isDefault ? 1 : 0, dirName]);
-}
-
 async function getCardDir(cardID: number): Promise<Result<string, Error>> {
   const query = `
   SELECT dir_name FROM cards WHERE id = ?;`;
   try {
     const row = (await window.api.sqlite.get(query, [cardID])) as { dir_name: string };
     return { kind: "ok", value: row.dir_name };
+  } catch (e) {
+    return { kind: "err", error: e };
+  }
+}
+
+async function deletePersona(bundle: PersonaBundle): Promise<Result<void, Error>> {
+  const query = `
+  UPDATE personas SET is_deleted = 1, is_default = 0 WHERE id = ?;
+  `;
+  try {
+    await window.api.sqlite.run(query, [bundle.data.id]);
+    return { kind: "ok", value: undefined };
   } catch (e) {
     return { kind: "err", error: e };
   }
@@ -580,10 +541,8 @@ export const queries = {
   updateMessagePrimeCandidate,
   resetChatToMessage,
   getAllExtantPersonaBundles,
-  deletePersona,
-  updatePersona,
-  insertPersona,
-  getCardDir
+  getCardDir,
+  deletePersona
 };
 
 deepFreeze(queries);
