@@ -35,7 +35,7 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
   // Used to keep track of the (old) scroll height so we could restore it
   const oldScrollHeightRef = useRef(0);
   const scrollEventRef = useRef<ScrollEvent | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isPageLoading, setIsPageLoading] = useState(true);
 
   // Sync states with db on load
   useEffect(() => {
@@ -49,9 +49,13 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
         // Scroll to the bottom of the chat on load
         // Race condition, too much of a hassle to fix
         setTimeout(scrollToBottom, 100);
-        setIsLoading(false);
+        setIsPageLoading(false);
       }
     })();
+  }, [chatID]);
+
+  useEffect(() => {
+    console.log("chatID changed");
   }, [chatID]);
 
   // Sync chat history when the limit changes
@@ -119,7 +123,7 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
   }, []);
 
   // Loading screen
-  if (isLoading || !personaBundle || !cardBundle) {
+  if (isPageLoading || !personaBundle || !cardBundle) {
     return <div className="flex h-screen w-screen items-center justify-center "></div>;
   }
 

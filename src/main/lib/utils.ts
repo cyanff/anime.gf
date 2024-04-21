@@ -12,13 +12,15 @@ export const dbPath = join(app.getPath("userData"), "agf.db");
 export const unpackedPath = join(rootPath, "/app.asar.unpacked/resources/");
 export const migrationsDir =
   process.env.NODE_ENV === "development" ? join(rootPath, "resources/migrations") : join(unpackedPath, "migrations");
-// Root directory for all blob data
-export const blobPath = path.join(app.getPath("userData"), "blob");
-// Silly tavern .png cards are stored in blob/cards
-export const cardsPath = path.join(blobPath, "cards");
-export const personasPath = path.join(blobPath, "personas");
+
 export const secretsPath = path.join(app.getPath("userData"), "secrets.json");
 export const settingsPath = path.join(app.getPath("userData"), "settings.json");
+
+// Root directory for all blob data
+export const blobPath = path.join(app.getPath("userData"), "blob");
+// Directories for different types of blob data
+export const cardsPath = path.join(blobPath, "cards");
+export const personasPath = path.join(blobPath, "personas");
 
 /**
  * Checks if a file exists and is accessible at the specified path.

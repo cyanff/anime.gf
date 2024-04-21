@@ -17,7 +17,11 @@ export interface API {
     };
     cards: {
       get: (card: string) => Promise<Result<CardBundle, Error>>;
-      post: (cardData: CardData, bannerImage: string | null, avatarImage: string | null) => Promise<Result<string, Error>>;
+      post: (
+        cardData: CardData,
+        bannerImage: string | null,
+        avatarImage: string | null
+      ) => Promise<Result<string, Error>>;
       exportToZip: (card: string) => Promise<Result<void, Error>>;
       importFromZip: (zip: string) => Promise<Result<void, Error>>;
     };
@@ -37,6 +41,10 @@ export interface API {
   xfetch: {
     post: (url: string, body: Object, headers: Record<string, string>) => Promise<Result<any, Error>>;
     get: (url: string, headers: Record<string, string>) => Promise<Result<any, Error>>;
+  };
+
+  utils: {
+    openURL: (url: string) => void;
   };
 }
 
@@ -74,6 +82,10 @@ const api: API = {
   xfetch: {
     post: (url, body, headers) => ipcRenderer.invoke("xfetch.post", url, body, headers),
     get: (url, headers) => ipcRenderer.invoke("xfetch.get", url, headers)
+  },
+  utils: {
+    openURL: (url) => ipcRenderer.invoke("utils.openURL", url)
   }
 };
+
 contextBridge.exposeInMainWorld("api", api);

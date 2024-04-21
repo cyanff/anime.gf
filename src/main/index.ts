@@ -10,7 +10,6 @@ import { cardsPath, personasPath } from "./lib/utils";
 import setting from "./lib/store/setting";
 import { CardBundleWithoutID, CardData } from "@shared/types";
 
-
 (async () => {})();
 
 protocol.registerSchemesAsPrivileged([
@@ -123,9 +122,12 @@ app.whenReady().then(async () => {
     return await blob.cards.get(card);
   });
 
-  ipcMain.handle("blob.cards.post", async (_, cardData: CardData, bannerImage: string | null, avatarImage: string | null) => {
-    return await blob.cards.post(cardData, bannerImage, avatarImage);
-  });
+  ipcMain.handle(
+    "blob.cards.post",
+    async (_, cardData: CardData, bannerImage: string | null, avatarImage: string | null) => {
+      return await blob.cards.post(cardData, bannerImage, avatarImage);
+    }
+  );
 
   ipcMain.handle("blob.cards.exportToZip", async (_, card: string) => {
     return await blob.cards.exportToZip(card);
@@ -157,6 +159,10 @@ app.whenReady().then(async () => {
 
   ipcMain.handle("xfetch.get", async (_, url: string, headers: Record<string, string>) => {
     return await xfetch.get(url, headers);
+  });
+
+  ipcMain.handle("utils.openURL", async (_, url: string) => {
+    return await shell.openExternal(url);
   });
 
   ipcMain.handle("setting.get", async () => {
