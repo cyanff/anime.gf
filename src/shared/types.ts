@@ -37,6 +37,7 @@ export interface World {
   description: string;
 }
 // Contents of the card's directory
+// Edit this type to also include the card
 export interface CardBundle {
   id: number;
   data: CardData;

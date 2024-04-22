@@ -3,12 +3,11 @@ import Card from "@/components/Card";
 import CardModal from "@/components/CardModal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { queries } from "@/lib/queries";
-import { Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { ArrowDownIcon, ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { set } from "zod";
 
 interface CollectionsPageProps {
   setPage: (page: string) => void;
@@ -28,16 +27,19 @@ export default function CollectionsPage({
   const { createModal, closeModal, createDialog: createAlert } = useApp();
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);
-  const [filter, setFilter] = useState<string>("");
-  const filterNameAndValue = [
-    { name: "Recently Added", value: "placeholder1" },
-    { name: "Alphabetical", value: "placeholder2" },
-    { name: "Newest", value: "placeholder3" },
-    { name: "Oldest", value: "placeholder4" }
-  ];
+  const [sortBy, setSortBy] = useState<string>("alphabetical");
+  const [descending, setDescending] = useState<boolean>(true);
 
+  // TODO, edit card bundle type to also include all data from the card table
+  // then add sort by "imported" which is the inserted_at column in the db
+  const sortByNameAndValue = [
+    { name: "Alphabetical", value: "alphabetical" },
+    { name: "Created", value: "created" },
+    { name: "Updated", value: "updated" }
+  ];
   const fuseRef = useRef<Fuse<CardBundle>>();
-  // On cardBundles change, update the fuse search index
+
+  // On cardBundles change, update the fuse
   useEffect(() => {
     const fuseOptions = {
       keys: ["data.character.name"],
@@ -47,6 +49,7 @@ export default function CollectionsPage({
     fuseRef.current = new Fuse(cardBundles, fuseOptions);
   }, [cardBundles]);
 
+  // On searchInput change, update the search results
   useEffect(() => {
     if (!fuseRef.current) return;
     if (searchInput.trim() === "") {
@@ -57,19 +60,56 @@ export default function CollectionsPage({
     setSearchResults(results);
   }, [searchInput, cardBundles]);
 
-  const searchInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    setSearchInput(input);
-    if (input === "") {
-      setSearchResults(cardBundles);
-      return;
+  /**
+   * A function to compare two `CardBundle` objects based on the current `sortBy` and `descending` state.
+   *
+   * @param a - The first `CardBundle` object to compare.
+   * @param b - The second `CardBundle` object to compare.
+   * @returns
+   * A ternary value (-1, 0 ,1) indicating the sort order of the two `CardBundle` objects.
+   * -1: a should come before b
+   * 0: a and b are equal
+   * 1: a should come after b
+   */
+  const cardBundleSearchFN = (a: CardBundle, b: CardBundle) => {
+    let valueA: any, valueB: any;
+    switch (sortBy) {
+      case "alphabetical":
+        valueA = a.data.character.name.toLowerCase();
+        valueB = b.data.character.name.toLowerCase();
+        break;
+      case "created":
+        valueA = new Date(a.data.meta.created_at);
+        valueB = new Date(b.data.meta.created_at);
+        break;
+      case "updated":
+        // Fallback to created date if updated date is not available
+        valueA = new Date(a.data.meta.updated_at || a.data.meta.created_at);
+        valueB = new Date(b.data.meta.updated_at || b.data.meta.created_at);
+        break;
+      default:
+        return 0;
     }
-
-    const res = cardBundles.filter((item) => item.data.character.name.toLowerCase().includes(input.toLowerCase()));
-    setSearchResults(res);
+    let comparisonResult: number;
+    if (valueA < valueB) {
+      comparisonResult = -1;
+    } else if (valueA > valueB) {
+      comparisonResult = 1;
+    } else {
+      comparisonResult = 0;
+    }
+    // If descending is true, we want the comparison result to be reversed
+    return descending ? -comparisonResult : comparisonResult;
   };
 
-  async function onCreateChat(cardID: number, greeting: string) {
+  // On sortBy or descending change, update the search results
+  useEffect(() => {
+    if (!searchResults) return;
+    const sortedResults = searchResults.sort(cardBundleSearchFN);
+    setSearchResults([...sortedResults]);
+  }, [sortBy, descending]);
+
+  async function createChatHandler(cardID: number, greeting: string) {
     const res = await queries.createChat(1, cardID);
     if (res.kind == "ok") {
       const chatCards = await queries.getRecentChats();
@@ -97,29 +137,47 @@ export default function CollectionsPage({
             className="h-9 w-full grow bg-neutral-700 text-gray-100 caret-white focus:outline-none"
             placeholder="Search for a chat"
             value={searchInput}
-            onChange={searchInputHandler}
+            onChange={(e) => setSearchInput(e.target.value)}
           ></input>
         </div>
-        {/* Filter Selection*/}
-        <div className="space-y-1 pr-8">
-          <Select onValueChange={(v) => setFilter(v)} value={filter}>
+        {/* Sort By Selection*/}
+        <div className="flex">
+          <Select onValueChange={(v) => setSortBy(v)} value={sortBy}>
             <SelectTrigger className="h-12 space-x-2 rounded-xl bg-neutral-700 text-neutral-200">
               <Bars3BottomLeftIcon height="24px" />
-              <SelectValue placeholder={filter === "" ? "Select a filter" : filter} />
+              <SelectValue placeholder={sortBy === "" ? "Select a filter" : sortBy} />
             </SelectTrigger>
             <SelectContent className="bg-neutral-700">
-              {filterNameAndValue.map((nameAndValue, idx) => (
+              {sortByNameAndValue.map((nameAndValue, idx) => (
                 <SelectItem key={idx} value={nameAndValue.value}>
                   {nameAndValue.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+
+          {/* Ascending / Descending Arrow */}
+          <button
+            className="p-2 focus:outline-none"
+            onClick={() => {
+              setDescending(!descending);
+            }}
+          >
+            <ArrowUpIcon
+              className={`${descending ? "rotate-180" : "rotate-0"} text-neutral-125 duration-125 size-5 fill-neutral-400 transition ease-out `}
+            />
+          </button>
         </div>
       </div>
 
       {/* Collection Area */}
       <div className="flex flex-wrap  scroll-smooth transition duration-500 ease-out">
+        {searchResults?.length === 0 && (
+          <div className="line-clamp-1 w-full whitespace-pre text-center text-lg font-semibold text-neutral-400">
+            {"No cards found  ╥﹏╥"}
+          </div>
+        )}
+
         {searchResults?.map((cardBundle, idx) => {
           return (
             <Card
@@ -142,7 +200,7 @@ export default function CollectionsPage({
               }}
               cardBundle={cardBundle}
               openCardModal={() => {
-                createModal(<CardModal cardBundle={cardBundle} onCreateChat={onCreateChat} />);
+                createModal(<CardModal cardBundle={cardBundle} onCreateChat={createChatHandler} />);
               }}
             />
           );
