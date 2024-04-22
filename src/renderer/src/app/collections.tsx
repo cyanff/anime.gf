@@ -1,14 +1,14 @@
-import { queries } from "@/lib/queries";
-import { toast } from "sonner";
+import { DialogConfig, useApp } from "@/components/AppContext";
 import Card from "@/components/Card";
 import CardModal from "@/components/CardModal";
-import { DialogConfig, useApp } from "@/components/AppContext";
-import { CardBundle } from "@shared/types";
-import { BarsArrowDownIcon, MagnifyingGlassCircleIcon } from "@heroicons/react/24/outline";
-import { Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
+import { queries } from "@/lib/queries";
+import { Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { CardBundle } from "@shared/types";
+import Fuse from "fuse.js";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { set } from "zod";
 
 interface CollectionsPageProps {
   setPage: (page: string) => void;
@@ -27,7 +27,7 @@ export default function CollectionsPage({
 }: CollectionsPageProps) {
   const { createModal, closeModal, createDialog: createAlert } = useApp();
   const [searchInput, setSearchInput] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<CardBundle[]>([]);
+  const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);
   const [filter, setFilter] = useState<string>("");
   const filterNameAndValue = [
     { name: "Recently Added", value: "placeholder1" },
@@ -35,6 +35,39 @@ export default function CollectionsPage({
     { name: "Newest", value: "placeholder3" },
     { name: "Oldest", value: "placeholder4" }
   ];
+
+  const fuseRef = useRef<Fuse<CardBundle>>();
+  // On cardBundles change, update the fuse search index
+  useEffect(() => {
+    const fuseOptions = {
+      keys: ["data.character.name"],
+      includeScore: true,
+      threshold: 0.3
+    };
+    fuseRef.current = new Fuse(cardBundles, fuseOptions);
+  }, [cardBundles]);
+
+  useEffect(() => {
+    if (!fuseRef.current) return;
+    if (searchInput.trim() === "") {
+      setSearchResults(cardBundles);
+      return;
+    }
+    const results = fuseRef.current.search(searchInput).map((result) => result.item);
+    setSearchResults(results);
+  }, [searchInput, cardBundles]);
+
+  const searchInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    setSearchInput(input);
+    if (input === "") {
+      setSearchResults(cardBundles);
+      return;
+    }
+
+    const res = cardBundles.filter((item) => item.data.character.name.toLowerCase().includes(input.toLowerCase()));
+    setSearchResults(res);
+  };
 
   async function onCreateChat(cardID: number, greeting: string) {
     const res = await queries.createChat(1, cardID);
@@ -64,7 +97,7 @@ export default function CollectionsPage({
             className="h-9 w-full grow bg-neutral-700 text-gray-100 caret-white focus:outline-none"
             placeholder="Search for a chat"
             value={searchInput}
-            onChange={(e) => {}}
+            onChange={searchInputHandler}
           ></input>
         </div>
         {/* Filter Selection*/}
@@ -87,7 +120,7 @@ export default function CollectionsPage({
 
       {/* Collection Area */}
       <div className="flex flex-wrap  scroll-smooth transition duration-500 ease-out">
-        {cardBundles?.map((cardBundle, idx) => {
+        {searchResults?.map((cardBundle, idx) => {
           return (
             <Card
               key={idx}

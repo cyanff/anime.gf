@@ -52,6 +52,7 @@
     "electron-updater": "^6.1.7",
     "form-data": "^4.0.0",
     "framer-motion": "^11.0.12",
+    "fuse.js": "^7.0.0",
     "jszip": "^3.10.1",
     "mustache": "^4.2.0",
     "next-themes": "^0.3.0",

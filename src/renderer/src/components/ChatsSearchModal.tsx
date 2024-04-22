@@ -1,12 +1,14 @@
 import { useApp } from "@/components/AppContext";
 import { ChatSearchItem, queries } from "@/lib/queries";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { useEffect, useState } from "react";
+import Fuse from "fuse.js";
+import { useEffect, useRef, useState } from "react";
 
 export default function ChatsSearchModal() {
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchResults, setSearchResults] = useState<ChatSearchItem[]>([]);
   const [searchItems, setSearchItems] = useState<ChatSearchItem[]>([]);
+  const fuseRef = useRef<Fuse<ChatSearchItem>>();
 
   const { setChatID, closeModal } = useApp();
 
@@ -17,6 +19,25 @@ export default function ChatsSearchModal() {
       setSearchResults(res);
     })();
   }, []);
+
+  useEffect(() => {
+    const fuseOptions = {
+      keys: ["characterName"],
+      includeScore: true,
+      threshold: 0.3
+    };
+    fuseRef.current = new Fuse(searchItems, fuseOptions);
+  }, [searchItems]);
+
+  useEffect(() => {
+    if (!fuseRef.current) return;
+    if (searchInput.trim() === "") {
+      setSearchResults(searchItems);
+      return;
+    }
+    const results = fuseRef.current.search(searchInput).map((result) => result.item);
+    setSearchResults(results);
+  }, [searchInput, fuseRef]);
 
   const searchInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
