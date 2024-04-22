@@ -3,12 +3,11 @@ import { useState, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { InputArea } from "@/components/ui/input-area";
 import { PencilSquareIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { CardData } from "@shared/types";
-import { time } from "@/lib/time";
 
 const formSchema = z.object({
   name: z.string().min(0).max(400),
@@ -17,6 +16,7 @@ const formSchema = z.object({
   greeting: z.string().min(0).max(400),
   message_example: z.string().min(0).max(400)
 });
+type FormData = z.infer<typeof formSchema>;
 
 interface CreationPageProps {
   setPage: (page: string) => void;
@@ -40,22 +40,21 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
     }
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Create CardData object
+  async function onSubmit(data: FormData) {
     const cardData: CardData = {
-      spec: "spec",
-      spec_version: "spec_version",
+      spec: "anime.gf",
+      spec_version: "1.0",
       character: {
-        name: values.name,
-        description: values.description,
-        greeting: values.greeting,
-        msg_examples: values.message_example
+        name: data.name,
+        description: data.description,
+        greeting: data.greeting,
+        msg_examples: data.message_example
       },
       world: {
         description: "description"
       },
       meta: {
-        title: values.name,
+        title: data.name,
         created_at: new Date().toLocaleDateString(),
         creator: {
           card: "card",
@@ -63,7 +62,7 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
           world: "world"
         },
         tagline: "tagline",
-        tags: values.tags.split(",")
+        tags: data.tags.split(",")
       }
     };
 
