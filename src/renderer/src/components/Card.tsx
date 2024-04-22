@@ -1,3 +1,4 @@
+import Tag from "@/components/Tag";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -5,11 +6,10 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
-import { ArrowPathIcon, DocumentDuplicateIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { useMotionValue } from "framer-motion";
-import { CardPattern } from "./ui/card-pattern";
-import { motion } from "framer-motion";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
+import { motion, useMotionValue } from "framer-motion";
+import { CardPattern } from "./ui/card-pattern";
 interface Props {
   cardBundle: CardBundle;
   deleteCard: () => void;
@@ -64,14 +64,11 @@ function Card({ deleteCard, editCard, cardBundle, openCardModal }: Props) {
                 {cardBundle.data.meta.notes}
               </div>
               <div className="absolute -top-2 h-16 space-x-0.5 space-y-1 overflow-hidden pl-5 text-left">
-                {cardBundle.data.meta.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-block whitespace-nowrap rounded-full bg-neutral-600 px-2 py-1.5 text-xs font-[550] text-gray-200"
-                  >
-                    {tag}
-                  </span>
-                ))}
+                <div className="flex flex-wrap gap-1">
+                  {cardBundle.data.meta.tags.map((tag, idx) => (
+                    <Tag key={idx} text={tag} />
+                  ))}
+                </div>
               </div>
               <div className="absolute top-20 z-10 pl-5 text-left text-sm text-neutral-400">
                 created by @{cardBundle.data.meta.creator.card}

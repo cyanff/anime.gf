@@ -42,6 +42,7 @@ import { CardBundle, PersonaBundle, UIMessageCandidate } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import Markdown, { Components } from "react-markdown";
 import { toast } from "sonner";
+import Tag from "@/components/Tag";
 
 interface MessageProps {
   className?: string;
@@ -334,17 +335,12 @@ function MessagePopoverContentProps({ sender, personaBundle, cardBundle }: Messa
                 )}
               </div>
             </div>
-            {/* Character tags */}
+            {/* Tags */}
             <div className="flex flex-col gap-y-2">
               <div className="text-sm font-semibold">Tags:</div>
               <div className="flex flex-wrap gap-x-1.5 gap-y-2">
-                {cardBundle.data.meta.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-block rounded-full bg-neutral-700 px-2 py-1.5 text-xs font-[550] text-gray-200"
-                  >
-                    {tag}
-                  </span>
+                {cardBundle.data.meta.tags.map((tag, idx) => (
+                  <Tag key={idx} text={tag} />
                 ))}
               </div>
             </div>

@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface LogoButtonProps {
   className?: string;
+  [key: string]: any;
 }
 
-export default function LogoButton({ className }: LogoButtonProps) {
+export default function LogoButton({ className, rest }: LogoButtonProps) {
   const [isClicked, setIsClicked] = useState(false);
 
   // Reset the button state after a delay
@@ -27,11 +29,13 @@ export default function LogoButton({ className }: LogoButtonProps) {
 
   return (
     <motion.button
-      className={cn("bg-grad-magenta-2 h-9 w-16 rounded-full px-5 py-3", className)}
+      className={cn("h-9 w-16 rounded-full bg-grad-magenta-2 px-5 py-3", className)}
       transition={{ type: "spring" }}
       animate={isClicked ? "clicked" : "initial"}
       variants={variants}
       onMouseDown={() => setIsClicked(true)}
+      onClick={() => toast("To the beat! ^-^")}
+      {...rest}
     ></motion.button>
   );
 }

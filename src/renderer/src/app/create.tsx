@@ -9,7 +9,6 @@ import { InputArea } from "@/components/ui/input-area";
 import { PencilSquareIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { CardData } from "@shared/types";
 import { time } from "@/lib/time";
-import { PhotoIcon } from "@heroicons/react/24/solid";
 
 const formSchema = z.object({
   name: z.string().min(0).max(400),

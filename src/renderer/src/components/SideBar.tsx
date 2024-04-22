@@ -17,21 +17,21 @@ interface SideBarProps {
 export default function SideBar({ setPage }: SideBarProps) {
   return (
     <div className="mr-3.5 flex h-full w-20 flex-col items-center bg-background py-6">
-      <LogoButton className="mb-4" />
+      <LogoButton className="mb-4 size-12" />
 
       {/* Top Button Group*/}
       <div className="flex flex-col">
         <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("create")}>
-          <PlusCircleIcon className="size-8 text-neutral-400" />
+          <PlusCircleIcon className="size-8 text-neutral-500" />
         </Button>
         <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("chats")}>
-          <ChatBubbleLeftRightIcon className="size-8 text-neutral-400" />
+          <ChatBubbleLeftRightIcon className="size-8 text-neutral-500" />
         </Button>
         <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("collections")}>
-          <UserGroupIcon className="size-8 text-neutral-400" />
+          <UserGroupIcon className="size-8 text-neutral-500" />
         </Button>
         <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("settings")}>
-          <Cog8ToothIcon className="size-8 text-neutral-400" />
+          <Cog8ToothIcon className="size-8 text-neutral-500" />
         </Button>
       </div>
 
@@ -49,7 +49,7 @@ export default function SideBar({ setPage }: SideBarProps) {
             toast.success("Discord invite opened in browser!");
           }}
         >
-          <DiscordIcon />
+          <DiscordIcon className="fill-neutral-500" />
         </Button>
         <Button
           variant="outline"
@@ -59,7 +59,7 @@ export default function SideBar({ setPage }: SideBarProps) {
             toast.info("Docs are coming soon™!");
           }}
         >
-          <BookOpenIcon className="size-7 text-neutral-400" />
+          <BookOpenIcon className="size-7 text-neutral-500" />
         </Button>
       </div>
     </div>
