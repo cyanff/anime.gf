@@ -9,6 +9,7 @@ import { InputArea } from "@/components/ui/input-area";
 import { PencilSquareIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { CardData } from "@shared/types";
 import { time } from "@/lib/time";
+import { PhotoIcon } from "@heroicons/react/24/solid";
 
 const formSchema = z.object({
   name: z.string().min(0).max(400),
@@ -31,7 +32,6 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
   const bannerInput = useRef<HTMLInputElement>(null);
   const avatarInput = useRef<HTMLInputElement>(null);
 
-  // provide default values for properties which are not required in the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -114,149 +114,152 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
   };
 
   return (
-    <div className="scroll-primary flex w-full items-center justify-center overflow-y-auto rounded-lg bg-background">
-      <div className="w-[46rem] rounded-lg bg-neutral-800">
-        {/* Banner and profile picture */}
-        <div className="relative rounded-lg">
-          <div
-            className="flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden rounded-t-lg bg-gradient-to-br from-neutral-700 to-neutral-500"
-            onClick={handleBannerClick}
-          >
-            {bannerNativeImage ? (
-              <img src={bannerNativeImage ?? ""} alt="Profile" className="" />
-            ) : (
-              <PencilSquareIcon className="absolute h-12 w-12 text-neutral-300" />
-            )}
-            <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-30"></div>
-            <input
-              type="file"
-              style={{ display: "none" }}
-              ref={bannerInput}
-              onChange={handleBannerChange}
-              accept=".jpg,.jpeg,.png"
-            />
+    <div className="flex h-full w-full items-center justify-center bg-background">
+      {/* Scroll Wrapper */}
+      <div className="h-5/6 w-1/3 min-w-[30rem] overflow-hidden rounded-2xl bg-neutral-800">
+        <div className="scroll-secondary flex h-full w-full flex-col overflow-auto">
+          {/* Banner and profile picture */}
+          <div className="relative mb-12 shrink-0">
+            <div
+              className="flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden bg-gradient-to-br from-neutral-700 to-neutral-500"
+              onClick={handleBannerClick}
+            >
+              {bannerNativeImage ? (
+                <img src={bannerNativeImage ?? ""} alt="Profile" className="" />
+              ) : (
+                <PencilSquareIcon className="absolute h-12 w-12 text-neutral-400" />
+              )}
+              <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-10"></div>
+              <input
+                type="file"
+                style={{ display: "none" }}
+                ref={bannerInput}
+                onChange={handleBannerChange}
+                accept=".jpg,.jpeg,.png"
+              />
+            </div>
+            <div
+              className="absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-neutral-700 to-neutral-600"
+              onClick={handleProfileClick}
+            >
+              {avatarNativeImage ? (
+                <img src={avatarNativeImage} alt="Profile" className="" />
+              ) : (
+                <PencilSquareIcon className="absolute h-8 w-8 text-neutral-300" />
+              )}
+              <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-10"></div>
+              <input
+                type="file"
+                style={{ display: "none" }}
+                ref={avatarInput}
+                onChange={handleAvatarChange}
+                accept=".jpg,.jpeg,.png"
+              />
+            </div>
           </div>
-          <div
-            className="absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-neutral-700 to-neutral-600"
-            onClick={handleProfileClick}
-          >
-            {avatarNativeImage ? (
-              <img src={avatarNativeImage} alt="Profile" className="" />
-            ) : (
-              <PencilSquareIcon className="absolute h-8 w-8 text-neutral-300" />
-            )}
-            <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-30"></div>
-            <input
-              type="file"
-              style={{ display: "none" }}
-              ref={avatarInput}
-              onChange={handleAvatarChange}
-              accept=".jpg,.jpeg,.png"
-            />
-          </div>
-        </div>
-        {/* Character details container */}
-        <div className="px-6 pb-6 pt-12">
-          <div className="flex flex-col pt-8">
-            {/* Character details form */}
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Character Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="add character name"
-                          className="border-neutral-700 focus-visible:ring-neutral-400"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="tags"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tags</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="add comma separated list of tags"
-                          className="scroll-tertiary border-neutral-700 focus-visible:ring-neutral-400"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Character Description</FormLabel>
-                      <FormControl>
-                        <InputArea
-                          placeholder="add character description"
-                          className="scroll-tertiary border-neutral-700 focus-visible:ring-neutral-400"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="greeting"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Character Greeting</FormLabel>
-                      <FormControl>
-                        <InputArea
-                          placeholder="add character greeting"
-                          className="scroll-tertiary border-neutral-700 focus-visible:ring-neutral-400"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="message_example"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Message Examples</FormLabel>
-                      <FormControl>
-                        <InputArea
-                          placeholder="add message examples"
-                          className="scroll-tertiary border-neutral-700 focus-visible:ring-neutral-400 "
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex justify-end">
-                  <button
-                    className="flex items-center space-x-2 rounded-md bg-neutral-700 px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
-                    type="submit"
-                  >
-                    <UserPlusIcon className="size-5" />
-                    <span className="font-medium text-neutral-200">Create</span>
-                  </button>
-                </div>
-              </form>
-            </Form>
+          {/* Character details container */}
+          <div className="px-6 pb-6 pt-12">
+            <div className="flex flex-col pt-8">
+              {/* Character details form */}
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Character Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="What should your character be named?"
+                            className="h-12 w-full select-text rounded-md border border-neutral-600 bg-neutral-700 px-2.5 placeholder:font-[450] focus:outline-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="tags"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tags</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="add comma separated list of tags"
+                            className="scroll-tertiary border-neutral-700 focus-visible:ring-neutral-400"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Character Description</FormLabel>
+                        <FormControl>
+                          <InputArea
+                            placeholder="add character description"
+                            className="scroll-tertiary border-neutral-700 focus-visible:ring-neutral-400"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="greeting"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Character Greeting</FormLabel>
+                        <FormControl>
+                          <InputArea
+                            placeholder="add character greeting"
+                            className="scroll-tertiary border-neutral-700 focus-visible:ring-neutral-400"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="message_example"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Message Examples</FormLabel>
+                        <FormControl>
+                          <InputArea
+                            placeholder="add message examples"
+                            className="scroll-tertiary border-neutral-700 focus-visible:ring-neutral-400  "
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="flex justify-end">
+                    <button
+                      className="flex items-center space-x-2 rounded-md bg-neutral-700 px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
+                      type="submit"
+                    >
+                      <UserPlusIcon className="size-5" />
+                      <span className="font-medium text-neutral-200">Create</span>
+                    </button>
+                  </div>
+                </form>
+              </Form>
+            </div>
           </div>
         </div>
       </div>

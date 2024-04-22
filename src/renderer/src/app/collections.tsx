@@ -171,7 +171,7 @@ export default function CollectionsPage({
       </div>
 
       {/* Collection Area */}
-      <div className="flex flex-wrap  scroll-smooth transition duration-500 ease-out">
+      <div className="flex flex-wrap  gap-4 scroll-smooth transition duration-500 ease-out">
         {searchResults?.length === 0 && (
           <div className="line-clamp-1 w-full whitespace-pre text-center text-lg font-semibold text-neutral-400">
             {"No cards found  ╥﹏╥"}

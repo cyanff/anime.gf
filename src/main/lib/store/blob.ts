@@ -112,7 +112,7 @@ export namespace cards {
   ): Promise<Result<undefined, Error>> {
     const pathEscapedCharName = toPathEscapedStr(cardData.character.name);
     const cardDirName = `${pathEscapedCharName}-${crypto.randomUUID()}`;
-    const cardDirPath = path.join(cardsPath, cardDirName);
+    const cardDirPath = path.join(cardsRootPath, cardDirName);
 
     await fsp.mkdir(cardDirPath, { recursive: true });
 
@@ -157,7 +157,7 @@ export namespace cards {
     const row = (await sqlite.get(query, [cardID])) as { dir_name: string };
 
     // Construct the path to the card directory
-    const cardDirPath = path.join(cardsPath, row.dir_name);
+    const cardDirPath = path.join(cardsRootPath, row.dir_name);
 
     // Write the updated card data to the data.json file
     await fsp.writeFile(path.join(cardDirPath, "data.json"), JSON.stringify(cardData));

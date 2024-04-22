@@ -5,7 +5,7 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
-import { ArrowPathIcon, DocumentDuplicateIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { ArrowPathIcon, DocumentDuplicateIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useMotionValue } from "framer-motion";
 import { CardPattern } from "./ui/card-pattern";
 import { motion } from "framer-motion";
@@ -31,6 +31,7 @@ function Card({ deleteCard, editCard, cardBundle, openCardModal }: Props) {
     <ContextMenu>
       <ContextMenuTrigger>
         <motion.button
+          className="focus:outline-none"
           whileHover={{
             scale: 1.02,
             transition: { duration: 0.2 }
@@ -41,7 +42,7 @@ function Card({ deleteCard, editCard, cardBundle, openCardModal }: Props) {
           }}
         >
           <div
-            className="group/card justify-top relative m-2 flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl bg-neutral-700 p-2"
+            className="group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl bg-neutral-700 p-2"
             onClick={openCardModal}
             onMouseMove={onMouseMove}
           >
@@ -53,8 +54,8 @@ function Card({ deleteCard, editCard, cardBundle, openCardModal }: Props) {
             />
 
             <div className="relative flex flex-grow flex-col space-y-1">
-            <div className="text-overflow-ellipsis absolute -top-28 z-10 overflow-hidden whitespace-nowrap w-full max-w-md pl-5 text-left text-lg font-semibold text-neutral-200">
-                {cardBundle.data.character.name} 
+              <div className="text-overflow-ellipsis absolute -top-28 z-10 w-full max-w-md overflow-hidden whitespace-nowrap pl-5 text-left text-lg font-semibold text-neutral-200">
+                {cardBundle.data.character.name}
               </div>
               <div
                 className="absolute -top-20 z-10 overflow-hidden pl-5 text-left text-sm font-semibold text-neutral-200"
@@ -80,14 +81,14 @@ function Card({ deleteCard, editCard, cardBundle, openCardModal }: Props) {
         </motion.button>
       </ContextMenuTrigger>
       <ContextMenuContent className="w-40 px-1 py-2">
-        <ContextMenuItem onSelect={deleteCard}>
-          Delete Card
+        <ContextMenuItem onSelect={editCard}>
+          Edit
           <ContextMenuShortcut>
-            <TrashIcon className="size-4" />
+            <PencilIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
-        <ContextMenuItem onSelect={editCard}>
-          Edit Card
+        <ContextMenuItem onSelect={deleteCard}>
+          Delete
           <ContextMenuShortcut>
             <TrashIcon className="size-4" />
           </ContextMenuShortcut>
