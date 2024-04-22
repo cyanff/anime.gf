@@ -11,6 +11,7 @@ import { z } from "zod";
 import { useEffect, useState } from "react";
 import { getProvider, getProvidersNameAndValue } from "@/lib/provider/provider";
 import Combobox from "@/components/ui/combobox";
+import { ChatBubbleLeftIcon } from "@heroicons/react/24/solid";
 
 const schema = z.object({
   provider: z.string().default("Anthropic"),

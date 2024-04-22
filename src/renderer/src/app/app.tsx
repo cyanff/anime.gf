@@ -128,7 +128,7 @@ export default function App() {
           e.stopPropagation();
         }}
       >
-        <SideBar setPage={setPage} />
+        <SideBar setPage={setPage} page={page} />
 
         {/* Confirmation Dialog */}
         {alertConfig && (

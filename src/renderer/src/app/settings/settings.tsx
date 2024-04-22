@@ -2,6 +2,7 @@ import { useState } from "react";
 import SettingsPersona from "@/app/settings/settings_persona";
 import SettingsChat from "@/app/settings/settings_chat";
 import SettingsKeys from "@/app/settings/settings_keys";
+import { KeyIcon } from "@heroicons/react/24/solid";
 
 export default function SettingsPage() {
   const [page, setPage] = useState<string>("chat");

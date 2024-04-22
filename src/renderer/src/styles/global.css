@@ -23,7 +23,7 @@
   border-radius: 10px;
 }
 .scroll-primary::-webkit-scrollbar-thumb {
-  background: theme(colors.neutral.950);
+  background: theme(colors.neutral.900);
   border-radius: 10px;
 }
 
@@ -101,7 +101,7 @@
     --muted-foreground: 0 0% 63.9%;
     --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62.8% 55.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 13.9%;
     --input: 0 0% 13.9%;

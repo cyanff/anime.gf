@@ -1,18 +1,41 @@
 import { deepFreeze } from "@shared/utils";
+import { title } from "process";
 
 export const config = {
   persona: {
+    nameMinChars: 1,
     nameMaxChars: 128,
+
+    descriptionMinChars: 0,
     descriptionMaxChars: 768
   },
   card: {
+    nameMinChars: 1,
     nameMaxChars: 128,
+
+    descriptionMinChars: 0,
     descriptionMaxChars: 768,
+
+    greetingMinChars: 1,
     greetingMaxChars: 256,
-    msgExamplesMaxChars: 512,
+
+    msgExamplesMinChars: 0,
+    msgExamplesMaxChars: 1024,
+
+    titleMinChars: 1,
+    titleMaxChars: 128,
+
+    tagLineMinChars: 0,
     taglineMaxChars: 128,
+
+    tagsMinCount: 0,
     tagsMaxCount: 8,
-    tagsMaxChars: 32
+
+    tagsMinChars: 2,
+    tagsMaxChars: 32,
+
+    notesMinChars: 0,
+    notesMaxChars: 2048
   },
   defaultSettings: {
     chat: {

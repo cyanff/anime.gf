@@ -78,7 +78,7 @@ const FormLabel = React.forwardRef<
 >(({ className, ...props }, ref) => {
   const { error, formItemId } = useFormField();
 
-  return <Label ref={ref} className={cn(error && "text-destructive", className)} htmlFor={formItemId} {...props} />;
+  return <Label ref={ref} className={className} htmlFor={formItemId} {...props} />;
 });
 FormLabel.displayName = "FormLabel";
 

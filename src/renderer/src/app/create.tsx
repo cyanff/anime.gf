@@ -1,22 +1,12 @@
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { InputArea } from "@/components/ui/input-area";
 import { PencilSquareIcon, UserPlusIcon } from "@heroicons/react/24/outline";
-import { CardData } from "@shared/types";
-
-const formSchema = z.object({
-  name: z.string().min(0).max(400),
-  tags: z.string().min(0).max(400),
-  description: z.string().min(0).max(400),
-  greeting: z.string().min(0).max(400),
-  message_example: z.string().min(0).max(400)
-});
-type FormData = z.infer<typeof formSchema>;
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CardData, CardFormData, cardFormSchema } from "@shared/types";
+import { useForm } from "react-hook-form";
 
 interface CreationPageProps {
   setPage: (page: string) => void;
@@ -31,38 +21,39 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
   const bannerInput = useRef<HTMLInputElement>(null);
   const avatarInput = useRef<HTMLInputElement>(null);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      tags: "",
-      greeting: "",
-      message_example: ""
-    }
-  });
+  const form = useForm<CardFormData>({ resolver: zodResolver(cardFormSchema) });
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors }
+  } = form;
 
-  async function onSubmit(data: FormData) {
+  async function onSubmit(data: CardFormData) {
     const cardData: CardData = {
       spec: "anime.gf",
       spec_version: "1.0",
       character: {
-        name: data.name,
-        description: data.description,
-        greeting: data.greeting,
-        msg_examples: data.message_example
+        name: data.character.name,
+        description: data.character.description,
+        greeting: data.character.greeting,
+        msg_examples: data.character.msg_examples
       },
       world: {
-        description: "description"
+        description: data.world.description
       },
       meta: {
-        title: data.name,
-        created_at: new Date().toLocaleDateString(),
+        title: data.meta.title,
+        notes: data.meta.notes,
+        created_at: new Date().toISOString(),
         creator: {
-          card: "card",
-          character: "character",
-          world: "world"
+          card: "you",
+          character: "you",
+          world: "you"
         },
-        tagline: "tagline",
-        tags: data.tags.split(",")
+        tagline: data.meta.tagline,
+        tags: data.meta.tags.split(",")
       }
     };
 
@@ -163,16 +154,12 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                   <FormField
                     control={form.control}
-                    name="name"
+                    name="character.name"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Character Name</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="What should your character be named?"
-                            className="h-12 w-full select-text rounded-md border border-neutral-600 bg-neutral-700 px-2.5 placeholder:font-[450] focus:outline-none"
-                            {...field}
-                          />
+                          <Input placeholder="What should your character be named?" className="" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -180,33 +167,12 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
                   />
                   <FormField
                     control={form.control}
-                    name="tags"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tags</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="add comma separated list of tags"
-                            className="scroll-tertiary border-neutral-700 focus-visible:ring-neutral-400"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="description"
+                    name="character.description"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Character Description</FormLabel>
                         <FormControl>
-                          <InputArea
-                            placeholder="add character description"
-                            className="scroll-tertiary border-neutral-700 focus-visible:ring-neutral-400"
-                            {...field}
-                          />
+                          <InputArea placeholder="add character description" className="" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -214,16 +180,12 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
                   />
                   <FormField
                     control={form.control}
-                    name="greeting"
+                    name="character.greeting"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Character Greeting</FormLabel>
                         <FormControl>
-                          <InputArea
-                            placeholder="add character greeting"
-                            className="scroll-tertiary border-neutral-700 focus-visible:ring-neutral-400"
-                            {...field}
-                          />
+                          <InputArea placeholder="add character greeting" className="" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -231,14 +193,85 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
                   />
                   <FormField
                     control={form.control}
-                    name="message_example"
+                    name="character.msg_examples"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Message Examples</FormLabel>
                         <FormControl>
+                          <InputArea placeholder="add message examples" className="" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="world.description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>World Description</FormLabel>
+                        <FormControl>
+                          <InputArea placeholder="add world description" className="" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="meta.title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="add title" className="" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="meta.tagline"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tagline</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="a brief description of how you would describe the card to others."
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="meta.tags"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tags</FormLabel>
+                        <FormControl>
+                          <Input placeholder="add comma separated list of tags" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="meta.notes"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Notes</FormLabel>
+                        <FormControl>
                           <InputArea
-                            placeholder="add message examples"
-                            className="scroll-tertiary border-neutral-700 focus-visible:ring-neutral-400  "
+                            placeholder="optional creator notes to users of your card"
+                            className=""
                             {...field}
                           />
                         </FormControl>
@@ -248,7 +281,7 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
                   />
                   <div className="flex justify-end">
                     <button
-                      className="flex items-center space-x-2 rounded-md bg-neutral-700 px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
+                      className="flex items-center space-x-2 rounded-md bg-grad-magenta px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
                       type="submit"
                     >
                       <UserPlusIcon className="size-5" />

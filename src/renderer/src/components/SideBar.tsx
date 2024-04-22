@@ -11,17 +11,23 @@ import DiscordIcon from "@/components/icons/discord";
 import { toast } from "sonner";
 
 interface SideBarProps {
+  page: string;
   setPage: (page: string) => void;
 }
 
-export default function SideBar({ setPage }: SideBarProps) {
+export default function SideBar({ page, setPage }: SideBarProps) {
   return (
     <div className="mr-3.5 flex h-full w-20 flex-col items-center bg-background py-6">
       <LogoButton className="mb-4 size-12" />
 
       {/* Top Button Group*/}
       <div className="flex flex-col">
-        <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("create")}>
+        <Button
+          variant="outline"
+          size="icon"
+          className={`m-2 size-16 rounded-xl ${page === "create" ? "bg-neutral-700" : ""}`}
+          onClick={() => setPage("create")}
+        >
           <PlusCircleIcon className="size-8 text-neutral-500" />
         </Button>
         <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("chats")}>

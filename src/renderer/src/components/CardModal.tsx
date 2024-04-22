@@ -4,6 +4,7 @@ import { ArrowUpOnSquareIcon, ChatBubbleLeftRightIcon } from "@heroicons/react/2
 import { CardBundle } from "@shared/types";
 import { queries } from "../lib/queries";
 import { toast } from "sonner";
+import Tag from "@/components/Tag";
 interface Props {
   cardBundle: CardBundle;
   onCreateChat: (cardID: number, greeting: string) => void;
@@ -34,13 +35,13 @@ function CardModal({ cardBundle, onCreateChat }: Props) {
         {/* Banner and profile picture */}
         <div className="relative rounded-lg">
           <img
-            src={cardBundle.bannerURI}
+            src={cardBundle.bannerURI || "default_banner.png"}
             alt="Banner"
             draggable="false"
             className="h-48 w-full select-none rounded-t-lg bg-neutral-700 object-cover"
           />
           <img
-            src={cardBundle.avatarURI}
+            src={cardBundle.avatarURI || "default_avatar.png"}
             alt="Profile"
             draggable="false"
             className="absolute -bottom-12 left-4 h-24 w-24 select-none rounded-full border-4 border-neutral-800 object-cover"
@@ -58,21 +59,18 @@ function CardModal({ cardBundle, onCreateChat }: Props) {
               <div className="text-sm text-neutral-400 ">created by @{cardBundle.data.meta.creator.card}</div>
             </div>
             {/* Character tags */}
-            <div className="flex">
-              <div className="mr-4 text-2xl font-semibold">Tags:</div>
-              <div>
-                {cardBundle.data.meta.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="m-1 inline-block rounded-full bg-neutral-700 px-5 py-2 text-sm font-semibold text-gray-200"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+            <div className="mr-4 text-2xl font-semibold">Tags:</div>
+            <div className="flex h-20 flex-wrap gap-1.5">
+              {cardBundle.data.meta.tags.map((tag) => (
+                <Tag key={tag} text={tag} />
+              ))}
             </div>
           </div>
           <div className="mt-6 flex justify-end space-x-4 border-b border-t border-neutral-700">
+            <Button variant="outline" className="group m-2 h-10 w-16 border-none bg-transparent" onClick={handleExport}>
+              <ArrowUpOnSquareIcon className="size-6 text-neutral-400 transition duration-200 ease-out group-hover:text-neutral-200" />
+            </Button>
+
             <Button
               variant="outline"
               size="icon"
@@ -80,15 +78,6 @@ function CardModal({ cardBundle, onCreateChat }: Props) {
               onClick={() => onCreateChat(cardBundle.id, cardBundle.data.character.greeting)}
             >
               <ChatBubbleLeftRightIcon className="size-6 text-neutral-200" />
-            </Button>
-
-            <Button
-              variant="outline"
-              size="icon"
-              className="m-2 h-10 w-16 bg-gradient-to-r from-[#C3407F] to-[#7C405D] transition ease-out hover:brightness-90"
-              onClick={handleExport}
-            >
-              <ArrowUpOnSquareIcon className="size-6 text-neutral-200" />
             </Button>
           </div>
           {/* Character details dropdowns */}
