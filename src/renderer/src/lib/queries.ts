@@ -79,7 +79,7 @@ async function getAllChatSearchItems(): Promise<ChatSearchItem[]> {
 FROM
     chats c
         JOIN
-    cards as ca ON ca.id = c.id
+    cards as ca ON ca.id = c.card_id
 ORDER BY c.id DESC`;
 
   const rows = (await window.api.sqlite.all(query)) as QueryResult[];

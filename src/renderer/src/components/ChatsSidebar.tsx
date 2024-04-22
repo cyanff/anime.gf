@@ -54,19 +54,19 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
         transition={{ duration: 0.2 }}
         variants={sidebarVariants}
       >
-        <div className="flex h-full w-80 flex-col overflow-hidden rounded-2xl bg-background">
+        <div className="flex h-full w-80 flex-col overflow-hidden rounded-3xl bg-background">
           {/*Top Section */}
           <div className="flex grow flex-col px-2 py-3">
             {/* Search Bar */}
             <div
-              className="mb-2 flex w-full cursor-pointer items-center space-x-2 overflow-hidden rounded-lg bg-neutral-700 p-1"
+              className="mb-2 flex w-full cursor-pointer items-center space-x-2 overflow-hidden rounded-2xl bg-neutral-950 p-1"
               onClick={() => {
                 createModal(<ChatsSearchModal />);
               }}
             >
               <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-neutral-400" />
               <input
-                className="h-11 w-full grow cursor-pointer select-none bg-neutral-700 text-gray-100 caret-transparent placeholder:font-[480] placeholder:tracking-wide focus:outline-none"
+                className="h-11 w-full grow cursor-pointer select-none bg-inherit text-gray-100 caret-transparent placeholder:font-[480] placeholder:tracking-wide focus:outline-none"
                 placeholder="Search for a chat"
               ></input>
             </div>
