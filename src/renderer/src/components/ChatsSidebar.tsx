@@ -56,22 +56,26 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
       >
         <div className="flex h-full w-80 flex-col overflow-hidden rounded-3xl bg-background">
           {/*Top Section */}
-          <div className="flex grow flex-col px-2 py-3">
-            {/* Search Bar */}
-            <div
-              className="mb-2 flex w-full cursor-pointer items-center space-x-2 overflow-hidden rounded-2xl bg-neutral-950 p-1"
-              onClick={() => {
-                createModal(<ChatsSearchModal />);
-              }}
-            >
-              <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-neutral-400" />
-              <input
-                className="h-11 w-full grow cursor-pointer select-none bg-inherit text-gray-100 caret-transparent placeholder:font-[480] placeholder:tracking-wide focus:outline-none"
-                placeholder="Search for a chat"
-              ></input>
+          <div className="flex grow flex-col py-3">
+            {/* Search Bar Wrapper*/}
+            <div className="mb-2 w-full px-2">
+              {/* Search Bar */}
+              <div
+                className="mb-2 flex w-full cursor-pointer items-center space-x-2 overflow-hidden rounded-2xl bg-neutral-950 p-1"
+                onClick={() => {
+                  createModal(<ChatsSearchModal />);
+                }}
+              >
+                <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-neutral-400" />
+                <input
+                  className="h-11 w-full grow cursor-pointer select-none bg-inherit text-gray-100 caret-transparent placeholder:font-[480] placeholder:tracking-wide focus:outline-none"
+                  placeholder="Search for a chat"
+                ></input>
+              </div>
             </div>
 
-            <div className="scroll-secondary my-4 flex h-full max-h-full grow flex-col space-y-1 overflow-auto">
+            {/* Recent Chats */}
+            <div className="scroll-secondary flex h-96 grow flex-col space-y-1.5 overflow-auto px-2">
               {recentChats?.map((chat, idx) => {
                 return (
                   <RecentChat
