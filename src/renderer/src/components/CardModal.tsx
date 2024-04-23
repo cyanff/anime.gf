@@ -1,17 +1,22 @@
 import Dropdown from "@/components/Dropdown";
 import { Button } from "@/components/ui/button";
-import { ArrowUpOnSquareIcon, ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid";
+import { ArrowUpOnSquareIcon, ChatBubbleLeftRightIcon, PencilIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import { queries } from "../lib/queries";
 import { toast } from "sonner";
 import Tag from "@/components/Tag";
 import { time } from "@/lib/time";
-interface Props {
+import EditCardModal from "@/components/EditCardModal";
+import { useApp } from "@/components/AppContext";
+interface CardModalProps {
   cardBundle: CardBundle;
+  syncCardBundles: () => void;
   onCreateChat: (cardID: number, greeting: string) => void;
 }
 
-function CardModal({ cardBundle, onCreateChat }: Props) {
+function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps) {
+  const { createModal, closeModal } = useApp();
+
   const handleExport = async () => {
     const cardDirRes = await queries.getCardDir(cardBundle.id);
 
@@ -28,6 +33,11 @@ function CardModal({ cardBundle, onCreateChat }: Props) {
       return;
     }
     toast.success("Card successfully exported to zip!");
+  };
+
+  const handleEdit = () => {
+    closeModal();
+    createModal(<EditCardModal cardBundle={cardBundle} syncCardBundles={syncCardBundles} />);
   };
 
   return (
@@ -68,6 +78,10 @@ function CardModal({ cardBundle, onCreateChat }: Props) {
             </div>
           </div>
           <div className="mt-6 flex justify-end space-x-4 border-b border-t border-neutral-700">
+            <Button variant="outline" className="group m-2 h-10 w-16 border-none bg-transparent" onClick={handleEdit}>
+              <PencilIcon className="size-6 text-neutral-400 transition duration-200 ease-out group-hover:text-neutral-200" />
+            </Button>
+
             <Button variant="outline" className="group m-2 h-10 w-16 border-none bg-transparent" onClick={handleExport}>
               <ArrowUpOnSquareIcon className="size-6 text-neutral-400 transition duration-200 ease-out group-hover:text-neutral-200" />
             </Button>

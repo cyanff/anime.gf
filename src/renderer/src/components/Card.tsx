@@ -1,3 +1,5 @@
+import { DialogConfig, useApp } from "@/components/AppContext";
+import EditCardModal from "@/components/EditCardModal";
 import Tag from "@/components/Tag";
 import {
   ContextMenu,
@@ -6,16 +8,11 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
+import { queries } from "@/lib/queries";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { CardBundle, CardFormData } from "@shared/types";
+import { CardBundle } from "@shared/types";
 import { motion, useMotionValue } from "framer-motion";
 import { CardPattern } from "./ui/card-pattern";
-import { DeepPartial } from "react-hook-form";
-import { DialogConfig, useApp } from "@/components/AppContext";
-import { queries } from "@/lib/queries";
-import CharacterForm from "@/components/CharacterForm";
-import { cardFormDataToCardData } from "@/lib/utils";
-import { toast } from "sonner";
 interface CardProps {
   cardBundle: CardBundle;
   syncCardBundles: () => void;
@@ -23,7 +20,7 @@ interface CardProps {
 }
 
 function Card({ cardBundle, syncCardBundles, openCardModal }: CardProps) {
-  const { createModal, closeModal, createDialog } = useApp();
+  const { createModal, createDialog } = useApp();
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 
@@ -33,31 +30,7 @@ function Card({ cardBundle, syncCardBundles, openCardModal }: CardProps) {
     mouseY.set(clientY - top);
   }
 
-  const onEdit = () => {
-    const successfulSubmitHandler = async (data: CardFormData) => {
-      const cardData = cardFormDataToCardData(data);
-
-      const res = await window.api.blob.cards.update(
-        cardBundle.id,
-        cardData,
-        data.character.bannerURI ?? null,
-        data.character.avatarURI ?? null
-      );
-      syncCardBundles();
-      if (res.kind === "err") {
-        toast.error("Error updating card.");
-        console.error("An error occurred while running the update function:", res.error);
-        return;
-      }
-      closeModal();
-    };
-
-    createModal(
-      <div className="h-[80vh] w-[36rem] overflow-hidden rounded-xl">
-        <CharacterForm cardBundle={cardBundle} formType="edit" onSuccessfulSubmit={successfulSubmitHandler} />
-      </div>
-    );
-  };
+  const handleEdit = () => {};
 
   const onDelete = () => {
     const config: DialogConfig = {
@@ -123,7 +96,11 @@ function Card({ cardBundle, syncCardBundles, openCardModal }: CardProps) {
         </motion.button>
       </ContextMenuTrigger>
       <ContextMenuContent className="w-40 px-1 py-2">
-        <ContextMenuItem onSelect={onEdit}>
+        <ContextMenuItem
+          onSelect={() => {
+            createModal(<EditCardModal cardBundle={cardBundle} syncCardBundles={syncCardBundles} />);
+          }}
+        >
           Edit
           <ContextMenuShortcut>
             <PencilIcon className="size-4" />
