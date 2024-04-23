@@ -23,25 +23,19 @@ export default function SideBar({ page, setPage }: SideBarProps) {
       {/* Top Button Group*/}
       <div className="flex flex-col">
         <Button
-          variant="outline"
           size="icon"
           className={`m-2 size-16 rounded-xl ${page === "create" ? "bg-background" : ""}`}
           onClick={() => setPage("create")}
         >
           <PlusCircleIcon className="size-8 text-secondary" />
         </Button>
-        <Button variant="outline" size="icon" className="m-2 h-16 w-16 rounded-xl" onClick={() => setPage("chats")}>
+        <Button size="icon" className="m-2 h-16 w-16 rounded-xl " onClick={() => setPage("chats")}>
           <ChatBubbleLeftRightIcon className="size-8 text-secondary" />
         </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="m-2 h-16 w-16 rounded-xl"
-          onClick={() => setPage("collections")}
-        >
+        <Button size="icon" className="m-2 h-16 w-16 rounded-xl" onClick={() => setPage("collections")}>
           <UserGroupIcon className="size-8 text-secondary" />
         </Button>
-        <Button variant="outline" size="icon" className="m-2 h-16 w-16 rounded-xl" onClick={() => setPage("settings")}>
+        <Button size="icon" className="m-2 h-16 w-16 rounded-xl" onClick={() => setPage("settings")}>
           <Cog8ToothIcon className="size-8 text-secondary" />
         </Button>
       </div>
@@ -52,7 +46,6 @@ export default function SideBar({ page, setPage }: SideBarProps) {
       {/* Bottom Button Group*/}
       <div className="flex flex-col space-y-2">
         <Button
-          variant="outline"
           size="icon"
           className="mx-2 size-12 rounded-xl"
           onClick={() => {
@@ -63,7 +56,6 @@ export default function SideBar({ page, setPage }: SideBarProps) {
           <DiscordIcon className="fill-secondary" />
         </Button>
         <Button
-          variant="outline"
           size="icon"
           className="mx-2 size-12 rounded-xl"
           onClick={() => {
