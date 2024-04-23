@@ -47,6 +47,10 @@ module.exports = {
           DEFAULT: "var(--secondary)",
           foreground: "var(--secondary-foreground)"
         },
+        action: {
+          primary: "var(--action-primary)",
+          secondary: "var(--action-secondary)"
+        },
         destructive: {
           DEFAULT: "var(--destructive)",
           foreground: "var(--destructive-foreground)"

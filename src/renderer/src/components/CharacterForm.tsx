@@ -83,17 +83,17 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
   };
 
   return (
-    <div className="scroll-secondary flex h-full w-full flex-col overflow-auto">
+    <div className="scroll-secondary bg-background-secondary flex h-full w-full flex-col overflow-auto">
       {/* Banner and profile picture */}
       <div className="relative mb-12 shrink-0">
         <div
-          className="flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden bg-gradient-to-br from-neutral-700 to-neutral-500"
+          className="bg-grad-character flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden opacity-50"
           onClick={handleBannerClick}
         >
           {bannerDisplayImage ? (
             <img src={bannerDisplayImage ?? ""} alt="Profile" className="" />
           ) : (
-            <PencilSquareIcon className="absolute h-12 w-12 text-neutral-400" />
+            <PencilSquareIcon className="absolute h-12 w-12 text-primary" />
           )}
           <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-10"></div>
           <input
@@ -108,13 +108,13 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
           />
         </div>
         <div
-          className="absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-neutral-700 to-neutral-600"
+          className="bg-grad-character absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full"
           onClick={handleProfileClick}
         >
           {avatarDisplayImage ? (
             <img src={avatarDisplayImage} alt="Profile" className="" />
           ) : (
-            <PencilSquareIcon className="absolute h-8 w-8 text-neutral-300" />
+            <PencilSquareIcon className="absolute h-8 w-8 text-primary" />
           )}
           <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-10"></div>
           <input
@@ -140,9 +140,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="character.name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Character Name</FormLabel>
+                    <FormLabel className="text-primary">Character Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="What should your character be named?" className="rounded-xl" {...field} />
+                      <Input placeholder="What should your character be named?" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -153,9 +153,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="character.description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Character Description</FormLabel>
+                    <FormLabel className="text-primary">Character Description</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="add character description" className="rounded-xl" {...field} />
+                      <InputArea placeholder="add character description" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -166,9 +166,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="character.greeting"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Character Greeting</FormLabel>
+                    <FormLabel className="text-primary">Character Greeting</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="add character greeting" className="rounded-xl" {...field} />
+                      <InputArea placeholder="add character greeting" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -179,9 +179,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="character.msg_examples"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Message Examples</FormLabel>
+                    <FormLabel className="text-primary">Message Examples</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="add message examples" className="rounded-xl" {...field} />
+                      <InputArea placeholder="add message examples" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -192,9 +192,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="world.description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>World Description</FormLabel>
+                    <FormLabel className="text-primary">World Description</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="add world description" className="rounded-xl" {...field} />
+                      <InputArea placeholder="add world description" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -205,9 +205,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="meta.title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel className="text-primary">Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="add title" className="rounded-xl" {...field} />
+                      <Input placeholder="add title" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -219,11 +219,10 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="meta.tagline"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tagline</FormLabel>
+                    <FormLabel className="text-primary">Tagline</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="a brief description of how you would describe the card to others."
-                        className="rounded-xl"
                         {...field}
                       />
                     </FormControl>
@@ -237,9 +236,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="meta.tags"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tags</FormLabel>
+                    <FormLabel className="text-primary">Tags</FormLabel>
                     <FormControl>
-                      <Input placeholder="add comma separated list of tags" className="rounded-xl" {...field} />
+                      <Input placeholder="add comma separated list of tags" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -251,9 +250,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="meta.notes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Notes</FormLabel>
+                    <FormLabel className="text-primary">Notes</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="optional creator notes to users of your card" className="rounded-xl" {...field} />
+                      <InputArea placeholder="optional creator notes to users of your card" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -262,7 +261,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
               <div className="flex justify-end space-x-3">
                 {formType === "edit" && (
                   <button
-                    className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
+                    className="flex items-center space-x-2 rounded-xl bg-card bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
                     type="button"
                     onClick={() => {
                       form.reset(initialData);
@@ -270,16 +269,16 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                       setAvatarDisplayImage(initialData?.character?.avatarURI ?? "");
                     }}
                   >
-                    <span className="font-medium text-neutral-200">Reset</span>
+                    <span className="font-medium text-primary">Reset</span>
                   </button>
                 )}
 
                 <button
-                  className="flex items-center space-x-2 rounded-xl bg-grad-magenta px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
+                  className="flex items-center space-x-2 rounded-xl bg-action-primary px-4 py-2 transition-colors duration-200 hover:bg-action-secondary"
                   type="submit"
                 >
-                  <UserPlusIcon className="size-5" />
-                  <span className="font-medium text-neutral-200">{formType === "create" ? "Create" : "Save"}</span>
+                  <UserPlusIcon className="size-5 text-primary" />
+                  <span className="font-medium text-primary">{formType === "create" ? "Create" : "Save"}</span>
                 </button>
               </div>
             </form>

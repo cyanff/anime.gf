@@ -8,8 +8,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ className, type, ...pr
     <input
       type={type}
       className={cn(
-        `flex h-12 w-full select-text rounded-md border
-        border-input border-neutral-600 bg-neutral-700  px-2.5 py-1 text-sm shadow-sm
+        `flex h-12 w-full select-text rounded-xl border border-secondary
+        bg-background px-2.5  py-1 text-sm text-secondary shadow-sm
         transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium
         placeholder:font-[450] placeholder:text-muted-foreground focus:outline-none
         focus-visible:outline-none disabled:cursor-not-allowed
