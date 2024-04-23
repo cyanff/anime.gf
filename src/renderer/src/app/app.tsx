@@ -121,7 +121,7 @@ export default function App() {
   return (
     <AppContext.Provider value={{ createDialog, createModal, closeModal, setChatID }}>
       <div
-        className="flex h-screen bg-neutral-800 text-sm text-neutral-100 antialiased lg:text-base"
+        className="flex h-screen bg-background-secondary text-sm text-neutral-100 antialiased lg:text-base"
         onDrop={handleDrop}
         onDragOver={(e) => {
           e.preventDefault();

@@ -25,8 +25,8 @@ module.exports = {
       },
       backgroundImage: {
         none: "none",
-        "grad-user": "linear-gradient(45deg, var(--grad-user-primary), var(--grad-user-secondary))",
         "grad-logo": "linear-gradient(112.84deg, var(--grad-logo-primary), var(--grad-logo-secondary))",
+        "grad-user": "linear-gradient(45deg, var(--grad-user-primary), var(--grad-user-secondary))",
         "grad-character": "linear-gradient(45deg, var(--grad-character-primary), var(--grad-character-secondary))"
       },
 
@@ -36,7 +36,7 @@ module.exports = {
         ring: "var(--ring)",
         background: {
           DEFAULT: "var(--background)",
-          secondary: "var(--background-secondary)",
+          secondary: "var(--background-secondary)"
         },
         foreground: "var(--foreground)",
         primary: {

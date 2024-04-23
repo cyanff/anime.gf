@@ -11,7 +11,6 @@ import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { toast } from "sonner";
 import "../styles/global.css";
 import { motion } from "framer-motion";
-import { useTheme } from "@/components/theme-provider";
 
 enum ScrollEvent {
   SCROLLED_TO_TOP,
@@ -37,11 +36,7 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
   const oldScrollHeightRef = useRef(0);
   const scrollEventRef = useRef<ScrollEvent | null>(null);
   const [isPageLoading, setIsPageLoading] = useState(true);
-  const { setTheme } = useTheme();
 
-  useEffect(() => {
-    setTheme("dark");
-  }, []);
   // Sync states with db on load
   useEffect(() => {
     (async () => {
