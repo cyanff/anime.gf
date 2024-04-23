@@ -41,7 +41,7 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
   };
 
   return (
-    <div className="flex w-[45rem] items-center justify-center rounded-xl bg-background">
+    <div className="bg-background-secondary flex w-[45rem] items-center justify-center rounded-xl">
       <div className="scroll-secondary h-[60rem] overflow-y-scroll rounded-xl">
         {/* Banner and profile picture */}
         <div className="relative rounded-xl">
@@ -80,7 +80,11 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
           <div className="item-center mb-10 mt-14 flex justify-between border-neutral-700">
             {/* Left Button Group */}
             <div className="flex flex-row">
-              <Button variant="outline" className="group h-12 w-14 rounded-xl border-none bg-transparent p-0" onClick={handleEdit}>
+              <Button
+                variant="outline"
+                className="group h-12 w-14 rounded-xl border-none bg-transparent p-0"
+                onClick={handleEdit}
+              >
                 <PencilIcon className="size-6 text-neutral-400 transition duration-200 ease-out group-hover:text-neutral-200" />
               </Button>
 

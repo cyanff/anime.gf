@@ -20,9 +20,11 @@ export default function Tag({ text, className, isClickable = true }: TagProps) {
         toast.success("Copied to clipboard");
       }}
       className={cn(
-        `text-shadow inline-block h-fit min-w-8 ${isClickable ? "cursor-pointer hover:brightness-90" : ""} select-none whitespace-nowrap rounded-full bg-gradient-to-br from-neutral-600
-    to-neutral-700 px-2.5 py-1.5 text-center text-xs font-[550] text-neutral-200
-    shadow transition duration-200 ease-out`,
+        `text-shadow inline-block h-fit min-w-8 ${isClickable ? "cursor-pointer hover:brightness-90" : ""} 
+           select-none whitespace-nowrap rounded-full
+        bg-secondary px-2.5 py-1.5 text-center
+        text-xs font-[550] text-secondary shadow-md  transition
+        duration-200 ease-out`,
         className
       )}
     >

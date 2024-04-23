@@ -124,9 +124,9 @@ export default function CollectionsPage({ setPage, setChatID, cardBundles, syncC
       <div className="flex flex-row space-x-4 py-2 pb-8">
         {/* Search Bar*/}
         <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-xl bg-background p-2">
-          <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-neutral-400" />
+          <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-primary" />
           <input
-            className="h-9 w-full grow bg-background text-gray-100 caret-white focus:outline-none "
+            className="h-9 w-full grow bg-background text-primary focus:outline-none "
             placeholder="Search for a chat"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -135,11 +135,11 @@ export default function CollectionsPage({ setPage, setChatID, cardBundles, syncC
         {/* Sort By Selection*/}
         <div className="flex">
           <Select onValueChange={(v) => setSortBy(v)} value={sortBy}>
-            <SelectTrigger className="h-12 space-x-2 rounded-xl bg-neutral-700 text-neutral-200">
+            <SelectTrigger className="h-12 select-none space-x-2 rounded-xl bg-background font-medium text-primary">
               <Bars3BottomLeftIcon height="24px" />
               <SelectValue placeholder={sortBy === "" ? "Select a filter" : sortBy} />
             </SelectTrigger>
-            <SelectContent className="bg-neutral-700">
+            <SelectContent className="bg-background">
               {sortByNameAndValue.map((nameAndValue, idx) => (
                 <SelectItem key={idx} value={nameAndValue.value}>
                   {nameAndValue.name}
@@ -156,7 +156,7 @@ export default function CollectionsPage({ setPage, setChatID, cardBundles, syncC
             }}
           >
             <ArrowUpIcon
-              className={`${descending ? "rotate-180" : "rotate-0"} text-neutral-125 duration-125 size-5 fill-neutral-400 transition ease-out `}
+              className={`${descending ? "rotate-180" : "rotate-0"} text-neutral-125 duration-125 size-5 text-secondary transition ease-out `}
             />
           </button>
         </div>

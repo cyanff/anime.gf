@@ -25,7 +25,7 @@ export default function Combobox({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className="flex h-12 w-full items-center justify-between rounded-md bg-neutral-700 px-3 py-2">
+        <button className="bg-action-secondary flex h-12 w-full items-center justify-between rounded-md px-3 py-2">
           <p className="line-clamp-1 text-ellipsis">
             {value ? items.find((item) => item.value === value)?.name : placeholder}
           </p>

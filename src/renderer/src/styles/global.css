@@ -13,6 +13,8 @@
 
 :root {
   --font-inter: "Inter", sans-serif;
+  --radius: 0.8rem;
+  font-weight: 480;
 }
 
 
