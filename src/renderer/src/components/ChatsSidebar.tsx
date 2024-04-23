@@ -26,7 +26,6 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { createModal, createDialog } = useApp();
 
-
   useEffect(() => {
     syncRecentChats();
   }, []);
@@ -108,9 +107,6 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
                       };
                       createDialog(config);
                     }}
-                    cloneChat={() => {
-                      // TODO clone chat with the given id
-                    }}
                     id={chat.chat_id.toString()}
                     avatarURI={chat.avatarURI || ""}
                     name={chat.name}
@@ -157,7 +153,6 @@ interface RecentChatProps {
   active: boolean;
   deleteChat: () => void;
   resetChat: () => void;
-  cloneChat: () => void;
   className?: string;
   [x: string]: any;
 }
@@ -170,7 +165,6 @@ function RecentChat({
   active,
   deleteChat,
   resetChat,
-  cloneChat,
   className,
   ...rest
 }: RecentChatProps) {
@@ -206,12 +200,6 @@ function RecentChat({
           Reset
           <ContextMenuShortcut>
             <ArrowPathIcon className="size-4" />
-          </ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuItem disabled>
-          Clone
-          <ContextMenuShortcut>
-            <DocumentDuplicateIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
       </ContextMenuContent>

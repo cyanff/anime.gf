@@ -22,7 +22,6 @@ export default function CollectionsPage({ setPage, setChatID, cardBundles, syncC
   const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);
   const [sortBy, setSortBy] = useState<string>("alphabetical");
   const [descending, setDescending] = useState<boolean>(true);
-
   // TODO, edit card bundle type to also include all data from the card table
   // then add sort by "imported" which is the inserted_at column in the db
   const sortByNameAndValue = [
@@ -178,7 +177,13 @@ export default function CollectionsPage({ setPage, setChatID, cardBundles, syncC
               cardBundle={cardBundle}
               syncCardBundles={syncCardBundles}
               openCardModal={() => {
-                createModal(<CardModal cardBundle={cardBundle} onCreateChat={createChatHandler} />);
+                createModal(
+                  <CardModal
+                    cardBundle={cardBundle}
+                    onCreateChat={createChatHandler}
+                    syncCardBundles={syncCardBundles}
+                  />
+                );
               }}
             />
           );

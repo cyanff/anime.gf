@@ -7,32 +7,13 @@ interface DropdownProps {
   variant?: "sm" | "md";
 }
 
-export default function Dropdown({ label, content, variant = "md" }: DropdownProps) {
+export default function Dropdown({ label, content }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-
-  if (variant === "sm") {
-    return (
-      <div className="mb-2">
-        <button
-          className="duration-125 flex w-full items-center justify-between rounded-t-lg bg-neutral-700 px-3 py-2.5 text-left text-sm font-medium text-gray-200 transition ease-out hover:brightness-95"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <span className="text-xs font-medium">{label}</span>
-          <ChevronDownIcon className={`size-5  transition ease-out ${isOpen ? "rotate-180 transform" : ""}`} />
-        </button>
-        <div
-          className={`overflow-hidden rounded-b-lg bg-[#212121] transition-all duration-300 ease-in-out ${isOpen ? "max-h-96" : "max-h-0"}`}
-        >
-          <div className="px-4 pb-2 pt-4 text-sm text-gray-100">{content}</div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="mb-2">
       <button
-        className="duration-125 flex w-full items-center justify-between rounded-t-lg bg-neutral-700 px-4 py-2.5 text-left text-sm font-medium text-gray-200 transition ease-out hover:brightness-95"
+        className={`flex w-full items-center justify-between  rounded-t-lg bg-neutral-700 px-4 py-2.5 text-left text-sm font-medium text-gray-200 transition duration-200 ease-out hover:brightness-95`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="font-medium">{label}</span>
@@ -42,9 +23,9 @@ export default function Dropdown({ label, content, variant = "md" }: DropdownPro
         />
       </button>
       <div
-        className={`overflow-hidden  rounded-b-lg bg-[#212121] transition-all duration-300 ease-in-out ${isOpen ? "max-h-96" : "max-h-0"}`}
+        className={`overflow-hidden  rounded-b-lg bg-neutral-800 transition-all duration-300 ease-in-out ${isOpen ? "max-h-96" : "max-h-0"}`}
       >
-        <div className="px-4 pb-2 pt-4 text-sm text-gray-200">{content}</div>
+        <div className="px-4 pb-2 pt-4 text-sm text-primary">{content}</div>
       </div>
     </div>
   );
