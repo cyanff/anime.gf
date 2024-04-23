@@ -2,6 +2,7 @@ import { ProviderE } from "@/lib/provider/provider";
 import { config } from "@shared/config";
 import { Message, Persona } from "@shared/db_types";
 import { z } from "zod";
+// TODO: refactor data types to be more consistent
 
 // Card
 // =====================================
@@ -55,13 +56,6 @@ export interface CardBundleWithoutID {
 
 // Persona
 // =====================================
-/* Todo refactor this
-  PersonaData should be
-  {
-    name: string;
-    description: string;
-  }
-*/
 export interface PersonaData extends Persona {}
 
 // Contents of the persona's directory
@@ -141,9 +135,9 @@ const cardMetaSchema = z.object({
   // TODO: this should be z.array(z.string()) instead, this is hacky
   tags: z
     .string()
-    .min(3)
+    .min(1)
     .max(256)
-    .regex(/^(\w+)(,\s*\w+)*$/, "Tags must be a comma-separated list of words.")
+    .regex(/^(\w+)(,\s*\w+)*$/, "Tags must be a comma separated list of words without spaces.")
 });
 
 export const cardFormSchema = z.object({

@@ -5,7 +5,6 @@
   Users can copy, edit, regenerate, and rewind messages. 
   Users can only use "regenerate" on the latest message sent by a character.
   Users can only use "rewind" on any message that is not the latest message.
-
 */
 
 import {
@@ -43,6 +42,7 @@ import { useEffect, useRef, useState } from "react";
 import Markdown, { Components } from "react-markdown";
 import { toast } from "sonner";
 import Tag from "@/components/Tag";
+import { time } from "@/lib/time";
 
 interface MessageProps {
   className?: string;
@@ -308,7 +308,7 @@ function MessagePopoverContentProps({ sender, personaBundle, cardBundle }: Messa
               <div className="pb-1.5 text-xl font-semibold">{personaBundle.data.name}</div>
             </div>
           </div>
-          {/* Character details dropdowns */}
+          {/* User details dropdowns */}
           <div className="-mx-2 mt-3 flex flex-col rounded-lg bg-neutral-900 p-3">
             <h3 className="mb-1 text-lg font-semibold">About</h3>
             <div className="mb-2 h-[1.3px] w-full bg-neutral-700 brightness-75"></div>
@@ -329,7 +329,7 @@ function MessagePopoverContentProps({ sender, personaBundle, cardBundle }: Messa
             <div className="pr-10">
               <div className="pb-1.5 text-xl font-semibold">{cardBundle.data.character.name}</div>
               <div className="whitespace-nowrap text-xs  text-neutral-400 ">
-                <p className="font-medium">{`Created: ${cardBundle.data.meta.created_at}`}</p>
+                <p className="font-medium">{`Created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
                 {cardBundle.data.meta.updated_at && (
                   <p className="font-medium">{`Updated: ${cardBundle.data.meta.updated_at}`}</p>
                 )}

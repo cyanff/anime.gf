@@ -3,33 +3,45 @@ import { Input } from "@/components/ui/input";
 import { InputArea } from "@/components/ui/input-area";
 import { PencilSquareIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CardFormData, cardFormSchema } from "@shared/types";
-import { useRef, useState } from "react";
+import { CardBundle, CardFormData, cardFormSchema } from "@shared/types";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { DeepPartial, useForm } from "react-hook-form";
 
 type FormType = "create" | "edit";
 
 interface CharacterFormProps {
-  initialData?: DeepPartial<CardFormData>;
-  initialAvatarDisplayImage?: string;
-  initialBannerDisplayImage?: string;
+  cardBundle?: CardBundle;
   onSuccessfulSubmit(data: CardFormData): void;
   formType: FormType;
 }
 
-export default function CharacterForm({
-  initialData,
-  initialAvatarDisplayImage,
-  initialBannerDisplayImage,
-  onSuccessfulSubmit,
-  formType
-}: CharacterFormProps) {
-  const [bannerDisplayImage, setBannerDisplayImage] = useState<string | undefined>(initialBannerDisplayImage);
-  const [avatarDisplayImage, setAvatarDisplayImage] = useState<string | undefined>(initialAvatarDisplayImage);
+export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType }: CharacterFormProps) {
+  const [bannerDisplayImage, setBannerDisplayImage] = useState<string | undefined>();
+  const [avatarDisplayImage, setAvatarDisplayImage] = useState<string | undefined>();
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
-  const form = useForm<CardFormData>({ resolver: zodResolver(cardFormSchema), defaultValues: initialData });
+  const form = useForm<CardFormData>({ resolver: zodResolver(cardFormSchema) });
+
+  const initialData: DeepPartial<CardFormData> = useMemo(
+    () => ({
+      character: cardBundle?.data.character,
+      world: cardBundle?.data.world,
+      meta: {
+        title: cardBundle?.data.meta.title,
+        notes: cardBundle?.data.meta.notes,
+        tagline: cardBundle?.data.meta.tagline,
+        tags: cardBundle?.data.meta.tags.join(",")
+      }
+    }),
+    [cardBundle]
+  );
+
+  useEffect(() => {
+    setBannerDisplayImage(cardBundle?.bannerURI);
+    setAvatarDisplayImage(cardBundle?.avatarURI);
+    form.reset(initialData);
+  }, [cardBundle]);
 
   const onSubmit = (data: CardFormData) => {
     console.log(data);

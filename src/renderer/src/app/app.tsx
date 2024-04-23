@@ -80,6 +80,7 @@ export default function App() {
     e.preventDefault();
     e.stopPropagation();
     const numFiles = e.dataTransfer.files.length;
+    if (numFiles === 0) return;
 
     if (numFiles > 1) {
       toast.info(`Importing ${numFiles} cards all at once.`);

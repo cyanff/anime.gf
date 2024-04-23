@@ -5,6 +5,7 @@ import { CardBundle } from "@shared/types";
 import { queries } from "../lib/queries";
 import { toast } from "sonner";
 import Tag from "@/components/Tag";
+import { time } from "@/lib/time";
 interface Props {
   cardBundle: CardBundle;
   onCreateChat: (cardID: number, greeting: string) => void;
@@ -53,7 +54,7 @@ function CardModal({ cardBundle, onCreateChat }: Props) {
             <div className="w-[30rem] pr-10">
               <div className="pb-2 text-2xl font-semibold">{cardBundle.data.character.name}</div>
               <div className="pb-8 text-sm text-neutral-400">
-                <p>{`Created: ${cardBundle.data.meta.created_at}`}</p>
+                <p>{`Created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
                 {cardBundle.data.meta.updated_at && <p>{`Updated: ${cardBundle.data.meta.updated_at}`}</p>}{" "}
               </div>
               <div className="text-sm text-neutral-400 ">created by @{cardBundle.data.meta.creator.card}</div>

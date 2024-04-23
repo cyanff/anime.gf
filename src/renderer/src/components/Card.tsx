@@ -52,25 +52,9 @@ function Card({ cardBundle, syncCardBundles, openCardModal }: CardProps) {
       closeModal();
     };
 
-    const initialData: DeepPartial<CardFormData> = {
-      character: cardBundle.data.character,
-      world: cardBundle.data.world,
-      meta: {
-        title: cardBundle.data.meta.title,
-        notes: cardBundle.data.meta.notes,
-        tagline: cardBundle.data.meta.tagline,
-        tags: cardBundle.data.meta.tags.join(",")
-      }
-    };
     createModal(
       <div className="h-[80vh] w-[36rem] overflow-hidden rounded-xl">
-        <CharacterForm
-          initialAvatarDisplayImage={cardBundle.avatarURI}
-          initialBannerDisplayImage={cardBundle.bannerURI}
-          initialData={initialData}
-          formType="edit"
-          onSuccessfulSubmit={successfulSubmitHandler}
-        />
+        <CharacterForm cardBundle={cardBundle} formType="edit" onSuccessfulSubmit={successfulSubmitHandler} />
       </div>
     );
   };
