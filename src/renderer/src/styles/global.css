@@ -35,11 +35,11 @@
     --primary: hsl(0, 0%, 98%);
     --secondary: hsl(0, 0%, 63.9%);
 
+    --action-primary: hsl(0, 0%, 14.9%);
+    --aciton-secondary: hsla(0, 0%, 15%, 0.422);
+
     /* hover color */
     --accent: hsl(0, 0%, 14.9%);
-
-    /* button border color */
-    --input: hsl(0, 0%, 13.9%);
   }
 
   .sakura-white {
@@ -63,6 +63,9 @@
 
     --primary: hsl(330, 30%, 30%);
     --secondary: hsl(330, 20%, 50%);
+
+    --action-primary: hsl(341, 100%, 94%);
+    --action-secondary: hsla(329, 20%, 50%, 0.482);
 
     --accent: hsl(341, 100%, 94%);
 
@@ -91,6 +94,9 @@
     --primary: hsl(354, 50%, 20%);
     --secondary: hsl(354, 30%, 40%);
 
+    --action-primary: hsl(354, 40%, 95%);
+    --action-secondary: hsla(353, 30%, 40%, 0.474);
+
     --accent: hsl(354, 40%, 95%);
 
     --input: hsl(354, 40%, 93%);
@@ -118,6 +124,9 @@
     --primary: hsl(0, 0%, 98%);
     --secondary: hsl(0, 0%, 75%);
 
+    --action-primary: hsl(240, 28%, 10%);
+    --action-secondary: hsla(240, 29%, 10%, 0.459);
+
     --accent: hsl(240, 28%, 10%);
 
     --input: hsl(240, 28%, 12%);
@@ -144,6 +153,9 @@
 
     --primary: hsl(0, 0%, 100%);
     --secondary: hsl(230, 19%, 71%);
+
+    --action-primary: hsl(345, 70%, 48%);
+    --action-secondary: hsla(345, 70%, 48%, 0.515);
 
     --accent: hsl(345, 70%, 48%);
 
@@ -227,6 +239,9 @@
     --primary: hsl(0, 0%, 98%);
     --secondary: hsl(0, 0%, 63.9%);
 
+    --action-primary: hsl(0, 0%, 14.9%);
+    --action-secondary: hsla(0, 0%, 15%, 0.396);
+
     /* hover color */
     --accent: hsl(0, 0%, 14.9%);
 
@@ -249,6 +264,8 @@
     --border: hsl(0, 0%, 9%);
     --primary: hsl(0, 0%, 92%);
     --secondary: hsl(0, 0%, 60%);
+    --action-primary: hsl(0, 0%, 11%);
+    --action-secondary: hsla(0, 0%, 11%, 0.492);
     --accent: hsl(0, 0%, 11%);
     --input: hsl(0, 0%, 9%);
   }
@@ -268,6 +285,8 @@
     --border: hsl(0, 0%, 88%);
     --primary: hsl(0, 0%, 10%);
     --secondary: hsl(0, 0%, 40%);
+    --action-primary: hsl(0, 0%, 11%);
+    --action-secondary: hsla(0, 0%, 11%, 0.492);
     --accent: hsl(0, 0%, 85%);
     --input: hsl(0, 0%, 85%);
   }
@@ -287,6 +306,8 @@
     --border: hsl(0, 0%, 7%);
     --primary: hsl(0, 0%, 98%);
     --secondary: hsl(0, 0%, 80%);
+    --action-primary: hsl(0, 0%, 11%);
+    --action-secondary: hsla(0, 0%, 11%, 0.492);
     --accent: hsl(0, 0%, 10%);
     --input: hsl(0, 0%, 8%);
   }
@@ -306,6 +327,8 @@
     --border: hsl(200, 25%, 14%);
     --primary: hsl(200, 20%, 98%);
     --secondary: hsl(200, 20%, 64%);
+    --action-primary: hsl(200, 20%, 98%);
+    --action-secondary: hsl(200, 20%, 64%);
     --accent: hsl(200, 25%, 15%);
     --input: hsl(200, 25%, 14%);
   }
@@ -325,6 +348,8 @@
     --border: hsl(200, 25%, 10%);
     --primary: hsl(200, 20%, 92%);
     --secondary: hsl(200, 20%, 55%);
+    --action-primary: hsl(200, 20%, 98%);
+    --action-secondary: hsl(200, 20%, 64%);
     --accent: hsl(200, 25%, 10%);
     --input: hsl(200, 25%, 10%);
   }
@@ -344,6 +369,8 @@
     --border: hsl(200, 25%, 85%);
     --primary: hsl(200, 20%, 20%);
     --secondary: hsl(200, 20%, 45%);
+    --action-primary: hsl(200, 20%, 98%);
+    --action-secondary: hsl(200, 20%, 64%);
     --accent: hsl(200, 25%, 88%);
     --input: hsl(200, 25%, 85%);
   }
@@ -363,6 +390,8 @@
     --border: hsl(200, 30%, 12%);
     --primary: hsl(200, 30%, 100%);
     --secondary: hsl(200, 30%, 70%);
+    --action-primary: hsl(200, 20%, 98%);
+    --action-secondary: hsl(200, 20%, 64%);
     --accent: hsl(200, 30%, 11%);
     --input: hsl(200, 30%, 12%);
   }
