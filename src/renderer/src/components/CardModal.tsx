@@ -49,26 +49,26 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
             src={cardBundle.bannerURI || "default_banner.png"}
             alt="Banner"
             draggable="false"
-            className="h-48 w-full select-none rounded-t-xl bg-neutral-700 object-cover"
+            className="h-48 w-full select-none rounded-t-xl object-cover"
           />
           <img
             src={cardBundle.avatarURI || "default_avatar.png"}
             alt="Profile"
             draggable="false"
-            className="absolute -bottom-12 left-4 h-24 w-24 select-none rounded-full border-4 border-neutral-800 object-cover"
+            className="absolute -bottom-12 left-4 h-24 w-24 select-none rounded-full border-4 border-card object-cover"
           />
         </div>
         {/* Character details container */}
         <div className="px-6 pb-6 pt-12">
           <div className="flex flex-row">
             <div className="w-[30rem] pr-10">
-              <div className="pb-2 text-2xl font-semibold">{cardBundle.data.character.name}</div>
-              <p className="pb-1 text-sm font-semibold text-neutral-500">{`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
+              <div className="pb-2 text-2xl font-semibold text-primary">{cardBundle.data.character.name}</div>
+              <p className="pb-1 text-sm font-semibold text-secondary opacity-60">{`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
               {cardBundle.data.meta.updated_at && <p>{`Updated: ${cardBundle.data.meta.updated_at}`}</p>}{" "}
-              <p className="text-sm font-semibold text-neutral-500">by @{cardBundle.data.meta.creator.card}</p>
+              <p className="text-sm font-semibold text-secondary opacity-60">by @{cardBundle.data.meta.creator.card}</p>
             </div>
             {/* Character tags */}
-            <div className="mr-4 text-2xl font-semibold">Tags:</div>
+            <div className="mr-4 text-2xl font-semibold text-primary">Tags:</div>
             <div className="flex h-20 flex-wrap gap-1.5">
               {cardBundle.data.meta.tags.map((tag) => (
                 <Tag key={tag} text={tag} />
@@ -80,30 +80,21 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
           <div className="item-center mb-10 mt-14 flex justify-between border-neutral-700">
             {/* Left Button Group */}
             <div className="flex flex-row">
-              <Button
-                variant="outline"
-                className="group h-12 w-14 rounded-xl border-none bg-transparent p-0"
-                onClick={handleEdit}
-              >
+              <Button className="group h-12 w-14 rounded-xl border-none bg-transparent p-0" onClick={handleEdit}>
                 <PencilIcon className="size-6 text-neutral-400 transition duration-200 ease-out group-hover:text-neutral-200" />
               </Button>
 
-              <Button
-                variant="outline"
-                className="group h-12 w-14 rounded-xl border-none bg-transparent p-0"
-                onClick={handleExport}
-              >
+              <Button className="group h-12 w-14 rounded-xl border-none bg-transparent p-0" onClick={handleExport}>
                 <ArrowUpOnSquareIcon className="size-6 text-neutral-400 transition duration-200 ease-out group-hover:text-neutral-200" />
               </Button>
             </div>
 
             <Button
-              variant="outline"
               size="icon"
-              className="h-12 w-16 rounded-xl bg-gradient-to-r from-[#C3407F] to-[#7C405D] transition ease-out hover:brightness-90"
+              className="bg-action-primary h-12 w-16 rounded-xl transition ease-out hover:brightness-95"
               onClick={() => onCreateChat(cardBundle.id, cardBundle.data.character.greeting)}
             >
-              <ChatBubbleLeftRightIcon className="size-6 text-neutral-200" />
+              <ChatBubbleLeftRightIcon className="size-6 text-primary" />
             </Button>
           </div>
           {/* Character details dropdowns */}
