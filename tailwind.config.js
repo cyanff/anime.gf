@@ -65,7 +65,8 @@ module.exports = {
         },
         card: {
           DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)"
+          foreground: "var(--card-foreground)",
+          hover: "var(--card-hover)"
         }
       },
       borderRadius: {

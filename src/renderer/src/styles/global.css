@@ -2,7 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-var.ttf") format("truetype");
+}
+
+:root {
+  --font-inter: "Inter", sans-serif;
+}
+
+
+
 @layer base {
+
   /* ==================== You can edit these themes  ==================== */
   .custom {
     --background: hsl(0, 0%, 12%);
@@ -38,8 +54,9 @@
     /* hover color */
     --accent: hsl(0, 0%, 14.9%);
 
-    /* button border color */
+    /* input & text area*/
     --input: hsl(0, 0%, 13.9%);
+
   }
 
   .sakura-white {
@@ -74,6 +91,7 @@
     --background-secondary: hsl(354, 40%, 95%);
 
     --card: hsl(354, 15%, 90%);
+    --card-hover: hsl(354, 15%, 95%);
 
     --grad-user-primary: hsl(351, 70%, 80%);
     --grad-user-secondary: hsl(351, 50%, 70%);
@@ -202,6 +220,7 @@
 
     /* search bar and card color */
     --card: hsl(0, 0%, 25.1%);
+    --card-hover: hsl(0, 0%, 32.1%);
 
     /* user message color gradient */
     --grad-user-primary: hsl(331, 50%, 44%);
@@ -368,27 +387,14 @@
   }
 }
 
-@font-face {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("/fonts/inter-var.ttf") format("truetype");
-}
-
-:root {
-  --font-inter: "Inter", sans-serif;
-}
-
 .scroll-primary::-webkit-scrollbar {
   width: 8px; /* Thin width */
 }
 .scroll-primary::-webkit-scrollbar-track {
-  background: #212124;
   border-radius: 10px;
 }
 .scroll-primary::-webkit-scrollbar-thumb {
-  background: theme(colors.neutral.900);
+  background: var(--secondary);
   border-radius: 10px;
 }
 

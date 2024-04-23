@@ -6,31 +6,31 @@ import { KeyIcon } from "@heroicons/react/24/solid";
 
 export default function SettingsPage() {
   const [page, setPage] = useState<string>("chat");
-  // className="rounded-sm px-3 py-2 text-left text-[1.15rem] font-medium hover:bg-accent"
   return (
-    <div className="flex h-full w-full  bg-neutral-800 text-neutral-100">
+    <div className="flex h-full w-full text-neutral-100">
       {/*Sidebar*/}
       <div className="flex h-full w-56 shrink-0 flex-col space-y-2 overflow-hidden rounded-2xl bg-background px-3 py-8">
         <button
           className={`group flex w-full cursor-pointer items-center space-x-3 
-          rounded-md p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent
-          ${page === "chat" ? "bg-neutral-700 text-gray-200" : "text-gray-400"}`}
+          rounded-md p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent hover:opacity-80
+
+          ${page === "chat" ? "bg-accent text-primary" : "text-secondary"}`}
           onClick={() => setPage("chat")}
         >
           Chat
         </button>
         <button
           className={`group flex w-full cursor-pointer items-center space-x-3 
-          rounded-md p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent
-          ${page === "persona" ? "bg-neutral-700 text-gray-200" : "text-gray-400"}`}
+          rounded-md p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent hover:opacity-80
+          ${page === "persona" ? "bg-accent text-primary" : "text-secondary"}`}
           onClick={() => setPage("persona")}
         >
           Persona
         </button>
         <button
           className={`group flex w-full cursor-pointer items-center space-x-3 
-          rounded-md p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent
-          ${page === "key" ? "bg-neutral-700 text-gray-200" : "text-gray-400"}`}
+          rounded-md p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent hover:opacity-80
+          ${page === "key" ? "bg-accent text-primary" : "text-secondary"}`}
           onClick={() => setPage("key")}
         >
           Keys

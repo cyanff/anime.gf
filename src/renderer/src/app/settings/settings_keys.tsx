@@ -50,7 +50,7 @@ export default function SettingsKeys() {
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center space-y-5">
-      <h1 className="text-2xl font-bold tracking-wide">Keys Settings</h1>
+      <h1 className="text-2xl font-bold tracking-wide text-primary">Keys Settings</h1>
       <div className="flex h-[15rem] w-[26rem] flex-col space-y-8 rounded-2xl border border-neutral-700 bg-neutral-800 p-6">
         <div className="space-y-1 pr-8">
           <Label className="text-white">Provider</Label>

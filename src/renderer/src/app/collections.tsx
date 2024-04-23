@@ -120,13 +120,13 @@ export default function CollectionsPage({ setPage, setChatID, cardBundles, syncC
   }
 
   return (
-    <div className="scroll-primary  h-full w-full overflow-y-scroll bg-neutral-800 antialiased  lg:text-base">
+    <div className="scroll-primary  h-full w-full overflow-y-scroll antialiased  lg:text-base">
       <div className="flex flex-row space-x-4 py-2 pb-8">
         {/* Search Bar*/}
-        <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-xl bg-neutral-700 p-2">
+        <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-xl bg-background p-2">
           <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-neutral-400" />
           <input
-            className="h-9 w-full grow bg-neutral-700 text-gray-100 caret-white focus:outline-none "
+            className="h-9 w-full grow bg-background text-gray-100 caret-white focus:outline-none "
             placeholder="Search for a chat"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
