@@ -67,7 +67,7 @@ export default function ChatBar({
           }}
           value={userInput}
           placeholder={`Message @Saku`}
-          className="scroll-secondary h-6 max-h-64 w-full resize-none overflow-y-auto bg-inherit px-2 font-[430] leading-6 placeholder:select-none focus:outline-none"
+          className="scroll-secondary text-primary h-6 max-h-64 w-full resize-none overflow-y-auto bg-inherit px-2 font-[430] leading-6 placeholder:select-none focus:outline-none"
         />
         {/* Send button */}
         <button
@@ -78,7 +78,7 @@ export default function ChatBar({
           }}
           className="h-fit w-fit "
         >
-          <PaperAirplaneIcon className="size-7 fill-neutral-400  transition duration-150 ease-out hover:fill-neutral-200  " />
+          <PaperAirplaneIcon className="size-7 fill-secondary  transition duration-150 ease-out hover:fill-neutral-200  " />
         </button>
       </div>
     </div>

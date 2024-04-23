@@ -512,12 +512,12 @@ function MessageContextMenuContent({
 }
 
 const userMarkdown: Partial<Components> = {
-  em: ({ children }) => <span className="font-[550] italic text-secondary">{children}</span>,
+  em: ({ children }) => <span className="font-[550] italic text-primary">{children}</span>,
   strong: ({ children }) => <span className="pr-1 font-bold text-primary">{children}</span>,
   blockquote: ({ children }) => {
     return (
-      <div className="flex items-stretch font-medium italic text-secondary">
-        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-primary" />
+      <div className="flex items-stretch font-medium italic text-primary">
+        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-card" />
         {children}
       </div>
     );
@@ -530,7 +530,7 @@ const characterMarkdown: Partial<Components> = {
   blockquote: ({ children }) => {
     return (
       <div className="flex items-stretch font-medium italic text-secondary">
-        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-primary" />
+        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-card" />
         {children}
       </div>
     );

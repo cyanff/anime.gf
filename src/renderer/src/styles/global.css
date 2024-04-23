@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  /* ==================== Edit these custom themes  ==================== */
-  .custom-theme1 {
+  /* ==================== You can edit these themes  ==================== */
+  .custom {
     --background: hsl(0, 0%, 12%);
     --background-secondary: hsl(0, 0%, 14.9%);
 
@@ -42,118 +42,112 @@
     --input: hsl(0, 0%, 13.9%);
   }
 
-  .custom-theme2 {
-    --background: hsl(0, 0%, 12%);
-    --background-secondary: hsl(0, 0%, 14.9%);
+  .sakura-white {
+    --background: hsl(341, 100%, 98%);
+    --background-secondary: hsl(341, 100%, 95%);
 
-    /* search bar and card color */
-    --card: hsl(0, 0%, 25.1%);
+    --card: hsl(0, 0%, 100%);
 
-    /* user message color gradient */
-    --grad-user-primary: hsl(331, 50%, 44%);
-    --grad-user-secondary: hsl(331, 32%, 37%);
+    --grad-user-primary: hsl(330, 76%, 72%);
+    --grad-user-secondary: hsl(330, 60%, 65%);
 
-    /* character message color gradient */
-    --grad-character-primary: hsl(0, 0%, 23%);
-    --grad-character-secondary: hsl(0, 0%, 28%);
+    --grad-character-primary: hsl(0, 0%, 97%);
+    --grad-character-secondary: hsl(0, 0%, 94%);
 
-    /* logo color gradient*/
-    --grad-logo-primary: hsl(334, 75%, 47%) 0%;
-    --grad-logo-secondary: hsl(331, 52%, 93%) 100%;
+    --grad-logo-primary: hsl(345, 100%, 65%) 0%;
+    --grad-logo-secondary: hsl(345, 100%, 85%) 100%;
 
-    /* coupled to radix ui popover wip */
-    /* popover background color */
-    --popover: hsl(0, 0%, 9%);
-    /* popover text color */
-    --popover-foreground: hsl(0, 0%, 98%);
-    /* popover border color */
-    --border: hsl(0, 0%, 13.9%);
+    --popover: hsl(341, 100%, 90%);
+    --popover-foreground: hsl(341, 20%, 10%);
+    --border: hsl(341, 60%, 92%);
 
-    /* text colors */
-    --primary: hsl(0, 0%, 98%);
-    --secondary: hsl(0, 0%, 63.9%);
+    --primary: hsl(330, 30%, 30%);
+    --secondary: hsl(330, 20%, 50%);
 
-    /* hover color */
-    --accent: hsl(0, 0%, 14.9%);
+    --accent: hsl(341, 100%, 94%);
 
-    /* button border color */
-    --input: hsl(0, 0%, 13.9%);
+    --input: hsl(341, 60%, 93%);
   }
 
-  .custom-theme3 {
-    --background: hsl(0, 0%, 12%);
-    --background-secondary: hsl(0, 0%, 14.9%);
+  .pastel {
+    --background: hsl(354, 40%, 98%);
+    --background-secondary: hsl(354, 40%, 95%);
 
-    /* search bar and card color */
-    --card: hsl(0, 0%, 25.1%);
+    --card: hsl(354, 15%, 90%);
 
-    /* user message color gradient */
-    --grad-user-primary: hsl(331, 50%, 44%);
-    --grad-user-secondary: hsl(331, 32%, 37%);
+    --grad-user-primary: hsl(351, 70%, 80%);
+    --grad-user-secondary: hsl(351, 50%, 70%);
 
-    /* character message color gradient */
-    --grad-character-primary: hsl(0, 0%, 23%);
-    --grad-character-secondary: hsl(0, 0%, 28%);
+    --grad-character-primary: hsl(330, 40%, 90%);
+    --grad-character-secondary: hsl(330, 50%, 80%);
 
-    /* logo color gradient*/
-    --grad-logo-primary: hsl(334, 75%, 47%) 0%;
-    --grad-logo-secondary: hsl(331, 52%, 93%) 100%;
+    --grad-logo-primary: hsl(351, 80%, 75%) 0%;
+    --grad-logo-secondary: hsl(351, 60%, 85%) 100%;
 
-    /* coupled to radix ui popover wip */
-    /* popover background color */
-    --popover: hsl(0, 0%, 9%);
-    /* popover text color */
-    --popover-foreground: hsl(0, 0%, 98%);
-    /* popover border color */
-    --border: hsl(0, 0%, 13.9%);
+    --popover: hsl(0, 0%, 97%);
+    --popover-foreground: hsl(354, 20%, 30%);
+    --border: hsl(354, 40%, 93%);
 
-    /* text colors */
-    --primary: hsl(0, 0%, 98%);
-    --secondary: hsl(0, 0%, 63.9%);
+    --primary: hsl(354, 50%, 20%);
+    --secondary: hsl(354, 30%, 40%);
 
-    /* hover color */
-    --accent: hsl(0, 0%, 14.9%);
+    --accent: hsl(354, 40%, 95%);
 
-    /* button border color */
-    --input: hsl(0, 0%, 13.9%);
+    --input: hsl(354, 40%, 93%);
   }
 
-  .custom-theme4 {
-    --background: hsl(0, 0%, 12%);
-    --background-secondary: hsl(0, 0%, 14.9%);
+  .cyberpunk {
+    --background: hsl(240, 28%, 7%);
+    --background-secondary: hsl(240, 28%, 9%);
 
-    /* search bar and card color */
-    --card: hsl(0, 0%, 25.1%);
+    --card: hsl(240, 28%, 20%);
 
-    /* user message color gradient */
-    --grad-user-primary: hsl(331, 50%, 44%);
-    --grad-user-secondary: hsl(331, 32%, 37%);
+    --grad-user-primary: hsl(192, 100%, 50%);
+    --grad-user-secondary: hsl(192, 85%, 40%);
 
-    /* character message color gradient */
-    --grad-character-primary: hsl(0, 0%, 23%);
-    --grad-character-secondary: hsl(0, 0%, 28%);
+    --grad-character-primary: hsl(284, 70%, 40%);
+    --grad-character-secondary: hsl(284, 85%, 50%);
 
-    /* logo color gradient*/
-    --grad-logo-primary: hsl(334, 75%, 47%) 0%;
-    --grad-logo-secondary: hsl(331, 52%, 93%) 100%;
+    --grad-logo-primary: hsl(192, 100%, 50%) 0%;
+    --grad-logo-secondary: hsl(284, 85%, 50%) 100%;
 
-    /* coupled to radix ui popover wip */
-    /* popover background color */
-    --popover: hsl(0, 0%, 9%);
-    /* popover text color */
+    --popover: hsl(240, 28%, 5%);
     --popover-foreground: hsl(0, 0%, 98%);
-    /* popover border color */
-    --border: hsl(0, 0%, 13.9%);
+    --border: hsl(240, 28%, 12%);
 
-    /* text colors */
     --primary: hsl(0, 0%, 98%);
-    --secondary: hsl(0, 0%, 63.9%);
+    --secondary: hsl(0, 0%, 75%);
 
-    /* hover color */
-    --accent: hsl(0, 0%, 14.9%);
+    --accent: hsl(240, 28%, 10%);
 
-    /* button border color */
-    --input: hsl(0, 0%, 13.9%);
+    --input: hsl(240, 28%, 12%);
+  }
+
+  .twilight-red {
+    --background: hsl(230, 29%, 11%);
+    --background-secondary: hsl(230, 29%, 13%);
+
+    --card: hsl(230, 29%, 22%);
+
+    --grad-user-primary: hsl(345, 70%, 50%);
+    --grad-user-secondary: hsl(345, 70%, 45%);
+
+    --grad-character-primary: hsl(230, 29%, 30%);
+    --grad-character-secondary: hsl(232, 29%, 30%);
+
+    --grad-logo-primary: hsl(345, 80%, 50%) 0%;
+    --grad-logo-secondary: hsl(345, 60%, 60%) 100%;
+
+    --popover: hsl(0, 0%, 8%);
+    --popover-foreground: hsl(0, 0%, 100%);
+    --border: hsl(0, 0%, 15%);
+
+    --primary: hsl(0, 0%, 100%);
+    --secondary: hsl(230, 19%, 71%);
+
+    --accent: hsl(345, 70%, 48%);
+
+    --input: hsl(0, 0%, 15%);
   }
 
   /*
@@ -238,8 +232,6 @@
 
     /* button border color */
     --input: hsl(0, 0%, 13.9%);
-
-    --radius: 0.8rem;
   }
 
   .magenta-darkmode {
@@ -259,7 +251,6 @@
     --secondary: hsl(0, 0%, 60%);
     --accent: hsl(0, 0%, 11%);
     --input: hsl(0, 0%, 9%);
-    --radius: 0.8rem;
   }
 
   .magenta-lightmode {
@@ -279,7 +270,6 @@
     --secondary: hsl(0, 0%, 40%);
     --accent: hsl(0, 0%, 85%);
     --input: hsl(0, 0%, 85%);
-    --radius: 0.8rem;
   }
 
   .magenta-highcontrast {
@@ -299,15 +289,14 @@
     --secondary: hsl(0, 0%, 80%);
     --accent: hsl(0, 0%, 10%);
     --input: hsl(0, 0%, 8%);
-    --radius: 0.8rem;
   }
 
   .cyan {
-    --background: hsl(200, 20%, 12%);
-    --background-secondary: hsl(200, 20%, 15%);
+    --background: hsl(210, 10%, 12%);
+    --background-secondary: hsl(210, 8%, 15%);
     --card: hsl(200, 25%, 25%);
-    --grad-user-primary: hsl(192, 50%, 44%);
-    --grad-user-secondary: hsl(192, 32%, 37%);
+    --grad-user-primary: hsl(192, 50%, 49%);
+    --grad-user-secondary: hsl(192, 32%, 47%);
     --grad-character-primary: hsl(207, 20%, 23%);
     --grad-character-secondary: hsl(207, 20%, 28%);
     --grad-logo-primary: hsl(180, 75%, 47%) 0%;
@@ -319,12 +308,11 @@
     --secondary: hsl(200, 20%, 64%);
     --accent: hsl(200, 25%, 15%);
     --input: hsl(200, 25%, 14%);
-    --radius: 0.8rem;
   }
 
   .cyan-darkmode {
-    --background: hsl(200, 20%, 7%);
-    --background-secondary: hsl(200, 20%, 10%);
+    --background: hsl(204, 16%, 6%);
+    --background-secondary: hsl(204, 11%, 9%);
     --card: hsl(200, 25%, 15%);
     --grad-user-primary: hsl(192, 50%, 35%);
     --grad-user-secondary: hsl(192, 32%, 30%);
@@ -339,7 +327,6 @@
     --secondary: hsl(200, 20%, 55%);
     --accent: hsl(200, 25%, 10%);
     --input: hsl(200, 25%, 10%);
-    --radius: 0.8rem;
   }
 
   .cyan-lightmode {
@@ -359,12 +346,11 @@
     --secondary: hsl(200, 20%, 45%);
     --accent: hsl(200, 25%, 88%);
     --input: hsl(200, 25%, 85%);
-    --radius: 0.8rem;
   }
 
   .cyan-highcontrast {
-    --background: hsl(200, 20%, 5%);
-    --background-secondary: hsl(200, 20%, 10%);
+    --background: hsl(195, 15%, 5%);
+    --background-secondary: hsl(206, 16%, 9%);
     --card: hsl(200, 30%, 15%);
     --grad-user-primary: hsl(192, 80%, 50%);
     --grad-user-secondary: hsl(192, 80%, 40%);
@@ -379,7 +365,6 @@
     --secondary: hsl(200, 30%, 70%);
     --accent: hsl(200, 30%, 11%);
     --input: hsl(200, 30%, 12%);
-    --radius: 0.8rem;
   }
 }
 
