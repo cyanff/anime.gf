@@ -42,10 +42,10 @@ export default function ChatBar({
       <div className="flex h-fit w-fit items-center ">
         <Typing className="mb-1 ml-4 mt-1" name="Saku" typing={isTyping} />
       </div>
-      <div className="flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-neutral-700 p-4">
-        <button className="flex size-7 items-center justify-center text-neutral-400 hover:text-neutral-300">
+      <div className="flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-card p-4">
+        <button className="flex size-7 items-center justify-center">
           <PlusCircleIcon
-            className="size-7 fill-neutral-400 transition duration-150 ease-out hover:fill-neutral-200"
+            className="size-7 fill-secondary transition duration-150 ease-out hover:fill-primary"
             onClick={() => {
               toast("Coming in a future update!");
             }}

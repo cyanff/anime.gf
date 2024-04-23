@@ -90,9 +90,9 @@ function Message({
   ...rest
 }: MessageProps) {
   const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
-  const roleColorStyles = sender === "user" ? "bg-[#87375f] outline-neutral-400" : "bg-grad-gray outline-neutral-500";
+  const roleColorStyles = sender === "user" ? "bg-grad-user " : "bg-grad-character";
   const editingStyles = isEditing ? "outline-2 outline-dashed" : "";
-  const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95  text-neutral-200 rounded-3xl group/msg`;
+  const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95  text-primary rounded-3xl group/msg`;
   const editFieldRef = useRef<HTMLDivElement>(null);
   const [idx, setIDX] = useState(messagesIDX);
   const message = messages[idx];
@@ -185,7 +185,7 @@ function Message({
               <div className="flex flex-col justify-start space-y-0.5">
                 {/* Username and Timestamp */}
                 <div className="flex h-fit flex-row items-center justify-between space-x-3">
-                  <div className=" text-base font-semibold text-white">{name}</div>
+                  <div className=" text-base font-semibold text-primary">{name}</div>
                   <MessageDropdownMenu
                     isLatest={isLatest}
                     isLatestCharacterMessage={isLatestCharacterMessage}
@@ -300,7 +300,7 @@ function MessagePopoverContentProps({ sender, personaBundle, cardBundle }: Messa
     const avatarURI = personaBundle.avatarURI || "default_avatar.png";
 
     return (
-      <PopoverContent className="scroll-secondary max-h-[30rem] w-96 overflow-y-scroll bg-neutral-800 p-0 pb-10">
+      <PopoverContent className="scroll-secondary bg-background-secondary max-h-[30rem] w-96 overflow-y-scroll p-0 pb-10">
         <MessagePopoverBanner bannerURI={bannerURI} avatarURI={avatarURI} />
         <div className="px-6 pt-12">
           <div className="flex flex-row">
@@ -308,10 +308,10 @@ function MessagePopoverContentProps({ sender, personaBundle, cardBundle }: Messa
               <div className="pb-1.5 text-xl font-semibold">{personaBundle.data.name}</div>
             </div>
           </div>
-          {/* Character details dropdowns */}
-          <div className="-mx-2 mt-3 flex flex-col rounded-lg bg-neutral-900 p-3">
+          {/* User details dropdowns */}
+          <div className="-mx-2 mt-3 flex flex-col rounded-lg bg-background p-3">
             <h3 className="mb-1 text-lg font-semibold">About</h3>
-            <div className="mb-2 h-[1.3px] w-full bg-neutral-700 brightness-75"></div>
+            <div className="bg-background-secondary mb-2 h-[1.3px] w-full"></div>
             <p className="text-sm font-[450]">{personaBundle.data.description} </p>
           </div>
         </div>
@@ -328,7 +328,7 @@ function MessagePopoverContentProps({ sender, personaBundle, cardBundle }: Messa
           <div className="flex flex-row">
             <div className="pr-10">
               <div className="pb-1.5 text-xl font-semibold">{cardBundle.data.character.name}</div>
-              <div className="whitespace-nowrap text-xs  text-neutral-400 ">
+              <div className="whitespace-nowrap text-xs  text-secondary ">
                 <p className="font-medium">{`Created: ${cardBundle.data.meta.created_at}`}</p>
                 {cardBundle.data.meta.updated_at && (
                   <p className="font-medium">{`Updated: ${cardBundle.data.meta.updated_at}`}</p>
@@ -399,7 +399,12 @@ function MessageDropdownMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-36">
         <DropdownMenuGroup>
-          <DropdownMenuItem onSelect={handleCopy}>Copy</DropdownMenuItem>
+          <DropdownMenuItem onSelect={handleCopy}>
+            Copy{" "}
+            <ContextMenuShortcut>
+              <ClipboardDocumentIcon className="size-4" />
+            </ContextMenuShortcut>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
@@ -507,12 +512,12 @@ function MessageContextMenuContent({
 }
 
 const userMarkdown: Partial<Components> = {
-  em: ({ children }) => <span className="font-[550] italic text-neutral-300">{children}</span>,
-  strong: ({ children }) => <span className="pr-1 font-bold text-gray-200">{children}</span>,
+  em: ({ children }) => <span className="font-[550] italic text-secondary">{children}</span>,
+  strong: ({ children }) => <span className="pr-1 font-bold text-primary">{children}</span>,
   blockquote: ({ children }) => {
     return (
-      <div className="flex items-stretch font-medium italic text-neutral-100">
-        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-gray-600" />
+      <div className="flex items-stretch font-medium italic text-secondary">
+        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-primary" />
         {children}
       </div>
     );
@@ -520,12 +525,12 @@ const userMarkdown: Partial<Components> = {
 };
 
 const characterMarkdown: Partial<Components> = {
-  em: ({ children }) => <span className="pr-1 font-[550] italic text-gray-400">{children}</span>,
-  strong: ({ children }) => <span className="pr-1 font-bold text-gray-200">{children}</span>,
+  em: ({ children }) => <span className="pr-1 font-[550] italic text-secondary">{children}</span>,
+  strong: ({ children }) => <span className="pr-1 font-bold text-primary">{children}</span>,
   blockquote: ({ children }) => {
     return (
-      <div className="flex items-stretch font-medium italic text-neutral-400">
-        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-neutral-400" />
+      <div className="flex items-stretch font-medium italic text-secondary">
+        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-primary" />
         {children}
       </div>
     );
