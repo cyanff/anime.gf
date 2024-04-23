@@ -176,13 +176,13 @@ function RecentChat({
           className={cn(
             `group flex w-full cursor-pointer items-center space-x-3 
             rounded-xl p-2.5 transition duration-150 ease-out hover:bg-accent 
-        ${active ? "bg-card" : ""}`,
+        ${active ? "bg-accent" : ""}`,
             className
           )}
         >
           <img className="size-12 shrink-0 rounded-full object-cover object-top" src={avatarURI} alt="avatar" />
           <div className={`flex h-full max-w-full flex-col justify-center `}>
-            <h3 className="text-neutra line-clamp-1 text-ellipsis  font-[550] text-secondary group-hover:text-primary">
+            <h3 className=" line-clamp-1 text-ellipsis  font-[550] text-secondary group-hover:text-primary">
               {name}
             </h3>
             <p className="line-clamp-1 text-ellipsis text-[14.5px] font-[450] text-secondary">{message}</p>

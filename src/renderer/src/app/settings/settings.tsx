@@ -7,13 +7,12 @@ import { KeyIcon } from "@heroicons/react/24/solid";
 export default function SettingsPage() {
   const [page, setPage] = useState<string>("chat");
   return (
-    <div className="flex h-full w-full text-neutral-100">
+    <div className="flex h-full w-full  rounded-xl bg-background-secondary">
       {/*Sidebar*/}
       <div className="flex h-full w-56 shrink-0 flex-col space-y-2 overflow-hidden rounded-2xl bg-background px-3 py-8">
         <button
           className={`group flex w-full cursor-pointer items-center space-x-3 
-          rounded-md p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent hover:opacity-80
-
+          rounded-xl p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent
           ${page === "chat" ? "bg-accent text-primary" : "text-secondary"}`}
           onClick={() => setPage("chat")}
         >
@@ -21,7 +20,7 @@ export default function SettingsPage() {
         </button>
         <button
           className={`group flex w-full cursor-pointer items-center space-x-3 
-          rounded-md p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent hover:opacity-80
+          rounded-xl p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent
           ${page === "persona" ? "bg-accent text-primary" : "text-secondary"}`}
           onClick={() => setPage("persona")}
         >
@@ -29,7 +28,7 @@ export default function SettingsPage() {
         </button>
         <button
           className={`group flex w-full cursor-pointer items-center space-x-3 
-          rounded-md p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent hover:opacity-80
+          rounded-xl p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent
           ${page === "key" ? "bg-accent text-primary" : "text-secondary"}`}
           onClick={() => setPage("key")}
         >

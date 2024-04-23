@@ -26,9 +26,9 @@ export default function CreationPage({ setPage, syncCardBundles }: CreationPageP
   }
 
   return (
-    <div className="flex h-full w-full items-center justify-center bg-background">
+    <div className="flex h-full w-full items-center justify-center rounded-xl bg-background">
       {/* Scroll Wrapper */}
-      <div className="h-5/6 w-1/3 min-w-[30rem] overflow-hidden rounded-2xl bg-neutral-800">
+      <div className="h-5/6 w-1/3 min-w-[30rem] overflow-hidden rounded-2xl border border-line">
         <CharacterForm onSuccessfulSubmit={onSuccessfulSubmit} formType="create" />
       </div>
     </div>

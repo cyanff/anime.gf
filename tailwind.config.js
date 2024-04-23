@@ -34,6 +34,7 @@ module.exports = {
         border: "var(--border)",
         input: "var(--input)",
         ring: "var(--ring)",
+        line: "var(--line)",
         background: {
           DEFAULT: "var(--background)",
           secondary: "var(--background-secondary)"

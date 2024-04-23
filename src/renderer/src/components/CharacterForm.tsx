@@ -87,7 +87,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
       {/* Banner and profile picture */}
       <div className="relative mb-12 shrink-0">
         <div
-          className="bg-grad-character flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden opacity-50"
+          className="bg-action-primary flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden opacity-75"
           onClick={handleBannerClick}
         >
           {bannerDisplayImage ? (
@@ -108,7 +108,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
           />
         </div>
         <div
-          className="bg-grad-character absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full"
+          className="bg-action-primary absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full"
           onClick={handleProfileClick}
         >
           {avatarDisplayImage ? (

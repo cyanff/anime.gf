@@ -71,14 +71,14 @@ export function PersonaModal({
   };
 
   return (
-    <div className="flex w-96 flex-col space-y-5 rounded-lg border border-neutral-700 bg-neutral-800 p-6 focus:outline-none">
-      <h3 className="text-lg font-semibold">{title}</h3>
+    <div className="flex w-96 flex-col space-y-5 rounded-lg border border-line bg-background p-6 focus:outline-none">
+      <h3 className="text-lg text-primary font-semibold">{title}</h3>
       {/* Name Input & Avatar */}
       <div className="flex w-full items-center space-x-6">
         {/* Name Input*/}
         <Input
           {...register("name")}
-          className="relative h-12 w-64 select-text rounded-md border border-neutral-600 bg-neutral-700 px-2.5  placeholder:font-[450] focus:outline-none"
+          className="relative h-12 w-64 select-text rounded-md border border-line bg-background-secondary px-2.5  placeholder:font-[450] focus:outline-none"
           placeholder="Name"
         />
         {/* Avatar Display */}
@@ -98,7 +98,7 @@ export function PersonaModal({
             // Else display default gradient avatar
             <div
               className={`flex size-14 shrink-0 select-none items-center justify-center 
-            rounded-full bg-grad-magenta text-2xl font-bold`}
+            rounded-full bg-action-primary text-2xl text-primary font-bold`}
               onClick={() => {
                 avatarInputRef.current?.click();
               }}
@@ -107,7 +107,7 @@ export function PersonaModal({
             </div>
           )}
           <PencilSquareIcon
-            className="absolute -right-1 -top-1 size-6 rounded-sm fill-neutral-300 p-0.5"
+            className="absolute -right-1 -top-1 size-6 rounded-sm fill-primary p-0.5"
             onClick={() => avatarInputRef.current?.click()}
           />
           <input
@@ -126,7 +126,7 @@ export function PersonaModal({
       <Textarea
         {...register("description")}
         placeholder="Description"
-        className="scroll-tertiary flex h-36 w-full resize-none items-start rounded-md border border-neutral-600 bg-neutral-700 p-2.5 placeholder:font-[450] focus:outline-none"
+        className="scroll-tertiary flex h-36 w-full resize-none items-start rounded-md border border-line bg-background-secondary text-secondary p-2.5 placeholder:font-[450] focus:outline-none"
       />
 
       {/* Is Default? */}
@@ -161,7 +161,7 @@ export function PersonaModal({
             </button>
           )}
           <button
-            className="flex items-center rounded-sm bg-neutral-700 px-3 py-2 font-medium text-neutral-200"
+            className="flex items-center rounded-sm transition bg-action-primary hover:bg-action-secondary px-3 py-2 font-medium text-primary"
             onClick={handleSubmit(submit.handle)}
           >
             {submit.label}

@@ -115,7 +115,7 @@ export default function SettingsPersona() {
     <div className="flex h-full w-full flex-col items-center justify-center space-y-8">
       <h1 className="text-2xl font-bold tracking-wide">Persona Settings</h1>
       {/* Personas List */}
-      <div className=" flex max-h-[50%] min-h-24 w-[28rem] rounded-2xl border border-neutral-700 bg-neutral-800 py-2">
+      <div className=" flex max-h-[50%] min-h-24 w-[28rem] rounded-2xl border border-line bg-background-secondary py-2">
         <div className="scroll-secondary flex h-full w-full flex-col space-y-2 overflow-y-scroll px-3">
           {personaBundles.length === 0 && (
             <div className="flex h-full w-full items-center justify-center">
@@ -130,10 +130,10 @@ export default function SettingsPersona() {
               <ContextMenu key={idx}>
                 <ContextMenuTrigger>
                   <button
-                    className={`group flex h-fit w-full items-center justify-between rounded-lg p-3 font-[480] text-neutral-100 transition duration-200 ease-out hover:bg-neutral-700 focus:outline-none`}
+                    className={`group flex h-fit w-full items-center justify-between rounded-lg p-3 font-[480] text-primary transition duration-200 ease-out hover:bg-action-primary focus:outline-none`}
                     onClick={() => handleEdit(bundle)}
                   >
-                    <div className="mr-3 flex w-full items-center space-x-5">
+                    <div className="mr-3 flex w-full items-center space-x-5 ">
                       <img
                         draggable="false"
                         className="size-12 rounded-full object-cover object-top"
@@ -145,7 +145,7 @@ export default function SettingsPersona() {
                           {bundle.data.name}
                         </h3>
                         {bundle.data.description && bundle.data.description.length != 0 && (
-                          <p className="line-clamp-1 text-ellipsis text-left text-[0.88rem] font-[470] text-gray-400">
+                          <p className="line-clamp-1 text-ellipsis text-left text-[0.88rem] font-[470] text-secondary">
                             {bundle.data.description}
                           </p>
                         )}
@@ -211,9 +211,9 @@ export default function SettingsPersona() {
           })}
         </div>
       </div>
-      <button className="flex items-center space-x-2 rounded-md bg-neutral-700 px-4 py-2" onClick={handleNew}>
-        <UserPlusIcon className="size-5" />
-        <span className="font-medium text-neutral-200">New</span>
+      <button className="flex items-center space-x-2 rounded-md transition bg-action-primary hover:bg-action-secondary px-4 py-2" onClick={handleNew}>
+        <UserPlusIcon className="size-5 text-primary" />
+        <span className="font-medium text-primary">New</span>
       </button>
     </div>
   );
