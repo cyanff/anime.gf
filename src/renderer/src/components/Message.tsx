@@ -18,14 +18,17 @@ import {
 import { cn } from "@/lib/utils";
 import {
   ArrowPathIcon,
+  BackwardIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ClipboardDocumentIcon,
   EllipsisHorizontalIcon,
-  WrenchScrewdriverIcon
+  PencilIcon,
+  TrashIcon
 } from "@heroicons/react/24/solid";
 
 import Dropdown from "@/components/Dropdown";
+import Tag from "@/components/Tag";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,12 +40,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { queries } from "@/lib/queries";
+import { time } from "@/lib/time";
 import { CardBundle, PersonaBundle, UIMessageCandidate } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import Markdown, { Components } from "react-markdown";
 import { toast } from "sonner";
-import Tag from "@/components/Tag";
-import { time } from "@/lib/time";
 
 interface MessageProps {
   className?: string;
@@ -92,7 +94,7 @@ function Message({
   const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
   const roleColorStyles = sender === "user" ? "bg-grad-user " : "bg-grad-character";
   const editingStyles = isEditing ? "outline-2 outline-dashed" : "";
-  const baseStyles = `h-fit flex items-center space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95  text-primary rounded-3xl group/msg`;
+  const baseStyles = `h-fit flex items-start space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 text-primary rounded-3xl group/msg`;
   const editFieldRef = useRef<HTMLDivElement>(null);
   const [idx, setIDX] = useState(messagesIDX);
   const message = messages[idx];
@@ -164,7 +166,7 @@ function Message({
   };
 
   return (
-    <div className={cn(" max-w-3/4 shrink-0", roleAlignStyles)}>
+    <div className={cn("max-w-3/4 shrink-0", roleAlignStyles)}>
       <ContextMenu>
         {/* Right Click Menu*/}
         <div className="flex flex-col">
@@ -172,7 +174,7 @@ function Message({
             {/* Message Component */}
             <div {...rest} className={cn(baseStyles, editingStyles, roleColorStyles, className)}>
               <Popover>
-                <PopoverTrigger className="shrink-0">
+                <PopoverTrigger className="m-1.5 shrink-0">
                   <img
                     className="size-12 select-none rounded-full object-cover object-top"
                     draggable="false"
@@ -180,7 +182,7 @@ function Message({
                     alt="Avatar"
                   />
                 </PopoverTrigger>
-                <MessagePopoverContentProps sender={sender} personaBundle={personaBundle} cardBundle={cardBundle} />
+                <MessagePopoverContent sender={sender} personaBundle={personaBundle} cardBundle={cardBundle} />
               </Popover>
               <div className="flex flex-col justify-start space-y-0.5">
                 {/* Username and Timestamp */}
@@ -263,7 +265,7 @@ function Message({
                 >
                   <ChevronLeftIcon className="size-5 fill-neutral-500" />
                 </button>
-                <p className="text-sm font-medium">{`${idx + 1} / ${messages.length}`}</p>
+                <p className="font-mono text-sm font-semibold  text-neutral-400">{`${idx + 1}/${messages.length}`}</p>
                 {/* Right Arrow */}
                 <button
                   className="size-5"
@@ -294,11 +296,12 @@ interface MessagePopoverContentProps {
   cardBundle: CardBundle;
 }
 
-function MessagePopoverContentProps({ sender, personaBundle, cardBundle }: MessagePopoverContentProps) {
+function MessagePopoverContent({ sender, personaBundle, cardBundle }: MessagePopoverContentProps) {
   if (sender === "user") {
     const bannerURI = "default_banner.png";
     const avatarURI = personaBundle.avatarURI || "default_avatar.png";
 
+    // USER popover
     return (
       <PopoverContent className="scroll-secondary bg-background-secondary max-h-[30rem] w-96 overflow-y-scroll p-0 pb-10">
         <MessagePopoverBanner bannerURI={bannerURI} avatarURI={avatarURI} />
@@ -321,6 +324,7 @@ function MessagePopoverContentProps({ sender, personaBundle, cardBundle }: Messa
     const bannerURI = cardBundle.bannerURI;
     const avatarURI = cardBundle.avatarURI;
 
+    // CHARACTER popover
     return (
       <PopoverContent className="scroll-secondary h-[30rem] w-96 overflow-y-scroll bg-neutral-800 p-0">
         <MessagePopoverBanner bannerURI={bannerURI} avatarURI={avatarURI} />
@@ -397,11 +401,11 @@ function MessageDropdownMenu({
       <DropdownMenuTrigger asChild>
         <EllipsisHorizontalIcon className="size-6 cursor-pointer opacity-0 transition duration-75 ease-out group-hover/msg:opacity-100" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-36">
+      <DropdownMenuContent className="w-40">
         <DropdownMenuGroup>
           <DropdownMenuItem onSelect={handleCopy}>
-            Copy{" "}
-            <ContextMenuShortcut>
+            Copy
+            <ContextMenuShortcut className="opacity-90">
               <ClipboardDocumentIcon className="size-4" />
             </ContextMenuShortcut>
           </DropdownMenuItem>
@@ -411,14 +415,14 @@ function MessageDropdownMenu({
           <DropdownMenuItem onSelect={handleEdit}>
             Edit
             <DropdownMenuShortcut>
-              <WrenchScrewdriverIcon className="size-4" />
+              <PencilIcon className="size-4" />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
           {isLatestCharacterMessage && (
             <DropdownMenuItem onSelect={handleRegenerate}>
               Regenerate
               <DropdownMenuShortcut>
-                <WrenchScrewdriverIcon className="size-4" />
+                <ArrowPathIcon className="size-4" />
               </DropdownMenuShortcut>
             </DropdownMenuItem>
           )}
@@ -427,22 +431,22 @@ function MessageDropdownMenu({
             <DropdownMenuItem onSelect={handleRewind}>
               Rewind
               <DropdownMenuShortcut>
-                <WrenchScrewdriverIcon className="size-4" />
+                <BackwardIcon className="size-4" />
               </DropdownMenuShortcut>
             </DropdownMenuItem>
           )}
 
           <DropdownMenuItem onSelect={handleCopyText}>
-            Copy Text
+            Copy Selected
             <DropdownMenuShortcut>
-              <WrenchScrewdriverIcon className="size-4" />
+              <ClipboardDocumentIcon className="size-4" />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
 
           <DropdownMenuItem onSelect={handleDelete}>
             Delete
             <DropdownMenuShortcut>
-              <WrenchScrewdriverIcon className="size-4" />
+              <TrashIcon className="size-4" />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -462,7 +466,7 @@ function MessageContextMenuContent({
   handleDelete
 }: MenuProps) {
   return (
-    <ContextMenuContent className="w-36">
+    <ContextMenuContent className="w-40">
       <ContextMenuItem onSelect={handleCopy}>
         Copy
         <ContextMenuShortcut>
@@ -473,7 +477,7 @@ function MessageContextMenuContent({
       <ContextMenuItem onSelect={handleEdit}>
         Edit
         <ContextMenuShortcut>
-          <WrenchScrewdriverIcon className="size-4" />
+          <PencilIcon className="size-4" />
         </ContextMenuShortcut>
       </ContextMenuItem>
 
@@ -481,7 +485,7 @@ function MessageContextMenuContent({
         <ContextMenuItem onSelect={handleRegenerate}>
           Regenerate
           <ContextMenuShortcut>
-            <WrenchScrewdriverIcon className="size-4" />
+            <ArrowPathIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
       )}
@@ -490,21 +494,21 @@ function MessageContextMenuContent({
         <ContextMenuItem onSelect={handleRewind}>
           Rewind
           <ContextMenuShortcut>
-            <WrenchScrewdriverIcon className="size-4" />
+            <BackwardIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
       )}
       <ContextMenuItem onSelect={handleCopyText}>
-        Copy Text
+        Copy Selected
         <ContextMenuShortcut>
-          <WrenchScrewdriverIcon className="size-4" />
+          <ClipboardDocumentIcon className="size-4" />
         </ContextMenuShortcut>
       </ContextMenuItem>
 
       <ContextMenuItem onSelect={handleDelete}>
         Delete
         <ContextMenuShortcut>
-          <WrenchScrewdriverIcon className="size-4" />
+          <TrashIcon className="size-4" />
         </ContextMenuShortcut>
       </ContextMenuItem>
     </ContextMenuContent>

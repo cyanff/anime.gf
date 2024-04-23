@@ -70,24 +70,21 @@ function Card({ cardBundle, syncCardBundles, openCardModal }: CardProps) {
             />
 
             <div className="relative flex flex-grow flex-col space-y-1">
-              <div className="text-overflow-ellipsis absolute -top-28 z-10 w-full max-w-md overflow-hidden whitespace-nowrap pl-5 text-left text-lg font-semibold text-neutral-200">
+              <div className="text-overflow-ellipsis absolute -top-28 z-10 w-full max-w-md overflow-hidden whitespace-nowrap pl-5 text-left text-lg font-semibold text-primary">
                 {cardBundle.data.character.name}
               </div>
-              <div
-                className="absolute -top-20 z-10 overflow-hidden pl-5 text-left text-sm font-semibold text-neutral-200"
-                style={{ display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical" }}
-              >
-                {cardBundle.data.meta.notes}
+              <div className="absolute -top-20 z-10 overflow-hidden pl-5 text-left text-sm font-[530] text-secondary">
+                {cardBundle.data.meta.tagline}
               </div>
               <div className="absolute -top-2 h-16 space-x-0.5 space-y-1 overflow-hidden pl-5 text-left">
                 <div className="flex flex-wrap gap-1">
                   {cardBundle.data.meta.tags.map((tag, idx) => (
-                    <Tag key={idx} text={tag} />
+                    <Tag key={idx} text={tag} isClickable={false} />
                   ))}
                 </div>
               </div>
-              <div className="absolute top-20 z-10 pl-5 text-left text-sm text-neutral-400">
-                created by @{cardBundle.data.meta.creator.card}
+              <div className="absolute top-20 z-10 pl-5 text-left text-sm font-medium text-secondary opacity-50">
+                by @{cardBundle.data.meta.creator.card}
               </div>
             </div>
           </div>
