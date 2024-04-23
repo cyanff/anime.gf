@@ -41,15 +41,15 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
   };
 
   return (
-    <div className="flex w-[45rem] items-center justify-center rounded-lg bg-background">
-      <div className="scroll-secondary h-[60rem] overflow-y-scroll rounded-lg">
+    <div className="flex w-[45rem] items-center justify-center rounded-xl bg-background">
+      <div className="scroll-secondary h-[60rem] overflow-y-scroll rounded-xl">
         {/* Banner and profile picture */}
-        <div className="relative rounded-lg">
+        <div className="relative rounded-xl">
           <img
             src={cardBundle.bannerURI || "default_banner.png"}
             alt="Banner"
             draggable="false"
-            className="h-48 w-full select-none rounded-t-lg bg-neutral-700 object-cover"
+            className="h-48 w-full select-none rounded-t-xl bg-neutral-700 object-cover"
           />
           <img
             src={cardBundle.avatarURI || "default_avatar.png"}
@@ -80,13 +80,13 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
           <div className="item-center mb-10 mt-14 flex justify-between border-neutral-700">
             {/* Left Button Group */}
             <div className="flex flex-row">
-              <Button variant="outline" className="group h-12 w-14 border-none bg-transparent p-0" onClick={handleEdit}>
+              <Button variant="outline" className="group h-12 w-14 rounded-xl border-none bg-transparent p-0" onClick={handleEdit}>
                 <PencilIcon className="size-6 text-neutral-400 transition duration-200 ease-out group-hover:text-neutral-200" />
               </Button>
 
               <Button
                 variant="outline"
-                className="group h-12 w-14 border-none bg-transparent p-0"
+                className="group h-12 w-14 rounded-xl border-none bg-transparent p-0"
                 onClick={handleExport}
               >
                 <ArrowUpOnSquareIcon className="size-6 text-neutral-400 transition duration-200 ease-out group-hover:text-neutral-200" />
@@ -96,7 +96,7 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
             <Button
               variant="outline"
               size="icon"
-              className="h-12 w-16 bg-gradient-to-r from-[#C3407F] to-[#7C405D] transition ease-out hover:brightness-90"
+              className="h-12 w-16 rounded-xl bg-gradient-to-r from-[#C3407F] to-[#7C405D] transition ease-out hover:brightness-90"
               onClick={() => onCreateChat(cardBundle.id, cardBundle.data.character.greeting)}
             >
               <ChatBubbleLeftRightIcon className="size-6 text-neutral-200" />

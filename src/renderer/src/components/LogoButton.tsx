@@ -31,10 +31,11 @@ export default function LogoButton({ className, rest }: LogoButtonProps) {
       "cyan-darkmode",
       "cyan-lightmode",
       "cyan-highcontrast",
-      "custom-theme1",
-      "custom-theme2",
-      "custom-theme3",
-      "custom-theme4"
+      "sakura-white",
+      "pastel",
+      "cyberpunk",
+      "twilight-red",
+      "custom"
     ];
 
     setThemes(storedThemes);

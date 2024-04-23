@@ -30,13 +30,18 @@ export default function SideBar({ page, setPage }: SideBarProps) {
         >
           <PlusCircleIcon className="size-8 text-secondary" />
         </Button>
-        <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("chats")}>
+        <Button variant="outline" size="icon" className="m-2 h-16 w-16 rounded-xl" onClick={() => setPage("chats")}>
           <ChatBubbleLeftRightIcon className="size-8 text-secondary" />
         </Button>
-        <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("collections")}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="m-2 h-16 w-16 rounded-xl"
+          onClick={() => setPage("collections")}
+        >
           <UserGroupIcon className="size-8 text-secondary" />
         </Button>
-        <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("settings")}>
+        <Button variant="outline" size="icon" className="m-2 h-16 w-16 rounded-xl" onClick={() => setPage("settings")}>
           <Cog8ToothIcon className="size-8 text-secondary" />
         </Button>
       </div>
@@ -49,7 +54,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
         <Button
           variant="outline"
           size="icon"
-          className="mx-2 size-12"
+          className="mx-2 size-12 rounded-xl"
           onClick={() => {
             window.api.utils.openURL("https://discord.gg/JrdGVTYV46");
             toast.success("Discord invite opened in browser!");
@@ -60,7 +65,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
         <Button
           variant="outline"
           size="icon"
-          className="mx-2 size-12"
+          className="mx-2 size-12 rounded-xl"
           onClick={() => {
             toast.info("Docs are coming soon™!");
           }}

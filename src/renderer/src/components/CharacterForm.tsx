@@ -134,7 +134,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
         <div className="flex flex-col pt-8">
           {/* Character details form */}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
               <FormField
                 control={form.control}
                 name="character.name"
@@ -142,7 +142,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                   <FormItem>
                     <FormLabel>Character Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="What should your character be named?" className="" {...field} />
+                      <Input placeholder="What should your character be named?" className="rounded-xl" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -155,7 +155,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                   <FormItem>
                     <FormLabel>Character Description</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="add character description" className="" {...field} />
+                      <InputArea placeholder="add character description" className="rounded-xl" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -168,7 +168,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                   <FormItem>
                     <FormLabel>Character Greeting</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="add character greeting" className="" {...field} />
+                      <InputArea placeholder="add character greeting" className="rounded-xl" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -181,7 +181,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                   <FormItem>
                     <FormLabel>Message Examples</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="add message examples" className="" {...field} />
+                      <InputArea placeholder="add message examples" className="rounded-xl" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -194,7 +194,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                   <FormItem>
                     <FormLabel>World Description</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="add world description" className="" {...field} />
+                      <InputArea placeholder="add world description" className="rounded-xl" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -207,7 +207,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="add title" className="" {...field} />
+                      <Input placeholder="add title" className="rounded-xl" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -223,6 +223,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                     <FormControl>
                       <Input
                         placeholder="a brief description of how you would describe the card to others."
+                        className="rounded-xl"
                         {...field}
                       />
                     </FormControl>
@@ -238,7 +239,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                   <FormItem>
                     <FormLabel>Tags</FormLabel>
                     <FormControl>
-                      <Input placeholder="add comma separated list of tags" {...field} />
+                      <Input placeholder="add comma separated list of tags" className="rounded-xl" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -252,7 +253,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                   <FormItem>
                     <FormLabel>Notes</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="optional creator notes to users of your card" className="" {...field} />
+                      <InputArea placeholder="optional creator notes to users of your card" className="rounded-xl" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -261,7 +262,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
               <div className="flex justify-end space-x-3">
                 {formType === "edit" && (
                   <button
-                    className="flex items-center space-x-2 rounded-md bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
+                    className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
                     type="button"
                     onClick={() => {
                       form.reset(initialData);
@@ -274,7 +275,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 )}
 
                 <button
-                  className="flex items-center space-x-2 rounded-md bg-grad-magenta px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
+                  className="flex items-center space-x-2 rounded-xl bg-grad-magenta px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
                   type="submit"
                 >
                   <UserPlusIcon className="size-5" />

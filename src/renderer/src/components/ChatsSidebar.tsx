@@ -122,7 +122,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
           <div className="flex h-16 w-full shrink-0 flex-row bg-card p-3">
             <div className="relative">
               <img src={personaBundle.avatarURI || ""} alt="Avatar" className="h-10 w-10 rounded-full" />
-              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 ring-4 ring-gray-700"></span>
+              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 ring-4 ring-card"></span>
             </div>
             <div className="flex h-full flex-col justify-center p-2">
               <h3 className="font-semibold text-primary ">{personaBundle.data.name}</h3>
@@ -175,7 +175,7 @@ function RecentChat({
           {...rest}
           className={cn(
             `group flex w-full cursor-pointer items-center space-x-3 
-        rounded-lg p-2.5 transition duration-150 ease-out hover:bg-accent 
+            rounded-xl p-2.5 transition duration-150 ease-out hover:bg-accent 
         ${active ? "bg-card" : ""}`,
             className
           )}
