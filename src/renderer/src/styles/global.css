@@ -35,8 +35,8 @@
     --primary: hsl(0, 0%, 98%);
     --secondary: hsl(0, 0%, 63.9%);
 
-    --action-primary: hsl(0, 0%, 14.9%);
-    --aciton-secondary: hsla(0, 0%, 15%, 0.422);
+    --action-primary: hsl(331, 50%, 44%);
+    --action-secondary: hsl(331, 32%, 37%);
 
     /* hover color */
     --accent: hsl(0, 0%, 14.9%);
@@ -64,12 +64,10 @@
     --primary: hsl(330, 30%, 30%);
     --secondary: hsl(330, 20%, 50%);
 
-    --action-primary: hsl(341, 100%, 94%);
-    --action-secondary: hsla(329, 20%, 50%, 0.482);
+    --action-primary: hsl(330, 100%, 80%);
+    --action-secondary: hsl(330, 53%, 65%);
 
     --accent: hsl(341, 100%, 94%);
-
-    --input: hsl(341, 60%, 93%);
   }
 
   .pastel {
@@ -94,12 +92,10 @@
     --primary: hsl(354, 50%, 20%);
     --secondary: hsl(354, 30%, 40%);
 
-    --action-primary: hsl(354, 40%, 95%);
-    --action-secondary: hsla(353, 30%, 40%, 0.474);
+    --action-primary: hsl(351, 70%, 80%);
+    --action-secondary: hsl(351, 26%, 55%);
 
     --accent: hsl(354, 40%, 95%);
-
-    --input: hsl(354, 40%, 93%);
   }
 
   .cyberpunk {
@@ -124,12 +120,10 @@
     --primary: hsl(0, 0%, 98%);
     --secondary: hsl(0, 0%, 75%);
 
-    --action-primary: hsl(240, 28%, 10%);
-    --action-secondary: hsla(240, 29%, 10%, 0.459);
+    --action-primary: hsl(284, 85%, 50%);
+    --action-secondary: hsl(284, 70%, 40%);
 
     --accent: hsl(240, 28%, 10%);
-
-    --input: hsl(240, 28%, 12%);
   }
 
   .twilight-red {
@@ -158,8 +152,6 @@
     --action-secondary: hsla(345, 70%, 48%, 0.515);
 
     --accent: hsl(345, 70%, 48%);
-
-    --input: hsl(0, 0%, 15%);
   }
 
   /*
@@ -239,14 +231,12 @@
     --primary: hsl(0, 0%, 98%);
     --secondary: hsl(0, 0%, 63.9%);
 
-    --action-primary: hsl(0, 0%, 14.9%);
-    --action-secondary: hsla(0, 0%, 15%, 0.396);
+    --action-primary: hsl(334, 55%, 52%);
+    --action-secondary: hsl(331, 42%, 34%);
 
     /* hover color */
     --accent: hsl(0, 0%, 14.9%);
 
-    /* button border color */
-    --input: hsl(0, 0%, 13.9%);
   }
 
   .magenta-darkmode {
@@ -264,10 +254,9 @@
     --border: hsl(0, 0%, 9%);
     --primary: hsl(0, 0%, 92%);
     --secondary: hsl(0, 0%, 60%);
-    --action-primary: hsl(0, 0%, 11%);
-    --action-secondary: hsla(0, 0%, 11%, 0.492);
+    --action-primary: hsl(334, 55%, 52%);
+    --action-secondary: hsl(331, 42%, 34%);
     --accent: hsl(0, 0%, 11%);
-    --input: hsl(0, 0%, 9%);
   }
 
   .magenta-lightmode {
@@ -285,10 +274,9 @@
     --border: hsl(0, 0%, 88%);
     --primary: hsl(0, 0%, 10%);
     --secondary: hsl(0, 0%, 40%);
-    --action-primary: hsl(0, 0%, 11%);
-    --action-secondary: hsla(0, 0%, 11%, 0.492);
+    --action-primary: hsl(331, 50%, 70%);
+    --action-secondary: hsl(331, 18%, 52%);
     --accent: hsl(0, 0%, 85%);
-    --input: hsl(0, 0%, 85%);
   }
 
   .magenta-highcontrast {
@@ -306,10 +294,9 @@
     --border: hsl(0, 0%, 7%);
     --primary: hsl(0, 0%, 98%);
     --secondary: hsl(0, 0%, 80%);
-    --action-primary: hsl(0, 0%, 11%);
-    --action-secondary: hsla(0, 0%, 11%, 0.492);
+    --action-primary: hsl(331, 75%, 60%);
+    --action-secondary: hsl(331, 60%, 45%);
     --accent: hsl(0, 0%, 10%);
-    --input: hsl(0, 0%, 8%);
   }
 
   .cyan {
@@ -327,10 +314,9 @@
     --border: hsl(200, 25%, 14%);
     --primary: hsl(200, 20%, 98%);
     --secondary: hsl(200, 20%, 64%);
-    --action-primary: hsl(200, 20%, 98%);
-    --action-secondary: hsl(200, 20%, 64%);
+    --action-primary: hsl(192, 50%, 49%);
+    --action-secondary: hsl(192, 30%, 41%);
     --accent: hsl(200, 25%, 15%);
-    --input: hsl(200, 25%, 14%);
   }
 
   .cyan-darkmode {
@@ -348,10 +334,9 @@
     --border: hsl(200, 25%, 10%);
     --primary: hsl(200, 20%, 92%);
     --secondary: hsl(200, 20%, 55%);
-    --action-primary: hsl(200, 20%, 98%);
-    --action-secondary: hsl(200, 20%, 64%);
+    --action-primary: hsl(192, 52%, 47%);
+    --action-secondary: hsl(191, 43%, 35%);
     --accent: hsl(200, 25%, 10%);
-    --input: hsl(200, 25%, 10%);
   }
 
   .cyan-lightmode {
@@ -369,10 +354,9 @@
     --border: hsl(200, 25%, 85%);
     --primary: hsl(200, 20%, 20%);
     --secondary: hsl(200, 20%, 45%);
-    --action-primary: hsl(200, 20%, 98%);
-    --action-secondary: hsl(200, 20%, 64%);
+    --action-primary: hsl(192, 63%, 76%);
+    --action-secondary: hsl(192, 42%, 64%);
     --accent: hsl(200, 25%, 88%);
-    --input: hsl(200, 25%, 85%);
   }
 
   .cyan-highcontrast {
@@ -390,10 +374,9 @@
     --border: hsl(200, 30%, 12%);
     --primary: hsl(200, 30%, 100%);
     --secondary: hsl(200, 30%, 70%);
-    --action-primary: hsl(200, 20%, 98%);
-    --action-secondary: hsl(200, 20%, 64%);
+    --action-primary: hsl(192, 80%, 50%);
+    --action-secondary: hsl(192, 80%, 40%);
     --accent: hsl(200, 30%, 11%);
-    --input: hsl(200, 30%, 12%);
   }
 }
 

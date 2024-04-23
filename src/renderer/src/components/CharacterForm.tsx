@@ -261,7 +261,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
               <div className="flex justify-end space-x-3">
                 {formType === "edit" && (
                   <button
-                    className="flex items-center space-x-2 rounded-xl bg-card bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-neutral-600"
+                    className="flex items-center space-x-2 rounded-xl bg-action-primary bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-action-secondary"
                     type="button"
                     onClick={() => {
                       form.reset(initialData);
