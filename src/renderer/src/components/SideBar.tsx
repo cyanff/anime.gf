@@ -25,19 +25,19 @@ export default function SideBar({ page, setPage }: SideBarProps) {
         <Button
           variant="outline"
           size="icon"
-          className={`m-2 size-16 rounded-xl ${page === "create" ? "bg-neutral-700" : ""}`}
+          className={`m-2 size-16 rounded-xl ${page === "create" ? "bg-background" : ""}`}
           onClick={() => setPage("create")}
         >
-          <PlusCircleIcon className="size-8 text-neutral-500" />
+          <PlusCircleIcon className="size-8 text-secondary" />
         </Button>
         <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("chats")}>
-          <ChatBubbleLeftRightIcon className="size-8 text-neutral-500" />
+          <ChatBubbleLeftRightIcon className="size-8 text-secondary" />
         </Button>
         <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("collections")}>
-          <UserGroupIcon className="size-8 text-neutral-500" />
+          <UserGroupIcon className="size-8 text-secondary" />
         </Button>
         <Button variant="outline" size="icon" className="m-2 h-16 w-16" onClick={() => setPage("settings")}>
-          <Cog8ToothIcon className="size-8 text-neutral-500" />
+          <Cog8ToothIcon className="size-8 text-secondary" />
         </Button>
       </div>
 
@@ -55,7 +55,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
             toast.success("Discord invite opened in browser!");
           }}
         >
-          <DiscordIcon className="fill-neutral-500" />
+          <DiscordIcon className="fill-secondary" />
         </Button>
         <Button
           variant="outline"
@@ -65,7 +65,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
             toast.info("Docs are coming soon™!");
           }}
         >
-          <BookOpenIcon className="size-7 text-neutral-500" />
+          <BookOpenIcon className="size-7 text-secondary" />
         </Button>
       </div>
     </div>

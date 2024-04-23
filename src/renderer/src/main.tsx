@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <App />
       <Toaster position="top-right" />
     </ThemeProvider>

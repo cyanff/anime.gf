@@ -119,7 +119,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
             </div>
           </div>
           {/*Bottom Section */}
-          <div className="flex h-16 w-full shrink-0 flex-row bg-neutral-700 p-3">
+          <div className="flex h-16 w-full shrink-0 flex-row bg-card p-3">
             <div className="relative">
               <img src={personaBundle.avatarURI || ""} alt="Avatar" className="h-10 w-10 rounded-full" />
               <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 ring-4 ring-gray-700"></span>
@@ -140,7 +140,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
           setSidebarOpen(!sidebarOpen);
         }}
       >
-        <div className="h-10 w-1.5 rounded-full bg-neutral-700 transition duration-100 ease-out group-hover:bg-neutral-500"></div>
+        <div className="h-10 w-1.5 rounded-full bg-card transition duration-100 ease-out group-hover:bg-neutral-500"></div>
       </button>
     </div>
   );
