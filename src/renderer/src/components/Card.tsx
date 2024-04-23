@@ -7,17 +7,23 @@ import {
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { CardBundle } from "@shared/types";
+import { CardBundle, CardFormData } from "@shared/types";
 import { motion, useMotionValue } from "framer-motion";
 import { CardPattern } from "./ui/card-pattern";
-interface Props {
+import { DeepPartial } from "react-hook-form";
+import { DialogConfig, useApp } from "@/components/AppContext";
+import { queries } from "@/lib/queries";
+import CharacterForm from "@/components/CharacterForm";
+import { cardFormDataToCardData } from "@/lib/utils";
+import { toast } from "sonner";
+interface CardProps {
   cardBundle: CardBundle;
-  deleteCard: () => void;
-  editCard: () => void;
+  syncCardBundles: () => void;
   openCardModal: () => void;
 }
 
-function Card({ deleteCard, editCard, cardBundle, openCardModal }: Props) {
+function Card({ cardBundle, syncCardBundles, openCardModal }: CardProps) {
+  const { createModal, closeModal, createDialog } = useApp();
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 
@@ -26,6 +32,61 @@ function Card({ deleteCard, editCard, cardBundle, openCardModal }: Props) {
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
   }
+
+  const onEdit = () => {
+    const successfulSubmitHandler = async (data: CardFormData) => {
+      const cardData = cardFormDataToCardData(data);
+
+      const res = await window.api.blob.cards.update(
+        cardBundle.id,
+        cardData,
+        data.character.bannerURI ?? null,
+        data.character.avatarURI ?? null
+      );
+      syncCardBundles();
+      if (res.kind === "err") {
+        toast.error("Error updating card.");
+        console.error("An error occurred while running the update function:", res.error);
+        return;
+      }
+      closeModal();
+    };
+
+    const initialData: DeepPartial<CardFormData> = {
+      character: cardBundle.data.character,
+      world: cardBundle.data.world,
+      meta: {
+        title: cardBundle.data.meta.title,
+        notes: cardBundle.data.meta.notes,
+        tagline: cardBundle.data.meta.tagline,
+        tags: cardBundle.data.meta.tags.join(",")
+      }
+    };
+    createModal(
+      <div className="h-[80vh] w-[36rem] overflow-hidden rounded-xl">
+        <CharacterForm
+          initialAvatarDisplayImage={cardBundle.avatarURI}
+          initialBannerDisplayImage={cardBundle.bannerURI}
+          initialData={initialData}
+          formType="edit"
+          onSuccessfulSubmit={successfulSubmitHandler}
+        />
+      </div>
+    );
+  };
+
+  const onDelete = () => {
+    const config: DialogConfig = {
+      title: `Delete ${cardBundle.data.character.name}`,
+      description: `Are you sure you want to delete ${cardBundle.data.character.name}?\nThis action will also delete corresponding chats with ${cardBundle.data.character.name} and cannot be undone.`,
+      actionLabel: "Delete",
+      onAction: async () => {
+        await queries.deleteCard(cardBundle.id);
+        syncCardBundles();
+      }
+    };
+    createDialog(config);
+  };
 
   return (
     <ContextMenu>
@@ -78,13 +139,13 @@ function Card({ deleteCard, editCard, cardBundle, openCardModal }: Props) {
         </motion.button>
       </ContextMenuTrigger>
       <ContextMenuContent className="w-40 px-1 py-2">
-        <ContextMenuItem onSelect={editCard}>
+        <ContextMenuItem onSelect={onEdit}>
           Edit
           <ContextMenuShortcut>
             <PencilIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
-        <ContextMenuItem onSelect={deleteCard}>
+        <ContextMenuItem onSelect={onDelete}>
           Delete
           <ContextMenuShortcut>
             <TrashIcon className="size-4" />

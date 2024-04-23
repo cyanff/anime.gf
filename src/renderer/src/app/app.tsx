@@ -12,7 +12,6 @@ import {
 import ChatsPage from "@/app/chats";
 import CollectionsPage from "@/app/collections";
 import CreationPage from "@/app/create";
-import EditPage from "@/app/edit";
 import SettingsPage from "@/app/settings/settings";
 import { AppContext, DialogConfig } from "@/components/AppContext";
 import SideBar from "@/components/SideBar";
@@ -40,7 +39,6 @@ export default function App() {
   const [cmdOpen, setCmdOpen] = useState<boolean>(false);
   const [chatID, setChatID] = useState(1);
   const [cardBundles, setCardBundles] = useState<CardBundle[]>([]);
-  const [cardBundle, setCardBundle] = useState<CardBundle>();
 
   useEffect(() => {
     syncCardBundles();
@@ -77,6 +75,7 @@ export default function App() {
     setModalOpen(false);
   }
 
+  // Handle zip imports
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -211,16 +210,12 @@ export default function App() {
 
         <div className="flex h-full w-full overflow-hidden py-4">
           {page === "create" && <CreationPage setPage={setPage} syncCardBundles={syncCardBundles} />}
-          {page === "edit" && cardBundle && (
-            <EditPage setPage={setPage} cardBundle={cardBundle} syncCardBundles={syncCardBundles} />
-          )}
           {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID} />}
           {page === "collections" && (
             <CollectionsPage
               setPage={setPage}
               setChatID={setChatID}
               cardBundles={cardBundles}
-              setCardBundle={setCardBundle}
               syncCardBundles={syncCardBundles}
             />
           )}

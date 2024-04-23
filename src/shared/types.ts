@@ -125,7 +125,9 @@ const characterFormSchema = z.object({
     .regex(/^[a-zA-Z0-9 -]*$/, "Name can only contain letters, numbers, spaces, and hyphens"),
   description: z.string().min(config.card.descriptionMinChars).max(config.card.descriptionMaxChars),
   greeting: z.string().min(config.card.greetingMinChars).max(config.card.greetingMaxChars),
-  msg_examples: z.string().min(config.card.msgExamplesMinChars).max(config.card.msgExamplesMaxChars)
+  msg_examples: z.string().min(config.card.msgExamplesMinChars).max(config.card.msgExamplesMaxChars),
+  avatarURI: z.string().optional(),
+  bannerURI: z.string().optional()
 });
 
 const worldFormSchema = z.object({

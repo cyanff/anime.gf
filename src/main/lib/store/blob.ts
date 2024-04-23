@@ -101,14 +101,14 @@ export namespace cards {
   /**
    * Posts a card to the storage.
    * @param cardData - The data of the card to be posted.
-   * @param bannerImage - The path to the banner image, or null if no banner image is provided.
-   * @param avatarImage - The path to the avatar image, or null if no avatar image is provided.
+   * @param bannerURI - The path to the banner image, or null if no banner image is provided.
+   * @param avatarURI - The path to the avatar image, or null if no avatar image is provided.
    * @returns A promise that resolves to a Result object indicating the success or failure of the operation.
    */
   export async function create(
     cardData: CardData,
-    bannerImage: string | null,
-    avatarImage: string | null
+    bannerURI: string | null,
+    avatarURI: string | null
   ): Promise<Result<undefined, Error>> {
     const pathEscapedCharName = toPathEscapedStr(cardData.character.name);
     const cardDirName = `${pathEscapedCharName}-${crypto.randomUUID()}`;
@@ -118,11 +118,11 @@ export namespace cards {
 
     await fsp.writeFile(path.join(cardDirPath, "data.json"), JSON.stringify(cardData));
 
-    if (avatarImage) {
-      await fsp.copyFile(avatarImage, path.join(cardDirPath, "avatar.png"));
+    if (avatarURI) {
+      await fsp.copyFile(avatarURI, path.join(cardDirPath, "avatar.png"));
     }
-    if (bannerImage) {
-      await fsp.copyFile(bannerImage, path.join(cardDirPath, "banner.png"));
+    if (bannerURI) {
+      await fsp.copyFile(bannerURI, path.join(cardDirPath, "banner.png"));
     }
 
     // Insert an entry for the card into the database
@@ -142,15 +142,15 @@ export namespace cards {
    * Updates the card data and images in the card directory.
    * @param cardID - The ID of the card to update.
    * @param cardData - The updated card data.
-   * @param bannerImage - The new banner image, or null if not provided.
-   * @param avatarImage - The new avatar image, or null if not provided.
+   * @param bannerURI - The new banner image, or null if not provided.
+   * @param avatarURI - The new avatar image, or null if not provided.
    * @returns A promise that resolves to a Result object indicating the success or failure of the update operation.
    */
   export async function update(
     cardID: number,
     cardData: CardData,
-    bannerImage: string | null,
-    avatarImage: string | null
+    bannerURI: string | null,
+    avatarURI: string | null
   ): Promise<Result<undefined, Error>> {
     // Retrieve the dir_name of the card from the database using the id
     const query = `SELECT dir_name FROM cards WHERE id =?;`;
@@ -163,13 +163,13 @@ export namespace cards {
     await fsp.writeFile(path.join(cardDirPath, "data.json"), JSON.stringify(cardData));
 
     // If a new avatar image is provided, copy it to the card directory
-    if (avatarImage) {
-      await fsp.copyFile(avatarImage, path.join(cardDirPath, "avatar.png"));
+    if (avatarURI) {
+      await fsp.copyFile(avatarURI, path.join(cardDirPath, "avatar.png"));
     }
 
     // If a new banner image is provided, copy it to the card directory
-    if (bannerImage) {
-      await fsp.copyFile(bannerImage, path.join(cardDirPath, "banner.png"));
+    if (bannerURI) {
+      await fsp.copyFile(bannerURI, path.join(cardDirPath, "banner.png"));
     }
 
     return { kind: "ok", value: undefined };

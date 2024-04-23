@@ -3,7 +3,7 @@ import Card from "@/components/Card";
 import CardModal from "@/components/CardModal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { queries } from "@/lib/queries";
-import { ArrowDownIcon, ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
@@ -13,18 +13,11 @@ interface CollectionsPageProps {
   setPage: (page: string) => void;
   setChatID: (chatID: number) => void;
   cardBundles: CardBundle[];
-  setCardBundle: (cardBundle: CardBundle) => void;
   syncCardBundles: () => void;
 }
 
-export default function CollectionsPage({
-  setPage,
-  setChatID,
-  cardBundles,
-  setCardBundle,
-  syncCardBundles
-}: CollectionsPageProps) {
-  const { createModal, closeModal, createDialog: createAlert } = useApp();
+export default function CollectionsPage({ setPage, setChatID, cardBundles, syncCardBundles }: CollectionsPageProps) {
+  const { createModal, closeModal, createDialog } = useApp();
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);
   const [sortBy, setSortBy] = useState<string>("alphabetical");
@@ -39,7 +32,7 @@ export default function CollectionsPage({
   ];
   const fuseRef = useRef<Fuse<CardBundle>>();
 
-  // On cardBundles change, update the fuse
+  // On cardBundles change, update fuse search index
   useEffect(() => {
     const fuseOptions = {
       keys: ["data.character.name"],
@@ -182,23 +175,8 @@ export default function CollectionsPage({
           return (
             <Card
               key={idx}
-              deleteCard={() => {
-                const alertConfig: DialogConfig = {
-                  title: `Delete ${cardBundle.data.character.name}`,
-                  description: `Are you sure you want to delete ${cardBundle.data.character.name}?\nThis action will also delete corresponding chats with ${cardBundle.data.character.name} and cannot be undone.`,
-                  actionLabel: "Delete",
-                  onAction: async () => {
-                    await queries.deleteCard(cardBundle.id);
-                    syncCardBundles();
-                  }
-                };
-                createAlert(alertConfig);
-              }}
-              editCard={() => {
-                setCardBundle(cardBundle);
-                setPage("edit");
-              }}
               cardBundle={cardBundle}
+              syncCardBundles={syncCardBundles}
               openCardModal={() => {
                 createModal(<CardModal cardBundle={cardBundle} onCreateChat={createChatHandler} />);
               }}

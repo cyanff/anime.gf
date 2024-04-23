@@ -123,15 +123,15 @@ app.whenReady().then(async () => {
 
   ipcMain.handle(
     "blob.cards.create",
-    async (_, cardData: CardData, bannerImage: string | null, avatarImage: string | null) => {
-      return await blob.cards.create(cardData, bannerImage, avatarImage);
+    async (_, cardData: CardData, bannerURI: string | null, avatarURI: string | null) => {
+      return await blob.cards.create(cardData, bannerURI, avatarURI);
     }
   );
 
   ipcMain.handle(
     "blob.cards.update",
-    async (_, cardID: number, cardData: CardData, bannerImage: string | null, avatarImage: string | null) => {
-      return await blob.cards.update(cardID, cardData, bannerImage, avatarImage);
+    async (_, cardID: number, cardData: CardData, bannerURI: string | null, avatarURI: string | null) => {
+      return await blob.cards.update(cardID, cardData, bannerURI, avatarURI);
     }
   );
 

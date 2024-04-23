@@ -1,14 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { Result } from "@shared/utils";
 import { RunResult } from "../main/lib/store/sqlite";
-import {
-  CardBundle,
-  CardData,
-  PersonaBundle,
-  PersonaBundleWithoutData,
-  PersonaFormData,
-  Settings
-} from "@shared/types";
+import { CardBundle, CardData, PersonaBundleWithoutData, PersonaFormData, Settings } from "@shared/types";
 
 // Expose API types to the renderer process
 export interface API {
@@ -26,14 +19,14 @@ export interface API {
       get: (card: string) => Promise<Result<CardBundle, Error>>;
       create: (
         cardData: CardData,
-        bannerImage: string | null,
-        avatarImage: string | null
+        bannerURI: string | null,
+        avatarURI: string | null
       ) => Promise<Result<undefined, Error>>;
       update: (
         cardID: number,
         cardData: CardData,
-        bannerImage: string | null,
-        avatarImage: string | null
+        bannerURI: string | null,
+        avatarURI: string | null
       ) => Promise<Result<undefined, Error>>;
       exportToZip: (card: string) => Promise<Result<void, Error>>;
       importFromZip: (zip: string) => Promise<Result<void, Error>>;
@@ -76,10 +69,10 @@ const api: API = {
     },
     cards: {
       get: (card) => ipcRenderer.invoke("blob.cards.get", card),
-      create: (cardData, bannerImage, avatarImage) =>
-        ipcRenderer.invoke("blob.cards.create", cardData, bannerImage, avatarImage),
-      update: (cardID, cardData, bannerImage, avatarImage) =>
-        ipcRenderer.invoke("blob.cards.update", cardID, cardData, bannerImage, avatarImage),
+      create: (cardData, bannerURI, avatarURI) =>
+        ipcRenderer.invoke("blob.cards.create", cardData, bannerURI, avatarURI),
+      update: (cardID, cardData, bannerURI, avatarURI) =>
+        ipcRenderer.invoke("blob.cards.update", cardID, cardData, bannerURI, avatarURI),
       exportToZip: (card) => ipcRenderer.invoke("blob.cards.exportToZip", card),
       importFromZip: (zip) => ipcRenderer.invoke("blob.cards.importFromZip", zip)
     },
