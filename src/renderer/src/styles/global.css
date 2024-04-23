@@ -3,9 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-
-   /* ==================== Edit these custom themes  ==================== */
-   .custom-theme1 {
+  /* ==================== Edit these custom themes  ==================== */
+  .custom-theme1 {
     --background: hsl(0, 0%, 12%);
     --background-secondary: hsl(0, 0%, 14.9%);
 
@@ -157,8 +156,8 @@
     --input: hsl(0, 0%, 13.9%);
   }
 
-  /* Deprecate shadcn css variables */
-  /* :root {
+  /*
+  :root {
     --background: hsl(0, 0%, 100%);
     --foreground: hsl(0, 0%, 3.9%);
     --card: hsl(0, 0%, 100%);
@@ -180,7 +179,7 @@
     --ring: hsl(0, 0%, 3.9%);
     --radius: 0.8rem;
   }
-
+  
   .dark {
     --background: hsl(0, 0%, 12%);
     --foreground: hsl(0, 0%, 98%);
@@ -239,6 +238,8 @@
 
     /* button border color */
     --input: hsl(0, 0%, 13.9%);
+
+    --radius: 0.8rem;
   }
 
   .magenta-darkmode {
@@ -258,6 +259,7 @@
     --secondary: hsl(0, 0%, 60%);
     --accent: hsl(0, 0%, 11%);
     --input: hsl(0, 0%, 9%);
+    --radius: 0.8rem;
   }
 
   .magenta-lightmode {
@@ -277,6 +279,7 @@
     --secondary: hsl(0, 0%, 40%);
     --accent: hsl(0, 0%, 85%);
     --input: hsl(0, 0%, 85%);
+    --radius: 0.8rem;
   }
 
   .magenta-highcontrast {
@@ -296,6 +299,7 @@
     --secondary: hsl(0, 0%, 80%);
     --accent: hsl(0, 0%, 10%);
     --input: hsl(0, 0%, 8%);
+    --radius: 0.8rem;
   }
 
   .cyan {
@@ -315,6 +319,7 @@
     --secondary: hsl(200, 20%, 64%);
     --accent: hsl(200, 25%, 15%);
     --input: hsl(200, 25%, 14%);
+    --radius: 0.8rem;
   }
 
   .cyan-darkmode {
@@ -334,6 +339,7 @@
     --secondary: hsl(200, 20%, 55%);
     --accent: hsl(200, 25%, 10%);
     --input: hsl(200, 25%, 10%);
+    --radius: 0.8rem;
   }
 
   .cyan-lightmode {
@@ -353,6 +359,7 @@
     --secondary: hsl(200, 20%, 45%);
     --accent: hsl(200, 25%, 88%);
     --input: hsl(200, 25%, 85%);
+    --radius: 0.8rem;
   }
 
   .cyan-highcontrast {
@@ -372,6 +379,7 @@
     --secondary: hsl(200, 30%, 70%);
     --accent: hsl(200, 30%, 11%);
     --input: hsl(200, 30%, 12%);
+    --radius: 0.8rem;
   }
 }
 
