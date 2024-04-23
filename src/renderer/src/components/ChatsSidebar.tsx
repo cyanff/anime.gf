@@ -190,16 +190,16 @@ function RecentChat({
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent className="w-40 px-1 py-2">
-        <ContextMenuItem onSelect={deleteChat}>
-          Delete
-          <ContextMenuShortcut>
-            <TrashIcon className="size-4" />
-          </ContextMenuShortcut>
-        </ContextMenuItem>
         <ContextMenuItem onSelect={resetChat}>
           Reset
           <ContextMenuShortcut>
             <ArrowPathIcon className="size-4" />
+          </ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem onSelect={deleteChat}>
+          Delete
+          <ContextMenuShortcut>
+            <TrashIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
       </ContextMenuContent>

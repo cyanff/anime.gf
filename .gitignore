@@ -4,3 +4,5 @@ out
 .DS_Store
 *.log*
 qdrant_storage
+electron.vite.config.*.mjs
+
