@@ -26,6 +26,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { createModal, createDialog } = useApp();
 
+
   useEffect(() => {
     syncRecentChats();
   }, []);
@@ -61,12 +62,12 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
             <div className="mb-2 w-full px-2">
               {/* Search Bar */}
               <div
-                className="mb-2 flex w-full cursor-pointer items-center space-x-2 overflow-hidden rounded-2xl bg-neutral-950 p-1"
+                className="mb-2 flex w-full cursor-pointer items-center space-x-2 overflow-hidden rounded-2xl bg-card p-1"
                 onClick={() => {
                   createModal(<ChatsSearchModal />);
                 }}
               >
-                <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-neutral-400" />
+                <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-secondary" />
                 <input
                   className="h-11 w-full grow cursor-pointer select-none bg-inherit text-gray-100 caret-transparent placeholder:font-[480] placeholder:tracking-wide focus:outline-none"
                   placeholder="Search for a chat"
@@ -128,8 +129,8 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
               <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 ring-4 ring-gray-700"></span>
             </div>
             <div className="flex h-full flex-col justify-center p-2">
-              <h3 className="font-semibold text-gray-100 ">{personaBundle.data.name}</h3>
-              <p className="font-medium text-gray-400">Online</p>
+              <h3 className="font-semibold text-primary ">{personaBundle.data.name}</h3>
+              <p className="font-medium text-secondary">Online</p>
             </div>
             {/* Settings Icon */}
             <div className="flex grow items-center justify-end"></div>
@@ -181,16 +182,16 @@ function RecentChat({
           className={cn(
             `group flex w-full cursor-pointer items-center space-x-3 
         rounded-lg p-2.5 transition duration-150 ease-out hover:bg-accent 
-        ${active ? "bg-neutral-700 text-neutral-50" : ""}`,
+        ${active ? "bg-card" : ""}`,
             className
           )}
         >
           <img className="size-12 shrink-0 rounded-full object-cover object-top" src={avatarURI} alt="avatar" />
           <div className={`flex h-full max-w-full flex-col justify-center `}>
-            <h3 className="text-neutra line-clamp-1 text-ellipsis  font-[550] text-neutral-300 group-hover:text-neutral-100">
+            <h3 className="text-neutra line-clamp-1 text-ellipsis  font-[550] text-secondary group-hover:text-primary">
               {name}
             </h3>
-            <p className="line-clamp-1 text-ellipsis text-[14.5px] font-[450] text-neutral-400">{message}</p>
+            <p className="line-clamp-1 text-ellipsis text-[14.5px] font-[450] text-secondary">{message}</p>
           </div>
         </div>
       </ContextMenuTrigger>

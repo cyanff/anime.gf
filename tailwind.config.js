@@ -25,44 +25,47 @@ module.exports = {
       },
       backgroundImage: {
         none: "none",
-        "grad-magenta": "linear-gradient(45deg, hsl(331, 52%, 51%), hsl(332, 42%, 43%), hsl(331, 32%, 37%))",
-        "grad-magenta-2": "linear-gradient(112.84deg, hsl(334, 75%, 47%) 0%, hsl(331, 52%, 93%) 100%)",
-        "grad-gray": "linear-gradient(45deg, hsl(0, 0%, 23%), hsl(0, 0%, 28%))"
+        "grad-user": "linear-gradient(45deg, var(--grad-user-primary), var(--grad-user-secondary))",
+        "grad-logo": "linear-gradient(112.84deg, var(--grad-logo-primary), var(--grad-logo-secondary))",
+        "grad-character": "linear-gradient(45deg, var(--grad-character-primary), var(--grad-character-secondary))"
       },
 
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
+        background: {
+          DEFAULT: "var(--background)",
+          secondary: "var(--background-secondary)",
+        },
+        foreground: "var(--foreground)",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))"
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)"
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))"
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)"
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))"
+          DEFAULT: "var(--destructive)",
+          foreground: "var(--destructive-foreground)"
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))"
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)"
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))"
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)"
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))"
+          DEFAULT: "var(--popover)",
+          foreground: "var(--popover-foreground)"
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))"
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)"
         }
       },
       borderRadius: {

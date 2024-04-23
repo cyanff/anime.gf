@@ -8,6 +8,7 @@ import { CardBundle } from "@shared/types";
 import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useTheme } from "@/components/theme-provider"
 
 interface CollectionsPageProps {
   setPage: (page: string) => void;
@@ -22,6 +23,17 @@ export default function CollectionsPage({ setPage, setChatID, cardBundles, syncC
   const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);
   const [sortBy, setSortBy] = useState<string>("alphabetical");
   const [descending, setDescending] = useState<boolean>(true);
+  const { setTheme } = useTheme()
+
+  useEffect(() => {
+    setTheme("darker");
+  }, []);
+
+
+
+
+
+
 
   // TODO, edit card bundle type to also include all data from the card table
   // then add sort by "imported" which is the inserted_at column in the db
@@ -121,7 +133,7 @@ export default function CollectionsPage({ setPage, setChatID, cardBundles, syncC
   }
 
   return (
-    <div className="scroll-primary h-full w-full overflow-y-scroll bg-neutral-800 antialiased  lg:text-base">
+    <div className="scroll-primary  h-full w-full overflow-y-scroll bg-neutral-800 antialiased  lg:text-base">
       <div className="flex flex-row space-x-4 py-2 pb-8">
         {/* Search Bar*/}
         <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-lg bg-neutral-700 p-2">
