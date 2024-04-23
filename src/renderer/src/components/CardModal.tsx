@@ -41,7 +41,7 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
   };
 
   return (
-    <div className="flex w-[45rem] items-center justify-center rounded-lg bg-neutral-800">
+    <div className="flex w-[45rem] items-center justify-center rounded-lg bg-background">
       <div className="scroll-secondary h-[60rem] overflow-y-scroll rounded-lg">
         {/* Banner and profile picture */}
         <div className="relative rounded-lg">
@@ -63,11 +63,9 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
           <div className="flex flex-row">
             <div className="w-[30rem] pr-10">
               <div className="pb-2 text-2xl font-semibold">{cardBundle.data.character.name}</div>
-              <div className="pb-8 text-sm text-neutral-400">
-                <p>{`Created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
-                {cardBundle.data.meta.updated_at && <p>{`Updated: ${cardBundle.data.meta.updated_at}`}</p>}{" "}
-              </div>
-              <div className="text-sm text-neutral-400 ">created by @{cardBundle.data.meta.creator.card}</div>
+              <p className="pb-1 text-sm font-semibold text-neutral-500">{`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
+              {cardBundle.data.meta.updated_at && <p>{`Updated: ${cardBundle.data.meta.updated_at}`}</p>}{" "}
+              <p className="text-sm font-semibold text-neutral-500">by @{cardBundle.data.meta.creator.card}</p>
             </div>
             {/* Character tags */}
             <div className="mr-4 text-2xl font-semibold">Tags:</div>
@@ -77,19 +75,28 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
               ))}
             </div>
           </div>
-          <div className="mt-6 flex justify-end space-x-4 border-b border-t border-neutral-700">
-            <Button variant="outline" className="group m-2 h-10 w-16 border-none bg-transparent" onClick={handleEdit}>
-              <PencilIcon className="size-6 text-neutral-400 transition duration-200 ease-out group-hover:text-neutral-200" />
-            </Button>
 
-            <Button variant="outline" className="group m-2 h-10 w-16 border-none bg-transparent" onClick={handleExport}>
-              <ArrowUpOnSquareIcon className="size-6 text-neutral-400 transition duration-200 ease-out group-hover:text-neutral-200" />
-            </Button>
+          {/* Buttons Bar */}
+          <div className="item-center mb-10 mt-14 flex justify-between border-neutral-700">
+            {/* Left Button Group */}
+            <div className="flex flex-row">
+              <Button variant="outline" className="group h-12 w-14 border-none bg-transparent p-0" onClick={handleEdit}>
+                <PencilIcon className="size-6 text-neutral-400 transition duration-200 ease-out group-hover:text-neutral-200" />
+              </Button>
+
+              <Button
+                variant="outline"
+                className="group h-12 w-14 border-none bg-transparent p-0"
+                onClick={handleExport}
+              >
+                <ArrowUpOnSquareIcon className="size-6 text-neutral-400 transition duration-200 ease-out group-hover:text-neutral-200" />
+              </Button>
+            </div>
 
             <Button
               variant="outline"
               size="icon"
-              className="m-2 h-10 w-16 bg-gradient-to-r from-[#C3407F] to-[#7C405D] transition ease-out hover:brightness-90"
+              className="h-12 w-16 bg-gradient-to-r from-[#C3407F] to-[#7C405D] transition ease-out hover:brightness-90"
               onClick={() => onCreateChat(cardBundle.id, cardBundle.data.character.greeting)}
             >
               <ChatBubbleLeftRightIcon className="size-6 text-neutral-200" />

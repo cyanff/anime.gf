@@ -30,8 +30,6 @@ function Card({ cardBundle, syncCardBundles, openCardModal }: CardProps) {
     mouseY.set(clientY - top);
   }
 
-  const handleEdit = () => {};
-
   const onDelete = () => {
     const config: DialogConfig = {
       title: `Delete ${cardBundle.data.character.name}`,

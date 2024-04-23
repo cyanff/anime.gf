@@ -14,7 +14,7 @@ export default function Tag({ text, className }: TagProps) {
     <span
       className={cn(
         `text-shadow inline-block h-fit min-w-8 whitespace-nowrap rounded-full
-    bg-gradient-to-br from-neutral-600 to-neutral-700 px-2 py-1.5 text-center
+    bg-gradient-to-br from-neutral-600 to-neutral-700 px-2.5 py-1.5 text-center
     text-xs font-medium text-neutral-200 shadow`,
         className
       )}

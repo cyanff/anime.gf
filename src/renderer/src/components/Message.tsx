@@ -347,10 +347,10 @@ function MessagePopoverContentProps({ sender, personaBundle, cardBundle }: Messa
           </div>
           {/* Character details dropdowns */}
           <div className="mt-6">
-            <Dropdown label="Character Description" content={cardBundle.data.character.description} variant="sm" />
-            <Dropdown label="Character Persona" content={cardBundle.data.meta.notes ?? ""} variant="sm" />
-            <Dropdown label="Greeting Message" content={cardBundle.data.character.greeting} variant="sm" />
-            <Dropdown label="Example Messages" content={cardBundle.data.character.msg_examples} variant="sm" />
+            <Dropdown label="Character Description" content={cardBundle.data.character.description} />
+            <Dropdown label="Character Persona" content={cardBundle.data.meta.notes ?? ""} />
+            <Dropdown label="Greeting Message" content={cardBundle.data.character.greeting} />
+            <Dropdown label="Example Messages" content={cardBundle.data.character.msg_examples} />
           </div>
         </div>
       </PopoverContent>

@@ -31,7 +31,7 @@ export default function EditCardModal({ cardBundle, syncCardBundles }: EditCardM
   };
 
   return (
-    <div className="h-[80vh] w-[36rem] overflow-hidden rounded-xl">
+    <div className="h-[80vh] w-[36rem] overflow-hidden rounded-3xl">
       <CharacterForm cardBundle={cardBundle} formType="edit" onSuccessfulSubmit={handleSuccessfulSubmit} />
     </div>
   );
