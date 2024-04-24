@@ -130,7 +130,7 @@ export default function SettingsPersona() {
               <ContextMenu key={idx}>
                 <ContextMenuTrigger>
                   <button
-                    className={`group flex h-fit w-full items-center justify-between rounded-lg p-3 font-[480] text-primary transition duration-200 ease-out hover:bg-action-primary focus:outline-none`}
+                    className={`group flex h-fit w-full items-center justify-between rounded-lg p-3 font-[480] text-primary transition duration-200 ease-out hover:bg-accent focus:outline-none`}
                     onClick={() => handleEdit(bundle)}
                   >
                     <div className="mr-3 flex w-full items-center space-x-5 ">
@@ -211,7 +211,10 @@ export default function SettingsPersona() {
           })}
         </div>
       </div>
-      <button className="flex items-center space-x-2 rounded-md transition bg-action-primary hover:bg-action-secondary px-4 py-2" onClick={handleNew}>
+      <button
+        className="flex items-center space-x-2 rounded-md bg-action-primary px-4 py-2 transition hover:bg-action-secondary"
+        onClick={handleNew}
+      >
         <UserPlusIcon className="size-5 text-primary" />
         <span className="font-medium text-primary">New</span>
       </button>

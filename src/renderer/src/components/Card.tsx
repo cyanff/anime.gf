@@ -83,7 +83,7 @@ function Card({ cardBundle, syncCardBundles, openCardModal }: CardProps) {
                   ))}
                 </div>
               </div>
-              <div className="absolute top-20 z-10 pl-5 text-left text-sm font-medium text-secondary opacity-50">
+              <div className="text-tertiary absolute top-20 z-10 pl-5 text-left text-sm font-medium">
                 by @{cardBundle.data.meta.creator.card}
               </div>
             </div>

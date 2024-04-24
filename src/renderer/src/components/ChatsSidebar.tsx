@@ -140,7 +140,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
           setSidebarOpen(!sidebarOpen);
         }}
       >
-        <div className="h-10 w-1.5 rounded-full bg-card transition duration-100 ease-out group-hover:bg-neutral-500"></div>
+        <div className="h-10 w-1.5 rounded-full bg-card transition duration-100 ease-out group-hover:bg-accent"></div>
       </button>
     </div>
   );
@@ -182,9 +182,7 @@ function RecentChat({
         >
           <img className="size-12 shrink-0 rounded-full object-cover object-top" src={avatarURI} alt="avatar" />
           <div className={`flex h-full max-w-full flex-col justify-center `}>
-            <h3 className=" line-clamp-1 text-ellipsis  font-[550] text-secondary group-hover:text-primary">
-              {name}
-            </h3>
+            <h3 className=" line-clamp-1 text-ellipsis  font-[550] text-secondary group-hover:text-primary">{name}</h3>
             <p className="line-clamp-1 text-ellipsis text-[14.5px] font-[450] text-secondary">{message}</p>
           </div>
         </div>

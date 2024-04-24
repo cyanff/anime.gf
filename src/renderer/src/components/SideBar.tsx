@@ -29,13 +29,13 @@ export default function SideBar({ page, setPage }: SideBarProps) {
         >
           <PlusCircleIcon className="size-8 text-secondary" />
         </Button>
-        <Button size="icon" className="m-2 h-16 w-16 rounded-xl " onClick={() => setPage("chats")}>
+        <Button className="m-2 size-16  rounded-xl hover:bg-accent " onClick={() => setPage("chats")}>
           <ChatBubbleLeftRightIcon className="size-8 text-secondary" />
         </Button>
-        <Button size="icon" className="m-2 h-16 w-16 rounded-xl" onClick={() => setPage("collections")}>
+        <Button className="m-2 size-16  rounded-xl hover:bg-accent" onClick={() => setPage("collections")}>
           <UserGroupIcon className="size-8 text-secondary" />
         </Button>
-        <Button size="icon" className="m-2 h-16 w-16 rounded-xl" onClick={() => setPage("settings")}>
+        <Button className="m-2 size-16  rounded-xl hover:bg-accent" onClick={() => setPage("settings")}>
           <Cog8ToothIcon className="size-8 text-secondary" />
         </Button>
       </div>

@@ -17,14 +17,64 @@
 }
 
 @layer base {
+  /*
+  :root {
+    --background: hsl(0, 0%, 100%);
+    --foreground: hsl(0, 0%, 3.9%);
+    --card: hsl(0, 0%, 100%);
+    --card-foreground: hsl(0, 0%, 3.9%);
+    --popover: hsl(0, 0%, 100%);
+    --popover-foreground: hsl(0, 0%, 3.9%);
+    --primary: hsl(0, 0%, 9%);
+    --primary-foreground: hsl(0, 0%, 98%);
+    --secondary: hsl(0, 0%, 96.1%);
+    --secondary-foreground: hsl(0, 0%, 9%);
+    --muted: hsl(0, 0%, 96.1%);
+    --muted-foreground: hsl(0, 0%, 45.1%);
+    --accent: hsl(0, 0%, 96.1%);
+    --accent-foreground: hsl(0, 0%, 9%);
+    --destructive: hsl(0, 84.2%, 60.2%);
+    --destructive-foreground: hsl(0, 0%, 98%);
+    --border: hsl(0, 0%, 89.8%);
+    --input: hsl(0, 0%, 89.8%);
+    --ring: hsl(0, 0%, 3.9%);
+    --radius: 0.8rem;
+  }
+  
+  .dark {
+    --background: hsl(0, 0%, 12%);
+    --foreground: hsl(0, 0%, 98%);
+    --card: hsl(0, 0%, 9%);
+    --card-foreground: hsl(0, 0%, 98%);
+    --popover: hsl(0, 0%, 9%);
+    --popover-foreground: hsl(0, 0%, 98%);
+    --primary: hsl(0, 0%, 98%);
+    --primary-foreground: hsl(0, 0%, 9%);
+    --secondary: hsl(0, 0%, 14.9%);
+    --secondary-foreground: hsl(0, 0%, 98%);
+    --muted: hsl(0, 0%, 14.9%);
+    --muted-foreground: hsl(0, 0%, 63.9%);
+    --accent: hsl(0, 0%, 14.9%);
+    --accent-foreground: hsl(0, 0%, 98%);
+    --destructive: hsl(0, 62.8%, 30.6%);
+    --destructive-foreground: hsl(0, 0%, 98%);
+    --border: hsl(0, 0%, 13.9%);
+    --input: hsl(0, 0%, 13.9%);
+    --ring: hsl(0, 0%, 83.1%);
+  } */
+
+
   /* ==================== You can edit these themes  ==================== */
   .custom {
     --background: hsl(0, 0%, 12%);
     --background-secondary: hsl(0, 0%, 14.9%);
 
-    /* search bar and card color */
+    /* card color */
     --card: hsl(0, 0%, 25.1%);
+    --card-hover: hsl(0, 0%, 31.1%);
+    --card-tag: hsl(0, 0%, 18%);
 
+    /* TODO: rename this to from/to */ 
     /* user message color gradient */
     --grad-user-primary: hsl(331, 50%, 44%);
     --grad-user-secondary: hsl(331, 32%, 37%);
@@ -37,25 +87,27 @@
     --grad-logo-primary: hsl(334, 75%, 47%) 0%;
     --grad-logo-secondary: hsl(331, 52%, 93%) 100%;
 
-    /* coupled to radix ui popover wip */
-    /* popover background color */
+    /* TODO: coupled to radix ui popover remove this later */
     --popover: hsl(0, 0%, 9%);
-    /* popover text color */
     --popover-foreground: hsl(0, 0%, 98%);
-    /* popover border color */
     --border: hsl(0, 0%, 13.9%);
+
+
 
     /* text colors */
     --primary: hsl(0, 0%, 98%);
     --secondary: hsl(0, 0%, 63.9%);
+    --tertiary: hsl(0, 0%, 42.1%);
 
+    /* action buttons */
     --action-primary: hsl(334, 55%, 52%);
     --action-secondary: hsl(331, 42%, 34%);
 
+    /* borders and seperators */
     --line: hsl(0, 0%, 25.1%);
 
     /* hover color */
-    --accent: hsl(0, 0%, 14.9%);
+    --accent: hsl(0, 0%, 18.0%);
   }
 
   .sakura-white {
@@ -179,51 +231,6 @@
     --accent: hsl(345, 70%, 48%);
   }
 
-  /*
-  :root {
-    --background: hsl(0, 0%, 100%);
-    --foreground: hsl(0, 0%, 3.9%);
-    --card: hsl(0, 0%, 100%);
-    --card-foreground: hsl(0, 0%, 3.9%);
-    --popover: hsl(0, 0%, 100%);
-    --popover-foreground: hsl(0, 0%, 3.9%);
-    --primary: hsl(0, 0%, 9%);
-    --primary-foreground: hsl(0, 0%, 98%);
-    --secondary: hsl(0, 0%, 96.1%);
-    --secondary-foreground: hsl(0, 0%, 9%);
-    --muted: hsl(0, 0%, 96.1%);
-    --muted-foreground: hsl(0, 0%, 45.1%);
-    --accent: hsl(0, 0%, 96.1%);
-    --accent-foreground: hsl(0, 0%, 9%);
-    --destructive: hsl(0, 84.2%, 60.2%);
-    --destructive-foreground: hsl(0, 0%, 98%);
-    --border: hsl(0, 0%, 89.8%);
-    --input: hsl(0, 0%, 89.8%);
-    --ring: hsl(0, 0%, 3.9%);
-    --radius: 0.8rem;
-  }
-  
-  .dark {
-    --background: hsl(0, 0%, 12%);
-    --foreground: hsl(0, 0%, 98%);
-    --card: hsl(0, 0%, 9%);
-    --card-foreground: hsl(0, 0%, 98%);
-    --popover: hsl(0, 0%, 9%);
-    --popover-foreground: hsl(0, 0%, 98%);
-    --primary: hsl(0, 0%, 98%);
-    --primary-foreground: hsl(0, 0%, 9%);
-    --secondary: hsl(0, 0%, 14.9%);
-    --secondary-foreground: hsl(0, 0%, 98%);
-    --muted: hsl(0, 0%, 14.9%);
-    --muted-foreground: hsl(0, 0%, 63.9%);
-    --accent: hsl(0, 0%, 14.9%);
-    --accent-foreground: hsl(0, 0%, 98%);
-    --destructive: hsl(0, 62.8%, 30.6%);
-    --destructive-foreground: hsl(0, 0%, 98%);
-    --border: hsl(0, 0%, 13.9%);
-    --input: hsl(0, 0%, 13.9%);
-    --ring: hsl(0, 0%, 83.1%);
-  } */
 
   .magenta {
     --background: hsl(0, 0%, 12%);

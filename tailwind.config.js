@@ -35,19 +35,15 @@ module.exports = {
         input: "var(--input)",
         ring: "var(--ring)",
         line: "var(--line)",
+
         background: {
           DEFAULT: "var(--background)",
           secondary: "var(--background-secondary)"
         },
         foreground: "var(--foreground)",
-        primary: {
-          DEFAULT: "var(--primary)",
-          foreground: "var(--primary-foreground)"
-        },
-        secondary: {
-          DEFAULT: "var(--secondary)",
-          foreground: "var(--secondary-foreground)"
-        },
+        primary: "var(--primary)",
+        secondary: "var(--secondary)",
+        tertiary: "var(--tertiary)",
         action: {
           primary: "var(--action-primary)",
           secondary: "var(--action-secondary)"
@@ -60,21 +56,21 @@ module.exports = {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)"
         },
-        accent: {
-          DEFAULT: "var(--accent)",
-          foreground: "var(--accent-foreground)"
-        },
+        accent: "var(--accent)",
         popover: {
           DEFAULT: "var(--popover)",
           foreground: "var(--popover-foreground)"
         },
         card: {
           DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)",
-          hover: "var(--card-hover)"
+          hover: "var(--card-hover)",
+          tag: "var(--card-tag)"
         }
       },
       borderRadius: {
+        "3xl": "calc(var(--radius) + 6px)",
+        "2xl": "calc(var(--radius) + 4px)",
+        xl: "calc(var(--radius) + 2px)",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)"

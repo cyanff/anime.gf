@@ -41,7 +41,7 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
   };
 
   return (
-    <div className="bg-background-secondary flex w-[45rem] items-center justify-center rounded-xl">
+    <div className="flex w-[45rem] items-center justify-center rounded-xl bg-background-secondary">
       <div className="scroll-secondary h-[60rem] overflow-y-scroll rounded-xl">
         {/* Banner and profile picture */}
         <div className="relative rounded-xl">
@@ -63,9 +63,9 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
           <div className="flex flex-row">
             <div className="w-[30rem] pr-10">
               <div className="pb-2 text-2xl font-semibold text-primary">{cardBundle.data.character.name}</div>
-              <p className="pb-1 text-sm font-semibold text-secondary opacity-60">{`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
+              <p className="text-tertiary pb-1 text-sm font-semibold">{`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
               {cardBundle.data.meta.updated_at && <p>{`Updated: ${cardBundle.data.meta.updated_at}`}</p>}{" "}
-              <p className="text-sm font-semibold text-secondary opacity-60">by @{cardBundle.data.meta.creator.card}</p>
+              <p className="text-tertiary text-sm font-semibold">by @{cardBundle.data.meta.creator.card}</p>
             </div>
             {/* Character tags */}
             <div className="mr-4 text-2xl font-semibold text-primary">Tags:</div>
@@ -77,7 +77,7 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
           </div>
 
           {/* Buttons Bar */}
-          <div className="item-center mb-10 mt-14 flex justify-between border-neutral-700">
+          <div className="item-center mb-10 mt-14 flex justify-between">
             {/* Left Button Group */}
             <div className="flex flex-row">
               <Button className="group h-12 w-14 rounded-xl border-none bg-transparent p-0" onClick={handleEdit}>
@@ -91,7 +91,7 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
 
             <Button
               size="icon"
-              className="bg-action-primary h-12 w-16 rounded-xl transition ease-out hover:brightness-95"
+              className="h-12 w-16 rounded-xl bg-action-primary transition ease-out"
               onClick={() => onCreateChat(cardBundle.id, cardBundle.data.character.greeting)}
             >
               <ChatBubbleLeftRightIcon className="size-6 text-primary" />
