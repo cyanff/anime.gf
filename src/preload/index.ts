@@ -28,6 +28,7 @@ export interface API {
         bannerURI: string | null,
         avatarURI: string | null
       ) => Promise<Result<undefined, Error>>;
+      del: (cardID: number) => Promise<Result<undefined, Error>>;
       exportToZip: (card: string) => Promise<Result<void, Error>>;
       importFromZip: (zip: string) => Promise<Result<void, Error>>;
     };
@@ -73,6 +74,7 @@ const api: API = {
         ipcRenderer.invoke("blob.cards.create", cardData, bannerURI, avatarURI),
       update: (cardID, cardData, bannerURI, avatarURI) =>
         ipcRenderer.invoke("blob.cards.update", cardID, cardData, bannerURI, avatarURI),
+      del: (cardID) => ipcRenderer.invoke("blob.cards.del", cardID),
       exportToZip: (card) => ipcRenderer.invoke("blob.cards.exportToZip", card),
       importFromZip: (zip) => ipcRenderer.invoke("blob.cards.importFromZip", zip)
     },

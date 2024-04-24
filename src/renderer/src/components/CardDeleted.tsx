@@ -49,7 +49,7 @@ function CardDeleted({ cardBundle, syncCardBundles, openCardModal }: CardProps) 
       description: `Are you sure you want to permenantly delete ${cardBundle.data.character.name}?\nThis action will also delete corresponding chats with ${cardBundle.data.character.name} and cannot be undone.`,
       actionLabel: "Delete",
       onAction: async () => {
-        await window.api.blob.cards.delete();
+        await window.api.blob.cards.del(cardBundle.id);
         syncCardBundles();
       }
     };

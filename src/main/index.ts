@@ -135,6 +135,10 @@ app.whenReady().then(async () => {
     }
   );
 
+  ipcMain.handle("blob.cards.del", async (_, cardID: number) => {
+    return await blob.cards.del(cardID);
+  });
+
   ipcMain.handle("blob.cards.exportToZip", async (_, card: string) => {
     return await blob.cards.exportToZip(card);
   });
