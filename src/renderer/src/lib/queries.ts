@@ -349,6 +349,19 @@ async function deleteCard(cardID: number): Promise<Result<void, Error>> {
   }
 }
 
+async function restoreCard(cardID: number): Promise<Result<void, Error>> {
+  try {
+    const query = `
+    UPDATE cards SET is_deleted = 0 WHERE id = ?;
+    `;
+    await window.api.sqlite.run(query, [cardID]);
+    return { kind: "ok", value: undefined };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
 async function insertMessage(
   chatID: number,
   message: string,
@@ -566,6 +579,7 @@ export const queries = {
   getAllExtantCardBundles,
   getAllDeletedCardBundles,
   deleteCard,
+  restoreCard,
   insertMessage,
   insertMessagePair,
   updateMessageText,
