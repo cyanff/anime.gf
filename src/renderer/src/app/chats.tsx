@@ -17,7 +17,7 @@ enum ScrollEvent {
   NEW_CHARACTER_MESSAGE
 }
 
-function ChatsPage({ chatID, setChatID }): JSX.Element {
+function ChatsPage({ chatID }): JSX.Element {
   const { createDialog } = useContext(AppContext);
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
   const [cardBundle, setCardBundle] = useState<CardBundle>();
@@ -291,7 +291,6 @@ function ChatsPage({ chatID, setChatID }): JSX.Element {
     >
       <ChatsSidebar
         chatID={chatID}
-        setChatID={setChatID}
         personaBundle={personaBundle}
         syncChatHistory={syncChatHistory}
       />

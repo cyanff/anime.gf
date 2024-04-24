@@ -37,12 +37,22 @@ export default function App() {
   const [modalContent, setModalContent] = useState<React.ReactNode>();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [cmdOpen, setCmdOpen] = useState<boolean>(false);
-  const [chatID, setChatID] = useState(1);
+  const [chatID, setChatID] = useState<number | null>(null);
   const [cardBundles, setCardBundles] = useState<CardBundle[]>([]);
 
   useEffect(() => {
+    syncChatID();
     syncCardBundles();
   }, []);
+
+  async function syncChatID() {
+    const res = await queries.getMostRecentChatID();
+    if (res.kind == "ok") {
+      setChatID(res.value);
+    } else {
+      toast.error("Error fetching card bundle.");
+    }
+  }
 
   async function syncCardBundles() {
     const res = await queries.getAllExtantCardBundles();
@@ -119,7 +129,7 @@ export default function App() {
   };
 
   return (
-    <AppContext.Provider value={{ createDialog, createModal, closeModal, setChatID, syncCardBundles }}>
+    <AppContext.Provider value={{ createDialog, createModal, closeModal, setChatID, syncCardBundles, syncChatID }}>
       <div
         className="bg-background-secondary flex h-screen text-sm text-neutral-100 antialiased lg:text-base"
         onDrop={handleDrop}
@@ -211,14 +221,8 @@ export default function App() {
 
         <div className="flex h-full w-full overflow-hidden py-4">
           {page === "create" && <CreationPage setPage={setPage} />}
-          {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID} />}
-          {page === "collections" && (
-            <CollectionsPage
-              setPage={setPage}
-              setChatID={setChatID}
-              cardBundles={cardBundles}
-            />
-          )}
+          {page === "chats" && chatID !== null && <ChatsPage chatID={chatID} />}{" "}
+          {page === "collections" && <CollectionsPage setPage={setPage} cardBundles={cardBundles} />}
           {page === "settings" && <SettingsPage />}
         </div>
       </div>

@@ -22,7 +22,7 @@ export default function CreationPage({ setPage }: CreationPageProps) {
       toast.success(`Created ${data.character.name} ^-^`);
     } else {
       toast.error("Error creating character.");
-      console.error("An error occurred while running the create function:", res.error);
+      console.error("An error occurred while creating character:", res.error);
     }
     syncCardBundles();
   }

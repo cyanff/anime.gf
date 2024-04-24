@@ -18,13 +18,12 @@ export interface ChatsSideBarProps {
   chatID: number;
   personaBundle: PersonaBundle;
   syncChatHistory: () => void;
-  setChatID: (id: number) => void;
 }
 
-export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, setChatID }: ChatsSideBarProps) {
+export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }: ChatsSideBarProps) {
   const [recentChats, setRecentChats] = useState<RecentChatI[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { createModal, createDialog } = useApp();
+  const { createModal, createDialog, setChatID } = useApp();
 
   useEffect(() => {
     syncRecentChats();

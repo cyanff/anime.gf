@@ -21,7 +21,7 @@ interface CardProps {
 }
 
 function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
-  const { createDialog, syncCardBundles, setChatID } = useApp();
+  const { createDialog, syncCardBundles, syncChatID } = useApp();
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 
@@ -46,12 +46,7 @@ function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
         await window.api.blob.cards.del(cardBundle.id);
         await queries.permaDeleteCard(cardBundle.id);
         syncDeletedCardBundles();
-        const res = await queries.getMostRecentChatID();
-        if (res.kind === "ok") {
-          setChatID(res.value);
-        } else {
-          console.error(res.error);
-        }
+        syncChatID();
       }
     };
     createDialog(config);

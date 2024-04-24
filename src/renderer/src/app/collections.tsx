@@ -11,12 +11,11 @@ import { toast } from "sonner";
 
 interface CollectionsPageProps {
   setPage: (page: string) => void;
-  setChatID: (chatID: number) => void;
   cardBundles: CardBundle[];
 }
 
-export default function CollectionsPage({ setPage, setChatID, cardBundles }: CollectionsPageProps) {
-  const { createModal, closeModal, createDialog } = useApp();
+export default function CollectionsPage({ setPage, cardBundles }: CollectionsPageProps) {
+  const { createModal, closeModal, setChatID } = useApp();
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);
   const [sortBy, setSortBy] = useState<string>("alphabetical");
