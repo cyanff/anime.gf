@@ -1,11 +1,18 @@
 import CardDeleted from "@/components/CardDeleted";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { queries } from "@/lib/queries";
-import { ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowUpIcon,
+  ArrowUturnLeftIcon,
+  Bars3BottomLeftIcon,
+  MagnifyingGlassIcon,
+  TrashIcon
+} from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { DialogConfig, useApp } from "@/components/AppContext";
 
 export default function SettingsRecentlyDeleted() {
   const [deletedCards, setDeletedCards] = useState<CardBundle[]>();
@@ -14,6 +21,8 @@ export default function SettingsRecentlyDeleted() {
   const [searchResults, setSearchResults] = useState<CardBundle[]>();
   const [sortBy, setSortBy] = useState<string>("alphabetical");
   const [descending, setDescending] = useState<boolean>(true);
+  const { createDialog, syncCardBundles, syncChatID } = useApp();
+  const [selectedCards, setSelectedCards] = useState<CardBundle[]>([]);
 
   useEffect(() => {
     syncDeletedCardBundles();
@@ -21,12 +30,11 @@ export default function SettingsRecentlyDeleted() {
 
   const syncDeletedCardBundles = async () => {
     const res = await queries.getAllDeletedCardBundles();
-    if (res.kind == "err") {
-      toast.error("Error fetching card bundle.");
-      console.error(res.error);
-      return;
+    if (res.kind == "ok") {
+      setDeletedCards(res.value);
+    } else {
+      toast.error("Error fetching deleted card bundles.");
     }
-    setDeletedCards(res.value);
   };
 
   // TODO, edit card bundle type to also include all data from the card table
@@ -108,8 +116,68 @@ export default function SettingsRecentlyDeleted() {
     setSearchResults([...sortedResults]);
   }, [sortBy, descending]);
 
+  async function handleRestore(cardBundle: CardBundle) {
+    await queries.restoreCard(cardBundle.id);
+    syncDeletedCardBundles();
+    syncCardBundles();
+  }
+
+  function handleSingleDelete(cardBundle: CardBundle) {
+    const config: DialogConfig = {
+      title: `Permenantly delete ${cardBundle.data.character.name}`,
+      description: `Are you sure you want to permenantly delete ${cardBundle.data.character.name}?\nThis action will also delete corresponding chats with ${cardBundle.data.character.name} and cannot be undone.`,
+      actionLabel: "Delete",
+      onAction: async () => {
+        await window.api.blob.cards.del(cardBundle.id);
+        await queries.permaDeleteCard(cardBundle.id);
+        syncDeletedCardBundles();
+        syncChatID();
+      }
+    };
+    createDialog(config);
+  }
+
+  function handleCardClick(cardBundle: CardBundle) {
+    setSelectedCards((prevSelectedCards) => {
+      // If the card is already selected, unselect it
+      if (prevSelectedCards.includes(cardBundle)) {
+        return prevSelectedCards.filter((card) => card !== cardBundle);
+      }
+      // Otherwise, select the card
+      else {
+        return [...prevSelectedCards, cardBundle];
+      }
+    });
+  }
+
+  async function handleRestoreSelected() {
+    for (const cardBundle of selectedCards) {
+      await handleRestore(cardBundle);
+    }
+    setSelectedCards([]);
+  }
+
+  function handleDeleteSelected() {
+    const config: DialogConfig = {
+      title: `Permenantly delete selected cards`,
+      description: `Are you sure you want to permenantly all selected cards?\nThis action will also delete corresponding chats and cannot be undone.`,
+      actionLabel: "Delete",
+      onAction: async () => {
+        for (const cardBundle of selectedCards) {
+          await window.api.blob.cards.del(cardBundle.id);
+          await queries.permaDeleteCard(cardBundle.id);
+        }
+        syncDeletedCardBundles();
+        syncChatID();
+      }
+    };
+    createDialog(config);
+
+    setSelectedCards([]);
+  }
+
   return (
-    <div className="scroll-primary  h-full w-full overflow-y-scroll antialiased  lg:text-base pl-4">
+    <div className="scroll-primary  h-full w-full overflow-y-scroll pl-4  antialiased lg:text-base">
       <div className="flex flex-row space-x-4 py-2 pb-8">
         {/* Search Bar*/}
         <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-xl bg-background p-2">
@@ -149,6 +217,20 @@ export default function SettingsRecentlyDeleted() {
             />
           </button>
         </div>
+        <button
+          className="bg-transparent hover:bg-accent flex items-center space-x-2 rounded-md px-4 py-2 transition"
+          onClick={handleRestoreSelected}
+        >
+          <ArrowUturnLeftIcon className="size-5 text-primary" />
+          <span className="font-medium text-primary">Restore</span>
+        </button>
+        <button
+          className="bg-action-primary hover:bg-action-secondary flex items-center space-x-2 rounded-md px-4 py-2 transition"
+          onClick={handleDeleteSelected}
+        >
+          <TrashIcon className="size-5 text-primary" />
+          <span className="font-medium text-primary">Delete Permenantly</span>
+        </button>
       </div>
 
       {/* Collection Area */}
@@ -160,7 +242,16 @@ export default function SettingsRecentlyDeleted() {
         )}
 
         {searchResults?.map((cardBundle, idx) => {
-          return <CardDeleted key={idx} cardBundle={cardBundle} syncDeletedCardBundles={syncDeletedCardBundles} />;
+          return (
+            <CardDeleted
+              key={idx}
+              cardBundle={cardBundle}
+              handleRestore={handleRestore}
+              handleDelete={handleSingleDelete}
+              onClick={() => handleCardClick(cardBundle)}
+              selected={selectedCards.includes(cardBundle)}
+            />
+          );
         })}
       </div>
     </div>

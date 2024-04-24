@@ -33,7 +33,7 @@ export default function SettingsPage() {
           ${page === "key" ? "bg-accent text-primary" : "text-secondary"}`}
           onClick={() => setPage("key")}
         >
-          API Keys
+          API Key
         </button>
         <button
           className={`group flex w-full cursor-pointer items-center space-x-3 

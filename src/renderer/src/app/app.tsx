@@ -50,7 +50,7 @@ export default function App() {
     if (res.kind == "ok") {
       setChatID(res.value);
     } else {
-      toast.error("Error fetching card bundle.");
+      toast.error("Error fetching recent chat ID.");
     }
   }
 
@@ -59,7 +59,7 @@ export default function App() {
     if (res.kind == "ok") {
       setCardBundles(res.value);
     } else {
-      toast.error("Error fetching card bundle.");
+      toast.error("Error fetching card bundles.");
     }
   }
 

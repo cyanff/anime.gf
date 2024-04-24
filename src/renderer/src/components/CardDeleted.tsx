@@ -1,5 +1,3 @@
-import { DialogConfig, useApp } from "@/components/AppContext";
-import EditCardModal from "@/components/EditCardModal";
 import Tag from "@/components/Tag";
 import {
   ContextMenu,
@@ -17,11 +15,13 @@ import { toast } from "sonner";
 
 interface CardProps {
   cardBundle: CardBundle;
-  syncDeletedCardBundles: () => void;
+  handleRestore: (cardBundle) => void;
+  handleDelete: (cardBundle) => void;
+  onClick: () => void;
+  selected: boolean;
 }
 
-function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
-  const { createDialog, syncCardBundles, syncChatID } = useApp();
+function CardDeleted({ cardBundle, handleRestore, handleDelete, onClick, selected }: CardProps) {
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 
@@ -30,27 +30,6 @@ function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
   }
-
-  const handleRestore = async () => {
-    await queries.restoreCard(cardBundle.id);
-    syncDeletedCardBundles();
-    syncCardBundles();
-  };
-
-  const handleDelete = () => {
-    const config: DialogConfig = {
-      title: `Permenantly delete ${cardBundle.data.character.name}`,
-      description: `Are you sure you want to permenantly delete ${cardBundle.data.character.name}?\nThis action will also delete corresponding chats with ${cardBundle.data.character.name} and cannot be undone.`,
-      actionLabel: "Delete",
-      onAction: async () => {
-        await window.api.blob.cards.del(cardBundle.id);
-        await queries.permaDeleteCard(cardBundle.id);
-        syncDeletedCardBundles();
-        syncChatID();
-      }
-    };
-    createDialog(config);
-  };
 
   return (
     <ContextMenu>
@@ -67,8 +46,9 @@ function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
           }}
         >
           <div
-            className="group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl bg-card p-2"
+            className={`group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl bg-card p-2 ${selected ? "opacity-100" : "opacity-50"}`}
             onMouseMove={onMouseMove}
+            onClick={onClick}
           >
             <CardPattern mouseX={mouseX} mouseY={mouseY} />
             <img
