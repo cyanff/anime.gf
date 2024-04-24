@@ -90,7 +90,6 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory, s
                           await queries.deleteChat(chat.chat_id);
                           syncRecentChats();
                           setChatID(recentChats[0].chat_id);
-                          syncChatHistory();
                         }
                       };
                       createDialog(config);

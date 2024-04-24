@@ -13,13 +13,15 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import { motion, useMotionValue } from "framer-motion";
 import { CardPattern } from "./ui/card-pattern";
+import { toast } from "sonner";
+
 interface CardProps {
   cardBundle: CardBundle;
   syncDeletedCardBundles: () => void;
 }
 
 function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
-  const { createDialog, syncCardBundles } = useApp();
+  const { createDialog, syncCardBundles, setChatID } = useApp();
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 
@@ -44,6 +46,12 @@ function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
         await window.api.blob.cards.del(cardBundle.id);
         await queries.permaDeleteCard(cardBundle.id);
         syncDeletedCardBundles();
+        const res = await queries.getMostRecentChatID();
+        if (res.kind === "ok") {
+          setChatID(res.value);
+        } else {
+          console.error(res.error);
+        }
       }
     };
     createDialog(config);

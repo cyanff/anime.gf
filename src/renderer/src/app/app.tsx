@@ -210,14 +210,13 @@ export default function App() {
         )}
 
         <div className="flex h-full w-full overflow-hidden py-4">
-          {page === "create" && <CreationPage setPage={setPage} syncCardBundles={syncCardBundles} />}
+          {page === "create" && <CreationPage setPage={setPage} />}
           {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID} />}
           {page === "collections" && (
             <CollectionsPage
               setPage={setPage}
               setChatID={setChatID}
               cardBundles={cardBundles}
-              syncCardBundles={syncCardBundles}
             />
           )}
           {page === "settings" && <SettingsPage />}

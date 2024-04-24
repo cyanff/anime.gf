@@ -2,6 +2,8 @@ import CharacterForm from "@/components/CharacterForm";
 import { cardFormDataToCardData } from "@/lib/utils";
 import { CardData, CardFormData } from "@shared/types";
 import { useApp } from "@/components/AppContext";
+import { toast } from "sonner";
+
 interface CreationPageProps {
   setPage: (page: string) => void;
 }
@@ -16,10 +18,11 @@ export default function CreationPage({ setPage }: CreationPageProps) {
       data.character.avatarURI ?? null
     );
     if (res.kind === "ok") {
-      console.log("Post function ran successfully. File path:", res.value);
       setPage("collections");
+      toast.success(`Created ${data.character.name} ^-^`);
     } else {
-      console.error("An error occurred while running the post function:", res.error);
+      toast.error("Error creating character.");
+      console.error("An error occurred while running the create function:", res.error);
     }
     syncCardBundles();
   }

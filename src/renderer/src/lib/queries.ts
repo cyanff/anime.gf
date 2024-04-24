@@ -156,6 +156,29 @@ LIMIT 20;`;
   }
 }
 
+async function getMostRecentChatID(): Promise<Result<number, Error>> {
+  const query = `
+  SELECT 
+  chats.id AS chat_id
+FROM 
+  chats
+  JOIN cards ON chats.card_id = cards.id
+ORDER BY 
+  chats.inserted_at DESC
+LIMIT 1;`;
+
+  try {
+    interface QueryResult {
+      chat_id: number;
+    }
+    const row = (await window.api.sqlite.get(query)) as QueryResult;
+    return { kind: "ok", value: row.chat_id };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
 async function getPersonaBundle(chatID: number): Promise<Result<PersonaBundle, Error>> {
   const query = `
   SELECT * 
@@ -587,6 +610,7 @@ export const queries = {
   resetChat,
   getAllChatSearchItems,
   getRecentChats,
+  getMostRecentChatID,
   getPersonaBundle,
   getChatHistory,
   getCardBundle,

@@ -174,13 +174,11 @@ export default function CollectionsPage({ setPage, setChatID, cardBundles }: Col
             <Card
               key={idx}
               cardBundle={cardBundle}
-              syncCardBundles={syncCardBundles}
               openCardModal={() => {
                 createModal(
                   <CardModal
                     cardBundle={cardBundle}
                     onCreateChat={createChatHandler}
-                    syncCardBundles={syncCardBundles}
                   />
                 );
               }}
