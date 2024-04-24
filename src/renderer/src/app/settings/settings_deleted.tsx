@@ -54,7 +54,7 @@ export default function SettingsRecentlyDeleted() {
       includeScore: true,
       threshold: 0.3
     };
-    fuseRef.current = new Fuse(deletedCards, fuseOptions);
+    fuseRef.current = new Fuse(deletedCards || [], fuseOptions);
   }, [deletedCards]);
 
   // On searchInput change, update the search results
@@ -117,15 +117,6 @@ export default function SettingsRecentlyDeleted() {
     setSearchResults([...sortedResults]);
   }, [sortBy, descending]);
 
-  async function handleDeleteChat(cardID: number, greeting: string) {
-    const res = await queries.deleteChat(1, cardID);
-    if (res.kind == "ok") {
-    } else {
-      toast.error("Error creating new chat.");
-    }
-    closeModal();
-  }
-
   return (
     <div className="scroll-primary  h-full w-full overflow-y-scroll antialiased  lg:text-base">
       <div className="flex flex-row space-x-4 py-2 pb-8">
@@ -173,7 +164,7 @@ export default function SettingsRecentlyDeleted() {
       <div className="flex flex-wrap  gap-4 scroll-smooth transition duration-500 ease-out">
         {searchResults?.length === 0 && (
           <div className="line-clamp-1 w-full whitespace-pre text-center text-lg font-semibold text-neutral-400">
-            {"No cards found  ╥﹏╥"}
+            {"No recently deleted cards"}
           </div>
         )}
 
@@ -182,7 +173,7 @@ export default function SettingsRecentlyDeleted() {
             <CardDeleted
               key={idx}
               cardBundle={cardBundle}
-              syncCardBundles={syncCardBundles}
+              syncDeletedCardBundles={syncDeletedCardBundles}
              
             />
           );

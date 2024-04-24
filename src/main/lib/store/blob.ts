@@ -186,7 +186,7 @@ export namespace cards {
 
     try {
       // Delete the card directory
-      await fs.promises.rmdir(cardDirPath, { recursive: true });
+      await fs.promises.rm(cardDirPath, { recursive: true });
 
       return { kind: "ok", value: undefined };
     } catch (error) {
