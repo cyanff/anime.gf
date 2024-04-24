@@ -32,7 +32,7 @@ function Card({ cardBundle, openCardModal }: CardProps) {
   const onDelete = () => {
     const config: DialogConfig = {
       title: `Delete ${cardBundle.data.character.name}`,
-      description: `Are you sure you want to delete ${cardBundle.data.character.name}?\nThis action will also delete corresponding chats with ${cardBundle.data.character.name} and cannot be undone.`,
+      description: `Are you sure you want to delete ${cardBundle.data.character.name}?\n `,
       actionLabel: "Delete",
       onAction: async () => {
         await queries.deleteCard(cardBundle.id);

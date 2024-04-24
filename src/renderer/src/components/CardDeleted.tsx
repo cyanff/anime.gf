@@ -98,7 +98,7 @@ function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
           </div>
         </motion.button>
       </ContextMenuTrigger>
-      <ContextMenuContent className="w-40 px-1 py-2">
+      <ContextMenuContent className="w-52 px-1 py-2">
         <ContextMenuItem onSelect={handleRestore}>
           Restore
           <ContextMenuShortcut>

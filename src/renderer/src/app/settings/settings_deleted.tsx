@@ -109,7 +109,7 @@ export default function SettingsRecentlyDeleted() {
   }, [sortBy, descending]);
 
   return (
-    <div className="scroll-primary  h-full w-full overflow-y-scroll antialiased  lg:text-base">
+    <div className="scroll-primary  h-full w-full overflow-y-scroll antialiased  lg:text-base pl-4">
       <div className="flex flex-row space-x-4 py-2 pb-8">
         {/* Search Bar*/}
         <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-xl bg-background p-2">
