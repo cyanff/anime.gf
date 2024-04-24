@@ -156,6 +156,29 @@ LIMIT 20;`;
   }
 }
 
+async function getMostRecentChatID(): Promise<Result<number, Error>> {
+  const query = `
+  SELECT 
+  chats.id AS chat_id
+FROM 
+  chats
+  JOIN cards ON chats.card_id = cards.id
+ORDER BY 
+  chats.inserted_at DESC
+LIMIT 1;`;
+
+  try {
+    interface QueryResult {
+      chat_id: number;
+    }
+    const row = (await window.api.sqlite.get(query)) as QueryResult;
+    return { kind: "ok", value: row.chat_id };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
 async function getPersonaBundle(chatID: number): Promise<Result<PersonaBundle, Error>> {
   const query = `
   SELECT * 
@@ -307,10 +330,66 @@ async function getAllExtantCardBundles(): Promise<Result<CardBundle[], Error>> {
   }
 }
 
+async function getAllDeletedCardBundles(): Promise<Result<CardBundle[], Error>> {
+  try {
+    const query = `
+      SELECT cards.id, cards.dir_name
+      FROM cards
+      WHERE cards.is_deleted = 1;`;
+    const rows = (await window.api.sqlite.all(query)) as { id: number; dir_name: string }[];
+    const cardBundles: CardBundle[] = [];
+    for (const row of rows) {
+      const res = await window.api.blob.cards.get(row.dir_name);
+      if (res.kind == "err") {
+        console.error("Error fetching a card bundle", res.error);
+        continue;
+      }
+      const cardBundle: CardBundle = {
+        id: row.id,
+        data: res.value.data,
+        avatarURI: res.value.avatarURI,
+        bannerURI: res.value.bannerURI
+      };
+      cardBundles.push(cardBundle);
+    }
+    return { kind: "ok", value: cardBundles };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
 async function deleteCard(cardID: number): Promise<Result<void, Error>> {
   try {
     const query = `
     UPDATE cards SET is_deleted = 1 WHERE id = ?;
+    `;
+    await window.api.sqlite.run(query, [cardID]);
+    return { kind: "ok", value: undefined };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
+async function permaDeleteCard(cardID: number): Promise<Result<void, Error>> {
+  try {
+    const query = `
+      DELETE FROM cards
+      WHERE id = ?
+    `;
+    await window.api.sqlite.run(query, [cardID]);
+    return { kind: "ok", value: undefined };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
+async function restoreCard(cardID: number): Promise<Result<void, Error>> {
+  try {
+    const query = `
+    UPDATE cards SET is_deleted = 0 WHERE id = ?;
     `;
     await window.api.sqlite.run(query, [cardID]);
     return { kind: "ok", value: undefined };
@@ -531,11 +610,15 @@ export const queries = {
   resetChat,
   getAllChatSearchItems,
   getRecentChats,
+  getMostRecentChatID,
   getPersonaBundle,
   getChatHistory,
   getCardBundle,
   getAllExtantCardBundles,
+  getAllDeletedCardBundles,
   deleteCard,
+  permaDeleteCard,
+  restoreCard,
   insertMessage,
   insertMessagePair,
   updateMessageText,

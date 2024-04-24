@@ -18,6 +18,7 @@ import JSZip from "jszip";
 import path from "path";
 import { attainable, blobRootPath, cardsRootPath, personasRootPath, extractZipToDir } from "../utils";
 import sqlite from "./sqlite";
+import { number } from "zod";
 
 async function init() {
   const blobDirExists = await attainable(blobRootPath);
@@ -173,6 +174,24 @@ export namespace cards {
     }
 
     return { kind: "ok", value: undefined };
+  }
+
+  export async function del(cardID: number): Promise<Result<undefined, Error>> {
+    // Retrieve the dir_name of the card from the database using the id
+    const query = `SELECT dir_name FROM cards WHERE id =?;`;
+    const row = (await sqlite.get(query, [cardID])) as { dir_name: string };
+
+    // Construct the path to the card directory
+    const cardDirPath = path.join(cardsRootPath, row.dir_name);
+
+    try {
+      // Delete the card directory
+      await fs.promises.rm(cardDirPath, { recursive: true });
+
+      return { kind: "ok", value: undefined };
+    } catch (error) {
+      return { kind: "err", error: error };
+    }
   }
 
   /**

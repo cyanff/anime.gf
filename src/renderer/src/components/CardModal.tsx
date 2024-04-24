@@ -10,12 +10,11 @@ import EditCardModal from "@/components/EditCardModal";
 import { useApp } from "@/components/AppContext";
 interface CardModalProps {
   cardBundle: CardBundle;
-  syncCardBundles: () => void;
   onCreateChat: (cardID: number, greeting: string) => void;
 }
 
-function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps) {
-  const { createModal, closeModal } = useApp();
+function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
+  const { createModal, closeModal, syncCardBundles } = useApp();
 
   const handleExport = async () => {
     const cardDirRes = await queries.getCardDir(cardBundle.id);
@@ -37,12 +36,12 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
 
   const handleEdit = () => {
     closeModal();
-    createModal(<EditCardModal cardBundle={cardBundle} syncCardBundles={syncCardBundles} />);
+    createModal(<EditCardModal cardBundle={cardBundle} />);
   };
 
   return (
-    <div className="bg-background-secondary flex w-[45rem] items-center justify-center rounded-xl">
-      <div className="scroll-secondary h-[60rem] overflow-y-scroll rounded-xl">
+    <div className="bg-background-secondary flex h-[80vh] w-[36rem] overflow-hidden items-center justify-center rounded-xl">
+      <div className="scroll-secondary h-full w-full overflow-y-scroll rounded-xl">
         {/* Banner and profile picture */}
         <div className="relative rounded-xl">
           <img

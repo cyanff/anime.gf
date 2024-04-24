@@ -1,6 +1,4 @@
-import { DialogConfig, useApp } from "@/components/AppContext";
-import Card from "@/components/Card";
-import CardModal from "@/components/CardModal";
+import CardDeleted from "@/components/CardDeleted";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { queries } from "@/lib/queries";
 import { ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
@@ -9,17 +7,28 @@ import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-interface CollectionsPageProps {
-  setPage: (page: string) => void;
-  cardBundles: CardBundle[];
-}
+export default function SettingsRecentlyDeleted() {
+  const [deletedCards, setDeletedCards] = useState<CardBundle[]>();
 
-export default function CollectionsPage({ setPage, cardBundles }: CollectionsPageProps) {
-  const { createModal, closeModal, setChatID } = useApp();
   const [searchInput, setSearchInput] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);
+  const [searchResults, setSearchResults] = useState<CardBundle[]>();
   const [sortBy, setSortBy] = useState<string>("alphabetical");
   const [descending, setDescending] = useState<boolean>(true);
+
+  useEffect(() => {
+    syncDeletedCardBundles();
+  }, []);
+
+  const syncDeletedCardBundles = async () => {
+    const res = await queries.getAllDeletedCardBundles();
+    if (res.kind == "err") {
+      toast.error("Error fetching card bundle.");
+      console.error(res.error);
+      return;
+    }
+    setDeletedCards(res.value);
+  };
+
   // TODO, edit card bundle type to also include all data from the card table
   // then add sort by "imported" which is the inserted_at column in the db
   const sortByNameAndValue = [
@@ -36,19 +45,19 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
       includeScore: true,
       threshold: 0.3
     };
-    fuseRef.current = new Fuse(cardBundles, fuseOptions);
-  }, [cardBundles]);
+    fuseRef.current = new Fuse(deletedCards || [], fuseOptions);
+  }, [deletedCards]);
 
   // On searchInput change, update the search results
   useEffect(() => {
     if (!fuseRef.current) return;
     if (searchInput.trim() === "") {
-      setSearchResults(cardBundles);
+      setSearchResults(deletedCards);
       return;
     }
     const results = fuseRef.current.search(searchInput).map((result) => result.item);
     setSearchResults(results);
-  }, [searchInput, cardBundles]);
+  }, [searchInput, deletedCards]);
 
   /**
    * A function to compare two `CardBundle` objects based on the current `sortBy` and `descending` state.
@@ -99,24 +108,6 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
     setSearchResults([...sortedResults]);
   }, [sortBy, descending]);
 
-  async function createChatHandler(cardID: number, greeting: string) {
-    const res = await queries.createChat(1, cardID);
-    if (res.kind == "ok") {
-      const chatCards = await queries.getRecentChats();
-      if (chatCards.kind == "ok") {
-        const message = await queries.insertMessage(chatCards.value[0].chat_id, greeting, "character");
-        if (message.kind == "err") {
-          toast.error("Error inserting character greeting message.");
-        }
-        setChatID(chatCards.value[0].chat_id);
-      }
-      setPage("chats");
-    } else {
-      toast.error("Error creating new chat.");
-    }
-    closeModal();
-  }
-
   return (
     <div className="scroll-primary  h-full w-full overflow-y-scroll antialiased  lg:text-base">
       <div className="flex flex-row space-x-4 py-2 pb-8">
@@ -164,25 +155,12 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
       <div className="flex flex-wrap  gap-4 scroll-smooth transition duration-500 ease-out">
         {searchResults?.length === 0 && (
           <div className="line-clamp-1 w-full whitespace-pre text-center text-lg font-semibold text-neutral-400">
-            {"No cards found  ╥﹏╥"}
+            {"No recently deleted cards"}
           </div>
         )}
 
         {searchResults?.map((cardBundle, idx) => {
-          return (
-            <Card
-              key={idx}
-              cardBundle={cardBundle}
-              openCardModal={() => {
-                createModal(
-                  <CardModal
-                    cardBundle={cardBundle}
-                    onCreateChat={createChatHandler}
-                  />
-                );
-              }}
-            />
-          );
+          return <CardDeleted key={idx} cardBundle={cardBundle} syncDeletedCardBundles={syncDeletedCardBundles} />;
         })}
       </div>
     </div>

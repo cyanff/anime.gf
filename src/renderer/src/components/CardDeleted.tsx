@@ -13,13 +13,15 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import { motion, useMotionValue } from "framer-motion";
 import { CardPattern } from "./ui/card-pattern";
+import { toast } from "sonner";
+
 interface CardProps {
   cardBundle: CardBundle;
-  openCardModal: () => void;
+  syncDeletedCardBundles: () => void;
 }
 
-function Card({ cardBundle, openCardModal }: CardProps) {
-  const { createModal, createDialog, syncCardBundles } = useApp();
+function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
+  const { createDialog, syncCardBundles, syncChatID } = useApp();
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 
@@ -29,14 +31,22 @@ function Card({ cardBundle, openCardModal }: CardProps) {
     mouseY.set(clientY - top);
   }
 
-  const onDelete = () => {
+  const handleRestore = async () => {
+    await queries.restoreCard(cardBundle.id);
+    syncDeletedCardBundles();
+    syncCardBundles();
+  };
+
+  const handleDelete = () => {
     const config: DialogConfig = {
-      title: `Delete ${cardBundle.data.character.name}`,
-      description: `Are you sure you want to delete ${cardBundle.data.character.name}?\nThis action will also delete corresponding chats with ${cardBundle.data.character.name} and cannot be undone.`,
+      title: `Permenantly delete ${cardBundle.data.character.name}`,
+      description: `Are you sure you want to permenantly delete ${cardBundle.data.character.name}?\nThis action will also delete corresponding chats with ${cardBundle.data.character.name} and cannot be undone.`,
       actionLabel: "Delete",
       onAction: async () => {
-        await queries.deleteCard(cardBundle.id);
-        syncCardBundles();
+        await window.api.blob.cards.del(cardBundle.id);
+        await queries.permaDeleteCard(cardBundle.id);
+        syncDeletedCardBundles();
+        syncChatID();
       }
     };
     createDialog(config);
@@ -58,7 +68,6 @@ function Card({ cardBundle, openCardModal }: CardProps) {
         >
           <div
             className="group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl bg-card p-2"
-            onClick={openCardModal}
             onMouseMove={onMouseMove}
           >
             <CardPattern mouseX={mouseX} mouseY={mouseY} />
@@ -90,18 +99,14 @@ function Card({ cardBundle, openCardModal }: CardProps) {
         </motion.button>
       </ContextMenuTrigger>
       <ContextMenuContent className="w-40 px-1 py-2">
-        <ContextMenuItem
-          onSelect={() => {
-            createModal(<EditCardModal cardBundle={cardBundle} />);
-          }}
-        >
-          Edit
+        <ContextMenuItem onSelect={handleRestore}>
+          Restore
           <ContextMenuShortcut>
             <PencilIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
-        <ContextMenuItem onSelect={onDelete}>
-          Delete
+        <ContextMenuItem onSelect={handleDelete}>
+          Delete Permanently
           <ContextMenuShortcut>
             <TrashIcon className="size-4" />
           </ContextMenuShortcut>
@@ -111,4 +116,4 @@ function Card({ cardBundle, openCardModal }: CardProps) {
   );
 }
 
-export default Card;
+export default CardDeleted;

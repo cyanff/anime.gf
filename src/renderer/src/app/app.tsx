@@ -37,21 +37,31 @@ export default function App() {
   const [modalContent, setModalContent] = useState<React.ReactNode>();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [cmdOpen, setCmdOpen] = useState<boolean>(false);
-  const [chatID, setChatID] = useState(1);
+  const [chatID, setChatID] = useState<number | null>(null);
   const [cardBundles, setCardBundles] = useState<CardBundle[]>([]);
 
   useEffect(() => {
+    syncChatID();
     syncCardBundles();
   }, []);
 
-  const syncCardBundles = async () => {
-    const res = await queries.getAllExtantCardBundles();
-    if (res.kind == "err") {
+  async function syncChatID() {
+    const res = await queries.getMostRecentChatID();
+    if (res.kind == "ok") {
+      setChatID(res.value);
+    } else {
       toast.error("Error fetching card bundle.");
-      return;
     }
-    setCardBundles(res.value);
-  };
+  }
+
+  async function syncCardBundles() {
+    const res = await queries.getAllExtantCardBundles();
+    if (res.kind == "ok") {
+      setCardBundles(res.value);
+    } else {
+      toast.error("Error fetching card bundle.");
+    }
+  }
 
   // Open command dialog with Ctrl + K
   useEffect(() => {
@@ -119,7 +129,7 @@ export default function App() {
   };
 
   return (
-    <AppContext.Provider value={{ createDialog, createModal, closeModal, setChatID }}>
+    <AppContext.Provider value={{ createDialog, createModal, closeModal, setChatID, syncCardBundles, syncChatID }}>
       <div
         className="bg-background-secondary flex h-screen text-sm text-neutral-100 antialiased lg:text-base"
         onDrop={handleDrop}
@@ -210,16 +220,9 @@ export default function App() {
         )}
 
         <div className="flex h-full w-full overflow-hidden py-4">
-          {page === "create" && <CreationPage setPage={setPage} syncCardBundles={syncCardBundles} />}
-          {page === "chats" && <ChatsPage chatID={chatID} setChatID={setChatID} />}
-          {page === "collections" && (
-            <CollectionsPage
-              setPage={setPage}
-              setChatID={setChatID}
-              cardBundles={cardBundles}
-              syncCardBundles={syncCardBundles}
-            />
-          )}
+          {page === "create" && <CreationPage setPage={setPage} />}
+          {page === "chats" && chatID !== null && <ChatsPage chatID={chatID} />}{" "}
+          {page === "collections" && <CollectionsPage setPage={setPage} cardBundles={cardBundles} />}
           {page === "settings" && <SettingsPage />}
         </div>
       </div>
