@@ -16,9 +16,10 @@ import { CardPattern } from "./ui/card-pattern";
 interface CardProps {
   cardBundle: CardBundle;
   syncDeletedCardBundles: () => void;
+  syncCardBundles: () => void;
 }
 
-function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
+function CardDeleted({ cardBundle, syncDeletedCardBundles, syncCardBundles }: CardProps) {
   const { createDialog } = useApp();
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
@@ -32,6 +33,7 @@ function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
   const handleRestore = async () => {
     await queries.restoreCard(cardBundle.id);
     syncDeletedCardBundles();
+    syncCardBundles();
   };
 
   const handleDelete = () => {
@@ -41,6 +43,7 @@ function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
       actionLabel: "Delete",
       onAction: async () => {
         await window.api.blob.cards.del(cardBundle.id);
+        await queries.permaDeleteCard(cardBundle.id);
         syncDeletedCardBundles();
       }
     };

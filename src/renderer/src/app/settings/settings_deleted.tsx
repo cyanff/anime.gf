@@ -1,4 +1,3 @@
-import { DialogConfig, useApp } from "@/components/AppContext";
 import CardDeleted from "@/components/CardDeleted";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { queries } from "@/lib/queries";
@@ -8,15 +7,7 @@ import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-interface CollectionsPageProps {
-  setPage: (page: string) => void;
-  setChatID: (chatID: number) => void;
-  cardBundles: CardBundle[];
-  syncCardBundles: () => void;
-}
-
-export default function SettingsRecentlyDeleted() {
-  const { createModal, closeModal, createDialog } = useApp();
+export default function SettingsRecentlyDeleted({syncCardBundles}) {
   const [deletedCards, setDeletedCards] = useState<CardBundle[]>();
 
   const [searchInput, setSearchInput] = useState<string>("");
@@ -174,7 +165,7 @@ export default function SettingsRecentlyDeleted() {
               key={idx}
               cardBundle={cardBundle}
               syncDeletedCardBundles={syncDeletedCardBundles}
-             
+              syncCardBundles={syncCardBundles} 
             />
           );
         })}

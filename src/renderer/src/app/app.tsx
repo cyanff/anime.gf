@@ -46,11 +46,11 @@ export default function App() {
 
   const syncCardBundles = async () => {
     const res = await queries.getAllExtantCardBundles();
-    if (res.kind == "err") {
+    if (res.kind == "ok") {
+      setCardBundles(res.value);
+    } else {
       toast.error("Error fetching card bundle.");
-      return;
     }
-    setCardBundles(res.value);
   };
 
   // Open command dialog with Ctrl + K
@@ -220,7 +220,7 @@ export default function App() {
               syncCardBundles={syncCardBundles}
             />
           )}
-          {page === "settings" && <SettingsPage />}
+          {page === "settings" && <SettingsPage syncCardBundles={syncCardBundles} />}
         </div>
       </div>
     </AppContext.Provider>

@@ -349,6 +349,20 @@ async function deleteCard(cardID: number): Promise<Result<void, Error>> {
   }
 }
 
+async function permaDeleteCard(cardID: number): Promise<Result<void, Error>> {
+  try {
+    const query = `
+      DELETE FROM cards
+      WHERE id = ?
+    `;
+    await window.api.sqlite.run(query, [cardID]);
+    return { kind: "ok", value: undefined };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
 async function restoreCard(cardID: number): Promise<Result<void, Error>> {
   try {
     const query = `
@@ -579,6 +593,7 @@ export const queries = {
   getAllExtantCardBundles,
   getAllDeletedCardBundles,
   deleteCard,
+  permaDeleteCard,
   restoreCard,
   insertMessage,
   insertMessagePair,
