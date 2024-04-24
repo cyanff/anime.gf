@@ -307,6 +307,35 @@ async function getAllExtantCardBundles(): Promise<Result<CardBundle[], Error>> {
   }
 }
 
+async function getAllDeletedCardBundles(): Promise<Result<CardBundle[], Error>> {
+  try {
+    const query = `
+      SELECT cards.id, cards.dir_name
+      FROM cards
+      WHERE cards.is_deleted = 1;`;
+    const rows = (await window.api.sqlite.all(query)) as { id: number; dir_name: string }[];
+    const cardBundles: CardBundle[] = [];
+    for (const row of rows) {
+      const res = await window.api.blob.cards.get(row.dir_name);
+      if (res.kind == "err") {
+        console.error("Error fetching a card bundle", res.error);
+        continue;
+      }
+      const cardBundle: CardBundle = {
+        id: row.id,
+        data: res.value.data,
+        avatarURI: res.value.avatarURI,
+        bannerURI: res.value.bannerURI
+      };
+      cardBundles.push(cardBundle);
+    }
+    return { kind: "ok", value: cardBundles };
+  } catch (e) {
+    isError(e);
+    return { kind: "err", error: e };
+  }
+}
+
 async function deleteCard(cardID: number): Promise<Result<void, Error>> {
   try {
     const query = `
@@ -535,6 +564,7 @@ export const queries = {
   getChatHistory,
   getCardBundle,
   getAllExtantCardBundles,
+  getAllDeletedCardBundles,
   deleteCard,
   insertMessage,
   insertMessagePair,
