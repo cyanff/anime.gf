@@ -15,11 +15,10 @@ import { motion, useMotionValue } from "framer-motion";
 import { CardPattern } from "./ui/card-pattern";
 interface CardProps {
   cardBundle: CardBundle;
-  syncCardBundles: () => void;
-  openCardModal: () => void;
+  syncDeletedCardBundles: () => void;
 }
 
-function CardDeleted({ cardBundle, syncCardBundles, openCardModal }: CardProps) {
+function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
   const { createDialog } = useApp();
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
@@ -30,17 +29,9 @@ function CardDeleted({ cardBundle, syncCardBundles, openCardModal }: CardProps) 
     mouseY.set(clientY - top);
   }
 
-  const handleRestore = () => {
-    const config: DialogConfig = {
-      title: `Delete ${cardBundle.data.character.name}`,
-      description: `Are you sure you want to delete ${cardBundle.data.character.name}?\nThis action will also delete corresponding chats with ${cardBundle.data.character.name} and cannot be undone.`,
-      actionLabel: "Delete",
-      onAction: async () => {
-        await queries.restoreCard(cardBundle.id);
-        syncCardBundles();
-      }
-    };
-    createDialog(config);
+  const handleRestore = async () => {
+    await queries.restoreCard(cardBundle.id);
+    syncDeletedCardBundles();
   };
 
   const handleDelete = () => {
@@ -50,7 +41,7 @@ function CardDeleted({ cardBundle, syncCardBundles, openCardModal }: CardProps) 
       actionLabel: "Delete",
       onAction: async () => {
         await window.api.blob.cards.del(cardBundle.id);
-        syncCardBundles();
+        syncDeletedCardBundles();
       }
     };
     createDialog(config);
@@ -72,7 +63,6 @@ function CardDeleted({ cardBundle, syncCardBundles, openCardModal }: CardProps) 
         >
           <div
             className="group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl bg-card p-2"
-            onClick={openCardModal}
             onMouseMove={onMouseMove}
           >
             <CardPattern mouseX={mouseX} mouseY={mouseY} />

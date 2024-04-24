@@ -1,6 +1,5 @@
 import { DialogConfig, useApp } from "@/components/AppContext";
-import Card from "@/components/Card";
-import CardModal from "@/components/CardModal";
+import CardDeleted from "@/components/CardDeleted";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { queries } from "@/lib/queries";
 import { ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
@@ -180,19 +179,11 @@ export default function SettingsRecentlyDeleted() {
 
         {searchResults?.map((cardBundle, idx) => {
           return (
-            <Card
+            <CardDeleted
               key={idx}
               cardBundle={cardBundle}
               syncCardBundles={syncCardBundles}
-              openCardModal={() => {
-                createModal(
-                  <CardModal
-                    cardBundle={cardBundle}
-                    onCreateChat={createChatHandler}
-                    syncCardBundles={syncCardBundles}
-                  />
-                );
-              }}
+             
             />
           );
         })}
