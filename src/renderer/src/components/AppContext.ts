@@ -14,6 +14,7 @@ interface AppContextProps {
   createModal: (config: React.ReactNode) => void;
   closeModal: () => void;
   setChatID: (id: number) => void;
+  syncCardBundles: () => void;
 }
 
 export const AppContext = createContext<AppContextProps>({} as AppContextProps);

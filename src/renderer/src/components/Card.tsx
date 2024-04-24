@@ -15,12 +15,11 @@ import { motion, useMotionValue } from "framer-motion";
 import { CardPattern } from "./ui/card-pattern";
 interface CardProps {
   cardBundle: CardBundle;
-  syncCardBundles: () => void;
   openCardModal: () => void;
 }
 
-function Card({ cardBundle, syncCardBundles, openCardModal }: CardProps) {
-  const { createModal, createDialog } = useApp();
+function Card({ cardBundle, openCardModal }: CardProps) {
+  const { createModal, createDialog, syncCardBundles } = useApp();
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 
@@ -93,7 +92,7 @@ function Card({ cardBundle, syncCardBundles, openCardModal }: CardProps) {
       <ContextMenuContent className="w-40 px-1 py-2">
         <ContextMenuItem
           onSelect={() => {
-            createModal(<EditCardModal cardBundle={cardBundle} syncCardBundles={syncCardBundles} />);
+            createModal(<EditCardModal cardBundle={cardBundle} />);
           }}
         >
           Edit

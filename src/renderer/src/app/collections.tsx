@@ -13,10 +13,9 @@ interface CollectionsPageProps {
   setPage: (page: string) => void;
   setChatID: (chatID: number) => void;
   cardBundles: CardBundle[];
-  syncCardBundles: () => void;
 }
 
-export default function CollectionsPage({ setPage, setChatID, cardBundles, syncCardBundles }: CollectionsPageProps) {
+export default function CollectionsPage({ setPage, setChatID, cardBundles }: CollectionsPageProps) {
   const { createModal, closeModal, createDialog } = useApp();
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);

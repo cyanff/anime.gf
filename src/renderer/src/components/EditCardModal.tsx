@@ -6,11 +6,10 @@ import { toast } from "sonner";
 
 interface EditCardModalProps {
   cardBundle: CardBundle;
-  syncCardBundles: () => void;
 }
 
-export default function EditCardModal({ cardBundle, syncCardBundles }: EditCardModalProps) {
-  const { closeModal } = useApp();
+export default function EditCardModal({ cardBundle }: EditCardModalProps) {
+  const { closeModal, syncCardBundles } = useApp();
 
   const handleSuccessfulSubmit = async (data: CardFormData) => {
     const cardData = cardFormDataToCardData(data);

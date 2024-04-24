@@ -7,7 +7,7 @@ import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-export default function SettingsRecentlyDeleted({syncCardBundles}) {
+export default function SettingsRecentlyDeleted() {
   const [deletedCards, setDeletedCards] = useState<CardBundle[]>();
 
   const [searchInput, setSearchInput] = useState<string>("");
@@ -160,14 +160,7 @@ export default function SettingsRecentlyDeleted({syncCardBundles}) {
         )}
 
         {searchResults?.map((cardBundle, idx) => {
-          return (
-            <CardDeleted
-              key={idx}
-              cardBundle={cardBundle}
-              syncDeletedCardBundles={syncDeletedCardBundles}
-              syncCardBundles={syncCardBundles} 
-            />
-          );
+          return <CardDeleted key={idx} cardBundle={cardBundle} syncDeletedCardBundles={syncDeletedCardBundles} />;
         })}
       </div>
     </div>

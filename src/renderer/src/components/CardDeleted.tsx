@@ -16,11 +16,10 @@ import { CardPattern } from "./ui/card-pattern";
 interface CardProps {
   cardBundle: CardBundle;
   syncDeletedCardBundles: () => void;
-  syncCardBundles: () => void;
 }
 
-function CardDeleted({ cardBundle, syncDeletedCardBundles, syncCardBundles }: CardProps) {
-  const { createDialog } = useApp();
+function CardDeleted({ cardBundle, syncDeletedCardBundles }: CardProps) {
+  const { createDialog, syncCardBundles } = useApp();
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 

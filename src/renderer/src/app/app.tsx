@@ -44,14 +44,14 @@ export default function App() {
     syncCardBundles();
   }, []);
 
-  const syncCardBundles = async () => {
+  async function syncCardBundles() {
     const res = await queries.getAllExtantCardBundles();
     if (res.kind == "ok") {
       setCardBundles(res.value);
     } else {
       toast.error("Error fetching card bundle.");
     }
-  };
+  }
 
   // Open command dialog with Ctrl + K
   useEffect(() => {
@@ -119,7 +119,7 @@ export default function App() {
   };
 
   return (
-    <AppContext.Provider value={{ createDialog, createModal, closeModal, setChatID }}>
+    <AppContext.Provider value={{ createDialog, createModal, closeModal, setChatID, syncCardBundles }}>
       <div
         className="bg-background-secondary flex h-screen text-sm text-neutral-100 antialiased lg:text-base"
         onDrop={handleDrop}
@@ -220,7 +220,7 @@ export default function App() {
               syncCardBundles={syncCardBundles}
             />
           )}
-          {page === "settings" && <SettingsPage syncCardBundles={syncCardBundles} />}
+          {page === "settings" && <SettingsPage />}
         </div>
       </div>
     </AppContext.Provider>

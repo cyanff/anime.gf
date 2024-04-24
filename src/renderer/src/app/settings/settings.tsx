@@ -5,7 +5,7 @@ import SettingsKeys from "@/app/settings/settings_keys";
 import SettingsRecentlyDeleted from "@/app/settings/settings_deleted";
 import { KeyIcon } from "@heroicons/react/24/solid";
 
-export default function SettingsPage({ syncCardBundles }) {
+export default function SettingsPage() {
   const [page, setPage] = useState<string>("chat");
   return (
     <div className="bg-background-secondary flex h-full  w-full rounded-xl">
@@ -51,7 +51,7 @@ export default function SettingsPage({ syncCardBundles }) {
         {page === "persona" && <SettingsPersona />}
         {page === "chat" && <SettingsChat />}
         {page === "key" && <SettingsKeys />}
-        {page === "deleted" && <SettingsRecentlyDeleted syncCardBundles={syncCardBundles} />}
+        {page === "deleted" && <SettingsRecentlyDeleted />}
       </div>
     </div>
   );

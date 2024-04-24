@@ -10,12 +10,11 @@ import EditCardModal from "@/components/EditCardModal";
 import { useApp } from "@/components/AppContext";
 interface CardModalProps {
   cardBundle: CardBundle;
-  syncCardBundles: () => void;
   onCreateChat: (cardID: number, greeting: string) => void;
 }
 
-function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps) {
-  const { createModal, closeModal } = useApp();
+function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
+  const { createModal, closeModal, syncCardBundles } = useApp();
 
   const handleExport = async () => {
     const cardDirRes = await queries.getCardDir(cardBundle.id);
@@ -37,7 +36,7 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
 
   const handleEdit = () => {
     closeModal();
-    createModal(<EditCardModal cardBundle={cardBundle} syncCardBundles={syncCardBundles} />);
+    createModal(<EditCardModal cardBundle={cardBundle} />);
   };
 
   return (
