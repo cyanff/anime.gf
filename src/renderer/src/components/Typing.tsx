@@ -9,7 +9,7 @@ interface TypingProps {
 
 export default function Typing({ className, name, typing }: TypingProps) {
   return (
-    <div className={cn(`flex items-center space-x-2 ${typing ? "visible" : "invisible"}`, className)}>
+    <div className={cn(`flex text-tx-secondary items-center space-x-2 ${typing ? "visible" : "invisible"}`, className)}>
       <div>
         <div className={styles.typing__dot}></div>
         <div className={styles.typing__dot}></div>

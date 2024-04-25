@@ -7,6 +7,7 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
+import { Input } from "@/components/ui/input";
 import { RecentChat as RecentChatI, queries } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 import { ArrowPathIcon, DocumentDuplicateIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/solid";
@@ -53,7 +54,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
         transition={{ duration: 0.2 }}
         variants={sidebarVariants}
       >
-        <div className="bg-nav-primary flex h-full w-80 flex-col overflow-hidden rounded-3xl">
+        <div className="bg-nav-secondary flex h-full w-80 flex-col overflow-hidden rounded-3xl">
           {/*Top Section */}
           <div className="flex grow flex-col py-3">
             {/* Search Bar Wrapper*/}
@@ -66,10 +67,10 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
                 }}
               >
                 <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-tx-secondary" />
-                <input
-                  className="text-tx-secondary h-11 w-full grow cursor-pointer select-none bg-inherit focus:outline-none"
+                <Input
+                  className="text-tx-secondary h-11 grow cursor-pointer select-none border-none bg-inherit focus:outline-none"
                   placeholder="Search for a chat"
-                ></input>
+                />
               </div>
             </div>
 

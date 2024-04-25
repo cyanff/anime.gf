@@ -1,6 +1,7 @@
 import { DialogConfig, useApp } from "@/components/AppContext";
 import Card from "@/components/Card";
 import CardModal from "@/components/CardModal";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { queries } from "@/lib/queries";
 import { ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
@@ -123,12 +124,12 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
         {/* Search Bar*/}
         <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-xl bg-input-primary p-2">
           <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-tx-secondary" />
-          <input
-            className="h-9 w-full grow bg-inherit text-tx-primary focus:outline-none "
+          <Input
+            className="h-9 w-full border-none grow bg-inherit text-tx-primary focus:outline-none "
             placeholder="Search for a chat"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-          ></input>
+          />
         </div>
         {/* Sort By Selection*/}
         <div className="flex">
