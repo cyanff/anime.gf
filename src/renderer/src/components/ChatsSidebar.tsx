@@ -47,6 +47,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
       {/* Sidebar Motion Wrapper*/}
       <motion.div
         className="h-full w-fit"
+        initial={{ width: "20rem", display: "block", overflow: "visible", opacity: 1 }}
         animate={sidebarOpen ? "open" : "closed"}
         transition={{ duration: 0.2 }}
         variants={sidebarVariants}
@@ -117,7 +118,11 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
           {/*Bottom Section */}
           <div className="bg-container-tertiary flex h-16 w-full shrink-0 flex-row p-3">
             <div className="relative">
-              <img src={personaBundle.avatarURI || ""} alt="Avatar" className="h-10 w-10 rounded-full" />
+              <img
+                src={personaBundle.avatarURI || "default_avatar.png"}
+                alt="Avatar"
+                className="h-10 w-10 rounded-full"
+              />
               <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full ring-container-tertiary bg-green-400 ring-4"></span>
             </div>
             <div className="flex h-full flex-col justify-center p-2">
@@ -175,7 +180,12 @@ function RecentChat({
             className
           )}
         >
-          <img className="size-12 shrink-0 rounded-full object-cover object-top" src={avatarURI} alt="avatar" />
+          <img
+            className="size-12 shrink-0 rounded-full object-cover object-top"
+            src={avatarURI || "default_avatar.png"}
+            alt="avatar"
+          />
+
           <div className={"flex h-full max-w-full flex-col justify-center "}>
             <h3 className="text-tx-primary line-clamp-1 text-ellipsis">{name}</h3>
             <p className="text-tx-secondary line-clamp-1 text-ellipsis text-[14.5px]">{message}</p>

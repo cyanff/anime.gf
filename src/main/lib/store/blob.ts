@@ -16,7 +16,15 @@ import fs from "fs";
 import fsp from "fs/promises";
 import JSZip from "jszip";
 import path from "path";
-import { attainable, blobRootPath, cardsRootPath, extractZipToDir, personasRootPath } from "../utils";
+import {
+  attainable,
+  blobRootPath,
+  cardsRootPath,
+  copyFolder,
+  extractZipToDir,
+  personasRootPath,
+  unpackedPath
+} from "../utils";
 import sqlite from "./sqlite";
 
 async function init() {
@@ -26,8 +34,10 @@ async function init() {
   }
 
   const cardsDirExists = await attainable(cardsRootPath);
+  // Copy unpackedPath/blob/cards to cardsRootPath
   if (!cardsDirExists) {
     await fsp.mkdir(cardsRootPath);
+    copyFolder(path.join(unpackedPath, "blob/cards"), cardsRootPath);
   }
 }
 

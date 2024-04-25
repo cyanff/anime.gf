@@ -362,9 +362,9 @@ function MessagePopoverContent({ sender, personaBundle, cardBundle }: MessagePop
 function MessagePopoverBanner({ bannerURI, avatarURI }: { bannerURI: string; avatarURI: string }) {
   return (
     <div className="relative w-full rounded-lg">
-      <img src={bannerURI} alt="Banner" className="h-36 w-full object-cover" />
+      <img src={bannerURI || "default_banner.png"} alt="Banner" className="h-36 w-full object-cover" />
       <img
-        src={avatarURI}
+        src={avatarURI || "default_avatar.png"}
         alt="Profile"
         className="absolute -bottom-12 left-4 size-20 rounded-full border-4 object-cover object-top border-float"
       />

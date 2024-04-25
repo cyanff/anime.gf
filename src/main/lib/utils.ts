@@ -1,6 +1,6 @@
 import { Result, isError } from "@shared/utils";
 import { app } from "electron";
-import { PathLike } from "fs";
+import fs, { PathLike } from "fs";
 import fsp from "fs/promises";
 import JSZip from "jszip";
 import path, { dirname, join } from "path";
@@ -58,4 +58,23 @@ export async function extractZipToDir(zipSrc: string, dirDest): Promise<Result<v
     isError(e);
     return { kind: "err", error: e };
   }
+}
+
+export function copyFolder(src, dest) {
+  // Create destination folder if it doesn't exist
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
+  // Read the contents of the source folder
+  fs.readdirSync(src).forEach((file) => {
+    const srcPath = join(src, file);
+    const destPath = join(dest, file);
+    if (fs.lstatSync(srcPath).isDirectory()) {
+      // Recurse
+      copyFolder(srcPath, destPath);
+    } else {
+      // Copy file to dest
+      fs.copyFileSync(srcPath, destPath);
+    }
+  });
 }
