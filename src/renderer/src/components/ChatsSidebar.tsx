@@ -121,7 +121,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
           <div className="bg-container-tertiary flex h-16 w-full shrink-0 flex-row p-3">
             <div className="relative">
               <img src={personaBundle.avatarURI || ""} alt="Avatar" className="h-10 w-10 rounded-full" />
-              <span className="ring-container-secondary absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 ring-4"></span>
+              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full ring-container-tertiary bg-green-400 ring-4"></span>
             </div>
             <div className="flex h-full flex-col justify-center p-2">
               <h3 className="font-semibold text-tx-primary ">{personaBundle.data.name}</h3>

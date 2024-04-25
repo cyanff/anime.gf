@@ -155,7 +155,7 @@ export function PersonaModal({
         <div className="flex flex-row space-x-3">
           {remove && (
             <button
-              className="flex items-center rounded-sm px-3 py-2 text-sm font-[450] text-red-400"
+              className="flex items-center rounded-sm px-3 py-2 text-sm font-[450] text-tx-primary"
               onClick={remove.handle}
             >
               {remove.label}

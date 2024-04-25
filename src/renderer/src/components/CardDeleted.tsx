@@ -46,7 +46,8 @@ function CardDeleted({ cardBundle, handleRestore, handleSingleDelete, onClick, s
           }}
         >
           <div
-            className={`group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl bg-collection-card p-2 ${selected ? "opacity-100" : "opacity-50"}`}
+            className={`group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl p-2
+            ${selected ? "bg-collection-card" : "saturate-50 opacity-50"}`}
             onMouseMove={onMouseMove}
             onClick={onClick}
           >
@@ -58,10 +59,13 @@ function CardDeleted({ cardBundle, handleRestore, handleSingleDelete, onClick, s
             />
 
             <div className="relative flex flex-grow flex-col space-y-1">
-              <div className="text-overflow-ellipsis absolute -top-28 z-10 w-full max-w-md overflow-hidden whitespace-nowrap pl-5 text-left text-lg font-semibold text-primary">
+              <div
+                className="text-overflow-ellipsis absolute -top-28 z-10 w-full max-w-md overflow-hidden whitespace-nowrap pl-5 text-left text-lg
+                  font-semibold text-tx-primary"
+              >
                 {cardBundle.data.character.name}
               </div>
-              <div className="absolute -top-20 z-10 overflow-hidden pl-5 text-left text-sm font-[530] text-secondary">
+              <div className="absolute -top-20 z-10 overflow-hidden pl-5 text-left text-sm font-[530] text-tx-secondary">
                 {cardBundle.data.meta.tagline}
               </div>
               <div className="absolute -top-2 h-16 space-x-0.5 space-y-1 overflow-hidden pl-5 text-left">
@@ -71,7 +75,7 @@ function CardDeleted({ cardBundle, handleRestore, handleSingleDelete, onClick, s
                   ))}
                 </div>
               </div>
-              <div className="absolute top-20 z-10 pl-5 text-left text-sm font-medium text-secondary opacity-50">
+              <div className="absolute top-20 z-10 pl-5 text-left text-sm font-medium text-tx-secondary opacity-50">
                 by @{cardBundle.data.meta.creator.card}
               </div>
             </div>
@@ -79,14 +83,14 @@ function CardDeleted({ cardBundle, handleRestore, handleSingleDelete, onClick, s
         </motion.button>
       </ContextMenuTrigger>
       <ContextMenuContent className="w-52 px-1 py-2">
-        <ContextMenuItem  onSelect={() => handleRestore(cardBundle)}>
+        <ContextMenuItem onSelect={() => handleRestore(cardBundle)}>
           Restore
           <ContextMenuShortcut>
             <PencilIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem onSelect={() => handleSingleDelete(cardBundle)}>
-          Delete Permanently
+          Delete
           <ContextMenuShortcut>
             <TrashIcon className="size-4" />
           </ContextMenuShortcut>
