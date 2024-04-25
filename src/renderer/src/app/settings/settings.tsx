@@ -46,7 +46,7 @@ export default function SettingsPage() {
 
       {/*Settings Content*/}
 
-      <div className="grow">
+      <div className="grow overflow-hidden">
         {page === "chat" && <SettingsChat />}
         {page === "persona" && <SettingsPersona />}
         {page === "key" && <SettingsKeys />}

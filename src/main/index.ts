@@ -30,7 +30,6 @@ app.whenReady().then(async () => {
   //   const { REACT_DEVELOPER_TOOLS, default: installExtension } = await import("electron-devtools-assembler");
   //   await installExtension(REACT_DEVELOPER_TOOLS);
   // }
-
   electronApp.setAppUserModelId("com.electron");
 
   /**
@@ -215,13 +214,14 @@ app.whenReady().then(async () => {
 
 function createWindow(): void {
   const win = new BrowserWindow({
+    title: "anime.gf",
+    icon: icon,
     width: 900,
     height: 670,
     minWidth: 960,
     minHeight: 600,
     show: false,
     autoHideMenuBar: true,
-    ...(process.platform === "linux" ? { icon } : {}),
     webPreferences: {
       spellcheck: false,
       preload: join(__dirname, "../preload/index.js"),

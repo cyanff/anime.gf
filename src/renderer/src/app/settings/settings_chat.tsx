@@ -86,13 +86,13 @@ export default function SettingsChat() {
   };
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center space-y-5">
+    <div className="flex h-full w-full flex-col items-center justify-center scroll-secondary space-y-5 overflow-hidden">
       <h1 className="text-2xl text-tx-primary font-bold tracking-wide">Chat Settings</h1>
       <FormProvider {...methods}>
-        <form>
+        <form className="overflow-hidden">
           {/* Card Wrapper*/}
-          <div className=" h-[37rem] w-[32rem] rounded-2xl border-y border-l border-line bg-container-primary py-3">
-            <div className="scroll-secondary flex h-full w-full flex-col space-y-8 overflow-y-auto px-8 py-6">
+          <div className=" h-[30rem] w-[32rem] rounded-2xl border-y border-l border-line bg-container-primary py-3">
+            <div className="scroll-secondary flex h-full w-full flex-col space-y-8 overflow-auto px-8 py-6">
               {/* Provider & Model Section */}
               <div className="space-y-3">
                 <h3 className="text-lg font-semibold text-tx-primary">Provider & Model</h3>
