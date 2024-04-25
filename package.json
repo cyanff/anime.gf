@@ -46,7 +46,6 @@
     "@types/better-sqlite3": "^7.6.9",
     "@types/form-data": "^2.5.0",
     "@types/mustache": "^4.2.5",
-    "@types/png-chunks-extract": "^1.0.2",
     "archiver": "^7.0.1",
     "better-sqlite3": "^9.4.3",
     "class-variance-authority": "^0.7.0",

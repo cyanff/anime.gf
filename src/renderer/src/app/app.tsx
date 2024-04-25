@@ -87,16 +87,13 @@ export default function App() {
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const numFiles = e.dataTransfer.files.length;
-    if (numFiles === 0) return;
-
-    if (numFiles > 1) {
-      toast.info(`Importing ${numFiles} cards all at once.`);
-    }
     const files = e.dataTransfer.files;
+    const numFiles = files.length;
+    let numValidFiles = 0;
 
+    if (numFiles === 0) return;
     try {
-      for (let i = 0; i < files.length; i++) {
+      for (let i = 0; i < numFiles; i++) {
         const file = files[i];
         // Reject files that are not .zip
         if (file.type !== "application/zip") {
@@ -117,8 +114,12 @@ export default function App() {
           console.error("Error importing cards", res.error);
           continue;
         }
+        numValidFiles++;
       }
-      toast.success(`Imported ${numFiles} cards.`);
+      if (numValidFiles != 0) {
+        return;
+      }
+      toast.success(`Imported ${numValidFiles} cards.`);
       syncCardBundles();
     } catch (e) {
       console.error("Error importing cards", e);
