@@ -75,25 +75,25 @@
     --logo-from: hsl(330, 70%, 60%);
     --logo-to: hsl(340, 80%, 90%);
 
-    --background: hsl(0, 0%, 92%);  
+    --background: hsl(0, 0%, 95%);  
   
     /* Navigational elements ex: sidebar, chat sidebar, settings sidebar */
     --nav-primary: hsl(340, 80%, 90%); 
     --nav-secondary: hsl(340, 70%, 94%);
 
     /* Containers that lie on top of backgrounds */
-    --container-primary: hsl(0, 0%, 100%);
+    --container-primary: hsl(0, 0%, 99%);
     --container-secondary: hsl(0, 0%, 95%);
-    --container-tertiary: hsl(340, 60%, 85%);
+    --container-tertiary: hsl(340, 60%, 84%);
 
     /* Text colors */
-    --tx-primary: hsl(340, 80%, 20%);  /* Dark pink for primary text */
-    --tx-secondary: hsl(340, 60%, 70%);  /* Softer pink for secondary text */
-    --tx-tertiary: hsl(340, 40%, 75%);  /* Light pink for tertiary text */
+    --tx-primary: hsl(340, 80%, 17%);  /* Dark pink for primary text */
+    --tx-secondary: hsl(340, 45%, 60%);  /* Softer pink for secondary text */
+    --tx-tertiary: hsl(340, 48%, 75%);  /* Light pink for tertiary text */
 
     /* Input elements, combo box, input */
-    --input-primary: hsl(0, 0%, 98%);
-    --input-secondary: hsl(340, 60%, 85%);
+    --input-primary: hsl(0, 0%, 99%);
+    --input-secondary: hsl(340, 60%, 87%);
     --input-tertiary: hsl(340, 60%, 93%);
 
     /* Chat */
@@ -108,12 +108,12 @@
     --chat-character-blockquote-bar: hsl(0, 0%, 85%); 
 
     /* Cards in the collections page */
-    --collection-card: hsl(340, 60%, 95%);
-    --collection-card-hover: hsl(340, 70%, 90%);  /* Slightly darker pink on hover */
+    --collection-card: hsl(340, 60%, 92%);
+    --collection-card-hover: hsl(340, 70%, 89%);
     --collection-card-tag: hsl(340, 50%, 85%); 
 
     /* Hover color */
-    --accent: hsl(340, 100%, 95%);  /* Pale pink for hover */
+    --accent: hsl(340, 90%, 90%); 
 
     /* Borders and Separators */
     --line: hsl(340, 30%, 90%);  /* Subtle pink lines for separators */

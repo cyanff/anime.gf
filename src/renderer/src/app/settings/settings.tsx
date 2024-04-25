@@ -36,7 +36,9 @@ export default function SettingsPage() {
         </button>
         <button
           className={`group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5 text-[1.07rem] font-[450] transition
-          duration-150 ease-out hover:bg-accent ${page === "deleted" ? "bg-accent text-tx-primary" : "text-tx-secondary"}`}
+          duration-150 ease-out hover:bg-accent ${
+            page === "deleted" ? "bg-container-tertiary text-tx-primary" : "text-tx-secondary"
+          }`}
           onClick={() => setPage("deleted")}
         >
           Recently Deleted

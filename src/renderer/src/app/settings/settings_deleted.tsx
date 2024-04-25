@@ -13,6 +13,7 @@ import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { DialogConfig, useApp } from "@/components/AppContext";
+import { Input } from "@/components/ui/input";
 
 export default function SettingsRecentlyDeleted() {
   const [deletedCards, setDeletedCards] = useState<CardBundle[]>();
@@ -177,69 +178,69 @@ export default function SettingsRecentlyDeleted() {
   }
 
   return (
-    <div className="scroll-primary  h-full w-full overflow-y-scroll pl-4  antialiased lg:text-base">
+    <div className="scroll-primary h-full w-full overflow-y-scroll pl-4 antialiased lg:text-base">
       <div className="flex flex-row space-x-4 py-2 pb-8">
         {/* Search Bar*/}
         <div className="flex flex-row space-x-4 ">
-        <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-xl bg-input-primary p-2">
-        <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-tx-secondary" />
-          <input
-            className="h-9 w-full grow bg-inherit text-tx-primary focus:outline-none "
-            placeholder="Search for a chat"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          ></input>
-        </div>
-        {/* Sort By Selection*/}
-        <div className="flex">
-          <Select onValueChange={(v) => setSortBy(v)} value={sortBy}>
-            <SelectTrigger className="h-12 select-none space-x-2 rounded-xl font-medium text-tx-primary">
-              <Bars3BottomLeftIcon height="24px" />
-              <SelectValue placeholder={sortBy === "" ? "Select a filter" : sortBy} />
-            </SelectTrigger>
-            <SelectContent className="">
-              {sortByNameAndValue.map((nameAndValue, idx) => (
-                <SelectItem key={idx} value={nameAndValue.value}>
-                  {nameAndValue.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Ascending / Descending Arrow */}
-          <button
-            className="p-2 focus:outline-none"
-            onClick={() => {
-              setDescending(!descending);
-            }}
-          >
-            <ArrowUpIcon
-              className={`${descending ? "rotate-180" : "rotate-0"} text-neutral-125 duration-125 size-5 text-secondary transition ease-out `}
+          <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-xl bg-input-primary p-2">
+            <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-tx-secondary" />
+            <Input
+              className="h-9 w-full border-none grow bg-inherit focus:outline-none "
+              placeholder="Search for a chat"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
             />
-          </button>
-        </div>
+          </div>
+          {/* Sort By Selection*/}
+          <div className="flex">
+            <Select onValueChange={(v) => setSortBy(v)} value={sortBy}>
+              <SelectTrigger className="h-12 select-none space-x-2 rounded-xl font-medium text-tx-primary">
+                <Bars3BottomLeftIcon height="24px" />
+                <SelectValue placeholder={sortBy === "" ? "Select a filter" : sortBy} />
+              </SelectTrigger>
+              <SelectContent className="">
+                {sortByNameAndValue.map((nameAndValue, idx) => (
+                  <SelectItem key={idx} value={nameAndValue.value}>
+                    {nameAndValue.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Ascending / Descending Arrow */}
+            <button
+              className="p-2 focus:outline-none"
+              onClick={() => {
+                setDescending(!descending);
+              }}
+            >
+              <ArrowUpIcon
+                className={`${descending ? "rotate-180" : "rotate-0"} text-tx-tertiary duration-125 size-5 text-secondary transition ease-out `}
+              />
+            </button>
+          </div>
         </div>
         <div className="flex flex-row flex-grow space-x-4 justify-end pr-8">
-        <button
-          className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-action-secondary"
-          onClick={handleRestoreSelected}
-        >
-          <span className="font-medium text-tx-primary">Restore</span>
-        </button>
-        <button
-          className="flex items-center space-x-2 rounded-xl bg-action-primary px-4 py-2 transition ease-out duration-200 hover:brightness-90"
-          onClick={handleDeleteSelected}
-        >
-          <TrashIcon className="size-5 text-tx-primary" />
-          <span className="font-medium text-tx-primary">Delete Permenantly</span>
-        </button>
+          <button
+            className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-action-secondary"
+            onClick={handleRestoreSelected}
+          >
+            <span className="font-medium text-tx-primary text-sm">Restore</span>
+          </button>
+          <button
+            className="flex items-center space-x-2 rounded-xl bg-action-primary px-4 py-2 transition ease-out duration-200 hover:brightness-90"
+            onClick={handleDeleteSelected}
+          >
+            <TrashIcon className="size-5 text-tx-primary" />
+            <span className="font-medium text-tx-primary text-sm">Delete Selected</span>
+          </button>
         </div>
       </div>
 
       {/* Collection Area */}
-      <div className="flex flex-wrap  gap-4 scroll-smooth transition duration-500 ease-out">
+      <div className="flex flex-wrap gap-4 scroll-smooth transition duration-500 ease-out">
         {searchResults?.length === 0 && (
-          <div className="line-clamp-1 w-full whitespace-pre text-center text-lg font-semibold text-neutral-400">
+          <div className="line-clamp-1 w-full whitespace-pre text-center text-lg font-semibold text-tx-tertiary">
             {"No recently deleted cards"}
           </div>
         )}
