@@ -20,8 +20,13 @@
     "gen-types": "",
     "new-migration": "node ./scripts/new_migration.js",
     "nuke": "./scripts/nuke.sh",
+    "nuke-win": "scripts\\nuke.bat",
     "seed": "electron ./scripts/seed.js",
-    "reset": "npm run nuke && npm run seed"
+    "seed-win": "electron ./scripts/seedwin.js",
+
+    "reset": "npm run nuke && npm run seed",
+    "reset-win": "npm run nuke-win && npm run seed-win"
+
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
@@ -85,6 +90,7 @@
     "prettier-plugin-tailwindcss": "^0.5.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "shx": "^0.3.4",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.12"
