@@ -1,8 +1,8 @@
 import { getProvider } from "@/lib/provider/provider";
-import { ContextParams, PromptVariant, context } from "./context";
-import { deepFreeze } from "@shared/utils";
-import { CardData, PersonaData } from "@shared/types";
 import { queries } from "@/lib/queries";
+import { CardData, PersonaData } from "@shared/types";
+import { deepFreeze } from "@shared/utils";
+import { ContextParams, context } from "./context";
 
 /**
  * Generates a response based on the provided chat ID, card data, persona data, and latest user message.

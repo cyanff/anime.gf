@@ -1,17 +1,16 @@
 import { Checkbox } from "@/components/ui/checkbox";
+import Combobox from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { getProvider, getProvidersNameAndValue } from "@/lib/provider/provider";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { config } from "@shared/config";
+import { useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect, useState } from "react";
-import { getProvider, getProvidersNameAndValue } from "@/lib/provider/provider";
-import Combobox from "@/components/ui/combobox";
-import { ChatBubbleLeftIcon } from "@heroicons/react/24/solid";
 
 const schema = z.object({
   provider: z.string().default("Anthropic"),

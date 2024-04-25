@@ -2,148 +2,145 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
+  /* Edit this theme */
+  .custom {
+    /* Logo button gradients */
+    --logo-from: hsl(334, 55%, 52%);
+    --logo-to: hsl(331, 50%, 84%);
 
-    /* Edit this theme */
-    .custom {
-      /* Logo button gradients */
-      --logo-from: hsl(334, 55%, 52%);
-      --logo-to: hsl(331, 50%, 84%);   
+    --background: hsl(0, 0%, 18%);
 
-      --background: hsl(0, 0%, 18%);  
-    
-      /* Navigational elements ex: sidebar, chat sidebar, settings sidebar */
-      --nav-primary: hsl(0, 0%, 12%); 
-      --nav-secondary: hsl(0, 0%, 15%);
+    /* Navigational elements ex: sidebar, chat sidebar, settings sidebar */
+    --nav-primary: hsl(0, 0%, 12%);
+    --nav-secondary: hsl(0, 0%, 15%);
 
-      /* Containers that lie on top of backgrounds */
-      --container-primary: hsl(0, 0%, 14%); 
-      --container-secondary: hsl(0, 0%, 17%);  
-      --container-tertiary: hsl(0, 0%, 22%);  
+    /* Containers that lie on top of backgrounds */
+    --container-primary: hsl(0, 0%, 14%);
+    --container-secondary: hsl(0, 0%, 17%);
+    --container-tertiary: hsl(0, 0%, 22%);
 
-      /* Text colors */
-      --tx-primary: hsl(0, 0%, 98%);  
-      --tx-secondary: hsl(0, 0%, 77%);  
-      --tx-tertiary: hsl(0, 0%, 50%);  
+    /* Text colors */
+    --tx-primary: hsl(0, 0%, 98%);
+    --tx-secondary: hsl(0, 0%, 77%);
+    --tx-tertiary: hsl(0, 0%, 50%);
 
-      /* Input elements, combo box, input */
-      --input-primary: hsl(0, 0%, 24%);   
-      --input-secondary: hsl(0, 0%, 22%);  
-      --input-tertiary: hsl(0, 0%, 28%);  
+    /* Input elements, combo box, input */
+    --input-primary: hsl(0, 0%, 24%);
+    --input-secondary: hsl(0, 0%, 22%);
+    --input-tertiary: hsl(0, 0%, 28%);
 
-      /* Chat */
-      /* User message uses the highlight color */
-      --chat-user-from: hsl(334, 55%, 49%);  
-      --chat-user-to: hsl(334, 55%, 45%);    
-      --chat-user-blockquote-bar: hsl(334, 55%, 33%); 
+    /* Chat */
+    /* User message uses the highlight color */
+    --chat-user-from: hsl(334, 55%, 49%);
+    --chat-user-to: hsl(334, 55%, 45%);
+    --chat-user-blockquote-bar: hsl(334, 55%, 33%);
 
-      /* Character message*/
-      --chat-character-from: hsl(0, 0%, 24%);  
-      --chat-character-to: hsl(0, 0%, 27%); 
-      --chat-character-blockquote-bar: hsl(0, 0%, 30%); 
+    /* Character message*/
+    --chat-character-from: hsl(0, 0%, 24%);
+    --chat-character-to: hsl(0, 0%, 27%);
+    --chat-character-blockquote-bar: hsl(0, 0%, 30%);
 
-      /* Cards in the collections page */
-      --collection-card: hsl(0, 0%, 26%);
-      --collection-card-hover: hsl(0, 0%, 31%);  
-      --collection-card-tag: hsl(0, 0%, 20%); 
+    /* Cards in the collections page */
+    --collection-card: hsl(0, 0%, 26%);
+    --collection-card-hover: hsl(0, 0%, 31%);
+    --collection-card-tag: hsl(0, 0%, 20%);
 
-      /* Hover color */
-      --accent: hsl(0, 0%, 19%); 
+    /* Hover color */
+    --accent: hsl(0, 0%, 19%);
 
-      /* Borders and Separators */
-      --line: hsl(0, 0%, 23%);  
+    /* Borders and Separators */
+    --line: hsl(0, 0%, 23%);
 
-      /* Scroll bar */
-      --scroll-primary-thumb: hsl(0, 0%, 9%);
-      --scroll-primary-track: hsl(0, 0%, 16%);
-      --scroll-secondary-thumb: hsl(0, 0%, 19%);
-      --scroll-secondary-track: hsl(0, 0%, 25%);
+    /* Scroll bar */
+    --scroll-primary-thumb: hsl(0, 0%, 9%);
+    --scroll-primary-track: hsl(0, 0%, 16%);
+    --scroll-secondary-thumb: hsl(0, 0%, 19%);
+    --scroll-secondary-track: hsl(0, 0%, 25%);
 
-      /* Floating elements, ex: modals, popovers, dialogs */
-      --float: hsl(0, 0%, 13%);  
+    /* Floating elements, ex: modals, popovers, dialogs */
+    --float: hsl(0, 0%, 13%);
 
-      /* Action, (buttons) elements */
-      --action-primary: hsl(334, 55%, 52%);  
-      --action-secondary: hsl(0, 0%, 52%);   
-      --action-tertiary: hsl(0, 0%, 25%);   
+    /* Action, (buttons) elements */
+    --action-primary: hsl(334, 55%, 52%);
+    --action-secondary: hsl(0, 0%, 52%);
+    --action-tertiary: hsl(0, 0%, 25%);
   }
-  
 
   /* Dark theme with magenta highlights */
   .anime-gf {
-        /* Logo button gradients */
-        --logo-from: hsl(334, 55%, 52%);  /* Darker magenta */
-        --logo-to: hsl(331, 50%, 84%);    /* Lighter magenta gradient */
-    
-        --background: hsl(0, 0%, 18%);  
-      
-        /* Navigational elements ex: sidebar, chat sidebar, settings sidebar */
-        --nav-primary: hsl(0, 0%, 12%); 
-        --nav-secondary: hsl(0, 0%, 15%);
-    
-        /* Containers that lie on top of backgrounds */
-        --container-primary: hsl(0, 0%, 14%); /* Moderate dark constrast vs background */
-        --container-secondary: hsl(0, 0%, 17%);  /* Low constrast vs background */
-        --container-tertiary: hsl(0, 0%, 22%);  /* Moderate light constrast vs background */
-    
-        /* Text colors */
-        --tx-primary: hsl(0, 0%, 98%);  /* Very light grey for primary text */
-        --tx-secondary: hsl(0, 0%, 77%);  /* Dimmer against background */
-        --tx-tertiary: hsl(0, 0%, 50%);  /*  Dimmest against background */
-    
-        /* Input elements, combo box, input */
-        --input-primary: hsl(0, 0%, 24%);   /* Moderate dark constrast vs background */
-        --input-secondary: hsl(0, 0%, 22%);  /* Low contrast vs background */
-        --input-tertiary: hsl(0, 0%, 28%);  /* Moderate light contrast vs background */
-    
-        /* Chat */
-        /* User message uses the highlight color */
-        --chat-user-from: hsl(334, 55%, 49%);  /* Magenta shade for user message start */
-        --chat-user-to: hsl(334, 55%, 45%);    /* Darker magenta for user message end */
-        --chat-user-blockquote-bar: hsl(334, 55%, 33%);  /* Darkest magenta for quote bar */
-    
-        /* Character message*/
-        --chat-character-from: hsl(0, 0%, 24%);  
-        --chat-character-to: hsl(0, 0%, 27%); 
-        --chat-character-blockquote-bar: hsl(0, 0%, 30%); 
-    
-        /* Cards in the collections page */
-        --collection-card: hsl(0, 0%, 26%);
-        --collection-card-hover: hsl(0, 0%, 31%);  /* Slightly lighter on hover */
-        --collection-card-tag: hsl(0, 0%, 20%); 
-    
-        /* Hover color */
-        --accent: hsl(0, 0%, 19%);  /* Slighly lighter than background */
-    
-        /* Borders and Separators */
-        --line: hsl(0, 0%, 23%);  /* Subtle lines for separators */
-    
-        /* Scroll bar */
-        --scroll-primary-thumb: hsl(0, 0%, 9%);
-        --scroll-primary-track: hsl(0, 0%, 16%);
-        --scroll-secondary-thumb: hsl(0, 0%, 19%);
-        --scroll-secondary-track: hsl(0, 0%, 25%);
-    
-        /* Floating elements, ex: modals, popovers, dialogs */
-        --float: hsl(0, 0%, 13%);  /* Darker than background */
-    
-        /* Action, (buttons) elements */
-        --action-primary: hsl(334, 55%, 52%);  /* Magenta highlight for primary action buttons */
-        --action-secondary: hsl(0, 0%, 52%);   /* Neutral for secondary action buttons */
-        --action-tertiary: hsl(0, 0%, 25%);    /* Neutral for tertiary action buttons */ 
+    /* Logo button gradients */
+    --logo-from: hsl(334, 55%, 52%); /* Darker magenta */
+    --logo-to: hsl(331, 50%, 84%); /* Lighter magenta gradient */
+
+    --background: hsl(0, 0%, 18%);
+
+    /* Navigational elements ex: sidebar, chat sidebar, settings sidebar */
+    --nav-primary: hsl(0, 0%, 12%);
+    --nav-secondary: hsl(0, 0%, 15%);
+
+    /* Containers that lie on top of backgrounds */
+    --container-primary: hsl(0, 0%, 14%); /* Moderate dark constrast vs background */
+    --container-secondary: hsl(0, 0%, 17%); /* Low constrast vs background */
+    --container-tertiary: hsl(0, 0%, 22%); /* Moderate light constrast vs background */
+
+    /* Text colors */
+    --tx-primary: hsl(0, 0%, 98%); /* Very light grey for primary text */
+    --tx-secondary: hsl(0, 0%, 77%); /* Dimmer against background */
+    --tx-tertiary: hsl(0, 0%, 50%); /*  Dimmest against background */
+
+    /* Input elements, combo box, input */
+    --input-primary: hsl(0, 0%, 24%); /* Moderate dark constrast vs background */
+    --input-secondary: hsl(0, 0%, 22%); /* Low contrast vs background */
+    --input-tertiary: hsl(0, 0%, 28%); /* Moderate light contrast vs background */
+
+    /* Chat */
+    /* User message uses the highlight color */
+    --chat-user-from: hsl(334, 55%, 49%); /* Magenta shade for user message start */
+    --chat-user-to: hsl(334, 55%, 45%); /* Darker magenta for user message end */
+    --chat-user-blockquote-bar: hsl(334, 55%, 33%); /* Darkest magenta for quote bar */
+
+    /* Character message*/
+    --chat-character-from: hsl(0, 0%, 24%);
+    --chat-character-to: hsl(0, 0%, 27%);
+    --chat-character-blockquote-bar: hsl(0, 0%, 30%);
+
+    /* Cards in the collections page */
+    --collection-card: hsl(0, 0%, 26%);
+    --collection-card-hover: hsl(0, 0%, 31%); /* Slightly lighter on hover */
+    --collection-card-tag: hsl(0, 0%, 20%);
+
+    /* Hover color */
+    --accent: hsl(0, 0%, 19%); /* Slighly lighter than background */
+
+    /* Borders and Separators */
+    --line: hsl(0, 0%, 23%); /* Subtle lines for separators */
+
+    /* Scroll bar */
+    --scroll-primary-thumb: hsl(0, 0%, 9%);
+    --scroll-primary-track: hsl(0, 0%, 16%);
+    --scroll-secondary-thumb: hsl(0, 0%, 19%);
+    --scroll-secondary-track: hsl(0, 0%, 25%);
+
+    /* Floating elements, ex: modals, popovers, dialogs */
+    --float: hsl(0, 0%, 13%); /* Darker than background */
+
+    /* Action, (buttons) elements */
+    --action-primary: hsl(334, 55%, 52%); /* Magenta highlight for primary action buttons */
+    --action-secondary: hsl(0, 0%, 52%); /* Neutral for secondary action buttons */
+    --action-tertiary: hsl(0, 0%, 25%); /* Neutral for tertiary action buttons */
   }
 
-   /* Sakura Bloom light theme */
-   .sakura-bloom {
+  /* Sakura Bloom light theme */
+  .sakura-bloom {
     /* Logo button gradients */
     --logo-from: hsl(330, 70%, 60%);
     --logo-to: hsl(340, 80%, 90%);
 
-    --background: hsl(0, 0%, 95%);  
-  
+    --background: hsl(0, 0%, 95%);
+
     /* Navigational elements ex: sidebar, chat sidebar, settings sidebar */
-    --nav-primary: hsl(340, 80%, 90%); 
+    --nav-primary: hsl(340, 80%, 90%);
     --nav-secondary: hsl(340, 70%, 94%);
 
     /* Containers that lie on top of backgrounds */
@@ -152,9 +149,9 @@
     --container-tertiary: hsl(340, 60%, 84%);
 
     /* Text colors */
-    --tx-primary: hsl(340, 80%, 17%);  /* Dark pink for primary text */
-    --tx-secondary: hsl(340, 45%, 60%);  /* Softer pink for secondary text */
-    --tx-tertiary: hsl(340, 48%, 75%);  /* Light pink for tertiary text */
+    --tx-primary: hsl(340, 80%, 17%); /* Dark pink for primary text */
+    --tx-secondary: hsl(340, 45%, 60%); /* Softer pink for secondary text */
+    --tx-tertiary: hsl(340, 48%, 75%); /* Light pink for tertiary text */
 
     /* Input elements, combo box, input */
     --input-primary: hsl(0, 0%, 99%);
@@ -163,25 +160,25 @@
 
     /* Chat */
     /* User message uses the highlight color */
-    --chat-user-from: hsl(340, 80%, 85%);  /* Light pink for user message start */
-    --chat-user-to: hsl(340, 80%, 80%);    /* Slightly darker pink for user message end */
-    --chat-user-blockquote-bar: hsl(340, 80%, 70%);  /* Darker pink for quote bar */
+    --chat-user-from: hsl(340, 80%, 85%); /* Light pink for user message start */
+    --chat-user-to: hsl(340, 80%, 80%); /* Slightly darker pink for user message end */
+    --chat-user-blockquote-bar: hsl(340, 80%, 70%); /* Darker pink for quote bar */
 
     /* Character message*/
-    --chat-character-from: hsl(0, 0%, 85%);  
-    --chat-character-to: hsl(0, 0%, 90%); 
-    --chat-character-blockquote-bar: hsl(0, 0%, 85%); 
+    --chat-character-from: hsl(0, 0%, 85%);
+    --chat-character-to: hsl(0, 0%, 90%);
+    --chat-character-blockquote-bar: hsl(0, 0%, 85%);
 
     /* Cards in the collections page */
     --collection-card: hsl(340, 60%, 92%);
     --collection-card-hover: hsl(340, 70%, 89%);
-    --collection-card-tag: hsl(340, 50%, 85%); 
+    --collection-card-tag: hsl(340, 50%, 85%);
 
     /* Hover color */
-    --accent: hsl(340, 90%, 90%); 
+    --accent: hsl(340, 90%, 90%);
 
     /* Borders and Separators */
-    --line: hsl(340, 30%, 90%);  /* Subtle pink lines for separators */
+    --line: hsl(340, 30%, 90%); /* Subtle pink lines for separators */
 
     /* Scroll bar */
     --scroll-primary-thumb: hsl(340, 60%, 80%);
@@ -190,12 +187,12 @@
     --scroll-secondary-track: hsl(340, 30%, 95%);
 
     /* Floating elements, ex: modals, popovers, dialogs */
-    --float: hsl(0, 0%, 100%);  /* Bright white for floating elements */
+    --float: hsl(0, 0%, 100%); /* Bright white for floating elements */
 
     /* Action, (buttons) elements */
-    --action-primary: hsl(340, 80%, 70%);  /* Vibrant pink for primary action buttons */
-    --action-secondary: hsl(340, 60%, 80%);   /* Softer pink for secondary action buttons */
-    --action-tertiary: hsl(340, 40%, 90%);    /* Pale pink for tertiary action buttons */ 
+    --action-primary: hsl(340, 80%, 70%); /* Vibrant pink for primary action buttons */
+    --action-secondary: hsl(340, 60%, 80%); /* Softer pink for secondary action buttons */
+    --action-tertiary: hsl(340, 40%, 90%); /* Pale pink for tertiary action buttons */
   }
 
   /* Artic dark theme */
@@ -203,60 +200,60 @@
     /* Logo button gradients */
     --logo-from: hsl(210, 90%, 60%);
     --logo-to: hsl(210, 90%, 70%);
-  
+
     /* Background */
     --background: hsl(210, 22%, 10%);
-  
+
     /* Navigational elements: sidebar, chat sidebar, settings sidebar */
     --nav-primary: hsl(210, 22%, 8%);
     --nav-secondary: hsl(210, 22%, 12%);
-  
+
     /* Containers that lie on top of backgrounds */
     --container-primary: hsl(210, 22%, 8%);
     --container-secondary: hsl(210, 22%, 12%);
     --container-tertiary: hsl(210, 22%, 18%);
-  
+
     /* Text colors */
     --tx-primary: hsl(210, 90%, 98%);
     --tx-secondary: hsl(210, 90%, 85%);
     --tx-tertiary: hsl(210, 90%, 72%);
-  
+
     /* Input elements, combo box, input */
     --input-primary: hsl(210, 22%, 15%);
     --input-secondary: hsl(210, 22%, 13%);
     --input-tertiary: hsl(210, 22%, 17%);
-  
+
     /* Chat */
     /* User message */
     --chat-user-from: hsl(210, 50%, 60%);
     --chat-user-to: hsl(210, 50%, 58%);
     --chat-user-blockquote-bar: hsl(210, 50%, 46%);
-  
+
     /* Character message */
     --chat-character-from: hsl(210, 22%, 15%);
     --chat-character-to: hsl(210, 22%, 18%);
     --chat-character-blockquote-bar: hsl(210, 22%, 23%);
-  
+
     /* Cards in the collections page */
     --collection-card: hsl(210, 22%, 15%);
     --collection-card-hover: hsl(210, 20%, 21%);
     --collection-card-tag: hsl(210, 22%, 10%);
-  
+
     /* Hover color */
     --accent: hsl(210, 50%, 60%);
-  
+
     /* Borders and Separators */
     --line: hsl(210, 22%, 13%);
-  
+
     /* Scroll bar */
     --scroll-primary-thumb: hsl(210, 22%, 10%);
     --scroll-primary-track: hsl(210, 22%, 13%);
     --scroll-secondary-thumb: hsl(210, 22%, 18%);
     --scroll-secondary-track: hsl(210, 22%, 21%);
-  
+
     /* Floating elements, ex: modals, popovers, dialogs */
     --float: hsl(210, 22%, 8%);
-  
+
     /* Action, (buttons) elements */
     --action-primary: hsl(210, 70%, 70%);
     --action-secondary: hsl(210, 50%, 70%);
@@ -264,139 +261,135 @@
   }
 
   /* Midnight dark theme with red accent :^) */
-  .midnight-red{
+  .midnight-red {
     /* Logo button gradients */
     --logo-from: hsl(0, 75%, 45%);
     --logo-to: hsl(345, 75%, 55%);
-  
+
     /* Background */
     --background: hsl(230, 20%, 14%);
-  
+
     /* Navigational elements: sidebar, chat sidebar, settings sidebar */
     --nav-primary: hsl(230, 30%, 12%);
     --nav-secondary: hsl(230, 25%, 15%);
-  
+
     /* Containers that lie on top of backgrounds */
     --container-primary: hsl(230, 30%, 12%);
     --container-secondary: hsl(230, 25%, 15%);
     --container-tertiary: hsl(230, 20%, 18%);
-  
+
     /* Text colors */
     --tx-primary: hsl(0, 0%, 98%);
     --tx-secondary: hsl(0, 0%, 75%);
     --tx-tertiary: hsl(0, 0%, 50%);
-  
+
     /* Input elements, combo box, input */
     --input-primary: hsl(230, 25%, 20%);
     --input-secondary: hsl(230, 20%, 18%);
     --input-tertiary: hsl(230, 30%, 22%);
-  
+
     /* Chat */
     /* User message */
     --chat-user-from: hsl(345, 77%, 53%);
     --chat-user-to: hsl(345, 70%, 40%);
     --chat-user-blockquote-bar: hsl(345, 85%, 30%);
-  
+
     /* Character message */
     --chat-character-from: hsl(230, 20%, 20%);
     --chat-character-to: hsl(230, 20%, 24%);
     --chat-character-blockquote-bar: hsl(230, 20%, 28%);
-  
+
     /* Cards in the collections page */
     --collection-card: hsl(230, 25%, 22%);
     --collection-card-hover: hsl(230, 25%, 28%);
     --collection-card-tag: hsl(230, 20%, 18%);
-  
+
     /* Hover color */
     --accent: hsl(345, 85%, 55%);
-  
+
     /* Borders and Separators */
     --line: hsl(230, 25%, 20%);
-  
+
     /* Scroll bar */
     --scroll-primary-thumb: hsl(230, 30%, 12%);
     --scroll-primary-track: hsl(230, 25%, 18%);
     --scroll-secondary-thumb: hsl(230, 25%, 20%);
     --scroll-secondary-track: hsl(230, 25%, 25%);
-  
+
     /* Floating elements, ex: modals, popovers, dialogs */
     --float: hsl(230, 30%, 12%);
-  
+
     /* Action, (buttons) elements */
     --action-primary: hsl(345, 77%, 48%);
     --action-secondary: hsl(230, 25%, 55%);
     --action-tertiary: hsl(230, 25%, 25%);
-  } 
+  }
 
   /* Twilight dark theme */
   .twilight {
     /* Logo button gradients */
-    --logo-from: hsl(244, 100%, 65%); 
+    --logo-from: hsl(244, 100%, 65%);
     --logo-to: hsl(240, 100%, 75%);
-  
+
     /* Background */
-    --background: hsl(240, 30%, 8%);  
-  
+    --background: hsl(240, 30%, 8%);
+
     /* Navigational elements ex: sidebar, chat sidebar, settings sidebar */
-    --nav-primary: hsl(240, 30%, 6%); 
+    --nav-primary: hsl(240, 30%, 6%);
     --nav-secondary: hsl(240, 30%, 9%);
-  
+
     /* Containers that lie on top of backgrounds */
     --container-primary: hsl(240, 30%, 6%);
     --container-secondary: hsl(240, 30%, 9%);
-    --container-tertiary: hsl(240, 30%, 16%); 
-  
+    --container-tertiary: hsl(240, 30%, 16%);
+
     /* Text colors */
-    --tx-primary: hsl(210, 100%, 98%); 
+    --tx-primary: hsl(210, 100%, 98%);
     --tx-secondary: hsl(223, 100%, 85%);
     --tx-tertiary: hsl(227, 48%, 62%);
-  
+
     /* Input elements, combo box, input */
     --input-primary: hsl(240, 30%, 12%);
     --input-secondary: hsl(240, 30%, 10%);
     --input-tertiary: hsl(240, 30%, 14%);
-  
+
     /* Chat */
     /* User message */
     --chat-user-from: hsl(240, 52%, 60%);
     --chat-user-to: hsl(240, 47%, 58%);
     --chat-user-blockquote-bar: hsl(240, 43%, 46%);
-  
+
     /* Character message */
     --chat-character-from: hsl(240, 30%, 12%);
     --chat-character-to: hsl(240, 30%, 15%);
     --chat-character-blockquote-bar: hsl(240, 30%, 20%);
-  
+
     /* Cards in the collections page */
     --collection-card: hsl(240, 29%, 13%);
     --collection-card-hover: hsl(240, 28%, 16%);
     --collection-card-tag: hsl(240, 30%, 8%);
-  
+
     /* Hover color */
-    --accent: hsl(237, 44%, 54%);  
-  
+    --accent: hsl(237, 44%, 54%);
+
     /* Borders and Separators */
-    --line: hsl(240, 30%, 10%);  
-  
+    --line: hsl(240, 30%, 10%);
+
     /* Scroll bar */
     --scroll-primary-thumb: hsl(240, 30%, 7%);
     --scroll-primary-track: hsl(240, 30%, 10%);
     --scroll-secondary-thumb: hsl(240, 30%, 15%);
     --scroll-secondary-track: hsl(240, 30%, 18%);
-  
+
     /* Floating elements, ex: modals, popovers, dialogs */
-    --float: hsl(240, 30%, 6%); 
-  
+    --float: hsl(240, 30%, 6%);
+
     /* Action, (buttons) elements */
-    --action-primary: hsl(237, 74%, 69%);  
-    --action-secondary: hsl(240, 50%, 70%);  
-    --action-tertiary: hsl(240, 30%, 20%); 
+    --action-primary: hsl(237, 74%, 69%);
+    --action-secondary: hsl(240, 50%, 70%);
+    --action-tertiary: hsl(240, 30%, 20%);
   }
-
-
 }
-
-
 
 @font-face {
   font-family: "Inter";
@@ -408,15 +401,13 @@
 
 :root {
   --font-inter: "Inter", sans-serif;
-    /* Hard coded variables referenced by radix ui, cannot remove */
-    /* Don't use these in custom themes */
+  /* Hard coded variables referenced by radix ui, cannot remove */
+  /* Don't use these in custom themes */
   --popover: var(--float);
   --popover-foreground: var(--tx-primary);
   --radius: 0.8rem;
   font-weight: 480;
-
 }
-
 
 .scroll-primary::-webkit-scrollbar {
   width: 8px;

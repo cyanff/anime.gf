@@ -1,6 +1,5 @@
-import { Provider } from "@/lib/provider/provider";
+import { CompletionConfig, Provider, ProviderMessage } from "@/lib/provider/provider";
 import { Result } from "@shared/utils";
-import { ProviderMessage, CompletionConfig } from "@/lib/provider/provider";
 
 interface ChatCompletion {
   id: string;

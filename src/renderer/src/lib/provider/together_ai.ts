@@ -1,6 +1,5 @@
-import { Provider } from "@/lib/provider/provider";
+import { CompletionConfig, Provider, ProviderMessage } from "@/lib/provider/provider";
 import { Result } from "@shared/utils";
-import { ProviderMessage, CompletionConfig } from "@/lib/provider/provider";
 
 const models = ["mistralai/Mixtral-8x7B-Instruct-v0.1", "NousResearch/Nous-Hermes-2-Mixtral-8x7B-SFT"];
 

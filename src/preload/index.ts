@@ -1,7 +1,7 @@
-import { contextBridge, ipcRenderer } from "electron";
-import { Result } from "@shared/utils";
-import { RunResult } from "../main/lib/store/sqlite";
 import { CardBundle, CardData, PersonaBundleWithoutData, PersonaFormData, Settings } from "@shared/types";
+import { Result } from "@shared/utils";
+import { contextBridge, ipcRenderer } from "electron";
+import { RunResult } from "../main/lib/store/sqlite";
 
 // Expose API types to the renderer process
 export interface API {

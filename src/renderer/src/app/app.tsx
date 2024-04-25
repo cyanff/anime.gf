@@ -25,10 +25,10 @@ import {
 } from "@/components/ui/command";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { handleA, handleB, handleC } from "@/lib/cmd";
+import { queries } from "@/lib/queries";
+import { CardBundle } from "@shared/types";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { CardBundle } from "@shared/types";
-import { queries } from "@/lib/queries";
 
 export default function App() {
   const [page, setPage] = useState<string>("chats");

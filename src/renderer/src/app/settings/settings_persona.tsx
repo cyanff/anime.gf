@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -7,6 +6,7 @@ import {
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
 import { EllipsisHorizontalIcon, UserPlusIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
+import { useEffect, useState } from "react";
 
 import {
   DropdownMenu,
@@ -17,10 +17,10 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 
-import { queries } from "@/lib/queries";
-import { toast } from "sonner";
-import { PersonaBundle, PersonaFormData } from "@shared/types";
 import { useApp } from "@/components/AppContext";
+import { queries } from "@/lib/queries";
+import { PersonaBundle, PersonaFormData } from "@shared/types";
+import { toast } from "sonner";
 import { PersonaModal } from "../../components/PersonaModal";
 
 export default function SettingsPersona() {

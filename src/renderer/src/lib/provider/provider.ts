@@ -1,7 +1,7 @@
-import { Result } from "@shared/utils";
 import { openAI } from "@/lib/provider/openai";
-import { anthropic } from "./anthropic";
 import { togetherAI } from "@/lib/provider/together_ai";
+import { Result } from "@shared/utils";
+import { anthropic } from "./anthropic";
 import { mistral } from "./mistral";
 
 export interface ProviderMessage {

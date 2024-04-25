@@ -1,5 +1,4 @@
 import fsp from "fs/promises";
-import fs from "fs";
 /**
  * Freeze an object along with all of it's properties and subproperties making it completely immutable.
  * This is useful because Object.freeze() only freezes the top level properties.

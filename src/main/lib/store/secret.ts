@@ -1,6 +1,6 @@
+import { Result, isError } from "@shared/utils";
 import fs from "fs/promises";
 import { attainable, secretsPath } from "../utils";
-import { Result, isError } from "@shared/utils";
 
 async function init() {
   const secretsFileExists = await attainable(secretsPath);

@@ -1,14 +1,12 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import { useTheme } from "@/components/theme-provider";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { useTheme } from "@/components/theme-provider";
+import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 interface LogoButtonProps {
   className?: string;

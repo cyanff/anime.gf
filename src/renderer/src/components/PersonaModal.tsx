@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { PencilSquareIcon } from "@heroicons/react/24/solid";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { PersonaFormData, personaFormSchema } from "@shared/types";
+import { useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 interface PersonaModalProps {

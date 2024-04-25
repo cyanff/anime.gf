@@ -1,6 +1,5 @@
-import { useMotionValue } from "framer-motion";
-import { useMotionTemplate, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 
 export const EvervaultCard = ({ text, className }: { text?: string; className?: string }) => {
   let mouseX = useMotionValue(0);

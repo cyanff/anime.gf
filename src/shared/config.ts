@@ -1,5 +1,4 @@
 import { deepFreeze } from "@shared/utils";
-import { title } from "process";
 
 export const config = {
   persona: {

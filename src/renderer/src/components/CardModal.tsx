@@ -1,13 +1,13 @@
+import { useApp } from "@/components/AppContext";
 import Dropdown from "@/components/Dropdown";
+import EditCardModal from "@/components/EditCardModal";
+import Tag from "@/components/Tag";
 import { Button } from "@/components/ui/button";
+import { time } from "@/lib/time";
 import { ArrowUpOnSquareIcon, ChatBubbleLeftRightIcon, PencilIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
-import { queries } from "../lib/queries";
 import { toast } from "sonner";
-import Tag from "@/components/Tag";
-import { time } from "@/lib/time";
-import EditCardModal from "@/components/EditCardModal";
-import { useApp } from "@/components/AppContext";
+import { queries } from "../lib/queries";
 interface CardModalProps {
   cardBundle: CardBundle;
   onCreateChat: (cardID: number, greeting: string) => void;
@@ -65,7 +65,9 @@ function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
               <p className="text-tx-tertiary pb-1 text-sm font-semibold">
                 {`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}
               </p>
-              {cardBundle.data.meta.updated_at && <p className="text-tx-tertiary pb-1 text-sm font-semibold">{`Updated: ${cardBundle.data.meta.updated_at}`}</p>}{" "}
+              {cardBundle.data.meta.updated_at && (
+                <p className="text-tx-tertiary pb-1 text-sm font-semibold">{`Updated: ${cardBundle.data.meta.updated_at}`}</p>
+              )}{" "}
               <p className="text-tx-tertiary text-sm font-semibold">by @{cardBundle.data.meta.creator.card}</p>
             </div>
             {/* Character tags */}
@@ -105,7 +107,6 @@ function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
             <Dropdown label="Greeting Message" content={cardBundle.data.character.greeting} />
             <Dropdown label="Example Messages" content={cardBundle.data.character.msg_examples} />
             <Dropdown label="World" content={cardBundle.data.world.description} />
-
           </div>
         </div>
       </div>

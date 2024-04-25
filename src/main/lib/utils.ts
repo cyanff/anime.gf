@@ -1,10 +1,9 @@
-import fsp from "fs/promises";
-import fs from "fs";
-import { app } from "electron";
-import path, { join, dirname } from "path";
-import { PathLike } from "fs";
-import JSZip from "jszip";
 import { Result, isError } from "@shared/utils";
+import { app } from "electron";
+import { PathLike } from "fs";
+import fsp from "fs/promises";
+import JSZip from "jszip";
+import path, { dirname, join } from "path";
 
 // TODO, make sure all of these directories exists on init
 export const rootPath = process.env.NODE_ENV === "development" ? app.getAppPath() : dirname(app.getAppPath());

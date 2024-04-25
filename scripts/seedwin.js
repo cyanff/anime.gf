@@ -6,7 +6,7 @@ const { app } = require("electron");
 const cwd = process.cwd();
 
 // Seed db
-const dbPath = join(app.getPath('appData'), 'agf', 'agf.db');
+const dbPath = join(app.getPath("appData"), "agf", "agf.db");
 const db = new Database(dbPath);
 const statement = fs.readFileSync(join(cwd, "/scripts/seed.sql"), { encoding: "utf-8" });
 try {
@@ -20,7 +20,7 @@ console.log("Database seeded successfully." + dbPath);
 
 // Seed blob storage data
 const src = join(cwd, "/scripts/blob");
-const dest = join(app.getPath('appData'), 'agf', 'blob');
+const dest = join(app.getPath("appData"), "agf", "blob");
 
 copyFolder(src, dest);
 function copyFolder(src, dest) {

@@ -1,19 +1,13 @@
+import { DialogConfig, useApp } from "@/components/AppContext";
 import CardDeleted from "@/components/CardDeleted";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { queries } from "@/lib/queries";
-import {
-  ArrowUpIcon,
-  ArrowUturnLeftIcon,
-  Bars3BottomLeftIcon,
-  MagnifyingGlassIcon,
-  TrashIcon
-} from "@heroicons/react/24/solid";
+import { ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { DialogConfig, useApp } from "@/components/AppContext";
-import { Input } from "@/components/ui/input";
 
 export default function SettingsRecentlyDeleted() {
   const [deletedCards, setDeletedCards] = useState<CardBundle[]>();

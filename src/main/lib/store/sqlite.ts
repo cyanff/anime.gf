@@ -1,4 +1,4 @@
-import Database, { Statement } from "better-sqlite3";
+import Database from "better-sqlite3";
 import { dbPath } from "../utils";
 
 let db: Database.Database;

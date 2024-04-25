@@ -1,6 +1,5 @@
-import { Provider } from "@/lib/provider/provider";
-import { Result, isError } from "@shared/utils";
-import { ProviderMessage, CompletionConfig } from "@/lib/provider/provider";
+import { CompletionConfig, Provider, ProviderMessage } from "@/lib/provider/provider";
+import { Result } from "@shared/utils";
 
 const models = ["gpt-3.5-turbo", "gpt-4.0-turbo-preview"];
 interface ChatCompletion {

@@ -1,8 +1,8 @@
-import { PaperAirplaneIcon, PlusCircleIcon, WrenchIcon } from "@heroicons/react/24/solid";
+import { PaperAirplaneIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
 import { CardData, PersonaData } from "@shared/types";
 import { useEffect, useRef } from "react";
-import Typing from "./Typing";
 import { toast } from "sonner";
+import Typing from "./Typing";
 
 interface ChatBarProps {
   chatID: number;

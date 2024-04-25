@@ -1,4 +1,4 @@
-import { useMotionTemplate, motion } from "framer-motion";
+import { motion, useMotionTemplate } from "framer-motion";
 
 export function CardPattern({ mouseX, mouseY }: any) {
   let maskImage = useMotionTemplate`radial-gradient(350px at ${mouseX}px ${mouseY}px, white, transparent)`;

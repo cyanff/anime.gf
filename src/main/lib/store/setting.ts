@@ -1,8 +1,8 @@
+import { config } from "@shared/config";
+import { Settings } from "@shared/types";
+import { Result, isError } from "@shared/utils";
 import fs from "fs/promises";
 import { attainable, settingsPath } from "../utils";
-import { Result, isError } from "@shared/utils";
-import { Settings } from "@shared/types";
-import { config } from "@shared/config";
 
 async function init() {
   const settingsFileExists = await attainable(settingsPath);

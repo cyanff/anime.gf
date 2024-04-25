@@ -1,5 +1,6 @@
-import { Button } from "@/components/ui/button";
 import LogoButton from "@/components/LogoButton";
+import DiscordIcon from "@/components/icons/discord";
+import { Button } from "@/components/ui/button";
 import {
   BookOpenIcon,
   ChatBubbleLeftRightIcon,
@@ -7,7 +8,6 @@ import {
   PlusCircleIcon,
   UserGroupIcon
 } from "@heroicons/react/24/solid";
-import DiscordIcon from "@/components/icons/discord";
 import { toast } from "sonner";
 
 interface SideBarProps {

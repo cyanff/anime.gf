@@ -1,14 +1,14 @@
-import { app, shell, BrowserWindow, ipcMain, net, protocol, globalShortcut } from "electron";
+import { electronApp, is, optimizer } from "@electron-toolkit/utils";
+import { CardData, PersonaFormData } from "@shared/types";
+import { BrowserWindow, app, ipcMain, net, protocol, shell } from "electron";
 import path, { join } from "path";
-import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
-import secret from "./lib/store/secret";
-import sqlite from "./lib/store/sqlite";
 import blob from "./lib/store/blob";
-import { xfetch } from "./lib/xfetch";
-import { cardsRootPath, personasRootPath } from "./lib/utils";
+import secret from "./lib/store/secret";
 import setting from "./lib/store/setting";
-import { CardBundleWithoutID, CardData, PersonaBundle, PersonaBundleWithoutData, PersonaFormData } from "@shared/types";
+import sqlite from "./lib/store/sqlite";
+import { cardsRootPath, personasRootPath } from "./lib/utils";
+import { xfetch } from "./lib/xfetch";
 
 (async () => {})();
 

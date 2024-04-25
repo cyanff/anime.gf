@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { RecentChat as RecentChatI, queries } from "@/lib/queries";
 import { cn } from "@/lib/utils";
-import { ArrowPathIcon, DocumentDuplicateIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { ArrowPathIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { PersonaBundle } from "@shared/types";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";

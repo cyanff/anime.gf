@@ -7,7 +7,7 @@
 // Ex: rollback file creation, db insertions, etc.
 // Wrap better-sqlite3
 
-import { CardBundleWithoutID, CardData, PersonaBundle, PersonaBundleWithoutData, PersonaFormData } from "@shared/types";
+import { CardBundleWithoutID, CardData, PersonaBundleWithoutData, PersonaFormData } from "@shared/types";
 import { Result, isError, isValidFileName, toPathEscapedStr } from "@shared/utils";
 import archiver from "archiver";
 import crypto from "crypto";
@@ -16,9 +16,8 @@ import fs from "fs";
 import fsp from "fs/promises";
 import JSZip from "jszip";
 import path from "path";
-import { attainable, blobRootPath, cardsRootPath, personasRootPath, extractZipToDir } from "../utils";
+import { attainable, blobRootPath, cardsRootPath, extractZipToDir, personasRootPath } from "../utils";
 import sqlite from "./sqlite";
-import { number } from "zod";
 
 async function init() {
   const blobDirExists = await attainable(blobRootPath);

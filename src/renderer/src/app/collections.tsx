@@ -1,4 +1,4 @@
-import { DialogConfig, useApp } from "@/components/AppContext";
+import { useApp } from "@/components/AppContext";
 import Card from "@/components/Card";
 import CardModal from "@/components/CardModal";
 import { Input } from "@/components/ui/input";

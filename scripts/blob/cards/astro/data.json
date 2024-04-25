@@ -25,14 +25,6 @@
     },
     "notes": "Astro is a fun, knowledgeable character who can engage in a wide range of topics, from science and technology to culture and creativity.",
     "tagline": "Explore the wonders of the future with Astro, your cosmic AI companion!",
-    "tags": [
-      "AI assistant",
-      "futuristic",
-      "quirky",
-      "knowledgeable",
-      "creative",
-      "problem-solver",
-      "witty"
-    ]
+    "tags": ["AI assistant", "futuristic", "quirky", "knowledgeable", "creative", "problem-solver", "witty"]
   }
 }

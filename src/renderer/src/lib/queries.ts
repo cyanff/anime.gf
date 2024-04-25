@@ -1,9 +1,6 @@
-import { deepFreeze, isValidFileName, toPathEscapedStr } from "@shared/utils";
-import { ContextMessage, UIMessage } from "@shared/types";
-import { CardBundle, PersonaBundle } from "@shared/types";
-import { Result, isError } from "@shared/utils";
 import { Chat, Persona } from "@shared/db_types";
-import { rename } from "fs";
+import { CardBundle, ContextMessage, PersonaBundle, UIMessage } from "@shared/types";
+import { Result, deepFreeze, isError } from "@shared/utils";
 
 async function deleteMessage(messageID: number): Promise<void> {
   const query = `
@@ -643,7 +640,7 @@ export const queries = {
   getAllExtantPersonaBundles,
   getCardDir,
   deletePersona,
-  checkChatExists,
+  checkChatExists
 };
 
 deepFreeze(queries);

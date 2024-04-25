@@ -6,12 +6,10 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
-import { queries } from "@/lib/queries";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import { motion, useMotionValue } from "framer-motion";
 import { CardPattern } from "./ui/card-pattern";
-import { toast } from "sonner";
 
 interface CardProps {
   cardBundle: CardBundle;

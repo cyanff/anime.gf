@@ -7,10 +7,10 @@ import { queries } from "@/lib/queries";
 import { reply } from "@/lib/reply";
 import { time } from "@/lib/time";
 import { CardBundle, PersonaBundle, UIMessage } from "@shared/types";
+import { motion } from "framer-motion";
 import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import "../styles/global.css";
-import { motion } from "framer-motion";
 
 enum ScrollEvent {
   SCROLLED_TO_TOP,
