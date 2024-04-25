@@ -1,5 +1,5 @@
 import { useApp } from "@/components/AppContext";
-import CharacterForm from "@/components/CharacterForm";
+import CardForm from "@/components/CardForm";
 import { cardFormDataToCardData } from "@/lib/utils";
 import { CardBundle, CardFormData } from "@shared/types";
 import { toast } from "sonner";
@@ -31,7 +31,7 @@ export default function EditCardModal({ cardBundle }: EditCardModalProps) {
 
   return (
     <div className="h-[80vh] w-[36rem] overflow-hidden rounded-3xl">
-      <CharacterForm cardBundle={cardBundle} formType="edit" onSuccessfulSubmit={handleSuccessfulSubmit} />
+      <CardForm cardBundle={cardBundle} formType="edit" onSuccessfulSubmit={handleSuccessfulSubmit} />
     </div>
   );
 }

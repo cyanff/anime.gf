@@ -47,7 +47,7 @@
     --collection-card-tag: hsl(0, 0%, 18%);
 
     /* Hover color */
-    --accent: hsl(0, 0%, 18.0%);
+    --accent: hsl(0, 0%, 16.0%);
     /* Borders and Separators */
     --line: hsl(0, 0%, 18.1%);
 
@@ -80,13 +80,13 @@
     --nav-secondary: hsl(0, 0%, 15%);
 
     /* Containers that lie on top of backgrounds */
-    --container-primary: hsl(0, 0%, 12%); /* Moderate dark constrast vs background */
-    --container-secondary: hsl(0, 0%, 15%);  /* Low constrast vs background */
+    --container-primary: hsl(0, 0%, 14%); /* Moderate dark constrast vs background */
+    --container-secondary: hsl(0, 0%, 17%);  /* Low constrast vs background */
     --container-tertiary: hsl(0, 0%, 22%);  /* Moderate light constrast vs background */
 
     /* Text colors */
     --tx-primary: hsl(0, 0%, 98%);  /* Very light grey for primary text */
-    --tx-secondary: hsl(0, 0%, 75%);  /* Dimmer grey for secondary text */
+    --tx-secondary: hsl(0, 0%, 77%);  /* Dimmer grey for secondary text */
     --tx-tertiary: hsl(0, 0%, 50%);  /* Darker grey for tertiary text */
 
     /* Input elements, combo box, input */
@@ -111,7 +111,7 @@
     --collection-card-tag: hsl(0, 0%, 20%); 
 
     /* Hover color */
-    --accent: hsl(0, 0%, 23%);  /* Slighly lighter than background */
+    --accent: hsl(0, 0%, 19%);  /* Slighly lighter than background */
 
     /* Borders and Separators */
     --line: hsl(0, 0%, 23%);  /* Subtle dark lines for separators */
@@ -119,7 +119,7 @@
     /* Scroll bar */
     --scroll-primary-thumb: hsl(0, 0%, 9%);
     --scroll-primary-track: hsl(0, 0%, 16%);
-    --scroll-secondary-thumb: hsl(0, 0%, 20%);
+    --scroll-secondary-thumb: hsl(0, 0%, 19%);
     --scroll-secondary-track: hsl(0, 0%, 25%);
 
     /* Floating elements, ex: modals, popovers, dialogs */
@@ -127,8 +127,8 @@
 
     /* Action, (buttons) elements */
     --action-primary: hsl(334, 55%, 52%);  /* Magenta for primary action buttons */
-    --action-secondary: hsl(0, 0%, 55%);  /* Dark slate for secondary buttons */
-    --action-tertiary: hsl(0, 0%, 25%);  /* Darker slate for tertiary buttons */
+    --action-secondary: hsl(0, 0%, 52%);  
+    --action-tertiary: hsl(0, 0%, 25%); 
   }
 
 
@@ -173,6 +173,7 @@
 }
 .scroll-secondary::-webkit-scrollbar-track {
   background: var(--scroll-secondary-track);
+  border-radius: 10px;
 }
 .scroll-secondary::-webkit-scrollbar-thumb {
   background: var(--scroll-secondary-thumb);

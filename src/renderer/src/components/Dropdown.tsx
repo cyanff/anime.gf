@@ -26,7 +26,7 @@ export default function Dropdown({ label, content }: DropdownProps) {
           isOpen ? "max-h-96" : "max-h-0"
         }`}
       >
-        <p className="px-4 pb-2 pt-4 text-sm text-tx-primary">{content}</p>
+        <p className="px-4 pb-2 pt-4 text-sm text-tx-secondary">{content}</p>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import CharacterForm from "@/components/CharacterForm";
+import CardForm from "@/components/CardForm";
 import { cardFormDataToCardData } from "@/lib/utils";
 import { CardData, CardFormData } from "@shared/types";
 import { useApp } from "@/components/AppContext";
@@ -30,8 +30,8 @@ export default function CreationPage({ setPage }: CreationPageProps) {
   return (
     <div className="flex h-full w-full items-center justify-center rounded-xl bg-background">
       {/* Scroll Wrapper */}
-      <div className="border-line h-5/6 w-1/3 min-w-[30rem] overflow-hidden rounded-2xl border">
-        <CharacterForm onSuccessfulSubmit={onSuccessfulSubmit} formType="create" />
+      <div className="border-line h-5/6 w-1/3 min-w-[30rem] overflow-hidden rounded-2xl border-y border-l">
+        <CardForm onSuccessfulSubmit={onSuccessfulSubmit} formType="create" />
       </div>
     </div>
   );

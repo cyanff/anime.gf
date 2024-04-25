@@ -92,7 +92,7 @@ export default function SettingsChat() {
       <FormProvider {...methods}>
         <form>
           {/* Card Wrapper*/}
-          <div className=" h-[37rem] w-[32rem] rounded-2xl border-y border-l border-line bg-container-primary py-2.5">
+          <div className=" h-[37rem] w-[32rem] rounded-2xl border-y border-l border-line bg-container-primary py-3">
             <div className="scroll-secondary flex h-full w-full flex-col space-y-8 overflow-y-auto px-8 py-6">
               {/* Provider & Model Section */}
               <div className="space-y-3">
