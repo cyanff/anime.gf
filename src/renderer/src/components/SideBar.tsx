@@ -17,7 +17,7 @@ interface SideBarProps {
 
 export default function SideBar({ page, setPage }: SideBarProps) {
   return (
-    <div className="mr-3.5 flex h-full w-20 flex-col items-center bg-background py-6">
+    <div className="bg-nav-primary mr-3.5 flex h-full w-20 flex-col items-center py-6">
       <LogoButton className="mb-4 size-12" />
 
       {/* Top Button Group*/}
@@ -27,16 +27,16 @@ export default function SideBar({ page, setPage }: SideBarProps) {
           className={`m-2 size-16 rounded-xl ${page === "create" ? "bg-background" : ""}`}
           onClick={() => setPage("create")}
         >
-          <PlusCircleIcon className="size-8 text-secondary" />
+          <PlusCircleIcon className="text-tx-secondary size-8" />
         </Button>
         <Button className="m-2 size-16  rounded-xl hover:bg-accent " onClick={() => setPage("chats")}>
-          <ChatBubbleLeftRightIcon className="size-8 text-secondary" />
+          <ChatBubbleLeftRightIcon className="text-tx-secondary size-8" />
         </Button>
         <Button className="m-2 size-16  rounded-xl hover:bg-accent" onClick={() => setPage("collections")}>
-          <UserGroupIcon className="size-8 text-secondary" />
+          <UserGroupIcon className="text-tx-secondary size-8" />
         </Button>
-        <Button className="m-2 size-16  rounded-xl hover:bg-accent" onClick={() => setPage("settings")}>
-          <Cog8ToothIcon className="size-8 text-secondary" />
+        <Button className="m-2 size-16 rounded-xl hover:bg-accent" onClick={() => setPage("settings")}>
+          <Cog8ToothIcon className="text-tx-secondary size-8" />
         </Button>
       </div>
 
@@ -53,7 +53,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
             toast.success("Discord invite opened in browser!");
           }}
         >
-          <DiscordIcon className="fill-secondary" />
+          <DiscordIcon className="fill-tx-tertiary" />
         </Button>
         <Button
           size="icon"
@@ -62,7 +62,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
             toast.info("Docs are coming soon™!");
           }}
         >
-          <BookOpenIcon className="size-7 text-secondary" />
+          <BookOpenIcon className="text-tx-tertiary size-7" />
         </Button>
       </div>
     </div>

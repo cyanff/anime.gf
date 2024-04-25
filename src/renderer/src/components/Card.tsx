@@ -57,7 +57,8 @@ function Card({ cardBundle, openCardModal }: CardProps) {
           }}
         >
           <div
-            className="group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl bg-card p-2"
+            className="group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl
+              bg-collection-card p-2"
             onClick={openCardModal}
             onMouseMove={onMouseMove}
           >
@@ -69,10 +70,13 @@ function Card({ cardBundle, openCardModal }: CardProps) {
             />
 
             <div className="relative flex flex-grow flex-col space-y-1">
-              <div className="text-overflow-ellipsis absolute -top-28 z-10 w-full max-w-md overflow-hidden whitespace-nowrap pl-5 text-left text-lg font-semibold text-primary">
+              <div
+                className="text-overflow-ellipsis absolute -top-28 z-10 w-full max-w-md overflow-hidden whitespace-nowrap pl-5 text-left text-lg
+                  font-semibold text-tx-primary"
+              >
                 {cardBundle.data.character.name}
               </div>
-              <div className="absolute -top-20 z-10 overflow-hidden pl-5 text-left text-sm font-[530] text-secondary">
+              <div className="absolute -top-20 z-10 overflow-hidden pl-5 text-left text-sm font-[530] text-tx-secondary">
                 {cardBundle.data.meta.tagline}
               </div>
               <div className="absolute -top-2 h-16 space-x-0.5 space-y-1 overflow-hidden pl-5 text-left">
@@ -82,7 +86,7 @@ function Card({ cardBundle, openCardModal }: CardProps) {
                   ))}
                 </div>
               </div>
-              <div className="text-tertiary absolute top-20 z-10 pl-5 text-left text-sm font-medium">
+              <div className="text-tx-tertiary absolute top-20 z-10 pl-5 text-left text-sm font-medium">
                 by @{cardBundle.data.meta.creator.card}
               </div>
             </div>

@@ -25,24 +25,24 @@ export default function Combobox({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className="flex h-12 w-full items-center justify-between rounded-xl bg-background px-3 py-2 text-primary">
+        <button className="flex h-12 w-full items-center justify-between rounded-lg bg-input-primary px-3 py-2 text-tx-primary">
           <p className="line-clamp-1 text-ellipsis">
             {value ? items.find((item) => item.value === value)?.name : placeholder}
           </p>
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 rounded-xl border-none p-0">
-        <Command className="w-full rounded-xl bg-background">
+      <PopoverContent className="w-80 rounded-lg border-none p-0">
+        <Command className="w-full rounded-xl bg-input-primary">
           <CommandInput placeholder="Select a model" className="h-9 " />
           <CommandEmpty>{emptyMessage}</CommandEmpty>
           <CommandGroup>
-            <CommandList className="scroll-tertiary">
+            <CommandList className="scroll-secondary">
               {items.map((item) => (
                 <CommandItem
                   key={item.value}
                   value={item.value}
-                  className="text-primary"
+                  className="text-tx-primary"
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);

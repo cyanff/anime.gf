@@ -92,9 +92,9 @@ function Message({
   ...rest
 }: MessageProps) {
   const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
-  const roleColorStyles = sender === "user" ? "bg-grad-user " : "bg-grad-character";
+  const roleColorStyles = sender === "user" ? "bg-chat-user-grad" : "bg-chat-character-grad";
   const editingStyles = isEditing ? "outline-2 outline-dashed" : "";
-  const baseStyles = `h-fit flex items-start space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 text-primary rounded-3xl group/msg`;
+  const baseStyles = `h-fit flex items-start space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 text-tx-primary rounded-3xl group/msg`;
   const editFieldRef = useRef<HTMLDivElement>(null);
   const [idx, setIDX] = useState(messagesIDX);
   const message = messages[idx];
@@ -185,9 +185,9 @@ function Message({
                 <MessagePopoverContent sender={sender} personaBundle={personaBundle} cardBundle={cardBundle} />
               </Popover>
               <div className="flex flex-col justify-start space-y-0.5">
-                {/* Username and Timestamp */}
+                {/* Name */}
                 <div className="flex h-fit flex-row items-center justify-between space-x-3">
-                  <div className=" text-base font-semibold text-primary">{name}</div>
+                  <div className=" text-base font-semibold text-tx-primary">{name}</div>
                   <MessageDropdownMenu
                     isLatest={isLatest}
                     isLatestCharacterMessage={isLatestCharacterMessage}
@@ -263,9 +263,9 @@ function Message({
                     handleChangeMessage(idx - 1);
                   }}
                 >
-                  <ChevronLeftIcon className="size-5 fill-neutral-500" />
+                  <ChevronLeftIcon className="size-5 text-tx-tertiary" />
                 </button>
-                <p className="font-mono text-sm font-semibold  text-neutral-400">{`${idx + 1}/${messages.length}`}</p>
+                <p className="font-mono text-sm font-semibold text-tx-tertiary">{`${idx + 1}/${messages.length}`}</p>
                 {/* Right Arrow */}
                 <button
                   className="size-5"
@@ -273,14 +273,14 @@ function Message({
                     handleChangeMessage(idx + 1);
                   }}
                 >
-                  <ChevronRightIcon className="size-5 fill-neutral-500" />
+                  <ChevronRightIcon className="size-5 text-tx-tertiary" />
                 </button>
               </div>
             ) : (
               <div className="px-2 py-1">
                 {/* Regenrate */}
                 <button className="size-6">
-                  <ArrowPathIcon className="size-6 fill-neutral-500" onClick={handleRegenerate} />
+                  <ArrowPathIcon className="size-6 text-tx-tertiary" onClick={handleRegenerate} />
                 </button>
               </div>
             ))}
@@ -303,7 +303,7 @@ function MessagePopoverContent({ sender, personaBundle, cardBundle }: MessagePop
 
     // USER popover
     return (
-      <PopoverContent className="scroll-secondary bg-background-secondary max-h-[30rem] w-96 overflow-y-scroll p-0 pb-10">
+      <PopoverContent className="scroll-secondary bg-float max-h-[30rem] w-96 overflow-y-scroll p-0 pb-10">
         <MessagePopoverBanner bannerURI={bannerURI} avatarURI={avatarURI} />
         <div className="px-6 pt-12">
           <div className="flex flex-row">
@@ -312,10 +312,9 @@ function MessagePopoverContent({ sender, personaBundle, cardBundle }: MessagePop
             </div>
           </div>
           {/* User details dropdowns */}
-          <div className="-mx-2 mt-3 flex flex-col rounded-lg bg-background p-3">
-            <h3 className="mb-1 text-lg font-semibold">About</h3>
-            <div className="bg-background-secondary mb-2 h-[1.3px] w-full"></div>
-            <p className="text-sm font-[450]">{personaBundle.data.description} </p>
+          <div className="-mx-2 mt-3 flex flex-col rounded-lg bg-container-primary p-3 space-y-4">
+            <h3 className="mb-1 font-semibold text-tx-primary">About</h3>
+            <p className="text-sm text-tx-secondary">{personaBundle.data.description} </p>
           </div>
         </div>
       </PopoverContent>
@@ -326,22 +325,20 @@ function MessagePopoverContent({ sender, personaBundle, cardBundle }: MessagePop
 
     // CHARACTER popover
     return (
-      <PopoverContent className="scroll-secondary h-[30rem] w-96 overflow-y-scroll bg-neutral-800 p-0">
+      <PopoverContent className="scroll-secondary h-[30rem] w-96 overflow-y-scroll bg-float p-0">
         <MessagePopoverBanner bannerURI={bannerURI} avatarURI={avatarURI} />
         <div className="pl-4 pr-2 pt-12">
           <div className="flex flex-row">
             <div className="pr-10">
-              <div className="pb-1.5 text-xl font-semibold">{cardBundle.data.character.name}</div>
-              <div className="whitespace-nowrap text-xs   text-secondary ">
-                <p className="font-medium">{`Created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
-                {cardBundle.data.meta.updated_at && (
-                  <p className="font-medium">{`Updated: ${cardBundle.data.meta.updated_at}`}</p>
-                )}
+              <div className="pb-1.5 text-xl font-semibold text-tx-primary">{cardBundle.data.character.name}</div>
+              <div className="whitespace-nowrap text-xs text-tx-tertiary font-[550]">
+                <p className="">{`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
+                {cardBundle.data.meta.updated_at && <p className="">{`updated: ${cardBundle.data.meta.updated_at}`}</p>}
               </div>
             </div>
             {/* Tags */}
             <div className="flex flex-col gap-y-2">
-              <div className="text-sm font-semibold">Tags:</div>
+              <div className="text-sm font-semibold text-tx-primary">Tags:</div>
               <div className="flex flex-wrap gap-x-1.5 gap-y-2">
                 {cardBundle.data.meta.tags.map((tag, idx) => (
                   <Tag key={idx} text={tag} />
@@ -369,7 +366,7 @@ function MessagePopoverBanner({ bannerURI, avatarURI }: { bannerURI: string; ava
       <img
         src={avatarURI}
         alt="Profile"
-        className="absolute -bottom-12 left-4 size-20 rounded-full border-[3px] border-neutral-800 object-cover object-top"
+        className="absolute -bottom-12 left-4 size-20 rounded-full border-4 object-cover object-top border-float"
       />
     </div>
   );
@@ -405,9 +402,9 @@ function MessageDropdownMenu({
         <DropdownMenuGroup>
           <DropdownMenuItem onSelect={handleCopy}>
             Copy
-            <ContextMenuShortcut className="opacity-90">
+            <DropdownMenuShortcut className="">
               <ClipboardDocumentIcon className="size-4" />
-            </ContextMenuShortcut>
+            </DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -467,7 +464,7 @@ function MessageContextMenuContent({
 }: MenuProps) {
   return (
     <ContextMenuContent className="w-40">
-      <ContextMenuItem onSelect={handleCopy}>
+      <ContextMenuItem onSelect={handleCopy} className="">
         Copy
         <ContextMenuShortcut>
           <ClipboardDocumentIcon className="size-4" />
@@ -516,12 +513,12 @@ function MessageContextMenuContent({
 }
 
 const userMarkdown: Partial<Components> = {
-  em: ({ children }) => <span className="font-[550] italic text-primary">{children}</span>,
-  strong: ({ children }) => <span className="pr-1 font-bold text-primary">{children}</span>,
+  em: ({ children }) => <span className="font-[550] italic text-tx-primary">{children}</span>,
+  strong: ({ children }) => <span className="pr-1 font-bold text-tx-primary">{children}</span>,
   blockquote: ({ children }) => {
     return (
-      <div className="flex items-stretch font-medium italic text-primary">
-        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-card" />
+      <div className="flex items-stretch font-medium italic text-tx-secondary">
+        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-chat-user-blockquote-bar" />
         {children}
       </div>
     );
@@ -529,12 +526,12 @@ const userMarkdown: Partial<Components> = {
 };
 
 const characterMarkdown: Partial<Components> = {
-  em: ({ children }) => <span className="pr-1 font-[550] italic text-secondary">{children}</span>,
-  strong: ({ children }) => <span className="pr-1 font-bold text-primary">{children}</span>,
+  em: ({ children }) => <span className="pr-1 font-[550] italic text-tx-secondary">{children}</span>,
+  strong: ({ children }) => <span className="pr-1 font-bold text-tx-primary">{children}</span>,
   blockquote: ({ children }) => {
     return (
-      <div className="flex items-stretch font-medium italic text-secondary">
-        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-card" />
+      <div className="flex items-stretch font-medium italic text-tx-secondary">
+        <div className="mr-3 min-h-8 w-[5px] shrink-0 rounded-sm bg-chat-character-blockquote-bar" />
         {children}
       </div>
     );

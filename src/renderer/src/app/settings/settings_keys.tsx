@@ -50,15 +50,15 @@ export default function SettingsKeys() {
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center space-y-5">
-      <h1 className="text-2xl font-bold tracking-wide text-primary">Keys Settings</h1>
-      <div className="flex h-[15rem] w-[26rem] flex-col space-y-8 rounded-2xl border border-line bg-background p-6">
+      <h1 className="text-2xl font-bold tracking-wide text-tx-primary">Keys Settings</h1>
+      <div className="flex h-[15rem] w-[26rem] flex-col space-y-8 rounded-2xl border border-line bg-container-primary p-6">
         <div className="space-y-1 pr-8">
-          <Label className="text-primary">Provider</Label>
+          <Label className="text-tx-primary">Provider</Label>
           <Select onValueChange={(v) => setProvider(v)} value={provider}>
-            <SelectTrigger className="h-12 bg-background-secondary text-primary">
+            <SelectTrigger className="h-12 text-tx-primary">
               <SelectValue placeholder={provider === "" ? "Select a provider" : provider} />
             </SelectTrigger>
-            <SelectContent className="bg-background-secondary">
+            <SelectContent className="">
               {providerNameAndValue.map((nameAndValue, idx) => (
                 <SelectItem key={idx} value={nameAndValue.value}>
                   {nameAndValue.name}
@@ -69,20 +69,20 @@ export default function SettingsKeys() {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-primary">API Key</Label>
+          <Label className="text-tx-primary">API Key</Label>
           <div className="flex items-center space-x-4">
             <Input
               type={isApiKeyVisible ? "text" : "password"}
-              className="h-12 grow bg-background-secondary font-mono font-[540] text-primary"
+              className="h-12 grow font-mono font-[550] text-tx-primary"
               onChange={(e) => setApiKey(e.target.value)}
               value={apiKey}
               placeholder="Enter your API key here..."
             />
             <button className="size-4 focus:outline-none" onClick={() => setIsApiKeyVisible(!isApiKeyVisible)}>
               {isApiKeyVisible ? (
-                <EyeSlashIcon className="size-5 text-primary hover:scale-110" />
+                <EyeSlashIcon className="size-5 text-tx-secondary hover:scale-110" />
               ) : (
-                <EyeIcon className="size-5 text-primary hover:scale-110" />
+                <EyeIcon className="size-5 text-tx-secondary hover:scale-110" />
               )}
             </button>
           </div>
@@ -90,7 +90,8 @@ export default function SettingsKeys() {
       </div>
 
       <button
-        className="flex items-center space-x-2 rounded-md border border-line transition bg-action-primary hover:bg-action-secondary px-4 py-2 font-medium text-primary"
+        className="flex items-center space-x-2 rounded-md border border-line transition bg-action-primary hover:rbrightness-90 px-4 py-2
+          font-medium text-tx-primary"
         onClick={handleSubmit}
       >
         Save

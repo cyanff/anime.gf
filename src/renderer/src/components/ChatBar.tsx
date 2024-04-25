@@ -42,10 +42,10 @@ export default function ChatBar({
       <div className="flex h-fit w-fit items-center ">
         <Typing className="mb-1 ml-4 mt-1" name="Saku" typing={isTyping} />
       </div>
-      <div className="flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-card p-4">
+      <div className="flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-input-primary p-4">
         <button className="flex size-7 items-center justify-center">
           <PlusCircleIcon
-            className="size-7 fill-secondary transition duration-150 ease-out hover:fill-primary"
+            className="size-7 transition duration-150 ease-out hover:brightness-90 fill-action-secondary"
             onClick={() => {
               toast("Coming in a future update!");
             }}
@@ -67,7 +67,8 @@ export default function ChatBar({
           }}
           value={userInput}
           placeholder={`Message @Saku`}
-          className="scroll-secondary text-primary h-6 max-h-64 w-full resize-none overflow-y-auto bg-inherit px-2 font-[430] leading-6 placeholder:select-none focus:outline-none"
+          className="scroll-secondary text-tx-primary h-6 max-h-64 w-full resize-none overflow-y-auto bg-inherit px-2 leading-6
+            placeholder:select-none focus:outline-none"
         />
         {/* Send button */}
         <button
@@ -78,7 +79,7 @@ export default function ChatBar({
           }}
           className="h-fit w-fit "
         >
-          <PaperAirplaneIcon className="size-7 fill-secondary  transition duration-150 ease-out hover:fill-neutral-200  " />
+          <PaperAirplaneIcon className="size-7 fill-action-secondary transition duration-150 ease-out hover:brightness-90" />
         </button>
       </div>
     </div>

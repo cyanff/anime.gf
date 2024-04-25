@@ -87,20 +87,20 @@ export default function SettingsChat() {
   };
 
   return (
-    <div className="flex h-full bg-background-secondary w-full flex-col items-center justify-center space-y-5">
-      <h1 className="text-2xl text-primary font-bold tracking-wide">Chat Settings</h1>
+    <div className="flex h-full w-full flex-col items-center justify-center space-y-5">
+      <h1 className="text-2xl text-tx-primary font-bold tracking-wide">Chat Settings</h1>
       <FormProvider {...methods}>
         <form>
           {/* Card Wrapper*/}
-          <div className=" h-[37rem] w-[32rem] rounded-2xl border border-line bg-background-secondary py-2.5">
+          <div className=" h-[37rem] w-[32rem] rounded-2xl border border-line bg-container-primary py-2.5">
             <div className="scroll-secondary flex h-full w-full flex-col space-y-8 overflow-y-auto px-8 py-6">
               {/* Provider & Model Section */}
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-primary">Provider & Model</h3>
+                <h3 className="text-lg font-semibold text-tx-primary">Provider & Model</h3>
                 {/* Provider & Model Contents */}
                 <div className="ml-6 space-y-4">
                   <div className=" space-y-1">
-                    <Label className="text-primary " htmlFor="provider">
+                    <Label className="text-tx-primary " htmlFor="provider">
                       Provider
                     </Label>
                     <Controller
@@ -109,10 +109,10 @@ export default function SettingsChat() {
                       render={({ field }) => {
                         return (
                           <Select onValueChange={field.onChange} value={field.value}>
-                            <SelectTrigger className="h-12 bg-background text-primary ">
+                            <SelectTrigger className="h-12 text-tx-primary ">
                               <SelectValue placeholder={field.value} />
                             </SelectTrigger>
-                            <SelectContent className="bg-background rounded-xl">
+                            <SelectContent className="bg-input-primary rounded-xl">
                               {providerNameAndValue.map((nameAndValue, idx) => (
                                 <SelectItem key={idx} value={nameAndValue.value}>
                                   {nameAndValue.name}
@@ -125,7 +125,7 @@ export default function SettingsChat() {
                     />
                   </div>
                   <div className="flex flex-col space-y-1">
-                    <Label className="text-primary" htmlFor="model">
+                    <Label className="text-tx-primary" htmlFor="model">
                       Model
                     </Label>
 
@@ -147,63 +147,63 @@ export default function SettingsChat() {
               </div>
               {/* Generation Section */}
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-primary">Generation</h3>
+                <h3 className="text-lg font-semibold text-tx-primary">Generation</h3>
 
                 {/* Generation Content*/}
                 <div className="ml-6 space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-primary" htmlFor="reply-max-tokens">
+                    <Label className="text-tx-primary" htmlFor="reply-max-tokens">
                       Reply max tokens
                     </Label>
                     <Input
                       {...register("maxReplyTokens", { valueAsNumber: true })}
                       type="number"
-                      className="h-10 bg-background text-primary"
+                      className="h-10 text-tx-primary"
                       placeholder={defaultSettings.maxReplyTokens.toString()}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-primary" htmlFor="reply-max-tokens">
+                    <Label className="text-tx-primary" htmlFor="reply-max-tokens">
                       Context max tokens
                     </Label>
                     <Input
                       {...register("maxContextTokens", { valueAsNumber: true })}
                       type="number"
-                      className="h-10 bg-background text-primary"
+                      className="h-10 text-tx-primary"
                       placeholder={defaultSettings.maxContextTokens.toString()}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-primary" htmlFor="temperature">
+                    <Label className="text-tx-primary" htmlFor="temperature">
                       Temperature
                     </Label>
                     <Input
                       {...register("temperature", { valueAsNumber: true })}
                       type="number"
-                      className="h-10 bg-background text-primary"
+                      className="h-10 text-tx-primary"
                       placeholder={defaultSettings.temperature.toString()}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-primary" htmlFor="top-p">
+                    <Label className="text-tx-primary" htmlFor="top-p">
                       Top P
                     </Label>
                     <Input
                       {...register("topP", { valueAsNumber: true })}
                       type="number"
-                      className="h-10 bg-background text-primary"
+                      className="h-10 text-tx-primary"
                       placeholder={defaultSettings.topP.toString()}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-primary" htmlFor="top-p">
+                    <Label className="text-tx-primary" htmlFor="top-p">
                       Top K
                     </Label>
                     <Input
                       {...register("topK", { valueAsNumber: true })}
                       type="number"
-                      className="h-10 bg-background text-primary"
+                      className="h-10 text-tx-primary"
                       placeholder={defaultSettings.topK.toString()}
                     />
                   </div>
@@ -223,22 +223,22 @@ export default function SettingsChat() {
                       )}
                     />
 
-                    <Label className="text-primary" htmlFor="message-streaming">
+                    <Label className="text-tx-primary" htmlFor="message-streaming">
                       Enable Message Streaming
                     </Label>
                   </div>
                 </div>
               </div>
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-primary">Extras</h3>
+                <h3 className="text-lg font-semibold text-tx-primary">Extras</h3>
                 <div className="ml-6 space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-primary" htmlFor="jailbreak">
+                    <Label className="text-tx-primary" htmlFor="jailbreak">
                       Jailbreak
                     </Label>
                     <Textarea
                       {...register("jailbreak")}
-                      className="scroll-tertiary h-36 resize-none bg-background text-primary"
+                      className="scroll-secondary h-36 resize-none text-tx-primary"
                       id="jailbreak"
                       placeholder="Enter your jailbreak prompt here"
                     />
@@ -250,7 +250,8 @@ export default function SettingsChat() {
         </form>
 
         <button
-          className="flex items-center space-x-2 rounded-xl border border-line bg-action-primary hover:bg-action-secondary px-4 py-2 font-medium text-primary"
+          className="flex items-center space-x-2 rounded-xl border border-line bg-action-primary hover:brightness-90 px-4 py-2
+            font-medium text-tx-primary"
           onClick={handleSubmit(onSubmit)}
         >
           Save

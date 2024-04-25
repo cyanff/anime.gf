@@ -1,6 +1,6 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { InputArea } from "@/components/ui/input-area";
+import { Textarea } from "@/components/ui/textarea";
 import { PencilSquareIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CardBundle, CardFormData, cardFormSchema } from "@shared/types";
@@ -83,17 +83,17 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
   };
 
   return (
-    <div className="scroll-secondary bg-background-secondary flex h-full w-full flex-col overflow-auto">
+    <div className="scroll-secondary bg-float flex h-full w-full flex-col overflow-auto">
       {/* Banner and profile picture */}
       <div className="relative mb-12 shrink-0">
         <div
-          className="bg-action-primary flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden opacity-75"
+          className="bg-action-secondary flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden opacity-75"
           onClick={handleBannerClick}
         >
           {bannerDisplayImage ? (
             <img src={bannerDisplayImage ?? ""} alt="Profile" className="" />
           ) : (
-            <PencilSquareIcon className="absolute h-12 w-12 text-primary" />
+            <PencilSquareIcon className="absolute h-12 w-12 text-tx-primary" />
           )}
           <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-10"></div>
           <input
@@ -108,13 +108,14 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
           />
         </div>
         <div
-          className="bg-action-primary absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full"
+          className="bg-action-secondary absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden
+            rounded-full"
           onClick={handleProfileClick}
         >
           {avatarDisplayImage ? (
             <img src={avatarDisplayImage} alt="Profile" className="" />
           ) : (
-            <PencilSquareIcon className="absolute h-8 w-8 text-primary" />
+            <PencilSquareIcon className="absolute h-8 w-8 text-tx-primary" />
           )}
           <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-10"></div>
           <input
@@ -140,7 +141,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="character.name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-primary">Character Name</FormLabel>
+                    <FormLabel className="text-tx-primary">Character Name</FormLabel>
                     <FormControl>
                       <Input placeholder="What should your character be named?" {...field} />
                     </FormControl>
@@ -153,9 +154,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="character.description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-primary">Character Description</FormLabel>
+                    <FormLabel className="text-tx-primary">Character Description</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="add character description" {...field} />
+                      <Textarea placeholder="add character description" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -166,9 +167,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="character.greeting"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-primary">Character Greeting</FormLabel>
+                    <FormLabel className="text-tx-primary">Character Greeting</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="add character greeting" {...field} />
+                      <Textarea placeholder="add character greeting" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -179,9 +180,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="character.msg_examples"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-primary">Message Examples</FormLabel>
+                    <FormLabel className="text-tx-primary">Message Examples</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="add message examples" {...field} />
+                      <Textarea placeholder="add message examples" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -192,9 +193,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="world.description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-primary">World Description</FormLabel>
+                    <FormLabel className="text-tx-primary">World Description</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="add world description" {...field} />
+                      <Textarea placeholder="add world description" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -205,7 +206,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="meta.title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-primary">Title</FormLabel>
+                    <FormLabel className="text-tx-primary">Title</FormLabel>
                     <FormControl>
                       <Input placeholder="add title" {...field} />
                     </FormControl>
@@ -219,7 +220,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="meta.tagline"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-primary">Tagline</FormLabel>
+                    <FormLabel className="text-tx-primary">Tagline</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="a brief description of how you would describe the card to others."
@@ -236,7 +237,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="meta.tags"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-primary">Tags</FormLabel>
+                    <FormLabel className="text-tx-primary">Tags</FormLabel>
                     <FormControl>
                       <Input placeholder="add comma separated list of tags" {...field} />
                     </FormControl>
@@ -250,9 +251,9 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                 name="meta.notes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-primary">Notes</FormLabel>
+                    <FormLabel className="text-tx-primary">Notes</FormLabel>
                     <FormControl>
-                      <InputArea placeholder="optional creator notes to users of your card" {...field} />
+                      <Textarea placeholder="optional creator notes to users of your card" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -261,7 +262,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
               <div className="flex justify-end space-x-3">
                 {formType === "edit" && (
                   <button
-                    className="flex items-center space-x-2 rounded-xl bg-action-primary bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-action-secondary"
+                    className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-action-secondary"
                     type="button"
                     onClick={() => {
                       form.reset(initialData);
@@ -269,16 +270,16 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                       setAvatarDisplayImage(initialData?.character?.avatarURI ?? "");
                     }}
                   >
-                    <span className="font-medium text-primary">Reset</span>
+                    <span className="font-medium text-tx-primary">Reset</span>
                   </button>
                 )}
 
                 <button
-                  className="flex items-center space-x-2 rounded-xl bg-action-primary px-4 py-2 transition-colors duration-200 hover:bg-action-secondary"
+                  className="flex items-center space-x-2 rounded-xl bg-action-primary px-4 py-2 transition ease-out duration-200 hover:brightness-90"
                   type="submit"
                 >
-                  <UserPlusIcon className="size-5 text-primary" />
-                  <span className="font-medium text-primary">{formType === "create" ? "Create" : "Save"}</span>
+                  <UserPlusIcon className="size-5 text-tx-primary" />
+                  <span className="font-medium text-tx-primary">{formType === "create" ? "Create" : "Save"}</span>
                 </button>
               </div>
             </form>

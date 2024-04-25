@@ -118,13 +118,13 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
   }
 
   return (
-    <div className="scroll-primary  h-full w-full overflow-y-scroll antialiased  lg:text-base pl-4">
+    <div className="scroll-primary h-full w-full overflow-y-scroll antialiased lg:text-base pl-4">
       <div className="flex flex-row space-x-4 py-2 pb-8">
         {/* Search Bar*/}
-        <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-xl bg-background p-2">
-          <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-primary" />
+        <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-xl bg-input-primary p-2">
+          <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-tx-secondary" />
           <input
-            className="h-9 w-full grow bg-background text-primary focus:outline-none "
+            className="h-9 w-full grow bg-inherit text-tx-primary focus:outline-none "
             placeholder="Search for a chat"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -133,11 +133,11 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
         {/* Sort By Selection*/}
         <div className="flex">
           <Select onValueChange={(v) => setSortBy(v)} value={sortBy}>
-            <SelectTrigger className="h-12 select-none space-x-2 rounded-xl bg-background font-medium text-primary">
+            <SelectTrigger className="h-12 select-none space-x-2 rounded-xl font-medium text-tx-primary">
               <Bars3BottomLeftIcon height="24px" />
               <SelectValue placeholder={sortBy === "" ? "Select a filter" : sortBy} />
             </SelectTrigger>
-            <SelectContent className="bg-background">
+            <SelectContent className="">
               {sortByNameAndValue.map((nameAndValue, idx) => (
                 <SelectItem key={idx} value={nameAndValue.value}>
                   {nameAndValue.name}
@@ -154,16 +154,16 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
             }}
           >
             <ArrowUpIcon
-              className={`${descending ? "rotate-180" : "rotate-0"} text-neutral-125 duration-125 size-5 text-secondary transition ease-out `}
+              className={`${descending ? "rotate-180" : "rotate-0"} duration-125 size-5 text-tx-secondary transition ease-out`}
             />
           </button>
         </div>
       </div>
 
       {/* Collection Area */}
-      <div className="flex flex-wrap  gap-4 scroll-smooth transition duration-500 ease-out">
+      <div className="flex flex-wrap gap-4 scroll-smooth transition duration-500 ease-out">
         {searchResults?.length === 0 && (
-          <div className="line-clamp-1 w-full whitespace-pre text-center text-lg font-semibold text-neutral-400">
+          <div className="line-clamp-1 w-full whitespace-pre text-center text-lg font-semibold text-tx-tertiary">
             {"No cards found  ╥﹏╥"}
           </div>
         )}
@@ -174,12 +174,7 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
               key={idx}
               cardBundle={cardBundle}
               openCardModal={() => {
-                createModal(
-                  <CardModal
-                    cardBundle={cardBundle}
-                    onCreateChat={createChatHandler}
-                  />
-                );
+                createModal(<CardModal cardBundle={cardBundle} onCreateChat={createChatHandler} />);
               }}
             />
           );

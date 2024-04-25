@@ -25,50 +25,56 @@ module.exports = {
       },
       backgroundImage: {
         none: "none",
-        "grad-logo": "linear-gradient(112.84deg, var(--grad-logo-primary), var(--grad-logo-secondary))",
-        "grad-user": "linear-gradient(45deg, var(--grad-user-primary), var(--grad-user-secondary))",
-        "grad-character": "linear-gradient(45deg, var(--grad-character-primary), var(--grad-character-secondary))"
+        "logo-grad": "linear-gradient(112.84deg, var(--logo-from), var(--logo-to))",
+        "chat-user-grad": "linear-gradient(45deg, var(--chat-user-from), var(--chat-user-to))",
+        "chat-character-grad": "linear-gradient(45deg, var(--chat-character-from), var(--chat-character-to))"
       },
 
       colors: {
-        border: "var(--border)",
-        input: "var(--input)",
-        ring: "var(--ring)",
-        line: "var(--line)",
-
-        background: {
-          DEFAULT: "var(--background)",
-          secondary: "var(--background-secondary)"
+        background: "var(--background)",
+        nav: {
+          primary: "var(--nav-primary)",
+          secondary: "var(--nav-secondary)"
         },
-        foreground: "var(--foreground)",
-        primary: "var(--primary)",
-        secondary: "var(--secondary)",
-        tertiary: "var(--tertiary)",
+        container: {
+          primary: "var(--container-primary)",
+          secondary: "var(--container-secondary)",
+          tertiary: "var(--container-tertiary)"
+        },
+        tx: {
+          primary: "var(--tx-primary)",
+          secondary: "var(--tx-secondary)",
+          tertiary: "var(--tx-tertiary)"
+        },
+        input: {
+          primary: "var(--input-primary)",
+          secondary: "var(--input-secondary)",
+          tertiary: "var(--input-tertiary)"
+        },
+        chat: {
+          "user-blockquote-bar": "var(--chat-user-blockquote-bar)",
+          "character-blockquote-bar": "var(--chat-character-blockquote-bar)"
+        },
+        "collection-card": {
+          DEFAULT: "var(--collection-card)",
+          hover: "var(--collection-card-hover)",
+          tag: "var(--collection-card-tag)"
+        },
         action: {
           primary: "var(--action-primary)",
-          secondary: "var(--action-secondary)"
+          secondary: "var(--action-secondary)",
+          tertiary: "var(--action-tertiary)"
         },
-        destructive: {
-          DEFAULT: "var(--destructive)",
-          foreground: "var(--destructive-foreground)"
-        },
-        muted: {
-          DEFAULT: "var(--muted)",
-          foreground: "var(--muted-foreground)"
-        },
+        line: "var(--line)",
         accent: "var(--accent)",
+        float: "var(--float)",
         popover: {
           DEFAULT: "var(--popover)",
           foreground: "var(--popover-foreground)"
-        },
-        card: {
-          DEFAULT: "var(--card)",
-          hover: "var(--card-hover)",
-          tag: "var(--card-tag)"
         }
       },
       borderRadius: {
-        "3xl": "calc(var(--radius) + 6px)",
+        "3xl": "calc(var(--radius) + 10px)",
         "2xl": "calc(var(--radius) + 4px)",
         xl: "calc(var(--radius) + 2px)",
         lg: "var(--radius)",

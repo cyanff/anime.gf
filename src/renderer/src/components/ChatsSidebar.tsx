@@ -53,21 +53,21 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
         transition={{ duration: 0.2 }}
         variants={sidebarVariants}
       >
-        <div className="flex h-full w-80 flex-col overflow-hidden rounded-3xl bg-background">
+        <div className="bg-container-primary flex h-full w-80 flex-col overflow-hidden rounded-3xl">
           {/*Top Section */}
           <div className="flex grow flex-col py-3">
             {/* Search Bar Wrapper*/}
             <div className="mb-2 w-full px-2">
               {/* Search Bar */}
               <div
-                className="mb-2 flex w-full cursor-pointer items-center space-x-2 overflow-hidden rounded-2xl bg-card p-1"
+                className="bg-input-secondary mb-2 flex w-full cursor-pointer items-center space-x-2 overflow-hidden rounded-2xl p-1"
                 onClick={() => {
                   createModal(<ChatsSearchModal />);
                 }}
               >
-                <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-secondary" />
+                <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-tx-secondary" />
                 <input
-                  className="h-11 w-full grow cursor-pointer select-none bg-inherit text-gray-100 caret-transparent placeholder:font-[480] placeholder:tracking-wide focus:outline-none"
+                  className="text-tx-secondary h-11 w-full grow cursor-pointer select-none bg-inherit focus:outline-none"
                   placeholder="Search for a chat"
                 ></input>
               </div>
@@ -117,14 +117,14 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
             </div>
           </div>
           {/*Bottom Section */}
-          <div className="flex h-16 w-full shrink-0 flex-row bg-card p-3">
+          <div className="bg-container-secondary flex h-16 w-full shrink-0 flex-row p-3">
             <div className="relative">
               <img src={personaBundle.avatarURI || ""} alt="Avatar" className="h-10 w-10 rounded-full" />
-              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 ring-4 ring-card"></span>
+              <span className="ring-container-secondary absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 ring-4"></span>
             </div>
             <div className="flex h-full flex-col justify-center p-2">
-              <h3 className="font-semibold text-primary ">{personaBundle.data.name}</h3>
-              <p className="font-medium text-secondary">Online</p>
+              <h3 className="font-semibold text-tx-primary ">{personaBundle.data.name}</h3>
+              <p className="font-medium text-tx-secondary">Online</p>
             </div>
             {/* Settings Icon */}
             <div className="flex grow items-center justify-end"></div>
@@ -138,7 +138,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
           setSidebarOpen(!sidebarOpen);
         }}
       >
-        <div className="h-10 w-1.5 rounded-full bg-card transition duration-100 ease-out group-hover:bg-accent"></div>
+        <div className="h-10 w-1.5 rounded-full bg-action-secondary transition duration-100 ease-out group-hover:bg-accent"></div>
       </button>
     </div>
   );
@@ -172,16 +172,15 @@ function RecentChat({
         <div
           {...rest}
           className={cn(
-            `group flex w-full cursor-pointer items-center space-x-3 
-            rounded-xl p-2.5 transition duration-150 ease-out hover:bg-accent 
-        ${active ? "bg-accent" : ""}`,
+            `group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5 transition duration-200 ease-out
+            hover:bg-accent ${active ? "bg-container-tertiary" : ""}`,
             className
           )}
         >
           <img className="size-12 shrink-0 rounded-full object-cover object-top" src={avatarURI} alt="avatar" />
-          <div className={`flex h-full max-w-full flex-col justify-center `}>
-            <h3 className=" line-clamp-1 text-ellipsis  font-[550] text-secondary group-hover:text-primary">{name}</h3>
-            <p className="line-clamp-1 text-ellipsis text-[14.5px] font-[450] text-secondary">{message}</p>
+          <div className={"flex h-full max-w-full flex-col justify-center "}>
+            <h3 className="text-tx-primary line-clamp-1 text-ellipsis">{name}</h3>
+            <p className="text-tx-secondary line-clamp-1 text-ellipsis text-[14.5px]">{message}</p>
           </div>
         </div>
       </ContextMenuTrigger>

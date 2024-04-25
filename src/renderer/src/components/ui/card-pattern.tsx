@@ -6,13 +6,13 @@ export function CardPattern({ mouseX, mouseY }: any) {
 
   return (
     <div className="pointer-events-none">
-      <div className="absolute inset-0 rounded-2xl  [mask-image:linear-gradient(white,transparent)] group-hover/card:opacity-50"></div>
+      <div className="absolute inset-0 rounded-2xl [mask-image:linear-gradient(white,transparent)] group-hover/card:opacity-50"></div>
       <motion.div
-        className="bg-card-hover absolute inset-0 rounded-2xl opacity-0 transition duration-200 group-hover/card:opacity-100"
+        className="bg-collection-card-hover absolute inset-0 rounded-2xl opacity-0 transition duration-200 group-hover/card:opacity-100"
         style={style}
       />
       <motion.div
-        className="absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay  group-hover/card:opacity-100"
+        className="absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay group-hover/card:opacity-100"
         style={style}
       ></motion.div>
     </div>

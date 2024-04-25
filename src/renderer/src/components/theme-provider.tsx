@@ -37,16 +37,8 @@ export function ThemeProvider({
     if (previousTheme) {
       root.classList.remove(previousTheme);
     }
-    // if (theme === "system") {
-    //   const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-
-    //   root.classList.add(systemTheme);
-    //   return;
-    // }
-
     root.classList.add(theme);
     root.dataset.theme = theme; // Store the current theme as data attribute
-
   }, [theme]);
 
   const value = {

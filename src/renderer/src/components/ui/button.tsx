@@ -8,11 +8,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-transparent text-secondary hover:brightness-90",
-        secondary: "bg-action-secondary text-secondary hover:bg-action-secondary/80",
+        default: "bg-transparent text-tx-secondary hover:brightness-90",
+        secondary: "bg-action-secondary text-tx-secondary hover:bg-action-secondary/80",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline"
+        link: "text-tx-primary underline-offset-4 hover:underline"
       },
       size: {
         default: "h-9 px-4 py-2",
