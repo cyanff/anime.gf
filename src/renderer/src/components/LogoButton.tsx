@@ -20,7 +20,7 @@ export default function LogoButton({ className, rest }: LogoButtonProps) {
   const { setTheme } = useTheme();
 
   useEffect(() => {
-    const storedThemes = ["custom", "magenta"];
+    const storedThemes = ["anime-gf", "sakura-pastel", "sakura-oasis", "sakura-bloom"];
 
     setThemes(storedThemes);
   }, []);
