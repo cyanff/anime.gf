@@ -62,8 +62,10 @@ function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
           <div className="flex flex-row">
             <div className="w-[30rem] pr-10">
               <div className="pb-2 text-2xl font-semibold text-tx-primary">{cardBundle.data.character.name}</div>
-              <p className="text-tx-tertiary pb-1 text-sm font-semibold">{`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
-              {cardBundle.data.meta.updated_at && <p>{`Updated: ${cardBundle.data.meta.updated_at}`}</p>}{" "}
+              <p className="text-tx-tertiary pb-1 text-sm font-semibold">
+                {`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}
+              </p>
+              {cardBundle.data.meta.updated_at && <p className="text-tx-tertiary pb-1 text-sm font-semibold">{`Updated: ${cardBundle.data.meta.updated_at}`}</p>}{" "}
               <p className="text-tx-tertiary text-sm font-semibold">by @{cardBundle.data.meta.creator.card}</p>
             </div>
             {/* Character tags */}

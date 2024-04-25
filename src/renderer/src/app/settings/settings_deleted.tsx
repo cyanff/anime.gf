@@ -232,7 +232,7 @@ export default function SettingsRecentlyDeleted() {
             onClick={handleDeleteSelected}
           >
             <TrashIcon className="size-5 text-tx-primary" />
-            <span className="font-medium text-tx-primary text-sm">Delete Selected</span>
+            <span className="font-medium text-tx-primary text-sm">Delete</span>
           </button>
         </div>
       </div>

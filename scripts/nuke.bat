@@ -1,7 +1,7 @@
 @echo off
 
-set db_path=%USERPROFILE%\AppData\Roaming\Electron\agf.db
-set blob_path=%USERPROFILE%\AppData\Roaming\Electron\blob
+set db_path=%USERPROFILE%\AppData\Roaming\agf\agf.db
+set blob_path=%USERPROFILE%\AppData\Roaming\agf\blob
 
 if not exist "%db_path%" (
     echo Database already does not exist.
