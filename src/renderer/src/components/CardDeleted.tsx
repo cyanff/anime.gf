@@ -46,7 +46,7 @@ function CardDeleted({ cardBundle, handleRestore, handleDelete, onClick, selecte
           }}
         >
           <div
-            className={`group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl bg-card p-2 ${selected ? "opacity-100" : "opacity-50"}`}
+            className={`group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl bg-collection-card p-2 ${selected ? "opacity-100" : "opacity-50"}`}
             onMouseMove={onMouseMove}
             onClick={onClick}
           >

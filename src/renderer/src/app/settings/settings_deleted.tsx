@@ -180,10 +180,11 @@ export default function SettingsRecentlyDeleted() {
     <div className="scroll-primary  h-full w-full overflow-y-scroll pl-4  antialiased lg:text-base">
       <div className="flex flex-row space-x-4 py-2 pb-8">
         {/* Search Bar*/}
-        <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-xl bg-background p-2">
-          <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-primary" />
+        <div className="flex flex-row space-x-4 ">
+        <div className="flex h-12 w-[30rem] shrink-0 items-center space-x-2 rounded-xl bg-input-primary p-2">
+        <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-tx-secondary" />
           <input
-            className="h-9 w-full grow bg-background text-primary focus:outline-none "
+            className="h-9 w-full grow bg-inherit text-tx-primary focus:outline-none "
             placeholder="Search for a chat"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -192,11 +193,11 @@ export default function SettingsRecentlyDeleted() {
         {/* Sort By Selection*/}
         <div className="flex">
           <Select onValueChange={(v) => setSortBy(v)} value={sortBy}>
-            <SelectTrigger className="h-12 select-none space-x-2 rounded-xl bg-background font-medium text-primary">
+            <SelectTrigger className="h-12 select-none space-x-2 rounded-xl font-medium text-tx-primary">
               <Bars3BottomLeftIcon height="24px" />
               <SelectValue placeholder={sortBy === "" ? "Select a filter" : sortBy} />
             </SelectTrigger>
-            <SelectContent className="bg-background">
+            <SelectContent className="">
               {sortByNameAndValue.map((nameAndValue, idx) => (
                 <SelectItem key={idx} value={nameAndValue.value}>
                   {nameAndValue.name}
@@ -217,20 +218,22 @@ export default function SettingsRecentlyDeleted() {
             />
           </button>
         </div>
+        </div>
+        <div className="flex flex-row flex-grow space-x-4 justify-end pr-8">
         <button
-          className="bg-transparent hover:bg-accent flex items-center space-x-2 rounded-md px-4 py-2 transition"
+          className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-action-secondary"
           onClick={handleRestoreSelected}
         >
-          <ArrowUturnLeftIcon className="size-5 text-primary" />
-          <span className="font-medium text-primary">Restore</span>
+          <span className="font-medium text-tx-primary">Restore</span>
         </button>
         <button
-          className="bg-action-primary hover:bg-action-secondary flex items-center space-x-2 rounded-md px-4 py-2 transition"
+          className="flex items-center space-x-2 rounded-xl bg-action-primary px-4 py-2 transition ease-out duration-200 hover:brightness-90"
           onClick={handleDeleteSelected}
         >
-          <TrashIcon className="size-5 text-primary" />
-          <span className="font-medium text-primary">Delete Permenantly</span>
+          <TrashIcon className="size-5 text-tx-primary" />
+          <span className="font-medium text-tx-primary">Delete Permenantly</span>
         </button>
+        </div>
       </div>
 
       {/* Collection Area */}
