@@ -250,7 +250,7 @@ export default function SettingsRecentlyDeleted() {
               key={idx}
               cardBundle={cardBundle}
               handleRestore={handleRestore}
-              handleDelete={handleSingleDelete}
+              handleSingleDelete={handleSingleDelete}
               onClick={() => handleCardClick(cardBundle)}
               selected={selectedCards.includes(cardBundle)}
             />

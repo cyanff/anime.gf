@@ -10,7 +10,7 @@ export default function SettingsPage() {
   return (
     <div className="flex h-full w-full rounded-xl">
       {/*Sidebar*/}
-      <div className="flex h-full w-56 shrink-0 flex-col space-y-2 overflow-hidden rounded-2xl bg-nav-secondary px-3 py-8">
+      <div className="flex h-full w-56 shrink-0 flex-col space-y-2 overflow-hidden rounded-2xl bg-nav-primary px-3 py-8">
         <button
           className={`group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5 text-[1.07rem] font-[450] transition
           duration-150 ease-out hover:bg-accent ${page === "chat" ? "bg-container-tertiary text-tx-primary" : "text-tx-secondary"}`}

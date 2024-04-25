@@ -5,68 +5,68 @@
 
 @layer base {
   .custom {
-    /* Logo button gradients */
-    --logo-from: hsl(334, 55%, 52%);
-    --logo-to: hsl(331, 50%, 84%);
+ /* Logo button gradients */
+ --logo-from: hsl(250, 30%, 50%); 
+ --logo-to: hsl(245, 35%, 65%);   
 
-    --background: hsl(0, 0%, 12%);
+ --background: hsl(240, 15%, 20%);  
+
+ /* Navigational elements ex: sidebar, chat sidebar, settings sidebar */
+ --nav-primary: hsl(240, 15%, 15%);  
+ --nav-secondary: hsl(240, 15%, 18%);
+
+ /* Containers that lie on top of backgrounds */
+ --container-primary: hsl(240, 15%, 15%); 
+ --container-secondary: hsl(240, 15%, 18%);  
+ --container-tertiary: hsl(240, 15%, 25%);  
+
+ /* Text colors */
+ --tx-primary: hsl(60, 100%, 98%);  
+ --tx-secondary: hsl(60, 100%, 80%); 
+ --tx-tertiary: hsl(60, 100%, 60%); 
+
+ /* Input elements, combo box, input */
+ --input-primary: hsl(240, 15%, 24%);   
+ --input-secondary: hsl(240, 15%, 22%); 
+ --input-tertiary: hsl(240, 15%, 30%);  
+
+ /* Chat */
+ /* User message */
+ --chat-user-from: hsl(250, 30%, 45%); 
+ --chat-user-to: hsl(250, 30%, 40%);  
+ --chat-user-blockquote-bar: hsl(250, 30%, 35%);  
+
+ /* Character message*/
+ --chat-character-from: hsl(240, 15%, 22%);  
+ --chat-character-to: hsl(240, 15%, 25%); 
+ --chat-character-blockquote-bar: hsl(240, 15%, 30%); 
+
+ /* Cards in the collections page */
+ --collection-card: hsl(240, 15%, 26%);
+ --collection-card-hover: hsl(240, 15%, 33%); 
+ --collection-card-tag: hsl(240, 15%, 20%); 
+
+ /* Hover color */
+ --accent: hsl(245, 35%, 27%);  
+
+ /* Borders and Separators */
+ --line: hsl(245, 35%, 25%);  
+
+ /* Scroll bar */
+ --scroll-primary-thumb: hsl(240, 15%, 12%);
+ --scroll-primary-track: hsl(240, 15%, 18%);
+ --scroll-secondary-thumb: hsl(240, 15%, 22%);
+ --scroll-secondary-track: hsl(240, 15%, 28%);
+
+ /* Floating elements, ex: modals, popovers, dialogs */
+ --float: hsl(240, 15%, 15%);  
+
+ /* Action, (buttons) elements */
+ --action-primary: hsl(250, 30%, 50%);  
+ --action-secondary: hsl(240, 15%, 55%);  
+ --action-tertiary: hsl(240, 15%, 30%); 
+}
   
-    /* Navigational elements ex: sidebar, chat sidebar, settings sidebar */
-    --nav-primary: hsl(0, 0%, 14%);
-    --nav-secondary: hsl(0, 0%, 16%);
-
-    /* Containers that lie on top of backgrounds */
-    --container-primary: hsl(0, 0%, 16%);
-    --container-secondary: hsl(0, 0%, 22%);
-    --container-tertiary: hsl(0, 0%, 28%);
-
-    /* Text colors */
-    --tx-primary: hsl(0, 0%, 98%);
-    --tx-secondary: hsl(0, 0%, 63.9%);
-    --tx-tertiary: hsl(0, 0%, 42.1%);
-
-    /* Input elements */
-    --input-primary: hsl(0, 0%, 24%);
-    --input-secondary: hsl(0, 0%, 30%);
-    --input-tertiary: hsl(0, 0%, 36%);
-
-    /* Chat */
-    /* User message */
-    --chat-user-from: hsl(331, 50%, 44%);
-    --chat-user-to: hsl(331, 32%, 37%);
-    --chat-user-blockquote-bar: hsl(331, 50%, 30%);
-    /* Character message*/
-    --chat-character-from: hsl(0, 0%, 23%);
-    --chat-character-to: hsl(0, 0%, 28%);
-    --chat-character-blockquote-bar: hsl(0, 0%, 30%);
-
-
-    /* Cards in the collections page */
-    --collection-card: hsl(0, 0%, 24%);
-    --collection-card-hover: hsl(0, 0%, 27%);
-    --collection-card-tag: hsl(0, 0%, 18%);
-
-    /* Hover color */
-    --accent: hsl(0, 0%, 18.0%);
-    /* Borders and Separators */
-    --line: hsl(0, 0%, 18.1%);
-
-    /* Scroll bar */
-    --scroll-primary-thumb: hsl(0, 0%, 35%);
-    --scroll-primary-track: hsl(0, 0%, 18%);
-    --scroll-secondary-thumb: hsl(0, 0%, 25%);
-    --scroll-secondary-track: hsl(0, 0%, 20%);
-
-
-    /* Floating elements, ex: modals, popovers, dialogs */
-    --float: hsl(0, 0%, 9%);
-
-    /* Action, (buttons) elements */
-    --action-primary: hsl(334, 55%, 52%);
-    --action-secondary: hsl(0, 0%, 24%);
-    --action-tertiary: hsl(0, 0%, 19%);
-
-  }
 
   .magenta {
     /* Logo button gradients */
