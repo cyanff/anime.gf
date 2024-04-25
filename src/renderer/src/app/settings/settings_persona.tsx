@@ -5,7 +5,7 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
-import { EllipsisHorizontalIcon, UserPlusIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
+import { EllipsisHorizontalIcon, PencilIcon, TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 
 import {
@@ -21,7 +21,7 @@ import { useApp } from "@/components/AppContext";
 import { queries } from "@/lib/queries";
 import { PersonaBundle, PersonaFormData } from "@shared/types";
 import { toast } from "sonner";
-import { PersonaModal } from "../../components/PersonaModal";
+import { PersonaFormModal } from "../../components/PersonaFormModal";
 
 export default function SettingsPersona() {
   const [personaBundles, setPersonaBundles] = useState<PersonaBundle[]>([]);
@@ -44,7 +44,7 @@ export default function SettingsPersona() {
   /* Handles user triggering the "new persona" action. */
   const handleNew = () => {
     createModal(
-      <PersonaModal
+      <PersonaFormModal
         title="New Persona"
         submit={{
           label: "Create",
@@ -71,7 +71,7 @@ export default function SettingsPersona() {
     const id = bundle.data.id;
 
     createModal(
-      <PersonaModal
+      <PersonaFormModal
         title="Edit Persona"
         name={name}
         description={description}
@@ -131,7 +131,7 @@ export default function SettingsPersona() {
                 <ContextMenuTrigger>
                   <button
                     className={`group flex h-fit w-full items-center justify-between rounded-lg p-3 font-[480] text-tx-primary transition duration-200
-                      ease-out hover:bg-accent focus:outline-none`}
+                      ease-out hover:brightness-90 focus:outline-none`}
                     onClick={() => handleEdit(bundle)}
                   >
                     <div className="mr-3 flex w-full items-center space-x-5 ">
@@ -167,7 +167,7 @@ export default function SettingsPersona() {
                           >
                             Edit
                             <DropdownMenuShortcut>
-                              <WrenchScrewdriverIcon className="size-4" />
+                              <PencilIcon className="size-4" />
                             </DropdownMenuShortcut>
                           </DropdownMenuItem>
                           <DropdownMenuItem
@@ -179,7 +179,7 @@ export default function SettingsPersona() {
                           >
                             Delete
                             <DropdownMenuShortcut>
-                              <WrenchScrewdriverIcon className="size-4" />
+                              <TrashIcon className="size-4" />
                             </DropdownMenuShortcut>
                           </DropdownMenuItem>
                         </DropdownMenuGroup>
@@ -192,7 +192,7 @@ export default function SettingsPersona() {
                   <ContextMenuItem onSelect={() => handleEdit(bundle)}>
                     Edit
                     <ContextMenuShortcut>
-                      <WrenchScrewdriverIcon className="size-4" />
+                      <PencilIcon className="size-4" />
                     </ContextMenuShortcut>
                   </ContextMenuItem>
 
@@ -203,7 +203,7 @@ export default function SettingsPersona() {
                   >
                     Delete
                     <ContextMenuShortcut>
-                      <WrenchScrewdriverIcon className="size-4" />
+                      <TrashIcon className="size-4" />
                     </ContextMenuShortcut>
                   </ContextMenuItem>
                 </ContextMenuContent>

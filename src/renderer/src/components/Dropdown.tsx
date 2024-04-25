@@ -17,12 +17,10 @@ export default function Dropdown({ label, content }: DropdownProps) {
         onClick={() => setIsOpen(!isOpen)}
       >
         <span>{label}</span>
-        <ChevronDownIcon
-          className={`duration-125 size-5 transition ease-out ${isOpen ? "rotate-180 transform" : ""}`}
-        />
+        <ChevronDownIcon className={`duration-125 size-5 transition  ${isOpen ? "rotate-180 transform" : ""}`} />
       </button>
       <div
-        className={`bg-container-tertiary overflow-hidden rounded-b-xl transition-all duration-300 ease-in-out ${
+        className={`bg-container-tertiary overflow-hidden rounded-b-xl transition-all duration-125 ease-in-out ${
           isOpen ? "max-h-96" : "max-h-0"
         }`}
       >

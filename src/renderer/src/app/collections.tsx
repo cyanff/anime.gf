@@ -1,11 +1,12 @@
 import { useApp } from "@/components/AppContext";
 import Card from "@/components/Card";
 import CardModal from "@/components/CardModal";
+import PersonaSelectionModal from "@/components/PersonaSelectionModal";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { queries } from "@/lib/queries";
 import { ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { CardBundle } from "@shared/types";
+import { CardBundle, PersonaBundle } from "@shared/types";
 import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -21,6 +22,8 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
   const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);
   const [sortBy, setSortBy] = useState<string>("alphabetical");
   const [descending, setDescending] = useState<boolean>(true);
+
+  const { createDialog } = useApp();
 
   // TODO, edit card bundle type to also include all data from the card table
   // then add sort by "imported" which is the inserted_at column in the db
@@ -101,8 +104,8 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
     setSearchResults([...sortedResults]);
   }, [sortBy, descending]);
 
-  async function createChatHandler(cardID: number, greeting: string) {
-    const res = await queries.createChat(1, cardID);
+  async function createChatWithPersona(personaBundle: PersonaBundle, cardID: number, greeting: string) {
+    const res = await queries.createChat(personaBundle.data.id, cardID);
     if (res.kind == "ok") {
       const chatCards = await queries.getRecentChats();
       if (chatCards.kind == "ok") {
@@ -117,6 +120,17 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
       toast.error("Error creating new chat.");
     }
     closeModal();
+  }
+
+  async function createChatHandler(cardID: number, greeting: string) {
+    closeModal();
+    createModal(
+      <PersonaSelectionModal
+        onPersonaSelect={(personaBundle: PersonaBundle) => {
+          createChatWithPersona(personaBundle, cardID, greeting);
+        }}
+      />
+    );
   }
 
   return (
@@ -165,8 +179,8 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
       {/* Collection Area */}
       <div className="flex flex-wrap gap-4 scroll-smooth transition duration-500 ease-out">
         {searchResults?.length === 0 && (
-          <div className="line-clamp-1 w-full whitespace-pre text-center text-lg font-semibold text-tx-tertiary">
-            {"No cards found  ╥﹏╥"}
+          <div className="w-full whitespace-pre text-center text-lg font-semibold text-tx-tertiary leading-9">
+            {"No cards found  ╥﹏╥ \n You can drag and drop card.zip(s) here to import them!"}
           </div>
         )}
 

@@ -16,7 +16,7 @@ export default function SettingsRecentlyDeleted() {
   const [searchResults, setSearchResults] = useState<CardBundle[]>();
   const [sortBy, setSortBy] = useState<string>("alphabetical");
   const [descending, setDescending] = useState<boolean>(true);
-  const { createDialog, syncCardBundles, syncChatID } = useApp();
+  const { createDialog, syncCardBundles } = useApp();
   const [selectedCards, setSelectedCards] = useState<CardBundle[]>([]);
 
   useEffect(() => {
@@ -126,7 +126,6 @@ export default function SettingsRecentlyDeleted() {
         await window.api.blob.cards.del(cardBundle.id);
         await queries.permaDeleteCard(cardBundle.id);
         syncDeletedCardBundles();
-        syncChatID();
       }
     };
     createDialog(config);
@@ -163,7 +162,6 @@ export default function SettingsRecentlyDeleted() {
           await queries.permaDeleteCard(cardBundle.id);
         }
         syncDeletedCardBundles();
-        syncChatID();
       }
     };
     createDialog(config);

@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-interface PersonaModalProps {
+interface PersonaFormModal {
   title: string;
   name?: string;
   description?: string;
@@ -23,14 +23,14 @@ interface PersonaModalProps {
   };
 }
 
-export function PersonaModal({
+export function PersonaFormModal({
   title,
   name = "",
   description = "",
   isDefault = false,
   submit,
   remove
-}: PersonaModalProps) {
+}: PersonaFormModal) {
   const [avatarNativeImage, setAvatarNativeImage] = useState<string | null>(null);
 
   const methods = useForm({
@@ -162,7 +162,7 @@ export function PersonaModal({
             </button>
           )}
           <button
-            className="flex items-center rounded-sm transition bg-action-primary hover:bg-action-secondary px-3 py-2 font-medium
+            className="flex items-center rounded-sm transition bg-action-primary hover:brightness-90 px-3 py-2 font-medium
               text-tx-primary"
             onClick={handleSubmit(submit.handle)}
           >

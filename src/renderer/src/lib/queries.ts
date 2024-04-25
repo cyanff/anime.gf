@@ -154,12 +154,11 @@ LIMIT 20;`;
 async function getMostRecentChat(): Promise<Result<number | undefined, Error>> {
   const query = `
   SELECT *
-FROM 
-  chats
-  JOIN cards ON chats.card_id = cards.id
-ORDER BY 
-  chats.inserted_at DESC
-LIMIT 1;`;
+  FROM 
+    chats
+  ORDER BY 
+    chats.inserted_at DESC
+  LIMIT 1;`;
 
   try {
     const rows = (await window.api.sqlite.all(query)) as Chat[];

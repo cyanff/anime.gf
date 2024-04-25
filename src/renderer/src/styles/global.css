@@ -119,8 +119,8 @@
     /* Scroll bar */
     --scroll-primary-thumb: hsl(0, 0%, 9%);
     --scroll-primary-track: hsl(0, 0%, 16%);
-    --scroll-secondary-thumb: hsl(0, 0%, 19%);
-    --scroll-secondary-track: hsl(0, 0%, 25%);
+    --scroll-secondary-thumb: hsl(0, 0%, 30%);
+    --scroll-secondary-track: rgba(0, 0, 0, 0.0);
 
     /* Floating elements, ex: modals, popovers, dialogs */
     --float: hsl(0, 0%, 13%); /* Darker than background */

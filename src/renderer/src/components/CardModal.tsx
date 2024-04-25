@@ -40,8 +40,8 @@ function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
   };
 
   return (
-    <div className="flex h-[80vh] w-[50rem] items-center justify-center overflow-hidden rounded-xl">
-      <div className="scroll-secondary h-full w-full overflow-auto rounded-xl">
+    <div className="flex h-[80vh] w-[40rem] items-center justify-center overflow-hidden rounded-3xl">
+      <div className="scroll-secondary h-full w-full overflow-auto">
         {/* Banner and profile picture */}
         <div className="relative rounded-xl">
           <img
