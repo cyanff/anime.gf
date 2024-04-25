@@ -30,7 +30,7 @@ export default function EditCardModal({ cardBundle }: EditCardModalProps) {
   };
 
   return (
-    <div className="h-[80vh] w-[36rem] overflow-hidden rounded-3xl">
+    <div className="h-[80vh] w-[50rem] overflow-hidden rounded-3xl">
       <CardForm cardBundle={cardBundle} formType="edit" onSuccessfulSubmit={handleSuccessfulSubmit} />
     </div>
   );

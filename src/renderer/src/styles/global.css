@@ -239,7 +239,7 @@
   
     /* Cards in the collections page */
     --collection-card: hsl(210, 22%, 15%);
-    --collection-card-hover: hsl(210, 22%, 13%);
+    --collection-card-hover: hsl(210, 20%, 21%);
     --collection-card-tag: hsl(210, 22%, 10%);
   
     /* Hover color */
@@ -369,7 +369,7 @@
   
     /* Cards in the collections page */
     --collection-card: hsl(240, 29%, 13%);
-    --collection-card-hover: hsl(240, 30%, 11%);
+    --collection-card-hover: hsl(240, 28%, 16%);
     --collection-card-tag: hsl(240, 30%, 8%);
   
     /* Hover color */

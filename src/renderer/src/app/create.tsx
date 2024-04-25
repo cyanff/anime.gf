@@ -30,7 +30,7 @@ export default function CreationPage({ setPage }: CreationPageProps) {
   return (
     <div className="flex h-full w-full items-center justify-center rounded-xl bg-background">
       {/* Scroll Wrapper */}
-      <div className="border-line h-5/6 w-5/12 min-w-[40rem] overflow-hidden rounded-2xl border-y border-l">
+      <div className="border-line h-5/6 w-[50rem] min-w-[40rem] overflow-hidden rounded-2xl border-y border-l">
         <CardForm onSuccessfulSubmit={onSuccessfulSubmit} formType="create" />
       </div>
     </div>

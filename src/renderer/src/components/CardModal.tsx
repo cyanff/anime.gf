@@ -40,7 +40,7 @@ function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
   };
 
   return (
-    <div className="flex h-[80vh] w-[36rem] items-center justify-center overflow-hidden rounded-xl">
+    <div className="flex h-[80vh] w-[50rem] items-center justify-center overflow-hidden rounded-xl">
       <div className="scroll-secondary h-full w-full overflow-auto rounded-xl">
         {/* Banner and profile picture */}
         <div className="relative rounded-xl">
@@ -101,9 +101,11 @@ function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
           {/* Character details dropdowns */}
           <div className="mt-6">
             <Dropdown label="Character Description" content={cardBundle.data.character.description} />
-            <Dropdown label="Character Persona" content={cardBundle.data.meta.notes ?? ""} />
+            <Dropdown label="Character Notes" content={cardBundle.data.meta.notes ?? ""} />
             <Dropdown label="Greeting Message" content={cardBundle.data.character.greeting} />
             <Dropdown label="Example Messages" content={cardBundle.data.character.msg_examples} />
+            <Dropdown label="World" content={cardBundle.data.world.description} />
+
           </div>
         </div>
       </div>
