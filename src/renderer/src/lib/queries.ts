@@ -2,7 +2,7 @@ import { deepFreeze, isValidFileName, toPathEscapedStr } from "@shared/utils";
 import { ContextMessage, UIMessage } from "@shared/types";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { Result, isError } from "@shared/utils";
-import { Persona } from "@shared/db_types";
+import { Chat, Persona } from "@shared/db_types";
 import { rename } from "fs";
 
 async function deleteMessage(messageID: number): Promise<void> {
@@ -21,7 +21,6 @@ async function createChat(personaId: number, cardId: number): Promise<Result<voi
     await window.api.sqlite.run(query, params);
     return { kind: "ok", value: undefined };
   } catch (e) {
-    isError(e);
     return { kind: "err", error: e };
   }
 }
@@ -151,15 +150,13 @@ LIMIT 20;`;
     );
     return { kind: "ok", value: chatCards };
   } catch (e) {
-    isError(e);
     return { kind: "err", error: e };
   }
 }
 
-async function getMostRecentChatID(): Promise<Result<number, Error>> {
+async function getMostRecentChat(): Promise<Result<number | undefined, Error>> {
   const query = `
-  SELECT 
-  chats.id AS chat_id
+  SELECT *
 FROM 
   chats
   JOIN cards ON chats.card_id = cards.id
@@ -168,13 +165,15 @@ ORDER BY
 LIMIT 1;`;
 
   try {
-    interface QueryResult {
-      chat_id: number;
+    const rows = (await window.api.sqlite.all(query)) as Chat[];
+    if (rows.length === 0) {
+      return { kind: "ok", value: undefined };
     }
-    const row = (await window.api.sqlite.get(query)) as QueryResult;
-    return { kind: "ok", value: row.chat_id };
+    if (rows.length > 1) {
+      console.error("More than one chat found when only one was expected.");
+    }
+    return { kind: "ok", value: rows[0].id };
   } catch (e) {
-    isError(e);
     return { kind: "err", error: e };
   }
 }
@@ -594,11 +593,22 @@ async function getCardDir(cardID: number): Promise<Result<string, Error>> {
 
 async function deletePersona(bundle: PersonaBundle): Promise<Result<void, Error>> {
   const query = `
-  UPDATE personas SET is_deleted = 1, is_default = 0 WHERE id = ?;
-  `;
+    UPDATE personas SET is_deleted = 1, is_default = 0 WHERE id = ?;
+    `;
   try {
     await window.api.sqlite.run(query, [bundle.data.id]);
     return { kind: "ok", value: undefined };
+  } catch (e) {
+    return { kind: "err", error: e };
+  }
+}
+
+async function checkChatExists(chatID: number): Promise<Result<boolean, Error>> {
+  const query = `SELECT EXISTS(SELECT 1 FROM chats WHERE id = ?) AS chat_exists;`;
+
+  try {
+    const row = (await window.api.sqlite.get(query, [chatID])) as { chat_exists: number };
+    return { kind: "ok", value: row.chat_exists === 1 };
   } catch (e) {
     return { kind: "err", error: e };
   }
@@ -610,7 +620,7 @@ export const queries = {
   resetChat,
   getAllChatSearchItems,
   getRecentChats,
-  getMostRecentChatID,
+  getMostRecentChat,
   getPersonaBundle,
   getChatHistory,
   getCardBundle,
@@ -632,7 +642,8 @@ export const queries = {
   resetChatToMessage,
   getAllExtantPersonaBundles,
   getCardDir,
-  deletePersona
+  deletePersona,
+  checkChatExists,
 };
 
 deepFreeze(queries);

@@ -23,10 +23,8 @@
     "nuke-win": "scripts\\nuke.bat",
     "seed": "electron ./scripts/seed.js",
     "seed-win": "electron ./scripts/seedwin.js",
-
     "reset": "npm run nuke && npm run seed",
     "reset-win": "npm run nuke-win && npm run seed-win"
-
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
@@ -87,6 +85,7 @@
     "postcss": "^8.4.35",
     "prettier": "^3.2.5",
     "prettier-plugin-classnames": "^0.6.5",
+    "prettier-plugin-organize-imports": "^3.2.4",
     "prettier-plugin-tailwindcss": "^0.5.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

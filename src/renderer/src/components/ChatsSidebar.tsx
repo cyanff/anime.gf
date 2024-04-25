@@ -24,7 +24,7 @@ export interface ChatsSideBarProps {
 export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }: ChatsSideBarProps) {
   const [recentChats, setRecentChats] = useState<RecentChatI[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { createModal, createDialog, setChatID } = useApp();
+  const { createModal, createDialog, setActiveChatID } = useApp();
 
   useEffect(() => {
     syncRecentChats();
@@ -89,7 +89,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
                         onAction: async () => {
                           await queries.deleteChat(chat.chat_id);
                           syncRecentChats();
-                          setChatID(recentChats[0].chat_id);
+                          setActiveChatID(recentChats[0].chat_id);
                         }
                       };
                       createDialog(config);
@@ -111,7 +111,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
                     name={chat.name}
                     message={chat.last_message}
                     active={chatID == chat.chat_id}
-                    onClick={() => setChatID(chat.chat_id)}
+                    onClick={() => setActiveChatID(chat.chat_id)}
                   />
                 );
               })}

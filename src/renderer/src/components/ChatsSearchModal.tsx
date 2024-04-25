@@ -10,7 +10,7 @@ export default function ChatsSearchModal() {
   const [searchItems, setSearchItems] = useState<ChatSearchItem[]>([]);
   const fuseRef = useRef<Fuse<ChatSearchItem>>();
 
-  const { setChatID, closeModal } = useApp();
+  const { setActiveChatID, closeModal } = useApp();
 
   useEffect(() => {
     (async () => {
@@ -75,7 +75,7 @@ export default function ChatsSearchModal() {
                 className="flex bg-container-secondary h-[4.5rem] w-full cursor-pointer items-center rounded-sm px-3 py-3 transition duration-200
                   ease-out hover:brightness-90"
                 onClick={() => {
-                  setChatID(result.id);
+                  setActiveChatID(result.id);
                   closeModal();
                 }}
               >

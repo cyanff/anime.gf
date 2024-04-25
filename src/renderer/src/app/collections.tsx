@@ -16,11 +16,12 @@ interface CollectionsPageProps {
 }
 
 export default function CollectionsPage({ setPage, cardBundles }: CollectionsPageProps) {
-  const { createModal, closeModal, setChatID } = useApp();
+  const { createModal, closeModal, setActiveChatID } = useApp();
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);
   const [sortBy, setSortBy] = useState<string>("alphabetical");
   const [descending, setDescending] = useState<boolean>(true);
+
   // TODO, edit card bundle type to also include all data from the card table
   // then add sort by "imported" which is the inserted_at column in the db
   const sortByNameAndValue = [
@@ -109,7 +110,7 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
         if (message.kind == "err") {
           toast.error("Error inserting character greeting message.");
         }
-        setChatID(chatCards.value[0].chat_id);
+        setActiveChatID(chatCards.value[0].chat_id);
       }
       setPage("chats");
     } else {

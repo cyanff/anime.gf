@@ -37,20 +37,18 @@ export default function App() {
   const [modalContent, setModalContent] = useState<React.ReactNode>();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [cmdOpen, setCmdOpen] = useState<boolean>(false);
-  const [chatID, setChatID] = useState<number | null>(null);
+  const [activeChatID, setActiveChatID] = useState<number>();
   const [cardBundles, setCardBundles] = useState<CardBundle[]>([]);
 
   useEffect(() => {
-    syncChatID();
+    setActiveChatToMostRecent();
     syncCardBundles();
   }, []);
 
-  async function syncChatID() {
-    const res = await queries.getMostRecentChatID();
+  async function setActiveChatToMostRecent() {
+    const res = await queries.getMostRecentChat();
     if (res.kind == "ok") {
-      setChatID(res.value);
-    } else {
-      toast.error("Error fetching recent chat ID.");
+      setActiveChatID(res.value);
     }
   }
 
@@ -129,7 +127,9 @@ export default function App() {
   };
 
   return (
-    <AppContext.Provider value={{ createDialog, createModal, closeModal, setChatID, syncCardBundles, syncChatID }}>
+    <AppContext.Provider
+      value={{ createDialog, createModal, closeModal, syncCardBundles, setActiveChatToMostRecent, setActiveChatID }}
+    >
       <div
         className="flex h-screen bg-background text-sm text-neutral-100 antialiased lg:text-base"
         onDrop={handleDrop}
@@ -221,7 +221,18 @@ export default function App() {
 
         <div className="flex h-full w-full overflow-hidden py-4">
           {page === "create" && <CreationPage setPage={setPage} />}
-          {page === "chats" && chatID !== null && <ChatsPage chatID={chatID} />}{" "}
+
+          {page === "chats" && !activeChatID && (
+            <div className="flex items-center justify-center w-full h-full text-tx-tertiary">
+              <p className="text-xl text-center leading-9 select-none">
+                You don't have any chats. <br />
+                Start a chat by going to collection -&gt; click on a card -&gt; click the start chat button. <br />
+                (づ ◕‿◕ )づ
+              </p>
+            </div>
+          )}
+
+          {page === "chats" && activeChatID && <ChatsPage chatID={activeChatID} />}
           {page === "collections" && <CollectionsPage setPage={setPage} cardBundles={cardBundles} />}
           {page === "settings" && <SettingsPage />}
         </div>

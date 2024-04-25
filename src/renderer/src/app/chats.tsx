@@ -1,4 +1,4 @@
-import { AppContext, DialogConfig } from "@/components/AppContext";
+import { AppContext, DialogConfig, useApp } from "@/components/AppContext";
 import ChatBar from "@/components/ChatBar";
 import ChatsSidebar from "@/components/ChatsSidebar";
 import Message from "@/components/Message";
@@ -37,28 +37,41 @@ function ChatsPage({ chatID }): JSX.Element {
   const scrollEventRef = useRef<ScrollEvent | null>(null);
   const [isPageLoading, setIsPageLoading] = useState(true);
 
+  const { setActiveChatToMostRecent } = useApp();
+
   // Sync states with db on load
   useEffect(() => {
+    // Check if the given chatID exists
+
     (async () => {
       try {
+        const chatExistsRes = await queries.checkChatExists(chatID);
+
+        if (chatExistsRes.kind === "ok" && !chatExistsRes.value) {
+          console.error(`Chat with ID ${chatID} does not exist. Setting active chat to most recent.`);
+          setActiveChatToMostRecent();
+          return;
+        }
+
+        if (chatExistsRes.kind === "err") {
+          console.error(`Failed to check if chat with ID ${chatID} exists.`);
+        }
+
         await syncCardBundle();
         await syncPersonaBundle();
         await syncChatHistory();
       } catch (e) {
+        toast.error("Failed to sync chat states with db.");
+        console.error(e);
       } finally {
         // Scroll to the bottom of the chat on load
-        // Race condition, too much of a hassle to fix
         setTimeout(scrollToBottom, 100);
         setIsPageLoading(false);
       }
     })();
   }, [chatID]);
 
-  useEffect(() => {
-    console.log("chatID changed");
-  }, [chatID]);
-
-  // Sync chat history when the limit changes
+  // Sync chat history when the chat history limit changes as users scroll up
   useEffect(() => {
     syncChatHistory();
   }, [chatHistoryLimit]);
