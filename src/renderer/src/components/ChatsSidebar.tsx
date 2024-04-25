@@ -46,15 +46,12 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
     <div className="flex h-full items-center">
       {/* Sidebar Motion Wrapper*/}
       <motion.div
-        initial={{
-          width: "20rem"
-        }}
-        className="h-full"
+        className="h-full w-fit"
         animate={sidebarOpen ? "open" : "closed"}
         transition={{ duration: 0.2 }}
         variants={sidebarVariants}
       >
-        <div className="bg-nav-secondary flex h-full w-80 flex-col overflow-hidden rounded-3xl">
+        <div className="bg-nav-secondary flex h-full w-80  flex-col overflow-hidden rounded-3xl">
           {/*Top Section */}
           <div className="flex grow flex-col py-3">
             {/* Search Bar Wrapper*/}

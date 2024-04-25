@@ -116,7 +116,7 @@ export default function App() {
         }
         numValidFiles++;
       }
-      if (numValidFiles != 0) {
+      if (numValidFiles === 0) {
         return;
       }
       toast.success(`Imported ${numValidFiles} cards.`);

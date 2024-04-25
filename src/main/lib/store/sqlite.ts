@@ -1,5 +1,5 @@
 import Database from "better-sqlite3";
-import { dbPath } from "../utils";
+import { attainable, dbPath } from "../utils";
 
 let db: Database.Database;
 
@@ -41,14 +41,15 @@ export function runAsTransaction(queries: string[], params: any[][] = []) {
  * Initializes the database connection.
  */
 async function init() {
-  db = Database(dbPath);
-
-  // TODO: run migrations on install
-  // New install
-  // if (!fs.existsSync(dbPath)) {
-  //   // const migrator = new Migrator({ migrationDir: migrationsDir, dbPath });
-  //   // migrator.migrate();
-  // }
+  // If database does not exists, create it and initialize the schema
+  if (!(await attainable(dbPath))) {
+    db = Database(dbPath);
+    db.exec(initSchemaQuery);
+  }
+  // If db exists, just connect to it
+  else {
+    db = Database(dbPath);
+  }
 }
 
 export default {
@@ -59,95 +60,81 @@ export default {
   runAsTransaction
 };
 
-// interface Migration {
-//   version: string;
-//   statement: string;
-//   name: string;
-// }
+const initSchemaQuery = `
+CREATE TABLE IF NOT EXISTS personas 
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT DEFAULT "" NOT NULL,
+    -- The name of the personas directory
+    -- Should be name-uuidv4
+    -- The name should be lowercased, with spaces replaced with hyphens
+    -- Ex: cyan-ea483976-e42c-42bb-9918-6314abc30b18
+    dir_name TEXT NOT NULL,
+    is_deleted BOOLEAN DEFAULT 0 NOT NULL,
+    is_default BOOLEAN DEFAULT 0 NOT NULL,
+    inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TEXT
+);
 
-// interface MigratorConfig {
-//   migrationDir: string;
-//   dbPath: string;
-// }
+CREATE TABLE IF NOT EXISTS cards 
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    -- The name of the card directory
+    -- Should be characterName-sha256
+    -- The characterName should be lowercased, with spaces replaced with hyphens
+    -- Ex: zephyr-ea483976-e42c-42bb-9918-6314abc30b18
+    dir_name TEXT NOT NULL,
+    is_deleted BOOLEAN DEFAULT 0 NOT NULL,
+    inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TEXT
+);
 
-// export class Migrator {
-//   private migrationsDir: string;
-//   private dbPath: string;
-//   private db: Database.Database;
+CREATE TABLE IF NOT EXISTS chats 
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    persona_id INTEGER NOT NULL,
+    card_id INTEGER NOT NULL,
+    inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TEXT,
+    FOREIGN KEY(persona_id) REFERENCES personas(id),
+    FOREIGN KEY(card_id) REFERENCES cards(id) ON DELETE CASCADE
+);
 
-//   constructor(config: MigratorConfig) {
-//     this.migrationsDir = config.migrationDir;
-//     this.dbPath = config.dbPath;
-//     this.db = new Database(this.dbPath);
-//   }
 
-//   ensureSchema() {
-//     const q = `
-//     CREATE TABLE IF NOT EXISTS schema_migrations (
-//       version TEXT NOT NULL PRIMARY KEY,
-//       statement TEXT,
-//       name TEXT
-//     )`.trim();
-//     this.db.exec(q);
-//   }
+CREATE TABLE IF NOT EXISTS message_candidates
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    message_id INTEGER NOT NULL,
+    text TEXT DEFAULT "" NOT NULL ,
+    inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TEXT,
+    FOREIGN KEY(message_id) REFERENCES messages(id) ON DELETE CASCADE
+);
 
-//   // Migrate the database to the latest version
-//   // TODO: Break this up
-//   async migrate() {
-//     this.ensureSchema();
-//     const dbMigrations = this.db.prepare("SELECT * FROM schema_migrations order by version").all() as Migration[];
-//     const dbVersion = dbMigrations[dbMigrations.length - 1]?.version || "0";
+CREATE TABLE IF NOT EXISTS messages
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    chat_id INTEGER NOT NULL,
+    text TEXT DEFAULT "" NOT NULL ,
+    sender TEXT NOT NULL CHECK(sender IN ('user', 'character')),
+    is_embedded BOOLEAN DEFAULT 0 NOT NULL,
+    prime_candidate_id INTEGER,
+    inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TEXT,
+    FOREIGN KEY(chat_id) REFERENCES chats(id) ON DELETE CASCADE,
+    FOREIGN KEY (prime_candidate_id) REFERENCES message_candidates (id)
+);
 
-//     // File name format: <version>_<name>.sql
-//     // Where version is a timestamp in the format YYYYMMDDHHMMSS
-//     // This format is lexicographically sortable
-//     const files = fs.readdirSync(this.migrationsDir);
-//     files.sort();
-//     const fileVersion = files[files.length - 1]?.split("_")[0] || "0";
-
-//     if (dbVersion === fileVersion) {
-//       console.log("Database is up to date");
-//       return;
-//     }
-
-//     if (dbVersion > fileVersion) {
-//       console.log(`Database version ${dbVersion} is ahead of file version ${fileVersion}`);
-//       return;
-//     }
-
-//     console.log(`Database version ${dbVersion} is behind file version ${fileVersion}`);
-//     console.log("Starting migration...");
-
-//     console.log(`Backing up db to ${this.dbPath}.bak`);
-//     fs.copyFileSync(this.dbPath, `${this.dbPath}.bak`);
-//     console.log("Backup complete.");
-
-//     console.log("Upgrading database...");
-//     const newMigrations = files.filter((file) => file > dbVersion);
-
-//     try {
-//       newMigrations.forEach((file) => {
-//         const [version, name] = file.split("_");
-//         const statement = fs.readFileSync(join(this.migrationsDir, file), { encoding: "utf8" });
-//         this.db.exec(statement);
-//         this.db
-//           .prepare("INSERT INTO schema_migrations (version, statement, name) VALUES (?, ?, ?)")
-//           .run(version, statement, name);
-//         console.log(`Migrated to version ${version}`);
-//       });
-
-//       console.log("Migration complete.");
-//     } catch (e) {
-//       console.log("Migration failed. Restoring database...");
-//       await this.restoreDB();
-//       console.log("Database restored.");
-//     }
-//   }
-
-//   async restoreDB() {
-//     const backupPath = `${this.dbPath}.bak`;
-//     if (fs.existsSync(backupPath)) {
-//       fs.copyFileSync(backupPath, this.dbPath);
-//     }
-//   }
-// }
+INSERT INTO cards (dir_name)
+VALUES
+    ('zephyr'),
+    ('eliza'),
+    ('astro'),
+    ('mai'),
+    ('lucy'),
+    ('yuno'),
+    ('miku'),
+    ('kurisu'),
+    ('rias');
+`;
