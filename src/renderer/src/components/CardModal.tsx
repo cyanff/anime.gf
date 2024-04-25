@@ -10,12 +10,11 @@ import EditCardModal from "@/components/EditCardModal";
 import { useApp } from "@/components/AppContext";
 interface CardModalProps {
   cardBundle: CardBundle;
-  syncCardBundles: () => void;
   onCreateChat: (cardID: number, greeting: string) => void;
 }
 
-function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps) {
-  const { createModal, closeModal } = useApp();
+function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
+  const { createModal, closeModal, syncCardBundles } = useApp();
 
   const handleExport = async () => {
     const cardDirRes = await queries.getCardDir(cardBundle.id);
@@ -37,12 +36,12 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
 
   const handleEdit = () => {
     closeModal();
-    createModal(<EditCardModal cardBundle={cardBundle} syncCardBundles={syncCardBundles} />);
+    createModal(<EditCardModal cardBundle={cardBundle} />);
   };
 
   return (
-    <div className="flex w-[45rem] items-center justify-center rounded-xl bg-background-secondary">
-      <div className="scroll-secondary h-[60rem] overflow-y-scroll rounded-xl">
+    <div className="flex h-[80vh] w-[36rem] items-center justify-center overflow-hidden rounded-xl bg-background-secondary">
+      <div className="scroll-secondary h-full w-full overflow-y-scroll rounded-xl">
         {/* Banner and profile picture */}
         <div className="relative rounded-xl">
           <img
@@ -63,9 +62,9 @@ function CardModal({ cardBundle, syncCardBundles, onCreateChat }: CardModalProps
           <div className="flex flex-row">
             <div className="w-[30rem] pr-10">
               <div className="pb-2 text-2xl font-semibold text-primary">{cardBundle.data.character.name}</div>
-              <p className="text-tertiary pb-1 text-sm font-semibold">{`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
+              <p className="pb-1 text-sm font-semibold text-tertiary">{`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
               {cardBundle.data.meta.updated_at && <p>{`Updated: ${cardBundle.data.meta.updated_at}`}</p>}{" "}
-              <p className="text-tertiary text-sm font-semibold">by @{cardBundle.data.meta.creator.card}</p>
+              <p className="text-sm font-semibold text-tertiary">by @{cardBundle.data.meta.creator.card}</p>
             </div>
             {/* Character tags */}
             <div className="mr-4 text-2xl font-semibold text-primary">Tags:</div>

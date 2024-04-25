@@ -2,12 +2,13 @@ import { useState } from "react";
 import SettingsPersona from "@/app/settings/settings_persona";
 import SettingsChat from "@/app/settings/settings_chat";
 import SettingsKeys from "@/app/settings/settings_keys";
+import SettingsRecentlyDeleted from "@/app/settings/settings_deleted";
 import { KeyIcon } from "@heroicons/react/24/solid";
 
 export default function SettingsPage() {
   const [page, setPage] = useState<string>("chat");
   return (
-    <div className="flex h-full w-full  rounded-xl bg-background-secondary">
+    <div className="bg-background-secondary flex h-full  w-full rounded-xl">
       {/*Sidebar*/}
       <div className="flex h-full w-56 shrink-0 flex-col space-y-2 overflow-hidden rounded-2xl bg-background px-3 py-8">
         <button
@@ -32,7 +33,15 @@ export default function SettingsPage() {
           ${page === "key" ? "bg-accent text-primary" : "text-secondary"}`}
           onClick={() => setPage("key")}
         >
-          Keys
+          API Key
+        </button>
+        <button
+          className={`group flex w-full cursor-pointer items-center space-x-3 
+          rounded-xl p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent
+          ${page === "deleted" ? "bg-accent text-primary" : "text-secondary"}`}
+          onClick={() => setPage("deleted")}
+        >
+          Recently Deleted
         </button>
       </div>
 
@@ -42,6 +51,7 @@ export default function SettingsPage() {
         {page === "persona" && <SettingsPersona />}
         {page === "chat" && <SettingsChat />}
         {page === "key" && <SettingsKeys />}
+        {page === "deleted" && <SettingsRecentlyDeleted />}
       </div>
     </div>
   );

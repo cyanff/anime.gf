@@ -1,5 +1,3 @@
-import { DialogConfig, useApp } from "@/components/AppContext";
-import EditCardModal from "@/components/EditCardModal";
 import Tag from "@/components/Tag";
 import {
   ContextMenu,
@@ -13,13 +11,17 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import { motion, useMotionValue } from "framer-motion";
 import { CardPattern } from "./ui/card-pattern";
+import { toast } from "sonner";
+
 interface CardProps {
   cardBundle: CardBundle;
-  openCardModal: () => void;
+  handleRestore: (cardBundle) => void;
+  handleDelete: (cardBundle) => void;
+  onClick: () => void;
+  selected: boolean;
 }
 
-function Card({ cardBundle, openCardModal }: CardProps) {
-  const { createModal, createDialog, syncCardBundles } = useApp();
+function CardDeleted({ cardBundle, handleRestore, handleDelete, onClick, selected }: CardProps) {
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 
@@ -28,19 +30,6 @@ function Card({ cardBundle, openCardModal }: CardProps) {
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
   }
-
-  const onDelete = () => {
-    const config: DialogConfig = {
-      title: `Delete ${cardBundle.data.character.name}`,
-      description: `Are you sure you want to delete ${cardBundle.data.character.name}?\n `,
-      actionLabel: "Delete",
-      onAction: async () => {
-        await queries.deleteCard(cardBundle.id);
-        syncCardBundles();
-      }
-    };
-    createDialog(config);
-  };
 
   return (
     <ContextMenu>
@@ -57,9 +46,9 @@ function Card({ cardBundle, openCardModal }: CardProps) {
           }}
         >
           <div
-            className="group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl bg-card p-2"
-            onClick={openCardModal}
+            className={`group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl bg-card p-2 ${selected ? "opacity-100" : "opacity-50"}`}
             onMouseMove={onMouseMove}
+            onClick={onClick}
           >
             <CardPattern mouseX={mouseX} mouseY={mouseY} />
             <img
@@ -82,26 +71,22 @@ function Card({ cardBundle, openCardModal }: CardProps) {
                   ))}
                 </div>
               </div>
-              <div className="text-tertiary absolute top-20 z-10 pl-5 text-left text-sm font-medium">
+              <div className="absolute top-20 z-10 pl-5 text-left text-sm font-medium text-secondary opacity-50">
                 by @{cardBundle.data.meta.creator.card}
               </div>
             </div>
           </div>
         </motion.button>
       </ContextMenuTrigger>
-      <ContextMenuContent className="w-40 px-1 py-2">
-        <ContextMenuItem
-          onSelect={() => {
-            createModal(<EditCardModal cardBundle={cardBundle} />);
-          }}
-        >
-          Edit
+      <ContextMenuContent className="w-52 px-1 py-2">
+        <ContextMenuItem onSelect={handleRestore}>
+          Restore
           <ContextMenuShortcut>
             <PencilIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
-        <ContextMenuItem onSelect={onDelete}>
-          Delete
+        <ContextMenuItem onSelect={handleDelete}>
+          Delete Permanently
           <ContextMenuShortcut>
             <TrashIcon className="size-4" />
           </ContextMenuShortcut>
@@ -111,4 +96,4 @@ function Card({ cardBundle, openCardModal }: CardProps) {
   );
 }
 
-export default Card;
+export default CardDeleted;

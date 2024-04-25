@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS chats
     inserted_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TEXT,
     FOREIGN KEY(persona_id) REFERENCES personas(id),
-    FOREIGN KEY(card_id) REFERENCES cards(id)
+    FOREIGN KEY(card_id) REFERENCES cards(id) ON DELETE CASCADE
 );
 
 
