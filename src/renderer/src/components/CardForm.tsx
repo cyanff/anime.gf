@@ -9,13 +9,13 @@ import { DeepPartial, useForm } from "react-hook-form";
 
 type FormType = "create" | "edit";
 
-interface CharacterFormProps {
+interface CardFormProps {
   cardBundle?: CardBundle;
   onSuccessfulSubmit(data: CardFormData): void;
   formType: FormType;
 }
 
-export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType }: CharacterFormProps) {
+export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: CardFormProps) {
   const [bannerDisplayImage, setBannerDisplayImage] = useState<string | undefined>();
   const [avatarDisplayImage, setAvatarDisplayImage] = useState<string | undefined>();
   const bannerInputRef = useRef<HTMLInputElement>(null);
@@ -87,7 +87,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
       {/* Banner and profile picture */}
       <div className="relative mb-12 shrink-0">
         <div
-          className="bg-action-secondary flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden opacity-75"
+          className="bg-action-tertiary flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden opacity-75"
           onClick={handleBannerClick}
         >
           {bannerDisplayImage ? (
@@ -108,7 +108,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
           />
         </div>
         <div
-          className="bg-action-secondary absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden
+          className="bg-action-tertiary absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden
             rounded-full"
           onClick={handleProfileClick}
         >
@@ -239,7 +239,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
                   <FormItem>
                     <FormLabel className="text-tx-primary">Tags</FormLabel>
                     <FormControl>
-                      <Input placeholder="add comma separated list of tags" {...field} />
+                      <Input placeholder="add a comma separated list of tags" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -262,7 +262,7 @@ export default function CharacterForm({ cardBundle, onSuccessfulSubmit, formType
               <div className="flex justify-end space-x-3">
                 {formType === "edit" && (
                   <button
-                    className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-action-secondary"
+                    className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:brightness-90"
                     type="button"
                     onClick={() => {
                       form.reset(initialData);
