@@ -68,7 +68,6 @@
         --action-tertiary: hsl(0, 0%, 25%);    /* Neutral for tertiary action buttons */ 
   }
 
-
    /* Sakura Bloom light theme */
    .sakura-bloom {
     /* Logo button gradients */
@@ -133,6 +132,197 @@
     --action-tertiary: hsl(340, 40%, 90%);    /* Pale pink for tertiary action buttons */ 
   }
 
+  .artic-dark {
+    /* Logo button gradients */
+    --logo-from: hsl(210, 90%, 60%);
+    --logo-to: hsl(210, 90%, 70%);
+  
+    /* Background */
+    --background: hsl(210, 22%, 10%);
+  
+    /* Navigational elements: sidebar, chat sidebar, settings sidebar */
+    --nav-primary: hsl(210, 22%, 8%);
+    --nav-secondary: hsl(210, 22%, 12%);
+  
+    /* Containers that lie on top of backgrounds */
+    --container-primary: hsl(210, 22%, 8%);
+    --container-secondary: hsl(210, 22%, 12%);
+    --container-tertiary: hsl(210, 22%, 18%);
+  
+    /* Text colors */
+    --tx-primary: hsl(210, 90%, 98%);
+    --tx-secondary: hsl(210, 90%, 85%);
+    --tx-tertiary: hsl(210, 90%, 72%);
+  
+    /* Input elements, combo box, input */
+    --input-primary: hsl(210, 22%, 15%);
+    --input-secondary: hsl(210, 22%, 13%);
+    --input-tertiary: hsl(210, 22%, 17%);
+  
+    /* Chat */
+    /* User message */
+    --chat-user-from: hsl(210, 50%, 60%);
+    --chat-user-to: hsl(210, 50%, 58%);
+    --chat-user-blockquote-bar: hsl(210, 50%, 46%);
+  
+    /* Character message */
+    --chat-character-from: hsl(210, 22%, 15%);
+    --chat-character-to: hsl(210, 22%, 18%);
+    --chat-character-blockquote-bar: hsl(210, 22%, 23%);
+  
+    /* Cards in the collections page */
+    --collection-card: hsl(210, 22%, 15%);
+    --collection-card-hover: hsl(210, 22%, 13%);
+    --collection-card-tag: hsl(210, 22%, 10%);
+  
+    /* Hover color */
+    --accent: hsl(210, 50%, 60%);
+  
+    /* Borders and Separators */
+    --line: hsl(210, 22%, 13%);
+  
+    /* Scroll bar */
+    --scroll-primary-thumb: hsl(210, 22%, 10%);
+    --scroll-primary-track: hsl(210, 22%, 13%);
+    --scroll-secondary-thumb: hsl(210, 22%, 18%);
+    --scroll-secondary-track: hsl(210, 22%, 21%);
+  
+    /* Floating elements, ex: modals, popovers, dialogs */
+    --float: hsl(210, 22%, 8%);
+  
+    /* Action, (buttons) elements */
+    --action-primary: hsl(210, 70%, 70%);
+    --action-secondary: hsl(210, 50%, 70%);
+    --action-tertiary: hsl(210, 22%, 20%);
+  }
+
+  .midnight-red{
+    /* Logo button gradients */
+    --logo-from: hsl(0, 75%, 45%);
+    --logo-to: hsl(345, 75%, 55%);
+  
+    /* Background */
+    --background: hsl(230, 20%, 14%);
+  
+    /* Navigational elements: sidebar, chat sidebar, settings sidebar */
+    --nav-primary: hsl(230, 30%, 12%);
+    --nav-secondary: hsl(230, 25%, 15%);
+  
+    /* Containers that lie on top of backgrounds */
+    --container-primary: hsl(230, 30%, 12%);
+    --container-secondary: hsl(230, 25%, 15%);
+    --container-tertiary: hsl(230, 20%, 18%);
+  
+    /* Text colors */
+    --tx-primary: hsl(0, 0%, 98%);
+    --tx-secondary: hsl(0, 0%, 75%);
+    --tx-tertiary: hsl(0, 0%, 50%);
+  
+    /* Input elements, combo box, input */
+    --input-primary: hsl(230, 25%, 20%);
+    --input-secondary: hsl(230, 20%, 18%);
+    --input-tertiary: hsl(230, 30%, 22%);
+  
+    /* Chat */
+    /* User message */
+    --chat-user-from: hsl(345, 77%, 53%);
+    --chat-user-to: hsl(345, 70%, 40%);
+    --chat-user-blockquote-bar: hsl(345, 85%, 30%);
+  
+    /* Character message */
+    --chat-character-from: hsl(230, 20%, 20%);
+    --chat-character-to: hsl(230, 20%, 24%);
+    --chat-character-blockquote-bar: hsl(230, 20%, 28%);
+  
+    /* Cards in the collections page */
+    --collection-card: hsl(230, 25%, 22%);
+    --collection-card-hover: hsl(230, 25%, 28%);
+    --collection-card-tag: hsl(230, 20%, 18%);
+  
+    /* Hover color */
+    --accent: hsl(345, 85%, 55%);
+  
+    /* Borders and Separators */
+    --line: hsl(230, 25%, 20%);
+  
+    /* Scroll bar */
+    --scroll-primary-thumb: hsl(230, 30%, 12%);
+    --scroll-primary-track: hsl(230, 25%, 18%);
+    --scroll-secondary-thumb: hsl(230, 25%, 20%);
+    --scroll-secondary-track: hsl(230, 25%, 25%);
+  
+    /* Floating elements, ex: modals, popovers, dialogs */
+    --float: hsl(230, 30%, 12%);
+  
+    /* Action, (buttons) elements */
+    --action-primary: hsl(345, 77%, 48%);
+    --action-secondary: hsl(230, 25%, 55%);
+    --action-tertiary: hsl(230, 25%, 25%);
+  } 
+
+  .twilight {
+    /* Logo button gradients */
+    --logo-from: hsl(244, 100%, 65%); 
+    --logo-to: hsl(240, 100%, 75%);
+  
+    /* Background */
+    --background: hsl(240, 30%, 8%);  
+  
+    /* Navigational elements ex: sidebar, chat sidebar, settings sidebar */
+    --nav-primary: hsl(240, 30%, 6%); 
+    --nav-secondary: hsl(240, 30%, 9%);
+  
+    /* Containers that lie on top of backgrounds */
+    --container-primary: hsl(240, 30%, 6%);
+    --container-secondary: hsl(240, 30%, 9%);
+    --container-tertiary: hsl(240, 30%, 16%); 
+  
+    /* Text colors */
+    --tx-primary: hsl(210, 100%, 98%); 
+    --tx-secondary: hsl(223, 100%, 85%);
+    --tx-tertiary: hsl(227, 48%, 62%);
+  
+    /* Input elements, combo box, input */
+    --input-primary: hsl(240, 30%, 12%);
+    --input-secondary: hsl(240, 30%, 10%);
+    --input-tertiary: hsl(240, 30%, 14%);
+  
+    /* Chat */
+    /* User message */
+    --chat-user-from: hsl(240, 52%, 60%);
+    --chat-user-to: hsl(240, 47%, 58%);
+    --chat-user-blockquote-bar: hsl(240, 43%, 46%);
+  
+    /* Character message */
+    --chat-character-from: hsl(240, 30%, 12%);
+    --chat-character-to: hsl(240, 30%, 15%);
+    --chat-character-blockquote-bar: hsl(240, 30%, 20%);
+  
+    /* Cards in the collections page */
+    --collection-card: hsl(240, 29%, 13%);
+    --collection-card-hover: hsl(240, 30%, 11%);
+    --collection-card-tag: hsl(240, 30%, 8%);
+  
+    /* Hover color */
+    --accent: hsl(237, 44%, 54%);  
+  
+    /* Borders and Separators */
+    --line: hsl(240, 30%, 10%);  
+  
+    /* Scroll bar */
+    --scroll-primary-thumb: hsl(240, 30%, 7%);
+    --scroll-primary-track: hsl(240, 30%, 10%);
+    --scroll-secondary-thumb: hsl(240, 30%, 15%);
+    --scroll-secondary-track: hsl(240, 30%, 18%);
+  
+    /* Floating elements, ex: modals, popovers, dialogs */
+    --float: hsl(240, 30%, 6%); 
+  
+    /* Action, (buttons) elements */
+    --action-primary: hsl(237, 74%, 69%);  
+    --action-secondary: hsl(240, 50%, 70%);  
+    --action-tertiary: hsl(240, 30%, 20%); 
+  }
 
 
 }
