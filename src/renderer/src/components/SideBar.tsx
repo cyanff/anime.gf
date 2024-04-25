@@ -22,17 +22,13 @@ export default function SideBar({ page, setPage }: SideBarProps) {
 
       {/* Top Button Group*/}
       <div className="flex flex-col">
-        <Button
-          size="icon"
-          className={`m-2 size-16 rounded-xl ${page === "create" ? "bg-background" : ""}`}
-          onClick={() => setPage("create")}
-        >
+        <Button size="icon" className={"m-2 size-16 rounded-xl hover:bg-accent"} onClick={() => setPage("create")}>
           <PlusCircleIcon className="text-tx-secondary size-8" />
         </Button>
-        <Button className="m-2 size-16  rounded-xl hover:bg-accent " onClick={() => setPage("chats")}>
+        <Button className="m-2 size-16 rounded-xl hover:bg-accent " onClick={() => setPage("chats")}>
           <ChatBubbleLeftRightIcon className="text-tx-secondary size-8" />
         </Button>
-        <Button className="m-2 size-16  rounded-xl hover:bg-accent" onClick={() => setPage("collections")}>
+        <Button className="m-2 size-16 rounded-xl hover:bg-accent" onClick={() => setPage("collections")}>
           <UserGroupIcon className="text-tx-secondary size-8" />
         </Button>
         <Button className="m-2 size-16 rounded-xl hover:bg-accent" onClick={() => setPage("settings")}>

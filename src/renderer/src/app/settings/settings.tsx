@@ -8,13 +8,7 @@ import { KeyIcon } from "@heroicons/react/24/solid";
 export default function SettingsPage() {
   const [page, setPage] = useState<string>("chat");
   return (
-<<<<<<< HEAD
-    <div className="flex h-full  w-full rounded-xl">
-||||||| parent of fb140c1 (theming work)
-    <div className="flex h-full w-full  rounded-xl bg-background-secondary">
-=======
     <div className="flex h-full w-full rounded-xl">
->>>>>>> fb140c1 (theming work)
       {/*Sidebar*/}
       <div className="flex h-full w-56 shrink-0 flex-col space-y-2 overflow-hidden rounded-2xl bg-nav-secondary px-3 py-8">
         <button
@@ -41,9 +35,8 @@ export default function SettingsPage() {
           API Key
         </button>
         <button
-          className={`group flex w-full cursor-pointer items-center space-x-3 
-          rounded-xl p-2.5 text-[1.07rem] font-[450] transition duration-150 ease-out hover:bg-accent
-          ${page === "deleted" ? "bg-accent text-primary" : "text-secondary"}`}
+          className={`group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5 text-[1.07rem] font-[450] transition
+          duration-150 ease-out hover:bg-accent ${page === "deleted" ? "bg-accent text-tx-primary" : "text-tx-secondary"}`}
           onClick={() => setPage("deleted")}
         >
           Recently Deleted

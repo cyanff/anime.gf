@@ -53,7 +53,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
         transition={{ duration: 0.2 }}
         variants={sidebarVariants}
       >
-        <div className="bg-container-primary flex h-full w-80 flex-col overflow-hidden rounded-3xl">
+        <div className="bg-container-secondary flex h-full w-80 flex-col overflow-hidden rounded-3xl">
           {/*Top Section */}
           <div className="flex grow flex-col py-3">
             {/* Search Bar Wrapper*/}
@@ -117,7 +117,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
             </div>
           </div>
           {/*Bottom Section */}
-          <div className="bg-container-secondary flex h-16 w-full shrink-0 flex-row p-3">
+          <div className="bg-container-tertiary flex h-16 w-full shrink-0 flex-row p-3">
             <div className="relative">
               <img src={personaBundle.avatarURI || ""} alt="Avatar" className="h-10 w-10 rounded-full" />
               <span className="ring-container-secondary absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 ring-4"></span>
@@ -138,7 +138,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
           setSidebarOpen(!sidebarOpen);
         }}
       >
-        <div className="h-10 w-1.5 rounded-full bg-action-secondary transition duration-100 ease-out group-hover:bg-accent"></div>
+        <div className="h-10 w-1.5 rounded-full bg-action-tertiary transition duration-100 ease-out group-hover:bg-accent"></div>
       </button>
     </div>
   );

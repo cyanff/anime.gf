@@ -133,11 +133,11 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
         {/* Sort By Selection*/}
         <div className="flex">
           <Select onValueChange={(v) => setSortBy(v)} value={sortBy}>
-            <SelectTrigger className="h-12 select-none space-x-2 rounded-xl font-medium text-tx-primary">
+            <SelectTrigger className="h-12 select-none space-x-2 rounded-xl font-medium text-tx-secondary">
               <Bars3BottomLeftIcon height="24px" />
               <SelectValue placeholder={sortBy === "" ? "Select a filter" : sortBy} />
             </SelectTrigger>
-            <SelectContent className="">
+            <SelectContent className="text-tx-secondary">
               {sortByNameAndValue.map((nameAndValue, idx) => (
                 <SelectItem key={idx} value={nameAndValue.value}>
                   {nameAndValue.name}

@@ -54,7 +54,7 @@ export default function ChatsSearchModal() {
   return (
     <div className="flex h-[45rem] w-[40rem] flex-col space-y-6 rounded-2xl bg-float px-16 py-8">
       {/* Search bar */}
-      <div className="flex h-fit w-full shrink-0 items-center space-x-3 overflow-hidden rounded-2xl bg-card py-2 pl-1 bg-input-primary">
+      <div className="flex h-fit w-full shrink-0 items-center space-x-3 overflow-hidden rounded-2xl bg-card py-1 pl-1 bg-input-primary">
         <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 font-[500] text-tx-secondary" />
         <input
           className="h-12 grow bg-inherit text-tx-primary focus:outline-none "
@@ -72,8 +72,8 @@ export default function ChatsSearchModal() {
             return (
               <div
                 key={idx}
-                className="flex bg-accent h-[4.5rem] w-full cursor-pointer items-center rounded-xl px-3 py-3 transition duration-200 ease-out
-                  hover:brightness-90"
+                className="flex bg-container-secondary h-[4.5rem] w-full cursor-pointer items-center rounded-sm px-3 py-3 transition duration-200
+                  ease-out hover:brightness-90"
                 onClick={() => {
                   setChatID(result.id);
                   closeModal();

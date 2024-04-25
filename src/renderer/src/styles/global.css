@@ -66,74 +66,71 @@
     --action-secondary: hsl(0, 0%, 24%);
     --action-tertiary: hsl(0, 0%, 19%);
 
-    /* Border Radius */
-    --radius: 0.8rem;
   }
 
   .magenta {
     /* Logo button gradients */
-    --logo-from: hsl(300, 55%, 52%);
-    --logo-to: hsl(300, 50%, 84%);
+    --logo-from: hsl(334, 55%, 52%);  /* Darker magenta */
+    --logo-to: hsl(331, 50%, 84%);    /* Lighter magenta gradient */
 
-    /* Background of the overall app */
-    --background: hsl(270, 30%, 12%);
-
+    --background: hsl(0, 0%, 18%);  
+  
     /* Navigational elements ex: sidebar, chat sidebar, settings sidebar */
-    --nav-primary: hsl(270, 30%, 14%);
-    --nav-secondary: hsl(270, 30%, 16%);
+    --nav-primary: hsl(0, 0%, 12%);  
+    --nav-secondary: hsl(0, 0%, 15%);
 
     /* Containers that lie on top of backgrounds */
-    --container-primary: hsl(270, 30%, 16%);
-    --container-secondary: hsl(270, 30%, 22%);
-    --container-tertiary: hsl(270, 30%, 28%);
+    --container-primary: hsl(0, 0%, 12%); /* Moderate dark constrast vs background */
+    --container-secondary: hsl(0, 0%, 15%);  /* Low constrast vs background */
+    --container-tertiary: hsl(0, 0%, 22%);  /* Moderate light constrast vs background */
 
     /* Text colors */
-    --tx-primary: hsl(0, 0%, 98%);
-    --tx-secondary: hsl(0, 0%, 80%);
-    --tx-tertiary: hsl(0, 0%, 60%);
+    --tx-primary: hsl(0, 0%, 98%);  /* Very light grey for primary text */
+    --tx-secondary: hsl(0, 0%, 75%);  /* Dimmer grey for secondary text */
+    --tx-tertiary: hsl(0, 0%, 50%);  /* Darker grey for tertiary text */
 
-    /* Input elements */
-    --input-primary: hsl(270, 30%, 24%);
-    --input-secondary: hsl(270, 30%, 30%);
-    --input-tertiary: hsl(270, 30%, 36%);
+    /* Input elements, combo box, input */
+    --input-primary: hsl(0, 0%, 24%);   /* Moderate dark constrast vs background */
+    --input-secondary: hsl(0, 0%, 22%);  /* Low contrast vs background */
+    --input-tertiary: hsl(0, 0%, 28%);  /* Moderate light contrast vs background */
 
     /* Chat */
     /* User message */
-    --chat-user-from: hsl(300, 55%, 44%);
-    --chat-user-to: hsl(300, 32%, 37%);
-    --chat-user-blockquote-bar: hsl(300, 50%, 30%);
+    --chat-user-from: hsl(334, 55%, 49%);  /* Magenta shade for user message start */
+    --chat-user-to: hsl(334, 55%, 45%);    /* Darker magenta for user message end */
+    --chat-user-blockquote-bar: hsl(334, 55%, 30%);  /* Darkest magenta for quote bar */
+
     /* Character message*/
-    --chat-character-from: hsl(270, 30%, 23%);
-    --chat-character-to: hsl(270, 30%, 28%);
-    --chat-character-blockquote-bar: hsl(270, 30%, 30%);
+    --chat-character-from: hsl(0, 0%, 24%);  
+    --chat-character-to: hsl(0, 0%, 27%); 
+    --chat-character-blockquote-bar: hsl(0, 0%, 30%);  /* Even darker slate for quote bar */
 
     /* Cards in the collections page */
-    --collection-card: hsl(270, 30%, 24%);
-    --collection-card-hover: hsl(270, 30%, 27%);
-    --collection-card-tag: hsl(270, 30%, 18%);
+    --collection-card: hsl(0, 0%, 26%);
+    --collection-card-hover: hsl(0, 0%, 31%);  /* Slightly lighter on hover */
+    --collection-card-tag: hsl(0, 0%, 20%); 
 
     /* Hover color */
-    --accent: hsl(300, 55%, 25%);
+    --accent: hsl(0, 0%, 23%);  /* Slighly lighter than background */
+
     /* Borders and Separators */
-    --line: hsl(270, 30%, 18%);
+    --line: hsl(0, 0%, 23%);  /* Subtle dark lines for separators */
 
     /* Scroll bar */
-    --scroll-primary-thumb: hsl(270, 30%, 35%);
-    --scroll-primary-track: hsl(270, 30%, 18%);
-    --scroll-secondary-thumb: hsl(270, 30%, 25%);
-    --scroll-secondary-track: hsl(270, 30%, 20%);
+    --scroll-primary-thumb: hsl(0, 0%, 9%);
+    --scroll-primary-track: hsl(0, 0%, 16%);
+    --scroll-secondary-thumb: hsl(0, 0%, 20%);
+    --scroll-secondary-track: hsl(0, 0%, 25%);
 
     /* Floating elements, ex: modals, popovers, dialogs */
-    --float: hsl(270, 30%, 9%);
+    --float: hsl(0, 0%, 12%);  /* Darker than background */
 
     /* Action, (buttons) elements */
-    --action-primary: hsl(300, 55%, 52%);
-    --action-secondary: hsl(270, 30%, 24%);
-    --action-tertiary: hsl(270, 30%, 19%);
-
-    /* Border Radius */
-    --radius: 0.8rem;
+    --action-primary: hsl(334, 55%, 52%);  /* Magenta for primary action buttons */
+    --action-secondary: hsl(0, 0%, 55%);  /* Dark slate for secondary buttons */
+    --action-tertiary: hsl(0, 0%, 25%);  /* Darker slate for tertiary buttons */
   }
+
 
 
 }
@@ -152,9 +149,11 @@
   --font-inter: "Inter", sans-serif;
     /* Hard coded variables referenced by radix ui, cannot remove */
     /* Don't use these in custom themes */
-    --popover: var(--float);
-    --popover-foreground: var(--tx-primary);
+  --popover: var(--float);
+  --popover-foreground: var(--tx-primary);
+  --radius: 0.8rem;
   font-weight: 480;
+
 }
 
 

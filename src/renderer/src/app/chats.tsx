@@ -289,11 +289,7 @@ function ChatsPage({ chatID }): JSX.Element {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.13, delay: 0.12 }}
     >
-      <ChatsSidebar
-        chatID={chatID}
-        personaBundle={personaBundle}
-        syncChatHistory={syncChatHistory}
-      />
+      <ChatsSidebar chatID={chatID} personaBundle={personaBundle} syncChatHistory={syncChatHistory} />
       {/* Main Content */}
       <div className="flex h-full w-full grow flex-row overflow-hidden">
         {/* Chat Area and Chat Bar Wrapper*/}
@@ -302,7 +298,7 @@ function ChatsPage({ chatID }): JSX.Element {
           <div
             ref={chatAreaRef}
             onScroll={handleScroll}
-            className="scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-y-scroll px-5 py-1 transition duration-500 ease-out"
+            className="scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-auto px-5 py-1 transition duration-500 ease-out"
           >
             {chatHistory?.map((message, idx) => {
               const iso = time.sqliteToISO(message.inserted_at);
