@@ -53,7 +53,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
         transition={{ duration: 0.2 }}
         variants={sidebarVariants}
       >
-        <div className="bg-container-primary flex h-full w-80 flex-col overflow-hidden rounded-3xl">
+        <div className="bg-nav-primary flex h-full w-80 flex-col overflow-hidden rounded-3xl">
           {/*Top Section */}
           <div className="flex grow flex-col py-3">
             {/* Search Bar Wrapper*/}

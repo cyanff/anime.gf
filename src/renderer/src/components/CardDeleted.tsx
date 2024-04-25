@@ -16,12 +16,12 @@ import { toast } from "sonner";
 interface CardProps {
   cardBundle: CardBundle;
   handleRestore: (cardBundle) => void;
-  handleDelete: (cardBundle) => void;
+  handleSingleDelete: (cardBundle) => void;
   onClick: () => void;
   selected: boolean;
 }
 
-function CardDeleted({ cardBundle, handleRestore, handleDelete, onClick, selected }: CardProps) {
+function CardDeleted({ cardBundle, handleRestore, handleSingleDelete, onClick, selected }: CardProps) {
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 
@@ -79,13 +79,13 @@ function CardDeleted({ cardBundle, handleRestore, handleDelete, onClick, selecte
         </motion.button>
       </ContextMenuTrigger>
       <ContextMenuContent className="w-52 px-1 py-2">
-        <ContextMenuItem onSelect={handleRestore}>
+        <ContextMenuItem  onSelect={() => handleRestore(cardBundle)}>
           Restore
           <ContextMenuShortcut>
             <PencilIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
-        <ContextMenuItem onSelect={handleDelete}>
+        <ContextMenuItem onSelect={() => handleSingleDelete(cardBundle)}>
           Delete Permanently
           <ContextMenuShortcut>
             <TrashIcon className="size-4" />
