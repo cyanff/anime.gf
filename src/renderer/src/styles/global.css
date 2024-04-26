@@ -87,7 +87,7 @@
     /* Text colors */
     --tx-primary: hsl(0, 0%, 98%); /* Very light grey for primary text */
     --tx-secondary: hsl(0, 0%, 77%); /* Dimmer against background */
-    --tx-tertiary: hsl(0, 0%, 50%); /*  Dimmest against background */
+    --tx-tertiary: hsl(0, 0%, 45%); /*  Dimmest against background */
 
     /* Input elements, combo box, input */
     --input-primary: hsl(0, 0%, 24%); /* Moderate dark constrast vs background */

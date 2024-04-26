@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { card } from "@/lib/card";
 import {
+  ArrowDownOnSquareIcon,
   BookOpenIcon,
   ChatBubbleLeftRightIcon,
   Cog8ToothIcon,
+  PencilSquareIcon,
   PlusCircleIcon,
   UserGroupIcon
 } from "@heroicons/react/24/solid";
@@ -28,7 +30,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
   const cardImportInputRef = useRef<HTMLInputElement>(null);
   const { syncCardBundles } = useApp();
 
-  async function cardInputChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
+  async function cardImportInputChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (!files) return;
     const res = await card.importFromFileList(files);
@@ -54,7 +56,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
         className="hidden"
         type="file"
         accept=".zip"
-        onChange={cardInputChangeHandler}
+        onChange={cardImportInputChangeHandler}
         multiple
       />
       <LogoButton className="mb-4 size-12" />
@@ -67,20 +69,22 @@ export default function SideBar({ page, setPage }: SideBarProps) {
               <PlusCircleIcon className="text-tx-secondary size-8" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent sideOffset={-15} className="*:text-tx-primary font-medium">
+          <DropdownMenuContent sideOffset={-15} className="*:text-tx-primary font-medium p-1.5">
             <DropdownMenuItem
               onSelect={() => {
                 setPage("create");
               }}
             >
-              Create a Card
+              <PencilSquareIcon className="size-4 text-tx-secondary mr-2" />
+              <span>Create Card</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() => {
                 cardImportInputRef!.current?.click();
               }}
             >
-              Import a Card
+              <ArrowDownOnSquareIcon className="size-4 text-tx-secondary mr-2" />
+              <span> Import Card </span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

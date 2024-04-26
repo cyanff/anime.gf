@@ -56,7 +56,7 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
   }, [searchInput, cardBundles]);
 
   /**
-   * A function to compare two `CardBundle` objects based on the current `sortBy` and `descending` state.
+   * Compares two `CardBundle` objects based on the current `sortBy` and `descending` state.
    *
    * @param a - The first `CardBundle` object to compare.
    * @param b - The second `CardBundle` object to compare.

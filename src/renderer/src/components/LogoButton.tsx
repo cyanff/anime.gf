@@ -6,22 +6,31 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 interface LogoButtonProps {
   className?: string;
   [key: string]: any;
 }
 
+interface Theme {
+  internal: string;
+  display: string;
+}
+
 export default function LogoButton({ className, rest }: LogoButtonProps) {
-  const [themes, setThemes] = useState<string[]>([]);
   const { setTheme } = useTheme();
 
-  useEffect(() => {
-    const storedThemes = ["anime-gf", "sakura-bloom", "artic-dark", "midnight-red", "twilight", "custom"];
-
-    setThemes(storedThemes);
-  }, []);
+  const themes: Theme[] = useMemo(
+    () => [
+      { internal: "anime-gf", display: "Anime.gf" },
+      { internal: "sakura-bloom", display: "Sakura Bloom" },
+      { internal: "artic-dark", display: "Arctic Dark" },
+      { internal: "midnight-red", display: "Midnight Red" },
+      { internal: "twilight", display: "Twilight" }
+    ],
+    []
+  );
 
   return (
     <DropdownMenu>
@@ -34,8 +43,8 @@ export default function LogoButton({ className, rest }: LogoButtonProps) {
       <DropdownMenuContent align="end">
         <div>
           {themes.map((theme) => (
-            <DropdownMenuItem key={theme} onClick={() => setTheme(theme)}>
-              {theme}
+            <DropdownMenuItem key={theme.internal} onClick={() => setTheme(theme.internal)}>
+              {theme.display}
             </DropdownMenuItem>
           ))}
         </div>

@@ -9,7 +9,7 @@ import {
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
 import { queries } from "@/lib/queries";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { ArrowUpOnSquareIcon, ChatBubbleLeftRightIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import { motion, useMotionValue } from "framer-motion";
 import { CardPattern } from "./ui/card-pattern";
@@ -93,7 +93,20 @@ function Card({ cardBundle, openCardModal }: CardProps) {
           </div>
         </motion.button>
       </ContextMenuTrigger>
-      <ContextMenuContent className="w-40 px-1 py-2">
+      <ContextMenuContent className="w-36 px-1 py-2">
+        <ContextMenuItem onSelect={() => {}}>
+          Start Chat
+          <ContextMenuShortcut>
+            <ChatBubbleLeftRightIcon className="size-4" />
+          </ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem onSelect={() => {}}>
+          Export
+          <ContextMenuShortcut>
+            <ArrowUpOnSquareIcon className="size-4" />
+          </ContextMenuShortcut>
+        </ContextMenuItem>
+
         <ContextMenuItem
           onSelect={() => {
             createModal(<EditCardModal cardBundle={cardBundle} />);
