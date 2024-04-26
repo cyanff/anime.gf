@@ -1,6 +1,7 @@
 # anime.gf
 
 ![image](https://github.com/cyanff/anime.gf/assets/42996044/306d1caf-d6ec-4370-92f6-2328de3a8956)
+![AI-gameview-demo-themes](https://github.com/cyanff/anime.gf/assets/42996044/b55a2d25-d5db-4d36-a5ba-53ead90fc069)
 
 anime.gf is a private & open source LLM frontend. User-friendly, multi-API support (OpenAI, Anthropic, Mistral, Together AI), Configurable LLM generation settings, Customizable themes. Open source waifus on the desktop. Alpha Early Access v0.0.1™® 
 
