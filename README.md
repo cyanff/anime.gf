@@ -65,10 +65,9 @@ If you encounter any issues or have questions, please don't hesitate to ask us o
 Made with ❤️ by cyan and snavu @[moecorp](https://www.anime.gf/)
 
 ## Contacts
-- Discord:  _cyan_
-- Twitter:  abyssalblue_
-- Discord:  snafu_xd
-- Twitter:  snafu_0x0
-
+- Discord:  `_cyan_`
+- Twitter:  `abyssalblue_`
+- Discord:  `snafu_xd`
+- Twitter:  `snafu_0x0`
 - Email: hello@moecorp.co
 
