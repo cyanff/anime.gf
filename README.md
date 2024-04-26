@@ -39,7 +39,7 @@ anime.gf is a private & open source LLM frontend. User-friendly, multi-API suppo
 ### Customize Theme
 ![AI-gameview-demo-themes](https://github.com/cyanff/anime.gf/assets/42996044/b55a2d25-d5db-4d36-a5ba-53ead90fc069)
 - The release build comes with preset themes
-- To edit themes, you have to download the source and manually edit the global.css file, then rebuild the project (npm run dev for dev build, npm run build:win for windows build)
+- To edit themes, you have to download the source and manually edit the css file
 - Theme editing in the app is a WIP feature!    
 
 ## Planned 
