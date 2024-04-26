@@ -13,10 +13,9 @@ anime.gf is a private & open source LLM frontend. User-friendly, multi-API suppo
 - User personas 
 - Chat reset, delete
 - Message rewind
-- Reponse regeneration
+- Response regeneration
 - Support for OpenAI, Anthropic, Mistral, Together AI backends
 - LLM generation settings
-- Message streaming
 - Jailbreak prompt
 - Customizable themes
 
