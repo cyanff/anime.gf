@@ -19,4 +19,19 @@ anime.gf is a private & open source LLM frontend. User-friendly, multi-API suppo
 - Customizable themes
 
 ## Installation
-- 
+- download the latest [release](https://github.com/cyanff/anime.gf/releases) and run the `setup.exe`
+- that's it!
+
+## Usage
+### Set provider, API Key, and model
+![AI-gameview-demo-usage-api](https://github.com/cyanff/anime.gf/assets/42996044/9b57af93-39c8-4f5d-90a5-2a63a8d3ca16)
+- navigate to settings -> API Key -> select provider and paste your API key -> save -> navigate to Chat settings -> select same provider and select model -> save   
+
+### Create Persona
+![AI-gameview-demo-usage-persona](https://github.com/cyanff/anime.gf/assets/42996044/6deb1a5c-f674-4722-8eaf-93d19e57d434)
+- navigate to settings -> Persona -> New -> fill out persona details -> Create
+
+### Start a new chat!
+![AI-gameview-demo-usage-chat](https://github.com/cyanff/anime.gf/assets/42996044/20aee910-ac04-4f17-b216-2fd0ec9f30bc)
+
+
