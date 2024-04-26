@@ -111,7 +111,6 @@ export default function App() {
         createModal,
         closeModal,
         syncCardBundles,
-        setActiveChatToMostRecent,
         setActiveChatID,
         setPage
       }}

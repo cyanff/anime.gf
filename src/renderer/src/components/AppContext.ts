@@ -15,7 +15,6 @@ interface AppContextProps {
   closeModal: () => void;
   setActiveChatID: (id: number) => void;
   syncCardBundles: () => void;
-  setActiveChatToMostRecent: () => void;
   setPage(page: string): void;
 }
 

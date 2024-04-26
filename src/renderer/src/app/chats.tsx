@@ -35,64 +35,28 @@ function ChatsPage({ chatID }): JSX.Element {
   // Used to keep track of the (old) scroll height so we could restore it
   const oldScrollHeightRef = useRef(0);
   const scrollEventRef = useRef<ScrollEvent | null>(null);
-  const [isPageLoading, setIsPageLoading] = useState(true);
+  const { setActiveChatID } = useApp();
 
-  const { setActiveChatToMostRecent } = useApp();
-
-  // Sync states with db on load
   useEffect(() => {
-    // Check if the given chatID exists
-
     (async () => {
-      try {
-        const chatExistsRes = await queries.checkChatExists(chatID);
-
-        if (chatExistsRes.kind === "ok" && !chatExistsRes.value) {
-          console.error(`Chat with ID ${chatID} does not exist. Setting active chat to most recent.`);
-          setActiveChatToMostRecent();
+      const chatExistsRes = await queries.checkChatExists(chatID);
+      // If active chat does not exist, set the most recent chat to be the active chat
+      if (chatExistsRes.kind === "ok" && !chatExistsRes.value) {
+        console.error(`Chat with ID ${chatID} does not exist. Setting active chat to most recent.`);
+        const recentChatRes = await queries.getMostRecentChat();
+        if (recentChatRes.kind === "ok" && recentChatRes.value) {
+          setActiveChatID(recentChatRes.value);
           return;
         }
-
-        if (chatExistsRes.kind === "err") {
-          console.error(`Failed to check if chat with ID ${chatID} exists.`);
-        }
-
-        await syncCardBundle();
-        await syncPersonaBundle();
-        await syncChatHistory();
-      } catch (e) {
-        toast.error("Failed to sync chat states with db.");
-        console.error(e);
-      } finally {
-        // Scroll to the bottom of the chat on load
-        setTimeout(scrollToBottom, 100);
-        setIsPageLoading(false);
       }
+      await syncChatHistory();
+      await syncPersonaBundle();
+      await syncCardBundle();
+      setTimeout(() => {
+        scrollToBottom();
+      }, 200);
     })();
   }, [chatID]);
-
-  // Sync chat history when the chat history limit changes as users scroll up
-  useEffect(() => {
-    syncChatHistory();
-  }, [chatHistoryLimit]);
-
-  useLayoutEffect(() => {
-    // Scroll to bottom on character message
-    if (scrollEventRef.current === ScrollEvent.NEW_CHARACTER_MESSAGE) {
-      scrollToBottom();
-    }
-    // Restore scroll position after loading more messages
-    else if (scrollEventRef.current === ScrollEvent.SCROLLED_TO_TOP) {
-      const delta = chatAreaRef.current!.scrollHeight - oldScrollHeightRef.current;
-      chatAreaRef.current!.scrollTop = delta;
-    }
-  }, [chatHistory]);
-
-  const scrollToBottom = () => {
-    if (chatAreaRef.current) {
-      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
-    }
-  };
 
   const syncCardBundle = async () => {
     const res = await queries.getCardBundle(chatID);
@@ -122,6 +86,29 @@ function ChatsPage({ chatID }): JSX.Element {
     setChatHistory(res.value);
   };
 
+  // Sync chat history when the chat history limit changes as users scroll up
+  useEffect(() => {
+    syncChatHistory();
+  }, [chatHistoryLimit]);
+
+  useLayoutEffect(() => {
+    // Scroll to bottom on character message
+    if (scrollEventRef.current === ScrollEvent.NEW_CHARACTER_MESSAGE) {
+      scrollToBottom();
+    }
+    // Restore scroll position after loading more messages
+    else if (scrollEventRef.current === ScrollEvent.SCROLLED_TO_TOP) {
+      const delta = chatAreaRef.current!.scrollHeight - oldScrollHeightRef.current;
+      chatAreaRef.current!.scrollTop = delta;
+    }
+  }, [chatHistory]);
+
+  const scrollToBottom = () => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }
+  };
+
   // Add escape key listener to exit edit mode
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -136,7 +123,7 @@ function ChatsPage({ chatID }): JSX.Element {
   }, []);
 
   // Loading screen
-  if (isPageLoading || !personaBundle || !cardBundle) {
+  if (!personaBundle || !cardBundle) {
     return <div className="flex h-screen w-screen items-center justify-center "></div>;
   }
 
