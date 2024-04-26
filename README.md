@@ -1,7 +1,6 @@
 # anime.gf
 
 ![image](https://github.com/cyanff/anime.gf/assets/42996044/306d1caf-d6ec-4370-92f6-2328de3a8956)
-![AI-gameview-demo-themes](https://github.com/cyanff/anime.gf/assets/42996044/b55a2d25-d5db-4d36-a5ba-53ead90fc069)
 
 anime.gf is a private & open source LLM frontend. User-friendly, multi-API support (OpenAI, Anthropic, Mistral, Together AI), Configurable LLM generation settings, Customizable themes. Open source waifus on the desktop. Alpha Early Access v0.0.1™® 
 
@@ -21,7 +20,7 @@ anime.gf is a private & open source LLM frontend. User-friendly, multi-API suppo
 - Jailbreak prompt
 - Customizable themes
 
-## Installation
+## Simple Installation
 - download the latest [release](https://github.com/cyanff/anime.gf/releases) and run the `setup.exe`
 - that's it!
 
@@ -37,7 +36,13 @@ anime.gf is a private & open source LLM frontend. User-friendly, multi-API suppo
 ### Start a new chat!
 ![AI-gameview-demo-usage-chat](https://github.com/cyanff/anime.gf/assets/42996044/20aee910-ac04-4f17-b216-2fd0ec9f30bc)
 
-## Planned
+### Customize Theme
+![AI-gameview-demo-themes](https://github.com/cyanff/anime.gf/assets/42996044/b55a2d25-d5db-4d36-a5ba-53ead90fc069)
+- The release build comes with preset themes
+- To edit themes, you have to download the source and manually edit the global.css file, then rebuild the project (npm run dev for dev build, npm run build:win for windows build)
+- Theme editing in the app is a WIP feature!    
+
+## Planned 
 ### Local Inference
 Want to run your models locally? The app will manage the entire process for you!
 No seperate backend required.
