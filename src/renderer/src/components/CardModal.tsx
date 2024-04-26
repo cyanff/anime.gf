@@ -3,35 +3,26 @@ import Dropdown from "@/components/Dropdown";
 import EditCardModal from "@/components/EditCardModal";
 import Tag from "@/components/Tag";
 import { Button } from "@/components/ui/button";
+import { card } from "@/lib/card";
 import { time } from "@/lib/time";
 import { ArrowUpOnSquareIcon, ChatBubbleLeftRightIcon, PencilIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import { toast } from "sonner";
-import { queries } from "../lib/queries";
 interface CardModalProps {
   cardBundle: CardBundle;
   onCreateChat: (cardID: number, greeting: string) => void;
 }
 
 function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
-  const { createModal, closeModal, syncCardBundles } = useApp();
+  const { createModal, closeModal } = useApp();
 
   const handleExport = async () => {
-    const cardDirRes = await queries.getCardDir(cardBundle.id);
-
-    if (cardDirRes.kind === "err") {
-      toast.error("Error fetching card directory to start the export process.");
-      console.error(cardDirRes.error);
-      return;
-    }
-
-    const res = await window.api.blob.cards.exportToZip(cardDirRes.value);
+    const res = await card.exportToZip(cardBundle.id);
     if (res.kind === "err") {
-      toast.error("Error exporting card bundle to zip.");
-      console.error(res.error);
+      toast.error(`Error exporting card. ${res.error}`);
       return;
     }
-    toast.success("Card successfully exported to zip!");
+    toast.success("Card exported successfully.");
   };
 
   const handleEdit = () => {

@@ -85,5 +85,8 @@ export function toPathEscapedStr(str: string) {
   return str.toLowerCase().replace(/\s/g, "-");
 }
 
+export function getFileExtension(fileName: string): string | undefined {
+  return fileName.split(".").pop() || undefined;
+}
+
 export type Result<T, E> = { kind: "ok"; value: T } | { kind: "err"; error: E };
-export type Option<T> = { kind: "some"; value: T } | { kind: "none" };

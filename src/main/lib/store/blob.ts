@@ -214,7 +214,7 @@ export namespace cards {
       return { kind: "err", error: new Error(`Card folder "${name}" not found`) };
     }
 
-    // Show the user a dialog to select the save location
+    // Show user a dialog to select the save location
     const dialogDefaultPath = path.join(app.getPath("desktop"), `${name}.zip`);
     const zipFilePath = await dialog.showSaveDialog({
       defaultPath: dialogDefaultPath,
@@ -222,10 +222,10 @@ export namespace cards {
     });
 
     if (zipFilePath.canceled || !zipFilePath.filePath) {
-      return { kind: "ok", value: undefined };
+      return { kind: "err", error: new Error("Export canceled by user.") };
     }
 
-    // Zip the card directory
+    // Zip up the card directory
     try {
       const output = fs.createWriteStream(zipFilePath.filePath);
       const archive = archiver("zip", {
@@ -236,7 +236,6 @@ export namespace cards {
       await archive.finalize();
       return { kind: "ok", value: undefined };
     } catch (e) {
-      isError(e);
       return { kind: "err", error: e };
     }
   }

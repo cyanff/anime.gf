@@ -134,7 +134,7 @@ export default function SettingsChat() {
                       render={({ field }) => (
                         <Combobox
                           items={models.map((model) => ({ name: model, value: model }))}
-                          disabled={true}
+                          disabled={!selectedProvider}
                           value={field.value}
                           setValue={(value) => {
                             setValue("model", value);

@@ -129,6 +129,8 @@
     --action-primary: hsl(334, 55%, 52%); /* Magenta highlight for primary action buttons */
     --action-secondary: hsl(0, 0%, 52%); /* Neutral for secondary action buttons */
     --action-tertiary: hsl(0, 0%, 25%); /* Neutral for tertiary action buttons */
+
+    --muted: hsl(0, 0%, 17%); /* Muted text color */
   }
 
   /* Sakura Bloom light theme */

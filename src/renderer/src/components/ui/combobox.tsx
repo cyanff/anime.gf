@@ -30,7 +30,7 @@ export default function Combobox({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild disabled={disabled} {...rest}>
         <button
-          className={` flex h-12 w-full items-center border border-line justify-between rounded-lg ${disabled ? "bg-muted border-none" : "bg-input-primary"}  px-3 py-2 text-tx-primary `}
+          className={` flex h-12 w-full items-center border border-line justify-between rounded-lg ${disabled ? "bg-muted border-none cursor-not-allowed" : "bg-input-primary"}  px-3 py-2 text-tx-primary `}
         >
           <p className="line-clamp-1 text-ellipsis" {...rest}>
             {value ? items.find((item) => item.value === value)?.name : placeholder}

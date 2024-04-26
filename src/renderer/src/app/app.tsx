@@ -24,6 +24,7 @@ import {
   CommandList
 } from "@/components/ui/command";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { card } from "@/lib/card";
 import { handleA, handleB, handleC } from "@/lib/cmd";
 import { queries } from "@/lib/queries";
 import { CardBundle } from "@shared/types";
@@ -83,50 +84,24 @@ export default function App() {
     setModalOpen(false);
   }
 
-  // Handle zip imports
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const files = e.dataTransfer.files;
-    const numFiles = files.length;
+    const res = await card.importFromFileList(files);
+
     let numValidFiles = 0;
-
-    if (numFiles === 0) return;
-    try {
-      for (let i = 0; i < numFiles; i++) {
-        const file = files[i];
-
-        // FIXME: hacky, use a better method to detect zips
-        // Reject files that are not .zip
-        if (!file.type.includes("zip")) {
-          toast.error(`${file.name} is not a zip file, skipping...`);
-          continue;
-        }
-        // Reject files larger than 50MB
-        if (file.size > 5e7) {
-          toast.error(`${file.name} is larger than 50MB, skipping...`);
-          continue;
-        }
-
-        const path = file.path;
-        const res = await window.api.blob.cards.importFromZip(path);
-
-        if (res.kind === "err") {
-          toast.error(`Error importing ${file.name}`);
-          console.error("Error importing cards", res.error);
-          continue;
-        }
-        numValidFiles++;
-      }
-      if (numValidFiles === 0) {
+    res.forEach((r) => {
+      if (r.kind === "err") {
+        toast.error(r.error.message);
         return;
       }
-      toast.success(`Imported ${numValidFiles} cards.`);
-      syncCardBundles();
-    } catch (e) {
-      console.error("Error importing cards", e);
-      toast.error(`Error importing cards.`);
+      numValidFiles++;
+    });
+    if (numValidFiles > 0) {
+      toast.success(`${numValidFiles} files imported successfully.`);
     }
+    syncCardBundles();
   };
 
   return (
