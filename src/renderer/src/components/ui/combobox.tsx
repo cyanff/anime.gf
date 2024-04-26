@@ -11,6 +11,8 @@ interface ComboBoxProps {
   setValue: (value: string) => void;
   placeholder?: string;
   emptyMessage?: string;
+  disabled?: boolean;
+  [key: string]: any;
 }
 
 export default function Combobox({
@@ -18,15 +20,19 @@ export default function Combobox({
   value,
   setValue,
   placeholder = "",
-  emptyMessage = "No results found"
+  emptyMessage = "No results found",
+  disabled,
+  ...rest
 }: ComboBoxProps) {
   const [open, setOpen] = React.useState(false);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button className="flex h-12 w-full items-center border border-line justify-between rounded-lg bg-input-primary px-3 py-2 text-tx-primary">
-          <p className="line-clamp-1 text-ellipsis">
+      <PopoverTrigger asChild disabled={disabled} {...rest}>
+        <button
+          className={` flex h-12 w-full items-center border border-line justify-between rounded-lg ${disabled ? "bg-muted border-none" : "bg-input-primary"}  px-3 py-2 text-tx-primary `}
+        >
+          <p className="line-clamp-1 text-ellipsis" {...rest}>
             {value ? items.find((item) => item.value === value)?.name : placeholder}
           </p>
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />

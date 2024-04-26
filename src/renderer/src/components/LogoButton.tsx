@@ -26,7 +26,10 @@ export default function LogoButton({ className, rest }: LogoButtonProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <button className={cn("h-9 w-16 rounded-full bg-logo-grad px-5 py-3", className)} {...rest}></button>
+        <button
+          className={cn("h-9 w-16 outline-none rounded-full bg-logo-grad px-5 py-3", className)}
+          {...rest}
+        ></button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <div>

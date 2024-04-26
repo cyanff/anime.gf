@@ -95,8 +95,10 @@ export default function App() {
     try {
       for (let i = 0; i < numFiles; i++) {
         const file = files[i];
+
+        // FIXME: hacky, use a better method to detect zips
         // Reject files that are not .zip
-        if (file.type !== "application/zip") {
+        if (!file.type.includes("zip")) {
           toast.error(`${file.name} is not a zip file, skipping...`);
           continue;
         }

@@ -68,6 +68,8 @@ module.exports = {
         line: "var(--line)",
         accent: "var(--accent)",
         float: "var(--float)",
+        muted: "var(--muted)",
+
         popover: {
           DEFAULT: "var(--popover)",
           foreground: "var(--popover-foreground)"

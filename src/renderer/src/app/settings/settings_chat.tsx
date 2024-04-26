@@ -54,7 +54,7 @@ export default function SettingsChat() {
     syncSettings();
   }, []);
 
-  /* Set the form's values to be the user's settings.json */
+  // Set the form's values to be the user's settings.json
   const syncSettings = async () => {
     const res = await window.api.setting.get();
     if (res.kind === "err") {
@@ -134,6 +134,7 @@ export default function SettingsChat() {
                       render={({ field }) => (
                         <Combobox
                           items={models.map((model) => ({ name: model, value: model }))}
+                          disabled={true}
                           value={field.value}
                           setValue={(value) => {
                             setValue("model", value);

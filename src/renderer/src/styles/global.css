@@ -193,6 +193,8 @@
     --action-primary: hsl(340, 80%, 70%); /* Vibrant pink for primary action buttons */
     --action-secondary: hsl(340, 60%, 80%); /* Softer pink for secondary action buttons */
     --action-tertiary: hsl(340, 40%, 90%); /* Pale pink for tertiary action buttons */
+
+    --muted: hsl(0, 0%, 50%);
   }
 
   /* Artic dark theme */
@@ -323,6 +325,7 @@
     --action-primary: hsl(345, 77%, 48%);
     --action-secondary: hsl(230, 25%, 55%);
     --action-tertiary: hsl(230, 25%, 25%);
+
   }
 
   /* Twilight dark theme */
