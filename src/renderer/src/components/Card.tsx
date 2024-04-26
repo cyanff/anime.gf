@@ -1,5 +1,7 @@
 import { DialogConfig, useApp } from "@/components/AppContext";
+import CardModal from "@/components/CardModal";
 import EditCardModal from "@/components/EditCardModal";
+import PersonaSelectionModal from "@/components/PersonaSelectionModal";
 import Tag from "@/components/Tag";
 import {
   ContextMenu,
@@ -8,18 +10,19 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
+import { card } from "@/lib/card";
 import { queries } from "@/lib/queries";
 import { ArrowUpOnSquareIcon, ChatBubbleLeftRightIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { CardBundle } from "@shared/types";
+import { CardBundle, PersonaBundle } from "@shared/types";
 import { motion, useMotionValue } from "framer-motion";
+import { toast } from "sonner";
 import { CardPattern } from "./ui/card-pattern";
 interface CardProps {
   cardBundle: CardBundle;
-  openCardModal: () => void;
 }
 
-function Card({ cardBundle, openCardModal }: CardProps) {
-  const { createModal, createDialog, syncCardBundles } = useApp();
+function Card({ cardBundle }: CardProps) {
+  const { createModal, createDialog, syncCardBundles, setActiveChatID, closeModal, setPage } = useApp();
   let mouseX = useMotionValue(0);
   let mouseY = useMotionValue(0);
 
@@ -42,6 +45,45 @@ function Card({ cardBundle, openCardModal }: CardProps) {
     createDialog(config);
   };
 
+  async function createChatWithPersona(personaBundle: PersonaBundle) {
+    const greeting = cardBundle.data.character.greeting;
+
+    const createChatRes = await queries.createChat(personaBundle.data.id, cardBundle.id);
+    if (createChatRes.kind === "err") {
+      toast.error("Error creating new chat.");
+      return;
+    }
+    const chatID = createChatRes.value.lastInsertRowid as number;
+
+    const insertGreetingRes = await queries.insertMessage(chatID, greeting, "character");
+    if (insertGreetingRes.kind == "err") {
+      toast.error("Error inserting character greeting message.");
+    }
+    setActiveChatID(chatID);
+    setPage("chats");
+    closeModal();
+  }
+
+  async function createChatHandler() {
+    closeModal();
+    createModal(
+      <PersonaSelectionModal
+        onPersonaSelect={(personaBundle: PersonaBundle) => {
+          createChatWithPersona(personaBundle);
+        }}
+      />
+    );
+  }
+
+  async function exportCardHandler() {
+    const res = await card.exportToZip(cardBundle.id);
+    if (res.kind === "err") {
+      toast.error(`Error exporting card. ${res.error}`);
+      return;
+    }
+    toast.success(`Card exported successfully!`);
+  }
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>
@@ -59,7 +101,9 @@ function Card({ cardBundle, openCardModal }: CardProps) {
           <div
             className="group/card justify-top relative flex h-64 w-[34rem] min-w-max cursor-pointer flex-row items-center rounded-xl
               bg-collection-card p-2"
-            onClick={openCardModal}
+            onClick={() => {
+              createModal(<CardModal cardBundle={cardBundle} onCreateChat={createChatHandler} />);
+            }}
             onMouseMove={onMouseMove}
           >
             <CardPattern mouseX={mouseX} mouseY={mouseY} />
@@ -94,13 +138,13 @@ function Card({ cardBundle, openCardModal }: CardProps) {
         </motion.button>
       </ContextMenuTrigger>
       <ContextMenuContent className="w-36 px-1 py-2">
-        <ContextMenuItem onSelect={() => {}}>
+        <ContextMenuItem onSelect={createChatHandler}>
           Start Chat
           <ContextMenuShortcut>
             <ChatBubbleLeftRightIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
-        <ContextMenuItem onSelect={() => {}}>
+        <ContextMenuItem onSelect={exportCardHandler}>
           Export
           <ContextMenuShortcut>
             <ArrowUpOnSquareIcon className="size-4" />

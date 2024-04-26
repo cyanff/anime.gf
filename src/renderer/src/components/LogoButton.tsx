@@ -23,7 +23,7 @@ export default function LogoButton({ className, rest }: LogoButtonProps) {
 
   const themes: Theme[] = useMemo(
     () => [
-      { internal: "anime-gf", display: "Anime.gf" },
+      { internal: "anime-gf", display: "anime.gf" },
       { internal: "sakura-bloom", display: "Sakura Bloom" },
       { internal: "artic-dark", display: "Arctic Dark" },
       { internal: "midnight-red", display: "Midnight Red" },
@@ -34,11 +34,8 @@ export default function LogoButton({ className, rest }: LogoButtonProps) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <button
-          className={cn("h-9 w-16 outline-none rounded-full bg-logo-grad px-5 py-3", className)}
-          {...rest}
-        ></button>
+      <DropdownMenuTrigger className="focus:outline-none">
+        <button className={cn("h-9 w-16 rounded-full bg-logo-grad px-5 py-3", className)} {...rest}></button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <div>

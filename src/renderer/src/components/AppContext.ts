@@ -16,6 +16,7 @@ interface AppContextProps {
   setActiveChatID: (id: number) => void;
   syncCardBundles: () => void;
   setActiveChatToMostRecent: () => void;
+  setPage(page: string): void;
 }
 
 export const AppContext = createContext<AppContextProps>({} as AppContextProps);

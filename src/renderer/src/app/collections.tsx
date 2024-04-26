@@ -1,15 +1,11 @@
 import { useApp } from "@/components/AppContext";
 import Card from "@/components/Card";
-import CardModal from "@/components/CardModal";
-import PersonaSelectionModal from "@/components/PersonaSelectionModal";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { queries } from "@/lib/queries";
 import { ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { CardBundle, PersonaBundle } from "@shared/types";
+import { CardBundle } from "@shared/types";
 import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 
 interface CollectionsPageProps {
   setPage: (page: string) => void;
@@ -22,7 +18,6 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
   const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);
   const [sortBy, setSortBy] = useState<string>("alphabetical");
   const [descending, setDescending] = useState<boolean>(true);
-
   const { createDialog } = useApp();
 
   // TODO, edit card bundle type to also include all data from the card table
@@ -104,35 +99,6 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
     setSearchResults([...sortedResults]);
   }, [sortBy, descending]);
 
-  async function createChatWithPersona(personaBundle: PersonaBundle, cardID: number, greeting: string) {
-    const res = await queries.createChat(personaBundle.data.id, cardID);
-    if (res.kind == "ok") {
-      const chatCards = await queries.getRecentChats();
-      if (chatCards.kind == "ok") {
-        const message = await queries.insertMessage(chatCards.value[0].chat_id, greeting, "character");
-        if (message.kind == "err") {
-          toast.error("Error inserting character greeting message.");
-        }
-        setActiveChatID(chatCards.value[0].chat_id);
-      }
-      setPage("chats");
-    } else {
-      toast.error("Error creating new chat.");
-    }
-    closeModal();
-  }
-
-  async function createChatHandler(cardID: number, greeting: string) {
-    closeModal();
-    createModal(
-      <PersonaSelectionModal
-        onPersonaSelect={(personaBundle: PersonaBundle) => {
-          createChatWithPersona(personaBundle, cardID, greeting);
-        }}
-      />
-    );
-  }
-
   return (
     <div className="scroll-primary h-full w-full overflow-y-scroll antialiased lg:text-base pl-4">
       <div className="flex flex-row space-x-4 py-2 pb-8">
@@ -185,15 +151,7 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
         )}
 
         {searchResults?.map((cardBundle, idx) => {
-          return (
-            <Card
-              key={idx}
-              cardBundle={cardBundle}
-              openCardModal={() => {
-                createModal(<CardModal cardBundle={cardBundle} onCreateChat={createChatHandler} />);
-              }}
-            />
-          );
+          return <Card key={idx} cardBundle={cardBundle} />;
         })}
       </div>
     </div>

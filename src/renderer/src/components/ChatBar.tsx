@@ -45,7 +45,7 @@ export default function ChatBar({
       <div className="flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-input-primary p-4">
         <button className="flex size-7 items-center justify-center">
           <PlusCircleIcon
-            className="size-7 transition duration-150 ease-out hover:brightness-90 fill-action-secondary"
+            className="size-7 transition duration-150 ease-out hover:brightness-90 fill-action-tertiary"
             onClick={() => {
               toast("Coming in a future update!");
             }}
@@ -79,7 +79,7 @@ export default function ChatBar({
           }}
           className="h-fit w-fit "
         >
-          <PaperAirplaneIcon className="size-7 fill-action-secondary transition duration-150 ease-out hover:brightness-90" />
+          <PaperAirplaneIcon className="size-7 fill-action-tertiary transition duration-150 ease-out hover:brightness-90" />
         </button>
       </div>
     </div>

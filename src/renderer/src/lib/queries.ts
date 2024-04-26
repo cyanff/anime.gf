@@ -1,6 +1,7 @@
 import { Chat, Persona } from "@shared/db_types";
 import { CardBundle, ContextMessage, PersonaBundle, UIMessage } from "@shared/types";
 import { Result, deepFreeze, isError } from "@shared/utils";
+import { RunResult } from "better-sqlite3";
 
 async function deleteMessage(messageID: number): Promise<void> {
   const query = `
@@ -9,14 +10,14 @@ async function deleteMessage(messageID: number): Promise<void> {
   await window.api.sqlite.run(query, [messageID]);
 }
 
-async function createChat(personaId: number, cardId: number): Promise<Result<void, Error>> {
+async function createChat(personaID: number, cardID: number): Promise<Result<RunResult, Error>> {
   try {
     const query = `
       INSERT INTO chats (persona_id, card_id)
       VALUES (?, ?);`;
-    const params = [personaId, cardId];
-    await window.api.sqlite.run(query, params);
-    return { kind: "ok", value: undefined };
+    const params = [personaID, cardID];
+    const res = await window.api.sqlite.run(query, params);
+    return { kind: "ok", value: res };
   } catch (e) {
     return { kind: "err", error: e };
   }

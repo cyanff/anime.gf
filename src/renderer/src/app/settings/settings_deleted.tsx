@@ -214,7 +214,7 @@ export default function SettingsRecentlyDeleted() {
         </div>
         <div className="flex flex-row flex-grow space-x-4 justify-end pr-8">
           <button
-            className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:bg-action-secondary"
+            className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:brightness-90"
             onClick={handleRestoreSelected}
           >
             <span className="font-medium text-tx-primary text-sm">Restore</span>

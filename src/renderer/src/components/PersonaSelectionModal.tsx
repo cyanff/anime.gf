@@ -29,7 +29,7 @@ export default function PersonaSelectionModa({ onPersonaSelect }: PersonaSelecti
   const { closeModal } = useApp();
 
   return (
-    <div className=" flex min-h-24 rounded-2xl w-[26rem] bg-container-primary p-6 flex-col space-y-9">
+    <div className=" flex min-h-24 rounded-2xl w-[26rem] bg-float p-6 flex-col space-y-9">
       {/* Modal title and description */}
       <div className="flex flex-col ml-3">
         <h1 className="text-tx-primary text-xl font-semibold">Persona Selection</h1>
@@ -79,7 +79,7 @@ export default function PersonaSelectionModa({ onPersonaSelect }: PersonaSelecti
       </div>
       <div className="flex justify-center">
         <Button
-          className="text-tx-primary font-semibold bg-action-primary h-10 w-fit"
+          className="text-tx-primary font-semibold bg-action-primary h-10 w-fit "
           onClick={() => {
             const defaults = personaBundles.filter((bundle) => bundle.data.is_default === 1);
 

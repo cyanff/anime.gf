@@ -3,70 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  /* Edit this theme */
-  .custom {
-    /* Logo button gradients */
-    --logo-from: hsl(334, 55%, 52%);
-    --logo-to: hsl(331, 50%, 84%);
-
-    --background: hsl(0, 0%, 18%);
-
-    /* Navigational elements ex: sidebar, chat sidebar, settings sidebar */
-    --nav-primary: hsl(0, 0%, 12%);
-    --nav-secondary: hsl(0, 0%, 15%);
-
-    /* Containers that lie on top of backgrounds */
-    --container-primary: hsl(0, 0%, 14%);
-    --container-secondary: hsl(0, 0%, 17%);
-    --container-tertiary: hsl(0, 0%, 22%);
-
-    /* Text colors */
-    --tx-primary: hsl(0, 0%, 98%);
-    --tx-secondary: hsl(0, 0%, 77%);
-    --tx-tertiary: hsl(0, 0%, 50%);
-
-    /* Input elements, combo box, input */
-    --input-primary: hsl(0, 0%, 24%);
-    --input-secondary: hsl(0, 0%, 22%);
-    --input-tertiary: hsl(0, 0%, 28%);
-
-    /* Chat */
-    /* User message uses the highlight color */
-    --chat-user-from: hsl(334, 55%, 49%);
-    --chat-user-to: hsl(334, 55%, 45%);
-    --chat-user-blockquote-bar: hsl(334, 55%, 33%);
-
-    /* Character message*/
-    --chat-character-from: hsl(0, 0%, 24%);
-    --chat-character-to: hsl(0, 0%, 27%);
-    --chat-character-blockquote-bar: hsl(0, 0%, 30%);
-
-    /* Cards in the collections page */
-    --collection-card: hsl(0, 0%, 26%);
-    --collection-card-hover: hsl(0, 0%, 31%);
-    --collection-card-tag: hsl(0, 0%, 20%);
-
-    /* Hover color */
-    --accent: hsl(0, 0%, 19%);
-
-    /* Borders and Separators */
-    --line: hsl(0, 0%, 23%);
-
-    /* Scroll bar */
-    --scroll-primary-thumb: hsl(0, 0%, 9%);
-    --scroll-primary-track: hsl(0, 0%, 16%);
-    --scroll-secondary-thumb: hsl(0, 0%, 19%);
-    --scroll-secondary-track: hsl(0, 0%, 25%);
-
-    /* Floating elements, ex: modals, popovers, dialogs */
-    --float: hsl(0, 0%, 13%);
-
-    /* Action, (buttons) elements */
-    --action-primary: hsl(334, 55%, 52%);
-    --action-secondary: hsl(0, 0%, 52%);
-    --action-tertiary: hsl(0, 0%, 25%);
-  }
-
   /* Dark theme with magenta highlights */
   .anime-gf {
     /* Logo button gradients */
@@ -127,8 +63,8 @@
 
     /* Action, (buttons) elements */
     --action-primary: hsl(334, 55%, 52%); /* Magenta highlight for primary action buttons */
-    --action-secondary: hsl(0, 0%, 52%); /* Neutral for secondary action buttons */
-    --action-tertiary: hsl(0, 0%, 25%); /* Neutral for tertiary action buttons */
+    --action-secondary: hsl(334, 50%, 45%); /* Less contrast */
+    --action-tertiary: hsl(0, 0%, 45%); /* Neutral for tertiary action buttons */
 
     --muted: hsl(0, 0%, 17%); /* Muted text color */
   }
@@ -309,7 +245,7 @@
     --collection-card-tag: hsl(230, 20%, 18%);
 
     /* Hover color */
-    --accent: hsl(345, 85%, 55%);
+    --accent: hsl(345, 70%, 40%);
 
     /* Borders and Separators */
     --line: hsl(230, 25%, 20%);

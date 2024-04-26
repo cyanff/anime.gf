@@ -106,7 +106,15 @@ export default function App() {
 
   return (
     <AppContext.Provider
-      value={{ createDialog, createModal, closeModal, syncCardBundles, setActiveChatToMostRecent, setActiveChatID }}
+      value={{
+        createDialog,
+        createModal,
+        closeModal,
+        syncCardBundles,
+        setActiveChatToMostRecent,
+        setActiveChatID,
+        setPage
+      }}
     >
       <div
         className="flex h-screen bg-background text-sm text-neutral-100 antialiased lg:text-base"

@@ -10,7 +10,7 @@ import { CardBundle } from "@shared/types";
 import { toast } from "sonner";
 interface CardModalProps {
   cardBundle: CardBundle;
-  onCreateChat: (cardID: number, greeting: string) => void;
+  onCreateChat: () => void;
 }
 
 function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
@@ -86,7 +86,7 @@ function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
             <Button
               size="icon"
               className="h-12 w-16 rounded-xl bg-action-primary transition ease-out"
-              onClick={() => onCreateChat(cardBundle.id, cardBundle.data.character.greeting)}
+              onClick={onCreateChat}
             >
               <ChatBubbleLeftRightIcon className="size-6 text-tx-primary" />
             </Button>
