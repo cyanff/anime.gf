@@ -1,7 +1,9 @@
 # anime.gf
+
 ![image](https://github.com/cyanff/anime.gf/assets/42996044/306d1caf-d6ec-4370-92f6-2328de3a8956)
 
-anime.gf is a private & open source LLM frontend. User-friendly, multi-API support (OpenAI, Anthropic, Mistral, Together AI), Configurable LLM generation settings, Customizable themes.
+anime.gf is a private & open source LLM frontend. User-friendly, multi-API support (OpenAI, Anthropic, Mistral, Together AI), Configurable LLM generation settings, Customizable themes. Open source waifus on the desktop. Alpha Early Access v0.0.1™® 
+
 
 ## Features
 - Character card creation
@@ -34,7 +36,32 @@ anime.gf is a private & open source LLM frontend. User-friendly, multi-API suppo
 ### Start a new chat!
 ![AI-gameview-demo-usage-chat](https://github.com/cyanff/anime.gf/assets/42996044/20aee910-ac04-4f17-b216-2fd0ec9f30bc)
 
+## Planned
+### Local Inference
+Want to run your models locally? The app will manage the entire process for you!
+No seperate backend required.
+### Online character database
+An online database and website to host and share character cards! 
+### More To Be Announced...
+
+## Community
+
+JOIN THE [DISCORD](https://discord.gg/CNGAZrahmA)! if any of these applies! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧
+- You want to **share** and **collect** cards
+- You want help test the app
+- You want to report a bug
+- You want to request a feature
+
 ## Support
 If you encounter any issues or have questions, please don't hesitate to ask us on [Discord](https://discord.gg/CNGAZrahmA)! 
 
 Made with ❤️ by cyan and snavu @[moecorp](https://www.anime.gf/)
+
+## Contacts
+- Discord:  _cyan_
+- Twitter:  abyssalblue_
+- Discord:  snafu_xd
+- Twitter:  snafu_0x0
+
+- Email: hello@moecorp.co
+
