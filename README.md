@@ -34,4 +34,7 @@ anime.gf is a private & open source LLM frontend. User-friendly, multi-API suppo
 ### Start a new chat!
 ![AI-gameview-demo-usage-chat](https://github.com/cyanff/anime.gf/assets/42996044/20aee910-ac04-4f17-b216-2fd0ec9f30bc)
 
+## Support
+If you encounter any issues or have questions, please don't hesitate to ask us on [Discord](https://discord.gg/CNGAZrahmA)! 
 
+Made with ❤️ by cyan and snavu @[moecorp](https://www.anime.gf/)
