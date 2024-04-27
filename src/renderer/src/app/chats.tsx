@@ -26,8 +26,6 @@ function ChatsPage({ chatID }): JSX.Element {
   // Keep track of which message is being edited, only one message can be edited at a time
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
-  const [userInput, setUserInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const isShiftKeyPressed = useShiftKey();
   const latestCharacterMessageIDX = chatHistory.findLastIndex((m) => m.sender === "character");
@@ -153,59 +151,11 @@ function ChatsPage({ chatID }): JSX.Element {
     }
   };
 
-  const handleSendMessage = async () => {
-    if (isGenerating) {
-      return;
-    }
-    setIsTyping(true);
-    setUserInput("");
-    scrollToBottom();
-    setIsGenerating(true);
-
-    // Optimistic update
-    const cachedUserInput = userInput;
-    setChatHistory((prevMessages: UIMessage[]) => [
-      ...prevMessages,
-      {
-        id: -1,
-        sender: "user",
-        text: cachedUserInput,
-        is_regenerated: 0,
-        candidates: [],
-        inserted_at: new Date().toISOString()
-      }
-    ]);
-
-    // Generate a reply
-    let characterReply: string;
-    try {
-      characterReply = await reply.generate(chatID, cardBundle.data, personaBundle.data, userInput);
-      const insertRes = await queries.insertMessagePair(chatID, userInput, characterReply);
-      scrollEventRef.current = ScrollEvent.NEW_CHARACTER_MESSAGE;
-      if (insertRes.kind == "err") {
-        toast.error(`Failed to insert user and character mesage into database. 
-        Error ${insertRes.error}`);
-        return;
-      }
-    } catch (e) {
-      toast.error(`Failed to generate a reply. Error: ${e}`);
-      console.error(e);
-      // Restore the user's input
-      setUserInput(cachedUserInput);
-    } finally {
-      setIsGenerating(false);
-      setIsTyping(false);
-      scrollToBottom();
-      syncChatHistory();
-    }
-  };
-
   const handleRegenerate = async (messageID: number) => {
     if (isGenerating) {
       return;
     }
     setIsGenerating(true);
-    setIsTyping(true);
     try {
       const characterReply = await reply.regenerate(chatID, messageID, cardBundle.data, personaBundle.data);
       const candidateID = await queries.insertCandidateMessage(messageID, characterReply);
@@ -214,7 +164,6 @@ function ChatsPage({ chatID }): JSX.Element {
       toast.error(`Failed to regenerate a reply. Error: ${e}`);
       console.error(e);
     } finally {
-      setIsTyping(false);
       setIsGenerating(false);
       syncChatHistory();
     }
@@ -346,16 +295,33 @@ function ChatsPage({ chatID }): JSX.Element {
               );
             })}
           </div>
-
           <ChatBar
             chatID={chatID}
-            personaData={personaBundle.data}
-            cardData={cardBundle.data}
-            isTyping={isTyping}
-            userInput={userInput}
-            setUserInput={setUserInput}
-            handleSendMessage={handleSendMessage}
-            className="mb-1 mr-5"
+            personaBundle={personaBundle}
+            cardBundle={cardBundle}
+            isGenerating={isGenerating}
+            setIsGenerating={setIsGenerating}
+            onMessageSend={(message) => {
+              scrollToBottom();
+              setChatHistory((prevMessages: UIMessage[]) => [
+                ...prevMessages,
+                {
+                  id: -1,
+                  sender: "user",
+                  text: message,
+                  is_regenerated: 0,
+                  candidates: [],
+                  inserted_at: new Date().toISOString()
+                }
+              ]);
+            }}
+            onMessageResolve={(res) => {
+              if (res.kind === "err") {
+                toast.error(`Failed to send message. ${res.error}`);
+              }
+              scrollEventRef.current = ScrollEvent.NEW_CHARACTER_MESSAGE;
+              syncChatHistory();
+            }}
           />
         </div>
       </div>

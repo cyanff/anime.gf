@@ -93,7 +93,7 @@ function Message({
 }: MessageProps) {
   const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
   const roleColorStyles = sender === "user" ? "bg-chat-user-grad" : "bg-chat-character-grad";
-  const editingStyles = isEditing ? "outline-2 outline-dashed" : "";
+  const editingStyles = isEditing ? "outline-2 outline-dashed outline-tx-secondary" : "";
   const baseStyles = `h-fit flex items-start space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 text-tx-primary rounded-3xl group/msg`;
   const editFieldRef = useRef<HTMLDivElement>(null);
   const [idx, setIDX] = useState(messagesIDX);

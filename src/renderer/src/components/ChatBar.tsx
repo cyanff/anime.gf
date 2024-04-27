@@ -1,31 +1,36 @@
+import { card } from "@/lib/card";
+import { queries } from "@/lib/queries";
+import { reply } from "@/lib/reply";
+import { cn } from "@/lib/utils";
 import { PaperAirplaneIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
-import { CardData, PersonaData } from "@shared/types";
-import { useEffect, useRef } from "react";
+import { CardBundle, CardData, PersonaBundle, PersonaData } from "@shared/types";
+import { Result } from "@shared/utils";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import Typing from "./Typing";
+import { set } from "zod";
+import styles from "../styles/Typing.module.css";
 
 interface ChatBarProps {
   chatID: number;
-  personaData: PersonaData;
-  cardData: CardData;
-  isTyping: boolean;
-  userInput: string;
-  setUserInput: (input: string) => void;
-  handleSendMessage: () => void;
-  className?: string;
+  personaBundle: PersonaBundle;
+  cardBundle: CardBundle;
+  isGenerating: boolean;
+  setIsGenerating: (isGenerating: boolean) => void;
+  onMessageSend: (message: string) => void;
+  onMessageResolve(res: Result<void, Error>): void;
 }
 
 export default function ChatBar({
   chatID,
-  personaData,
-  cardData,
-  isTyping,
-  userInput,
-  setUserInput,
-  handleSendMessage,
-  className,
-  ...rest
+  personaBundle,
+  cardBundle,
+  isGenerating,
+  setIsGenerating,
+  onMessageSend,
+  onMessageResolve
 }: ChatBarProps) {
+  const [userInput, setUserInput] = useState<string>("");
+
   // Dynamically expand the text area to fit the user's input
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
@@ -37,10 +42,30 @@ export default function ChatBar({
     textarea.style.height = textarea.scrollHeight + "px";
   }, [userInput]);
 
+  const handleSendMessage = async () => {
+    if (isGenerating) return;
+    const cachedUserInput = userInput;
+    setUserInput("");
+    setIsGenerating(true);
+    onMessageSend(userInput);
+    // Generate a reply
+    try {
+      const characterReply = await reply.generate(chatID, cardBundle.data, personaBundle.data, userInput);
+      const insertRes = await queries.insertMessagePair(chatID, userInput, characterReply);
+      onMessageResolve(insertRes);
+    } catch (e) {
+      // Restore user inputs
+      setUserInput(cachedUserInput);
+      onMessageResolve({ kind: "err", error: e });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
-    <div className={className}>
+    <div className="mb-1 mr-5">
       <div className="flex h-fit w-fit items-center ">
-        <Typing className="mb-1 ml-4 mt-1" name={cardData.character.name} typing={isTyping} />
+        <Typing className="mb-1 ml-4 mt-1" name={cardBundle.data.character.name} typing={isGenerating} />
       </div>
       <div className="flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-input-primary p-4">
         <button className="flex size-7 items-center justify-center">
@@ -82,6 +107,27 @@ export default function ChatBar({
           <PaperAirplaneIcon className="size-7 fill-action-tertiary transition duration-150 ease-out hover:brightness-90" />
         </button>
       </div>
+    </div>
+  );
+}
+
+interface TypingProps {
+  className?: string;
+  name: string;
+  typing: boolean;
+}
+
+function Typing({ className, name, typing }: TypingProps) {
+  return (
+    <div className={cn(`flex text-tx-secondary items-center space-x-2 ${typing ? "visible" : "invisible"}`, className)}>
+      <div>
+        <div className={styles.typing__dot}></div>
+        <div className={styles.typing__dot}></div>
+        <div className={styles.typing__dot}></div>
+      </div>
+      <p className="text-[0.9rem]">
+        <b>{name}</b> is typing
+      </p>
     </div>
   );
 }

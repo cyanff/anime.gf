@@ -62,6 +62,26 @@ export default function App() {
     }
   }
 
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const files = e.dataTransfer.files;
+    const res = await card.importFromFileList(files);
+
+    let numValidFiles = 0;
+    res.forEach((r) => {
+      if (r.kind === "err") {
+        toast.error(r.error.message);
+        return;
+      }
+      numValidFiles++;
+    });
+    if (numValidFiles > 0) {
+      toast.success(`${numValidFiles} files imported successfully.`);
+    }
+    syncCardBundles();
+  };
+
   // Open command dialog with Ctrl + K
   useEffect(() => {
     window.addEventListener("keydown", (e) => {
@@ -83,26 +103,6 @@ export default function App() {
   function closeModal() {
     setModalOpen(false);
   }
-
-  const handleDrop = async (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const files = e.dataTransfer.files;
-    const res = await card.importFromFileList(files);
-
-    let numValidFiles = 0;
-    res.forEach((r) => {
-      if (r.kind === "err") {
-        toast.error(r.error.message);
-        return;
-      }
-      numValidFiles++;
-    });
-    if (numValidFiles > 0) {
-      toast.success(`${numValidFiles} files imported successfully.`);
-    }
-    syncCardBundles();
-  };
 
   return (
     <AppContext.Provider
@@ -206,7 +206,6 @@ export default function App() {
 
         <div className="flex h-full w-full overflow-hidden py-4">
           {page === "create" && <CreationPage setPage={setPage} />}
-
           {page === "chats" && !activeChatID && (
             <div className="flex items-center justify-center w-full h-full text-tx-tertiary">
               <p className="text-xl text-center leading-9 select-none">
@@ -216,7 +215,6 @@ export default function App() {
               </p>
             </div>
           )}
-
           {page === "chats" && activeChatID && <ChatsPage chatID={activeChatID} />}
           {page === "collections" && <CollectionsPage setPage={setPage} cardBundles={cardBundles} />}
           {page === "settings" && <SettingsPage />}
