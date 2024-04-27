@@ -1,6 +1,6 @@
 import Database from "better-sqlite3";
 import { attainable, dbPath } from "../utils";
-
+// TODO: refactor apis in this file to return Result<T,E>
 let db: Database.Database;
 
 export interface RunResult {

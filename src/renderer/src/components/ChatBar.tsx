@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { PaperAirplaneIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
 import { CardBundle, CardData, PersonaBundle, PersonaData } from "@shared/types";
 import { Result } from "@shared/utils";
+import { on } from "events";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { set } from "zod";
@@ -48,10 +49,13 @@ export default function ChatBar({
     setUserInput("");
     setIsGenerating(true);
     onMessageSend(userInput);
-    // Generate a reply
     try {
-      const characterReply = await reply.generate(chatID, cardBundle.data, personaBundle.data, userInput);
-      const insertRes = await queries.insertMessagePair(chatID, userInput, characterReply);
+      const replyRes = await reply.generate(chatID, cardBundle.data, personaBundle.data, userInput);
+      if (replyRes.kind === "err") {
+        onMessageResolve(replyRes);
+        return;
+      }
+      const insertRes = await queries.insertMessagePair(chatID, userInput, replyRes.value);
       onMessageResolve(insertRes);
     } catch (e) {
       // Restore user inputs

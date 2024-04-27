@@ -1,7 +1,6 @@
 /*
-  A message component that displays a message in the chat. The message can be from the user or a character.
-  User messages are displayed on the right side of the chat area, while character messages are displayed on the left side.
-  User messages have a magenta background, while character messages have a gray gradient background.
+  A message component.  
+  A message can be from the user or a character.
   Users can copy, edit, regenerate, and rewind messages. 
   Users can only use "regenerate" on the latest message sent by a character.
   Users can only use "rewind" on any message that is not the latest message.

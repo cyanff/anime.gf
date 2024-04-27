@@ -2,7 +2,7 @@ import { ProviderMessage } from "@/lib/provider/provider";
 import { queries } from "@/lib/queries";
 import { getTokenizer } from "@/lib/tokenizer/provider";
 import { CardData, ContextMessage, PersonaData } from "@shared/types";
-import { deepFreeze } from "@shared/utils";
+import { Result, deepFreeze } from "@shared/utils";
 import Mustache from "mustache";
 
 export type PromptVariant = "xml" | "markdown";
@@ -30,7 +30,7 @@ interface Context {
  * - The system prompt
  * - The array of messages in the context window
  */
-async function get(params: ContextParams): Promise<Context> {
+async function get(params: ContextParams): Promise<Result<Context, Error>> {
   const systemPromptParams = {
     cardData: params.cardData,
     personaData: params.personaData,
@@ -38,17 +38,26 @@ async function get(params: ContextParams): Promise<Context> {
     jailbreak: params.jailbreak,
     variant: getPromptVariant(params.model)
   };
-  const systemPrompt = renderSystemPrompt(systemPromptParams);
+
+  const systemPromptRes = renderSystemPrompt(systemPromptParams);
+  if (systemPromptRes.kind === "err") {
+    return systemPromptRes;
+  }
+  const systemPrompt = systemPromptRes.value;
 
   const tokenizer = getTokenizer(params.model);
   const userMessageTokens = tokenizer.countTokens(params.latestUserMessage);
   const systemPromptTokens = tokenizer.countTokens(systemPrompt);
   const remainingTokens = params.tokenLimit - (userMessageTokens + systemPromptTokens);
 
-  if (remainingTokens < 300) {
-    throw new Error(
-      "System prompt and latest user message is taking up too many tokens.  There remains less than 300 tokens for the context window.  Please reduce the size of the system prompt or latest user message."
-    );
+  const minTokens = 300;
+  if (remainingTokens < minTokens) {
+    return {
+      kind: "err",
+      error: new Error(
+        `Only ${remainingTokens} tokens remaining in the token limit. Minimum of ${minTokens} tokens required to load the chat history.`
+      )
+    };
   }
 
   // Fetch messages to fill up the context window.
@@ -76,8 +85,11 @@ async function get(params: ContextParams): Promise<Context> {
   const providerMessages = toProviderMessages(contextWindow, params.latestUserMessage);
 
   return {
-    system: systemPrompt,
-    messages: providerMessages
+    kind: "ok",
+    value: {
+      system: systemPrompt,
+      messages: providerMessages
+    }
   };
 }
 
@@ -141,7 +153,7 @@ function toProviderMessages(messages: ContextMessage[], latestUserMessage: strin
  * @param params - The prompt parameters, including the card data, persona, character memory, and jailbreak settings.
  * @returns The rendered system prompt string.
  */
-function renderSystemPrompt(params: SystemPromptParams): string {
+function renderSystemPrompt(params: SystemPromptParams): Result<string, Error> {
   const template = getTemplate(params.variant);
   const ctx = {
     card: params.cardData,
@@ -149,9 +161,12 @@ function renderSystemPrompt(params: SystemPromptParams): string {
     characterMemory: params.characterMemory,
     jailbreak: params.jailbreak
   };
-
-  const systemPrompt = Mustache.render(template, ctx);
-  return systemPrompt;
+  try {
+    const systemPrompt = Mustache.render(template, ctx);
+    return { kind: "ok", value: systemPrompt };
+  } catch (e) {
+    return { kind: "err", error: e };
+  }
 }
 
 /**

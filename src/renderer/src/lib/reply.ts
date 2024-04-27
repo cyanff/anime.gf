@@ -1,7 +1,7 @@
 import { getProvider } from "@/lib/provider/provider";
 import { queries } from "@/lib/queries";
 import { CardData, PersonaData } from "@shared/types";
-import { deepFreeze } from "@shared/utils";
+import { Result, deepFreeze } from "@shared/utils";
 import { ContextParams, context } from "./context";
 
 /**
@@ -18,7 +18,7 @@ async function generate(
   cardData: CardData,
   personaData: PersonaData,
   latestUserMessage: string
-): Promise<string> {
+): Promise<Result<string, Error>> {
   const res = await _generate(chatID, cardData, personaData, latestUserMessage);
   return res;
 }
@@ -37,10 +37,12 @@ async function regenerate(
   messageID: number,
   cardData: CardData,
   personaData: PersonaData
-): Promise<string> {
-  const latestUserMessage = await queries.getLatestUserMessageStartingFrom(chatID, messageID);
-  const res = await _generate(chatID, cardData, personaData, latestUserMessage);
-  return res;
+): Promise<Result<string, Error>> {
+  const res = await queries.getLatestUserMessageStartingFrom(chatID, messageID);
+  if (res.kind == "err") {
+    return res;
+  }
+  return await _generate(chatID, cardData, personaData, res.value);
 }
 
 /**
@@ -52,12 +54,18 @@ async function regenerate(
  * @param latestUserMessage - The user message that's at the end of the context window.
  * @returns A promise that resolves to the generated response.
  */
-async function _generate(chatID: number, cardData: CardData, personaData: PersonaData, latestUserMessage: string) {
+async function _generate(
+  chatID: number,
+  cardData: CardData,
+  personaData: PersonaData,
+  latestUserMessage: string
+): Promise<Result<string, Error>> {
   const settingsRes = await window.api.setting.get();
   if (settingsRes.kind == "err") {
-    throw new Error("Error fetching settings.");
+    return settingsRes;
   }
   const settings = settingsRes.value;
+
   const contextParams: ContextParams = {
     chatID,
     latestUserMessage,
@@ -67,7 +75,12 @@ async function _generate(chatID: number, cardData: CardData, personaData: Person
     model: settings.chat.model,
     tokenLimit: settings.chat.maxContextTokens
   };
-  const ctx = await context.get(contextParams);
+  const contextRes = await context.get(contextParams);
+  if (contextRes.kind == "err") {
+    return contextRes;
+  }
+  const ctx = contextRes.value;
+
   const provider = getProvider(settings.chat.provider);
   const completionConfig = {
     model: settings.chat.model,
@@ -77,12 +90,7 @@ async function _generate(chatID: number, cardData: CardData, personaData: Person
     topP: settings.chat.topP,
     topK: settings.chat.topK
   };
-
-  const res = await provider.getChatCompletion(ctx.messages, completionConfig);
-  if (res.kind == "err") {
-    throw res.error;
-  }
-  return res.value;
+  return await provider.getChatCompletion(ctx.messages, completionConfig);
 }
 
 export const reply = {

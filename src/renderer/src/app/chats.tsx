@@ -157,8 +157,9 @@ function ChatsPage({ chatID }): JSX.Element {
     }
     setIsGenerating(true);
     try {
-      const characterReply = await reply.regenerate(chatID, messageID, cardBundle.data, personaBundle.data);
-      const candidateID = await queries.insertCandidateMessage(messageID, characterReply);
+      const replyRes = await reply.regenerate(chatID, messageID, cardBundle.data, personaBundle.data);
+      if (replyRes.kind === "err") throw replyRes.error;
+      const candidateID = await queries.insertCandidateMessage(messageID, replyRes.value);
       await queries.setCandidateMessageAsPrime(messageID, candidateID);
     } catch (e) {
       toast.error(`Failed to regenerate a reply. Error: ${e}`);
@@ -302,7 +303,7 @@ function ChatsPage({ chatID }): JSX.Element {
             isGenerating={isGenerating}
             setIsGenerating={setIsGenerating}
             onMessageSend={(message) => {
-              scrollToBottom();
+              // Optimistically add the message to the chat history
               setChatHistory((prevMessages: UIMessage[]) => [
                 ...prevMessages,
                 {
@@ -314,6 +315,7 @@ function ChatsPage({ chatID }): JSX.Element {
                   inserted_at: new Date().toISOString()
                 }
               ]);
+              scrollToBottom();
             }}
             onMessageResolve={(res) => {
               if (res.kind === "err") {
