@@ -9,16 +9,16 @@ export default function SettingsPage() {
   return (
     <div className="flex h-full w-full rounded-xl ">
       {/*Sidebar*/}
-      <div className="flex h-full w-56 shrink-0 flex-col space-y-2 overflow-hidden rounded-2xl bg-nav-primary px-3 py-8">
+      <div className="flex h-full w-56 shrink-0 flex-col space-y-1 overflow-hidden rounded-2xl bg-nav-primary px-3 py-8 text-[1.03rem]">
         <button
-          className={`group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5 text-[1.07rem] font-[450] transition
+          className={`group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5  transition
           duration-150 ease-out hover:bg-accent ${page === "chat" ? "bg-container-tertiary text-tx-primary" : "text-tx-secondary"}`}
           onClick={() => setPage("chat")}
         >
           Chat
         </button>
         <button
-          className={`group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5 text-[1.07rem] font-[450] transition
+          className={`group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5  transition
           duration-150 ease-out hover:bg-accent ${
             page === "persona" ? "bg-container-tertiary text-tx-primary" : "text-tx-secondary"
           }`}
@@ -27,14 +27,14 @@ export default function SettingsPage() {
           Persona
         </button>
         <button
-          className={`group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5 text-[1.07rem] font-[450] transition
+          className={`group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5  transition
           duration-150 ease-out hover:bg-accent ${page === "key" ? "bg-container-tertiary text-tx-primary" : "text-tx-secondary"}`}
           onClick={() => setPage("key")}
         >
           API Key
         </button>
         <button
-          className={`group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5 text-[1.07rem] font-[450] transition
+          className={`group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5  transition
           duration-150 ease-out hover:bg-accent ${
             page === "deleted" ? "bg-container-tertiary text-tx-primary" : "text-tx-secondary"
           }`}
@@ -46,7 +46,7 @@ export default function SettingsPage() {
 
       {/*Settings Content*/}
 
-      <div className="grow overflow-y-clip">
+      <div className="grow">
         {page === "chat" && <SettingsChat />}
         {page === "persona" && <SettingsPersona />}
         {page === "key" && <SettingsKeys />}

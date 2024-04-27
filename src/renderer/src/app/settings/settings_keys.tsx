@@ -33,11 +33,6 @@ export default function SettingsKeys() {
       return;
     }
 
-    if (!apiKey || apiKey === "") {
-      toast.error("Please enter an API key");
-      return;
-    }
-
     const result = await window.api.secret.set(provider, apiKey);
 
     if (result.kind === "err") {
