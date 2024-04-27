@@ -1,6 +1,6 @@
 import { openAI } from "@/lib/provider/openai";
 import { togetherAI } from "@/lib/provider/together_ai";
-import { Result } from "@shared/utils";
+import { Result } from "@shared/types";
 import { anthropic } from "./anthropic";
 import { mistral } from "./mistral";
 

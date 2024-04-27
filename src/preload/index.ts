@@ -1,5 +1,4 @@
-import { CardBundle, CardData, PersonaBundleWithoutData, PersonaFormData, Settings } from "@shared/types";
-import { Result } from "@shared/utils";
+import { CardBundle, CardData, PersonaBundleWithoutData, PersonaFormData, Result, Settings } from "@shared/types";
 import { contextBridge, ipcRenderer } from "electron";
 import { RunResult } from "../main/lib/store/sqlite";
 import { XFetchConfig } from "../main/lib/xfetch";

@@ -1,4 +1,5 @@
-import { Result, isError } from "@shared/utils";
+import { Result } from "@shared/types";
+import { isError } from "@shared/utils";
 import { app } from "electron";
 import fs, { PathLike } from "fs";
 import fsp from "fs/promises";

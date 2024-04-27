@@ -26,6 +26,7 @@ import {
   TrashIcon
 } from "@heroicons/react/24/solid";
 
+import { DialogConfig, useApp } from "@/components/AppContext";
 import Dropdown from "@/components/Dropdown";
 import Tag from "@/components/Tag";
 import {
@@ -38,81 +39,87 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { queries } from "@/lib/queries";
+import { useShiftKey } from "@/lib/hook/useShiftKey";
+import { MessageWithCandidates, MessagesHistory, queries } from "@/lib/queries";
+import { reply } from "@/lib/reply";
 import { time } from "@/lib/time";
-import { CardBundle, PersonaBundle, UIMessageCandidate } from "@shared/types";
+import { MessageCandidate as MessageCandidateI, Message as MessageI } from "@shared/db_types";
+import { CardBundle, PersonaBundle } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import Markdown, { Components } from "react-markdown";
 import { toast } from "sonner";
 
+type MessageOrCandidate = ({ kind: "message" } & MessageI) | ({ kind: "candidate" } & MessageCandidateI);
+
 interface MessageProps {
-  className?: string;
-  messageID: number;
-  avatar: string | null;
-  name: string;
-  timestring: string;
-  sender: "user" | "character";
+  messageWithCandidates: MessageWithCandidates;
+  messagesHistory: MessagesHistory;
   personaBundle: PersonaBundle;
   cardBundle: CardBundle;
-  messages: UIMessageCandidate[];
-  messagesIDX: number;
-  isLatest: boolean;
-  isLatestCharacterMessage: boolean;
-  isEditing: boolean;
+  isGenerating: boolean;
+  setIsGenerating: (isGenerating: boolean) => void;
   handleEdit: () => void;
+  editingMessageID: number | null;
   setEditText: (text: string) => void;
-  handleEditSubmit: (isCandidate: boolean, id: number) => void;
-  handleRegenerate: () => void;
-  handleRewind: () => void;
-  handleDelete: () => void;
-  [rest: string]: any;
+  onEditSubmit: (isCandidate: boolean, id: number) => void;
+  synChatHistory: () => void;
 }
 
-function Message({
-  className,
-  messageID,
-  avatar,
-  name,
-  timestring,
-  sender,
+export default function Message({
+  messageWithCandidates,
+  messagesHistory,
   personaBundle,
   cardBundle,
-  messages,
-  messagesIDX,
-  isLatest,
-  isLatestCharacterMessage,
-  isEditing,
+  isGenerating,
+  setIsGenerating,
   handleEdit,
   setEditText,
-  handleEditSubmit,
-  handleRegenerate,
-  handleRewind,
-  handleDelete,
-  ...rest
+  editingMessageID,
+  onEditSubmit,
+  synChatHistory
 }: MessageProps) {
-  const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
-  const roleColorStyles = sender === "user" ? "bg-chat-user-grad" : "bg-chat-character-grad";
-  const editingStyles = isEditing ? "outline-2 outline-dashed outline-tx-secondary" : "";
-  const baseStyles = `h-fit flex items-start space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 text-tx-primary rounded-3xl group/msg`;
+  const [messagesOrCandidates, setMessageOrCandidate] = useState<MessageOrCandidate[]>(() => {
+    const ret: MessageOrCandidate[] = [];
+    ret.push({ kind: "message", ...messageWithCandidates });
+    messageWithCandidates.candidates.forEach((candidate) => {
+      ret.push({ kind: "candidate", ...candidate });
+    });
+    return ret;
+  });
+
+  const [idx, setIDX] = useState(() => {
+    if (messageWithCandidates.prime_candidate_id) {
+      return messageWithCandidates.candidates.findIndex((c) => c.id === messageWithCandidates.prime_candidate_id) + 1;
+    }
+    return 0;
+  });
+
+  const isLatest;
+
   const editFieldRef = useRef<HTMLDivElement>(null);
-  const [idx, setIDX] = useState(messagesIDX);
-  const message = messages[idx];
+  const isShiftKeyPressed = useShiftKey();
+  const { createDialog } = useApp();
 
-  useEffect(() => {
-    setIDX(messagesIDX);
-  }, [messagesIDX]);
+  const { id: messageID, chat_id: chatID, sender } = messageWithCandidates;
+  const isEditing = editingMessageID === messageWithCandidates.id;
+  const { name, avatar } =
+    messageWithCandidates.sender === "user"
+      ? { name: personaBundle.data.name, avatar: personaBundle.avatarURI }
+      : { name: cardBundle.data.character.name, avatar: cardBundle.avatarURI };
 
-  // When the user switches between messgaes, update the "prime candidate" column in the database accordingly
+  // When the user switches between messages, update the "prime candidate" column in the database accordingly
   useEffect(() => {
-    if (idx === 0) {
+    const messageOrCandidate = messagesOrCandidates[idx];
+    if (messageOrCandidate.kind === "message") {
       queries.updateMessagePrimeCandidate(messageID, null);
+      return;
     } else {
-      queries.updateMessagePrimeCandidate(messageID, message.id);
+      queries.updateMessagePrimeCandidate(messageID, messageOrCandidate.id);
     }
   }, [idx]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(message.text);
+    navigator.clipboard.writeText(messageWithCandidates.text);
     toast.success("Message copied to clipboard!");
   };
 
@@ -127,7 +134,7 @@ function Message({
   // Focus on the edit field when the user starts editing
   useEffect(() => {
     if (!isEditing) return;
-    setEditText(message.text);
+    setEditText(messageWithCandidates.text);
     focusEditField();
   }, [isEditing]);
 
@@ -148,22 +155,10 @@ function Message({
     }, 0);
   };
 
-  const handleChangeMessage = (idx: number) => {
-    // If the message  change to is out of bounds, regenerate the message
-    if (idx === messages.length) {
-      handleRegenerate();
-      return;
-    }
-
-    if (isEditing) {
-      setEditText(messages[idx].text);
-      focusEditField();
-    }
-
-    const clampedValue = Math.min(Math.max(idx, 0), messages.length - 1);
-    setIDX(clampedValue);
-  };
-
+  const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
+  const roleColorStyles = sender === "user" ? "bg-chat-user-grad" : "bg-chat-character-grad";
+  const editingStyles = isEditing ? "outline-2 outline-dashed outline-tx-secondary" : "";
+  const baseStyles = `h-fit flex items-start space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 text-tx-primary rounded-3xl group/msg`;
   return (
     <div className={cn("max-w-3/4 shrink-0", roleAlignStyles)}>
       <ContextMenu>
@@ -171,7 +166,7 @@ function Message({
         <div className="flex flex-col">
           <ContextMenuTrigger>
             {/* Message Component */}
-            <div {...rest} className={cn(baseStyles, editingStyles, roleColorStyles, className)}>
+            <div className={cn(baseStyles, editingStyles, roleColorStyles)}>
               <Popover>
                 <PopoverTrigger className="m-1.5 shrink-0">
                   <img
@@ -205,7 +200,7 @@ function Message({
                     className="scroll-secondary h-auto w-full overflow-y-scroll text-wrap break-all bg-transparent text-left focus:outline-none"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
-                        handleEditSubmit(idx !== 0, messages[idx].id);
+                        onEditSubmit(idx !== 0, messages[idx].id);
                         e.preventDefault();
                       }
                     }}
@@ -213,7 +208,7 @@ function Message({
                     contentEditable={true}
                     suppressContentEditableWarning={true}
                   >
-                    {message.text}
+                    {messageWithCandidates.text}
                   </div>
                 ) : (
                   <Markdown
@@ -223,7 +218,7 @@ function Message({
                     className="whitespace-pre-wrap"
                     components={sender === "user" ? userMarkdown : characterMarkdown}
                   >
-                    {message.text}
+                    {messageWithCandidates.text}
                   </Markdown>
                 )}
               </div>
@@ -536,5 +531,3 @@ const characterMarkdown: Partial<Components> = {
     );
   }
 };
-
-export default Message;

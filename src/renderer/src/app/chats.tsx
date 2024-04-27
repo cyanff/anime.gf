@@ -1,12 +1,10 @@
-import { AppContext, DialogConfig, useApp } from "@/components/AppContext";
+import { AppContext, useApp } from "@/components/AppContext";
 import ChatBar from "@/components/ChatBar";
 import ChatsSidebar from "@/components/ChatsSidebar";
 import Message from "@/components/Message";
-import { useShiftKey } from "@/lib/hook/useShiftKey";
-import { queries } from "@/lib/queries";
-import { reply } from "@/lib/reply";
+import { MessagesHistory, queries } from "@/lib/queries";
 import { time } from "@/lib/time";
-import { CardBundle, PersonaBundle, UIMessage } from "@shared/types";
+import { CardBundle, PersonaBundle } from "@shared/types";
 import { motion } from "framer-motion";
 import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -18,19 +16,17 @@ enum ScrollEvent {
 }
 
 function ChatsPage({ chatID }): JSX.Element {
-  const { createDialog } = useContext(AppContext);
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
   const [cardBundle, setCardBundle] = useState<CardBundle>();
-  const [chatHistoryLimit, setChatHistoryLimit] = useState(50);
-  const [chatHistory, setChatHistory] = useState<UIMessage[]>([]);
+  const [historyLimit, setHistoryLimit] = useState(50);
+  const [messagesHistory, setMessagesHistory] = useState<MessagesHistory>([]);
   // Keep track of which message is being edited, only one message can be edited at a time
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const isShiftKeyPressed = useShiftKey();
-  const latestCharacterMessageIDX = chatHistory.findLastIndex((m) => m.sender === "character");
+  const latestCharacterMessageIDX = messagesHistory.findLastIndex((m) => m.sender === "character");
   const chatAreaRef = useRef<HTMLDivElement | null>(null);
-  // Used to keep track of the (old) scroll height so we could restore it
+  // Keep track of the previous scroll height to restore it when loading more messages
   const oldScrollHeightRef = useRef(0);
   const scrollEventRef = useRef<ScrollEvent | null>(null);
   const { setActiveChatID } = useApp();
@@ -76,18 +72,18 @@ function ChatsPage({ chatID }): JSX.Element {
   };
 
   const syncChatHistory = async () => {
-    const res = await queries.getChatHistory(chatID, chatHistoryLimit);
+    const res = await queries.getChatHistory(chatID, historyLimit);
     if (res.kind == "err") {
       toast.error("Error fetching chat history.");
       return;
     }
-    setChatHistory(res.value);
+    setMessagesHistory(res.value);
   };
 
   // Sync chat history when the chat history limit changes as users scroll up
   useEffect(() => {
     syncChatHistory();
-  }, [chatHistoryLimit]);
+  }, [historyLimit]);
 
   useLayoutEffect(() => {
     // Scroll to bottom on character message
@@ -99,7 +95,7 @@ function ChatsPage({ chatID }): JSX.Element {
       const delta = chatAreaRef.current!.scrollHeight - oldScrollHeightRef.current;
       chatAreaRef.current!.scrollTop = delta;
     }
-  }, [chatHistory]);
+  }, [messagesHistory]);
 
   const scrollToBottom = () => {
     if (chatAreaRef.current) {
@@ -151,83 +147,13 @@ function ChatsPage({ chatID }): JSX.Element {
     }
   };
 
-  const handleRegenerate = async (messageID: number) => {
-    if (isGenerating) {
-      return;
-    }
-    setIsGenerating(true);
-    try {
-      const replyRes = await reply.regenerate(chatID, messageID, cardBundle.data, personaBundle.data);
-      if (replyRes.kind === "err") throw replyRes.error;
-      const candidateID = await queries.insertCandidateMessage(messageID, replyRes.value);
-      await queries.setCandidateMessageAsPrime(messageID, candidateID);
-    } catch (e) {
-      toast.error(`Failed to regenerate a reply. Error: ${e}`);
-      console.error(e);
-    } finally {
-      setIsGenerating(false);
-      syncChatHistory();
-    }
-  };
-
-  const handleDelete = (messageID: number) => {
-    const deleteMessage = async () => {
-      try {
-        await queries.deleteMessage(messageID);
-      } catch (e) {
-        toast.error(`Failed to delete message. Error: ${e}`);
-        console.error(e);
-      } finally {
-        syncChatHistory();
-      }
-    };
-
-    if (isShiftKeyPressed) {
-      deleteMessage();
-    } else {
-      const config: DialogConfig = {
-        title: "Delete Message",
-        actionLabel: "Delete",
-        description: "Are you sure you want to delete this message?",
-        onAction: deleteMessage
-      };
-      createDialog(config);
-    }
-  };
-
-  const handleRewind = async (messageID: number) => {
-    const rewind = async () => {
-      try {
-        await queries.resetChatToMessage(chatID, messageID);
-      } catch (e) {
-        toast.error(`Failed to rewind chat. Error: ${e}`);
-        console.error(e);
-      } finally {
-        syncChatHistory();
-      }
-    };
-
-    if (isShiftKeyPressed) {
-      rewind();
-    } else {
-      const config: DialogConfig = {
-        title: "Rewind Chat",
-        actionLabel: "Rewind",
-        description:
-          "Are you sure you want to rewind the chat to this message? Rewinding will delete all messages that were sent after this message.",
-        onAction: rewind
-      };
-      createDialog(config);
-    }
-  };
-
   const handleScroll = async (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     // User scrolled to top
     if (e.currentTarget.scrollTop == 0) {
       // Store the current scroll height so we could restore it later
       oldScrollHeightRef.current = e.currentTarget.scrollHeight;
       scrollEventRef.current = ScrollEvent.SCROLLED_TO_TOP;
-      setChatHistoryLimit((prevLimit) => prevLimit + 15);
+      setHistoryLimit((prevLimit) => prevLimit + 15);
     }
   };
 
@@ -249,49 +175,27 @@ function ChatsPage({ chatID }): JSX.Element {
             onScroll={handleScroll}
             className="scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-auto px-5 py-1 transition duration-500 ease-out"
           >
-            {chatHistory?.map((message, idx) => {
-              const iso = time.sqliteToISO(message.inserted_at);
-              const relativeTime = time.isoToLLMRelativeTime(iso);
-              const isLatest = idx === chatHistory.length - 1;
-              const isLatestCharacterMessage = idx === latestCharacterMessageIDX;
-
-              // Combine the main message and its candidates into one messages array
-              let messages = [{ id: message.id, text: message.text }];
-              messages = messages.concat(message.candidates);
-
-              // If there are no prime candidates, set the index to be the main message
-              const primeCandidateIDX = message.candidates.findIndex((c) => c.id === message.prime_candidate_id);
-              const messageIDX = primeCandidateIDX === -1 ? 0 : primeCandidateIDX + 1;
-
+            {messagesHistory?.map((message, idx) => {
               return (
                 <Message
                   key={idx}
-                  messageID={message.id}
-                  avatar={message.sender === "user" ? personaBundle.avatarURI || "" : cardBundle.avatarURI || ""}
-                  name={message.sender === "user" ? personaBundle.data.name : cardBundle.data.character.name}
-                  sender={message.sender}
+                  messageWithCandidates={message}
+                  messagesHistory={messagesHistory}
                   personaBundle={personaBundle}
                   cardBundle={cardBundle}
-                  messages={messages}
-                  messagesIDX={messageIDX}
-                  timestring={relativeTime}
-                  isLatest={isLatest}
-                  isLatestCharacterMessage={isLatestCharacterMessage}
                   isEditing={editingMessageID === message.id}
+                  isGenerating={isGenerating}
+                  setIsGenerating={setIsGenerating}
                   handleEdit={() => setEditingMessageID(message.id)}
                   setEditText={setEditText}
-                  handleEditSubmit={(isCandidate: boolean, id: number) => {
+                  onEditSubmit={(isCandidate: boolean, id: number) => {
                     if (isCandidate) {
                       handleEditSubmit(undefined, id);
                     } else {
                       handleEditSubmit(id);
                     }
                   }}
-                  handleRegenerate={() => handleRegenerate(message.id)}
-                  handleRewind={() => handleRewind(message.id)}
-                  handleDelete={() => {
-                    handleDelete(message.id);
-                  }}
+                  synChatHistory={syncChatHistory}
                 />
               );
             })}
@@ -304,14 +208,16 @@ function ChatsPage({ chatID }): JSX.Element {
             setIsGenerating={setIsGenerating}
             onMessageSend={(message) => {
               // Optimistically add the message to the chat history
-              setChatHistory((prevMessages: UIMessage[]) => [
+              setMessagesHistory((prevMessages: MessagesHistory) => [
                 ...prevMessages,
                 {
                   id: -1,
+                  chat_id: chatID,
                   sender: "user",
                   text: message,
                   is_regenerated: 0,
                   candidates: [],
+                  is_embedded: 0,
                   inserted_at: new Date().toISOString()
                 }
               ]);

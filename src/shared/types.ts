@@ -52,8 +52,6 @@ export interface CardBundleWithoutID {
   bannerURI: string;
 }
 
-// =====================================
-
 // Persona
 // =====================================
 export interface PersonaData extends Persona {}
@@ -66,17 +64,6 @@ export interface PersonaBundleWithoutData {
 export interface PersonaBundle extends PersonaBundleWithoutData {
   data: PersonaData;
 }
-// =====================================
-
-export interface UIMessageCandidate {
-  id: number;
-  text: string;
-}
-
-export interface UIMessage extends Pick<Message, "id" | "sender" | "text" | "prime_candidate_id" | "inserted_at"> {
-  candidates: UIMessageCandidate[];
-}
-export interface ContextMessage extends Pick<Message, "id" | "sender" | "text"> {}
 
 // Settings from settings.json
 export interface Settings {
@@ -92,8 +79,6 @@ export interface Settings {
     streaming: boolean;
   };
 }
-
-// ===========================================
 
 // Forms
 // ===========================================
@@ -146,3 +131,4 @@ export const cardFormSchema = z.object({
   meta: cardMetaSchema
 });
 export type CardFormData = z.infer<typeof cardFormSchema>;
+export type Result<T, E> = { kind: "ok"; value: T } | { kind: "err"; error: E };

@@ -1,14 +1,10 @@
-import { card } from "@/lib/card";
 import { queries } from "@/lib/queries";
 import { reply } from "@/lib/reply";
 import { cn } from "@/lib/utils";
 import { PaperAirplaneIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
-import { CardBundle, CardData, PersonaBundle, PersonaData } from "@shared/types";
-import { Result } from "@shared/utils";
-import { on } from "events";
+import { CardBundle, PersonaBundle, Result } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { set } from "zod";
 import styles from "../styles/Typing.module.css";
 
 interface ChatBarProps {

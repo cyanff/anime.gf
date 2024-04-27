@@ -88,5 +88,3 @@ export function toPathEscapedStr(str: string) {
 export function getFileExtension(fileName: string): string | undefined {
   return fileName.split(".").pop() || undefined;
 }
-
-export type Result<T, E> = { kind: "ok"; value: T } | { kind: "err"; error: E };

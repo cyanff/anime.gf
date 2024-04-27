@@ -1,6 +1,6 @@
-import { Chat, Persona } from "@shared/db_types";
-import { CardBundle, ContextMessage, PersonaBundle, UIMessage } from "@shared/types";
-import { Result, deepFreeze, isError } from "@shared/utils";
+import { Chat, Message, MessageCandidate, Persona } from "@shared/db_types";
+import { CardBundle, PersonaBundle, Result } from "@shared/types";
+import { deepFreeze, isError } from "@shared/utils";
 import { RunResult } from "better-sqlite3";
 
 async function deleteMessage(messageID: number): Promise<void> {
@@ -231,49 +231,36 @@ async function getAllExtantPersonaBundles(): Promise<Result<PersonaBundle[], Err
   }
 }
 
-async function getChatHistory(chatID: number, limit: number = 10): Promise<Result<UIMessage[], Error>> {
-  interface MessageQueryResult {
-    id: number;
-    text: string;
-    sender: "user" | "character";
-    is_regenerated: number;
-    prime_candidate_id?: number;
-    inserted_at: string;
-  }
-
+export interface MessageWithCandidates extends Message {
+  candidates: MessageCandidate[];
+}
+export interface MessagesHistory extends Array<MessageWithCandidates> {}
+async function getChatHistory(chatID: number, limit: number = 10): Promise<Result<MessagesHistory, Error>> {
   const messageQuery = `
-    SELECT id, text, sender, prime_candidate_id, inserted_at
+    SELECT * 
     FROM messages
     WHERE chat_id = ${chatID}
     ORDER BY id DESC
     LIMIT ${limit};
     `;
-
   try {
-    const rows = (await window.api.sqlite.all(messageQuery)) as MessageQueryResult[];
-
+    const rows = (await window.api.sqlite.all(messageQuery)) as Message[];
     const ret = await Promise.all(
       rows.map(async (row) => {
         // For each message, fetch all candidates
         const candidateQuery = `
-      SELECT id, text
+      SELECT * 
       FROM message_candidates
       WHERE message_id = ${row.id};`;
-        const candidates = (await window.api.sqlite.all(candidateQuery)) as { id: number; text: string }[];
+        const candidates = (await window.api.sqlite.all(candidateQuery)) as MessageCandidate[];
         return {
-          id: row.id,
-          sender: row.sender,
-          text: row.text,
-          prime_candidate_id: row.prime_candidate_id,
-          inserted_at: row.inserted_at,
+          ...row,
           candidates
         };
       })
     );
-
     return { kind: "ok", value: ret.reverse() };
   } catch (e) {
-    isError(e);
     return { kind: "err", error: e };
   }
 }
@@ -452,6 +439,7 @@ async function updateMessageText(messageID: number, text: string): Promise<void>
   await window.api.sqlite.run(query, [text, messageID]);
 }
 
+export interface ContextMessage extends Pick<Message, "id" | "sender" | "text"> {}
 /**
  * Fetches a limited number of messages from the database starting from a given message ID for the specified chat.
  * If there is a prime candidate associated with a message, the prime candidate's text will be fetched instead of the message's text.

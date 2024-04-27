@@ -1,4 +1,5 @@
-import { Result, deepFreeze } from "@shared/utils";
+import { Result } from "@shared/types";
+import { deepFreeze } from "@shared/utils";
 
 export interface XFetchConfig {
   // How long to wait before timing out the request, in milliseconds.
