@@ -8,9 +8,13 @@ import secret from "./lib/store/secret";
 import setting from "./lib/store/setting";
 import sqlite from "./lib/store/sqlite";
 import { cardsRootPath, personasRootPath } from "./lib/utils";
-import { xfetch } from "./lib/xfetch";
+import { XFetchConfig, xfetch } from "./lib/xfetch";
 
-(async () => {})();
+app.on("web-contents-created", (_event, contents) => {
+  contents.on("will-navigate", (event, _navigationUrl) => {
+    event.preventDefault();
+  });
+});
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -165,12 +169,15 @@ app.whenReady().then(async () => {
     return await secret.set(k, v);
   });
 
-  ipcMain.handle("xfetch.post", async (_, url: string, body: Object, headers: Record<string, string>) => {
-    return await xfetch.post(url, body, headers);
-  });
+  ipcMain.handle(
+    "xfetch.post",
+    async (_, url: string, body: Object, headers: Record<string, string>, config?: XFetchConfig) => {
+      return await xfetch.post(url, body, headers, config);
+    }
+  );
 
-  ipcMain.handle("xfetch.get", async (_, url: string, headers: Record<string, string>) => {
-    return await xfetch.get(url, headers);
+  ipcMain.handle("xfetch.get", async (_, url: string, headers: Record<string, string>, config?: XFetchConfig) => {
+    return await xfetch.get(url, headers, config);
   });
 
   ipcMain.handle("utils.openURL", async (_, url: string) => {

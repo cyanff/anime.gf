@@ -157,7 +157,6 @@ function ChatsPage({ chatID }): JSX.Element {
     if (isGenerating) {
       return;
     }
-
     setIsTyping(true);
     setUserInput("");
     scrollToBottom();

@@ -27,14 +27,17 @@ interface Usage {
   total_tokens: number;
 }
 
-function getModels(): Promise<string[]> {
-  return Promise.resolve([
-    "open-mistral-7b",
-    "open-mixtral-8x7b",
-    "mistral-small-latest",
-    "mistral-medium-latest",
-    "mistral-large-latest"
-  ]);
+async function getModels(): Promise<Result<string[], Error>> {
+  return {
+    kind: "ok",
+    value: [
+      "open-mistral-7b",
+      "open-mixtral-8x7b",
+      "mistral-small-latest",
+      "mistral-medium-latest",
+      "mistral-large-latest"
+    ]
+  };
 }
 
 async function getChatCompletion(

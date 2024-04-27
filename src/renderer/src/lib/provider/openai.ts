@@ -1,7 +1,6 @@
 import { CompletionConfig, Provider, ProviderMessage } from "@/lib/provider/provider";
 import { Result } from "@shared/utils";
 
-const models = ["gpt-3.5-turbo", "gpt-4.0-turbo-preview"];
 interface ChatCompletion {
   id: string;
   object: "chat.completion";
@@ -27,8 +26,9 @@ interface Usage {
   total_tokens: number;
 }
 
-function getModels(): Promise<string[]> {
-  return Promise.resolve(["gpt-3.5-turbo", "gpt-4-turbo", "gpt-4"]);
+async function getModels(): Promise<Result<string[], Error>> {
+  const models = ["gpt-3.5-turbo", "gpt-4-turbo", "gpt-4"];
+  return { kind: "ok", value: models };
 }
 
 /**
@@ -40,11 +40,6 @@ function getModels(): Promise<string[]> {
   messages: ProviderMessage[],
   config: CompletionConfig
 ): Promise<Result<string, Error>> {
-  const validationRes = validateConfig(config);
-  if (validationRes.kind == "err") {
-    return validationRes;
-  }
-
   // Get API key from either config or secret store
   let key;
   if (!config.apiKey) {
@@ -96,13 +91,6 @@ async function streamChatCompletion(): Promise<any> {
 
 async function getTextCompletion(): Promise<Result<string, Error>> {
   throw new Error("Not implemented");
-}
-
-function validateConfig(config: CompletionConfig): Result<void, Error> {
-  if (!models.includes(config.model)) {
-    return { kind: "err", error: new Error("Invalid model specified in CompletionConfig") };
-  }
-  return { kind: "ok", value: undefined };
 }
 
 export const openAI: Provider = {

@@ -22,8 +22,8 @@ interface Usage {
   output_tokens: number;
 }
 
-async function getModels(): Promise<string[]> {
-  return ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229"];
+async function getModels(): Promise<Result<string[], Error>> {
+  return { kind: "ok", value: ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229"] };
 }
 
 async function getChatCompletion(

@@ -1,8 +1,6 @@
 import { CompletionConfig, Provider, ProviderMessage } from "@/lib/provider/provider";
 import { Result } from "@shared/utils";
 
-const models = ["mistralai/Mixtral-8x7B-Instruct-v0.1", "NousResearch/Nous-Hermes-2-Mixtral-8x7B-SFT"];
-
 interface ChatCompletion {
   id: string;
   choices: Choice[];
@@ -25,7 +23,7 @@ interface Usage {
   total_tokens: number;
 }
 
-async function getModels(): Promise<string[]> {
+async function getModels(): Promise<Result<string[], Error>> {
   interface Data
     extends Array<{
       // The official model name, ex: nousresearch/nous-hermes-2-mixtral-8x7b-sft
@@ -39,21 +37,23 @@ async function getModels(): Promise<string[]> {
   const url = "https://api.together.xyz/v1/models";
   const keyRes = await window.api.secret.get("together_ai");
   if (keyRes.kind == "err") {
-    throw keyRes.error;
+    return keyRes;
   }
+
   const key = keyRes.value;
   const headers = {
     Authorization: `Bearer ${key}`
   };
 
-  const modelsRes = await window.api.xfetch.get(url, headers);
+  const modelsRes = await window.api.xfetch.get(url, headers, { timeout: 2000 });
   if (modelsRes.kind == "err") {
-    throw modelsRes.error;
+    console.log("Error getting models:", modelsRes.error.message);
+    return modelsRes;
   }
 
   const data = modelsRes.value as Data;
-  const ret = data.filter((model) => model.type === "chat").map((model) => model.id);
-  return ret;
+  const models = data.filter((model) => model.type === "chat").map((model) => model.id);
+  return { kind: "ok", value: models };
 }
 
 async function getChatCompletion(

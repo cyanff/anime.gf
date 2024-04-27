@@ -2,6 +2,7 @@ import { CardBundle, CardData, PersonaBundleWithoutData, PersonaFormData, Settin
 import { Result } from "@shared/utils";
 import { contextBridge, ipcRenderer } from "electron";
 import { RunResult } from "../main/lib/store/sqlite";
+import { XFetchConfig } from "../main/lib/xfetch";
 
 // Expose API types to the renderer process
 export interface API {
@@ -48,8 +49,13 @@ export interface API {
     set: (settings: any) => Promise<Result<void, Error>>;
   };
   xfetch: {
-    post: (url: string, body: Object, headers: Record<string, string>) => Promise<Result<any, Error>>;
-    get: (url: string, headers: Record<string, string>) => Promise<Result<any, Error>>;
+    post: (
+      url: string,
+      body: Object,
+      headers: Record<string, string>,
+      config?: XFetchConfig
+    ) => Promise<Result<any, Error>>;
+    get: (url: string, headers: Record<string, string>, config?: XFetchConfig) => Promise<Result<any, Error>>;
   };
 
   utils: {
@@ -94,8 +100,8 @@ const api: API = {
     set: (settings) => ipcRenderer.invoke("setting.set", settings)
   },
   xfetch: {
-    post: (url, body, headers) => ipcRenderer.invoke("xfetch.post", url, body, headers),
-    get: (url, headers) => ipcRenderer.invoke("xfetch.get", url, headers)
+    post: (url, body, headers, config) => ipcRenderer.invoke("xfetch.post", url, body, headers, config),
+    get: (url, headers, config) => ipcRenderer.invoke("xfetch.get", url, headers, config)
   },
   utils: {
     openURL: (url) => ipcRenderer.invoke("utils.openURL", url)

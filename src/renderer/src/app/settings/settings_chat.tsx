@@ -38,21 +38,20 @@ export default function SettingsChat() {
     formState: { errors }
   } = methods;
 
+  const providerNameAndValue = getProvidersNameAndValue();
+  const [models, setModels] = useState<string[]>([]);
+  const selectedProvider = watch("provider");
+
+  useEffect(() => {
+    syncSettings();
+  }, []);
+
   // Shows the user an error message if there are any errors in the form
   useEffect(() => {
     Object.entries(errors).forEach(([key, value]) => {
       toast.error(`Error in field ${key}: ${value!.message}`);
     });
   }, [errors]);
-
-  const providerNameAndValue = getProvidersNameAndValue();
-  const [models, setModels] = useState<string[]>([]);
-  const selectedProvider = watch("provider");
-
-  // Set form's values to the user's current settings on load
-  useEffect(() => {
-    syncSettings();
-  }, []);
 
   // Set the form's values to be the user's settings.json
   const syncSettings = async () => {
@@ -61,17 +60,24 @@ export default function SettingsChat() {
       console.error("Error getting settings:", res.error);
       return;
     }
-
     const chatSettings = res.value.chat;
     reset(chatSettings);
   };
 
-  //  Change the models based on the selected provider
+  //  Change models based on the selected provider
   useEffect(() => {
     (async () => {
       if (!selectedProvider) return;
-      const models = await getProvider(selectedProvider).getModels();
-      setModels(models);
+      // Clear current model list
+      setModels([]);
+      console.log("selected provider:", selectedProvider);
+      // Fetch & set new model list based on the selected provider
+      const res = await getProvider(selectedProvider).getModels();
+      if (res.kind === "err") {
+        toast(`An error occured while fetching models list.`);
+        return;
+      }
+      setModels(res.value);
     })();
   }, [selectedProvider]);
 
