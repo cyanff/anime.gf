@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { useApp } from "@/components/AppContext";
+import { Button } from "@/components/ui/button";
 import { queries } from "@/lib/queries";
 import { PersonaBundle, PersonaFormData } from "@shared/types";
 import { toast } from "sonner";
@@ -212,13 +213,10 @@ export default function SettingsPersona() {
           })}
         </div>
       </div>
-      <button
-        className="flex items-center space-x-2 rounded-md bg-action-primary px-4 py-2 transition hover:brightness-90"
-        onClick={handleNew}
-      >
+      <Button className="flex items-center space-x-2" onClick={handleNew}>
         <UserPlusIcon className="size-5 text-tx-primary" />
         <span className="font-medium text-tx-primary">New</span>
-      </button>
+      </Button>
     </div>
   );
 }

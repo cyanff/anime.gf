@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -89,13 +90,7 @@ export default function SettingsKeys() {
         </div>
       </div>
 
-      <button
-        className="flex items-center space-x-2 rounded-md border border-line transition bg-action-primary hover:rbrightness-90 px-4 py-2
-          font-medium text-tx-primary"
-        onClick={handleSubmit}
-      >
-        Save
-      </button>
+      <Button onClick={handleSubmit}>Save</Button>
     </div>
   );
 }

@@ -65,7 +65,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
       <div className="flex flex-col">
         <DropdownMenu>
           <DropdownMenuTrigger className="outline-none">
-            <Button size="icon" className={"m-2 size-16 rounded-xl hover:bg-accent"}>
+            <Button variant="ghost" size="icon" className={"m-2 size-16 rounded-xl"}>
               <PlusCircleIcon className="text-tx-secondary size-8" />
             </Button>
           </DropdownMenuTrigger>
@@ -88,13 +88,17 @@ export default function SideBar({ page, setPage }: SideBarProps) {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button className="m-2 size-16 rounded-xl hover:bg-accent " onClick={() => setPage("chats")}>
+        <Button variant="ghost" className="m-2 size-16 rounded-xl" onClick={() => setPage("chats")}>
           <ChatBubbleLeftRightIcon className="text-tx-secondary size-8" />
         </Button>
-        <Button className="m-2 size-16 rounded-xl hover:bg-accent" onClick={() => setPage("collections")}>
+        <Button
+          variant="ghost"
+          className="m-2 size-16 rounded-xl hover:bg-accent"
+          onClick={() => setPage("collections")}
+        >
           <UserGroupIcon className="text-tx-secondary size-8" />
         </Button>
-        <Button className="m-2 size-16 rounded-xl hover:bg-accent" onClick={() => setPage("settings")}>
+        <Button variant="ghost" className="m-2 size-16 rounded-xl hover:bg-accent" onClick={() => setPage("settings")}>
           <Cog8ToothIcon className="text-tx-secondary size-8" />
         </Button>
       </div>
@@ -105,6 +109,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
       {/* Bottom Button Group*/}
       <div className="flex flex-col space-y-2">
         <Button
+          variant="ghost"
           size="icon"
           className="mx-2 size-12 rounded-xl"
           onClick={() => {
@@ -116,6 +121,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
         </Button>
         <Button
           size="icon"
+          variant="ghost"
           className="mx-2 size-12 rounded-xl"
           onClick={() => {
             toast.info("Docs are coming soon™!");

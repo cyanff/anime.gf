@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import Combobox from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
@@ -38,8 +39,8 @@ export default function SettingsChat() {
     formState: { errors }
   } = methods;
 
-  const providerNameAndValue = getProvidersNameAndValue();
   const [models, setModels] = useState<string[]>([]);
+  const providerNameAndValue = getProvidersNameAndValue();
   const selectedProvider = watch("provider");
 
   useEffect(() => {
@@ -70,11 +71,12 @@ export default function SettingsChat() {
       if (!selectedProvider) return;
       // Clear current model list
       setModels([]);
-      console.log("selected provider:", selectedProvider);
       // Fetch & set new model list based on the selected provider
       const res = await getProvider(selectedProvider).getModels();
       if (res.kind === "err") {
-        toast(`An error occured while fetching models list.`);
+        toast.error(
+          <span className="whitespace-pre-wrap">{`An error occured while fetching the model list for ${selectedProvider}.\nDid you enter an API key?`}</span>
+        );
         return;
       }
       setModels(res.value);
@@ -92,12 +94,12 @@ export default function SettingsChat() {
   };
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center scroll-secondary space-y-5 overflow-hidden">
+    <div className="flex h-full w-full flex-col items-center justify-center space-y-5">
       <h1 className="text-2xl text-tx-primary font-bold tracking-wide">Chat Settings</h1>
       <FormProvider {...methods}>
-        <form className="overflow-hidden">
+        <form className="flex flex-col items-center space-y-5">
           {/* Card Wrapper*/}
-          <div className=" h-[30rem] w-[32rem] rounded-2xl border-y border-l border-line bg-container-primary py-3">
+          <div className="h-[32rem] w-[32rem] rounded-2xl border-y border-l border-line bg-container-primary py-3">
             <div className="scroll-secondary flex h-full w-full flex-col space-y-8 overflow-auto px-8 py-6">
               {/* Provider & Model Section */}
               <div className="space-y-3">
@@ -253,15 +255,10 @@ export default function SettingsChat() {
               </div>
             </div>
           </div>
+          <Button className="" onClick={handleSubmit(onSubmit)}>
+            Save
+          </Button>
         </form>
-
-        <button
-          className="flex items-center space-x-2 rounded-xl border border-line bg-action-primary hover:brightness-90 px-4 py-2 font-medium
-            text-tx-primary"
-          onClick={handleSubmit(onSubmit)}
-        >
-          Save
-        </button>
       </FormProvider>
     </div>
   );

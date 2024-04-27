@@ -40,7 +40,7 @@ export default function ChatBar({
   return (
     <div className={className}>
       <div className="flex h-fit w-fit items-center ">
-        <Typing className="mb-1 ml-4 mt-1" name="Saku" typing={isTyping} />
+        <Typing className="mb-1 ml-4 mt-1" name={cardData.character.name} typing={isTyping} />
       </div>
       <div className="flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-input-primary p-4">
         <button className="flex size-7 items-center justify-center">

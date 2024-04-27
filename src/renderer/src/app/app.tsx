@@ -116,7 +116,7 @@ export default function App() {
       }}
     >
       <div
-        className="flex h-screen bg-background text-sm text-neutral-100 antialiased lg:text-base"
+        className="flex h-screen overflow-hidden bg-background text-sm text-tx-primary antialiased lg:text-base"
         onDrop={handleDrop}
         onDragOver={(e) => {
           e.preventDefault();

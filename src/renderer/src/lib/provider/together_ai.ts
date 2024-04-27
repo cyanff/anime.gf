@@ -45,9 +45,8 @@ async function getModels(): Promise<Result<string[], Error>> {
     Authorization: `Bearer ${key}`
   };
 
-  const modelsRes = await window.api.xfetch.get(url, headers, { timeout: 2000 });
+  const modelsRes = await window.api.xfetch.get(url, headers, { timeout: 5000 });
   if (modelsRes.kind == "err") {
-    console.log("Error getting models:", modelsRes.error.message);
     return modelsRes;
   }
 

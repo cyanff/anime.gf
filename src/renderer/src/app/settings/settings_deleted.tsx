@@ -1,5 +1,6 @@
 import { DialogConfig, useApp } from "@/components/AppContext";
 import CardDeleted from "@/components/CardDeleted";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { queries } from "@/lib/queries";
@@ -213,19 +214,13 @@ export default function SettingsRecentlyDeleted() {
           </div>
         </div>
         <div className="flex flex-row flex-grow space-x-4 justify-end pr-8">
-          <button
-            className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:brightness-90"
-            onClick={handleRestoreSelected}
-          >
+          <Button variant="secondary" className="flex items-center space-x-2" onClick={handleRestoreSelected}>
             <span className="font-medium text-tx-primary text-sm">Restore</span>
-          </button>
-          <button
-            className="flex items-center space-x-2 rounded-xl bg-action-primary px-4 py-2 transition ease-out duration-200 hover:brightness-90"
-            onClick={handleDeleteSelected}
-          >
+          </Button>
+          <Button className="flex items-center space-x-2" onClick={handleDeleteSelected}>
             <TrashIcon className="size-5 text-tx-primary" />
             <span className="font-medium text-tx-primary text-sm">Delete</span>
-          </button>
+          </Button>
         </div>
       </div>
 

@@ -7,7 +7,7 @@ import { useState } from "react";
 export default function SettingsPage() {
   const [page, setPage] = useState<string>("chat");
   return (
-    <div className="flex h-full w-full rounded-xl">
+    <div className="flex h-full w-full rounded-xl ">
       {/*Sidebar*/}
       <div className="flex h-full w-56 shrink-0 flex-col space-y-2 overflow-hidden rounded-2xl bg-nav-primary px-3 py-8">
         <button
@@ -46,7 +46,7 @@ export default function SettingsPage() {
 
       {/*Settings Content*/}
 
-      <div className="grow overflow-hidden">
+      <div className="grow overflow-y-clip">
         {page === "chat" && <SettingsChat />}
         {page === "persona" && <SettingsPersona />}
         {page === "key" && <SettingsKeys />}

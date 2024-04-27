@@ -1,0 +1,8 @@
+{
+  "singleQuote": false,
+  "semi": true,
+  "printWidth": 120,
+  "trailingComma": "none",
+  "plugins": ["prettier-plugin-tailwindcss", "prettier-plugin-classnames", "prettier-plugin-organize-imports"],
+  "organizeImportsSkipDestructiveCodeActions": true
+}
