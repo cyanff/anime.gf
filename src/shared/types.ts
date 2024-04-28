@@ -29,6 +29,7 @@ export interface CardData {
 
 export interface Character {
   name: string;
+  handle?: string;
   description: string;
   greeting: string;
   alt_greetings?: string[];
@@ -102,6 +103,12 @@ const characterFormSchema = z.object({
     .min(config.card.nameMinChars)
     .max(config.card.nameMaxChars)
     .regex(/^[a-zA-Z0-9 -]*$/, "Name can only contain letters, numbers, spaces, and hyphens"),
+  handle: z
+    .string()
+    .max(config.card.handleMaxChars)
+    .regex(/^[a-zA-Z0-9_-]*$/, "Handle can only contain letters, numbers, and dashes")
+    .optional(),
+
   description: z.string().min(config.card.descriptionMinChars).max(config.card.descriptionMaxChars),
   greeting: z.string().min(config.card.greetingMinChars).max(config.card.greetingMaxChars),
   msg_examples: z.string().min(config.card.msgExamplesMinChars).max(config.card.msgExamplesMaxChars),

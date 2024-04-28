@@ -28,6 +28,12 @@ export default function ChatBar({
 }: ChatBarProps) {
   const [userInput, setUserInput] = useState<string>("");
 
+  const prompt = `Message ${
+    cardBundle.data.character.handle?.length
+      ? `@${cardBundle.data.character.handle}`
+      : cardBundle.data.character.name
+  }`
+
   // Dynamically expand the text area to fit the user's input
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
@@ -91,7 +97,7 @@ export default function ChatBar({
             }
           }}
           value={userInput}
-          placeholder={`Message @Saku`}
+          placeholder={prompt}
           className="scroll-secondary text-tx-primary h-6 max-h-64 w-full resize-none overflow-y-auto bg-inherit px-2 leading-6
             placeholder:select-none focus:outline-none"
         />
