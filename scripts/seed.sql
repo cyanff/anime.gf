@@ -78,7 +78,8 @@ VALUES
     ('yuno'),
     ('miku'),
     ('kurisu'),
-    ('rias');
+    ('rias'),
+    ('test');
 
 
 INSERT INTO chats (persona_id, card_id)

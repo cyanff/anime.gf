@@ -2,7 +2,7 @@
   A message component.  
   A message can be from the user or a character.
   Users can copy, edit, regenerate, and rewind messages. 
-  Users can only use "regenerate" on the latest message sent by a character.
+  Users can only use "regenerate" on the latest message that is sent by a character.
   Users can only use "rewind" on any message that is not the latest message.
 */
 
@@ -45,7 +45,7 @@ import { reply } from "@/lib/reply";
 import { time } from "@/lib/time";
 import { MessageCandidate as MessageCandidateI, Message as MessageI } from "@shared/db_types";
 import { CardBundle, PersonaBundle } from "@shared/types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Markdown, { Components } from "react-markdown";
 import { toast } from "sonner";
 
@@ -56,13 +56,12 @@ interface MessageProps {
   messagesHistory: MessagesHistory;
   personaBundle: PersonaBundle;
   cardBundle: CardBundle;
+  editingMessageID: number | null;
+  setEditingMessageID: (id: number | null) => void;
+  setEditText: (text: string) => void;
   isGenerating: boolean;
   setIsGenerating: (isGenerating: boolean) => void;
-  handleEdit: () => void;
-  editingMessageID: number | null;
-  setEditText: (text: string) => void;
-  onEditSubmit: (isCandidate: boolean, id: number) => void;
-  synChatHistory: () => void;
+  syncChatHistory: () => void;
 }
 
 export default function Message({
@@ -72,44 +71,47 @@ export default function Message({
   cardBundle,
   isGenerating,
   setIsGenerating,
-  handleEdit,
   setEditText,
   editingMessageID,
-  onEditSubmit,
-  synChatHistory
+  setEditingMessageID,
+  syncChatHistory
 }: MessageProps) {
-  const [messagesOrCandidates, setMessageOrCandidate] = useState<MessageOrCandidate[]>(() => {
-    const ret: MessageOrCandidate[] = [];
-    ret.push({ kind: "message", ...messageWithCandidates });
-    messageWithCandidates.candidates.forEach((candidate) => {
-      ret.push({ kind: "candidate", ...candidate });
-    });
-    return ret;
-  });
-
-  const [idx, setIDX] = useState(() => {
-    if (messageWithCandidates.prime_candidate_id) {
-      return messageWithCandidates.candidates.findIndex((c) => c.id === messageWithCandidates.prime_candidate_id) + 1;
-    }
-    return 0;
-  });
-
-  const isLatest;
-
   const editFieldRef = useRef<HTMLDivElement>(null);
   const isShiftKeyPressed = useShiftKey();
   const { createDialog } = useApp();
-
   const { id: messageID, chat_id: chatID, sender } = messageWithCandidates;
   const isEditing = editingMessageID === messageWithCandidates.id;
   const { name, avatar } =
     messageWithCandidates.sender === "user"
       ? { name: personaBundle.data.name, avatar: personaBundle.avatarURI }
       : { name: cardBundle.data.character.name, avatar: cardBundle.avatarURI };
+  const isLatest = useMemo(
+    () => messagesHistory.length > 0 && messagesHistory[messagesHistory.length - 1].id === messageID,
+    [messagesHistory]
+  );
+  const messageAndCandidateArr = useMemo<MessageOrCandidate[]>(() => {
+    const ret: MessageOrCandidate[] = [{ kind: "message", ...messageWithCandidates }];
+    messageWithCandidates.candidates.forEach((candidate) => {
+      ret.push({ kind: "candidate", ...candidate });
+    });
+    return ret;
+  }, [messageWithCandidates]);
+
+  // Always show the prime candidate if it exists, or the message if it doesn't
+  const getIDX = () => {
+    if (messageWithCandidates.prime_candidate_id) {
+      return messageWithCandidates.candidates.findIndex((c) => c.id === messageWithCandidates.prime_candidate_id) + 1;
+    }
+    return 0;
+  };
+  const [idx, setIDX] = useState(getIDX);
+  useEffect(() => {
+    setIDX(getIDX());
+  }, [messageWithCandidates]);
 
   // When the user switches between messages, update the "prime candidate" column in the database accordingly
   useEffect(() => {
-    const messageOrCandidate = messagesOrCandidates[idx];
+    const messageOrCandidate = messageAndCandidateArr[idx];
     if (messageOrCandidate.kind === "message") {
       queries.updateMessagePrimeCandidate(messageID, null);
       return;
@@ -118,12 +120,12 @@ export default function Message({
     }
   }, [idx]);
 
-  const handleCopy = () => {
+  const copyHandler = () => {
     navigator.clipboard.writeText(messageWithCandidates.text);
     toast.success("Message copied to clipboard!");
   };
 
-  const handleCopyText = () => {
+  const copyTextHandler = () => {
     const selectedText = window.getSelection()?.toString();
     if (selectedText) {
       navigator.clipboard.writeText(selectedText);
@@ -134,7 +136,6 @@ export default function Message({
   // Focus on the edit field when the user starts editing
   useEffect(() => {
     if (!isEditing) return;
-    setEditText(messageWithCandidates.text);
     focusEditField();
   }, [isEditing]);
 
@@ -155,10 +156,134 @@ export default function Message({
     }, 0);
   };
 
+  const handleChangeMessage = (idx: number) => {
+    // If the message  change to is out of bounds, regenerate the message
+    if (idx === messageAndCandidateArr.length) {
+      regenerateHandler();
+      return;
+    }
+    // If user is currently in message edit mode, change the edit field to the new message
+    if (isEditing) {
+      setEditText(messageAndCandidateArr[idx].text);
+      focusEditField();
+    }
+    const clampedValue = Math.min(Math.max(idx, 0), messageAndCandidateArr.length - 1);
+    setIDX(clampedValue);
+  };
+
+  const editSubmitHandler = async () => {
+    setEditingMessageID(null);
+    try {
+      const text = messageAndCandidateArr[idx].text;
+      const id = messageAndCandidateArr[idx].id;
+      if (messageAndCandidateArr[idx].kind === "message") {
+        await queries.updateMessageText(id, text);
+      } else {
+        await queries.updateCandidateMessage(id, text);
+      }
+    } catch (e) {
+      toast.error(`Failed to edit the message. Error: ${e}`);
+      console.error(e);
+    } finally {
+      syncChatHistory();
+    }
+  };
+
+  const editHandler = async () => {
+    setEditingMessageID(messageID);
+    const text = messageAndCandidateArr[idx].text;
+    setEditText(text);
+  };
+
+  const rewindHandler = () => {
+    const rewind = async () => {
+      try {
+        await queries.resetChatToMessage(chatID, messageID);
+      } catch (e) {
+        toast.error(`Failed to rewind chat. Error: ${e}`);
+        console.error(e);
+      } finally {
+        syncChatHistory();
+      }
+    };
+
+    if (isShiftKeyPressed) {
+      rewind();
+    } else {
+      const config: DialogConfig = {
+        title: "Rewind Chat",
+        actionLabel: "Rewind",
+        description:
+          "Are you sure you want to rewind the chat to this message? Rewinding will delete all messages that were sent after this message.",
+        onAction: rewind
+      };
+      createDialog(config);
+    }
+  };
+  const deleteHandler = () => {
+    const deleteMessage = async () => {
+      try {
+        await queries.deleteMessage(messageID);
+      } catch (e) {
+        toast.error(`Failed to delete message. Error: ${e}`);
+        console.error(e);
+      } finally {
+        syncChatHistory();
+      }
+    };
+
+    if (isShiftKeyPressed) {
+      deleteMessage();
+    } else {
+      const config: DialogConfig = {
+        title: "Delete Message",
+        actionLabel: "Delete",
+        description: "Are you sure you want to delete this message?",
+        onAction: deleteMessage
+      };
+      createDialog(config);
+    }
+  };
+  const regenerateHandler = async () => {
+    if (isGenerating) {
+      toast.info("Already generating a reply. Please wait...");
+      return;
+    }
+    setIsGenerating(true);
+    try {
+      const replyRes = await reply.regenerate(chatID, messageID, cardBundle.data, personaBundle.data);
+      if (replyRes.kind === "err") throw replyRes.error;
+      const candidateID = await queries.insertCandidateMessage(messageID, replyRes.value);
+      await queries.setCandidateMessageAsPrime(messageID, candidateID);
+    } catch (e) {
+      toast.error(`Failed to regenerate a reply. Error: ${e}`);
+      console.error(e);
+    } finally {
+      setIsGenerating(false);
+      syncChatHistory();
+    }
+  };
+
+  const isCharacter = messageWithCandidates.sender === "character";
+  const isFirst = messagesHistory.length > 0 && messagesHistory[0].id === messageWithCandidates.id;
+  const showRegenerate = isLatest && isCharacter && !isFirst;
+  const showRewind = !isLatest;
+  const menuProps = {
+    showRegenerate,
+    showRewind,
+    onCopy: copyHandler,
+    onCopyText: copyTextHandler,
+    onEdit: editHandler,
+    onRegenerate: regenerateHandler,
+    onRewind: rewindHandler,
+    onDelete: deleteHandler
+  };
+
   const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
   const roleColorStyles = sender === "user" ? "bg-chat-user-grad" : "bg-chat-character-grad";
   const editingStyles = isEditing ? "outline-2 outline-dashed outline-tx-secondary" : "";
-  const baseStyles = `h-fit flex items-start space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 text-tx-primary rounded-3xl group/msg`;
+  const baseStyles =
+    "h-fit flex items-start space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 text-tx-primary rounded-3xl group/msg";
   return (
     <div className={cn("max-w-3/4 shrink-0", roleAlignStyles)}>
       <ContextMenu>
@@ -182,16 +307,7 @@ export default function Message({
                 {/* Name */}
                 <div className="flex h-fit flex-row items-center justify-between space-x-3">
                   <div className=" text-base font-semibold text-tx-primary">{name}</div>
-                  <MessageDropdownMenu
-                    isLatest={isLatest}
-                    isLatestCharacterMessage={isLatestCharacterMessage}
-                    handleCopy={handleCopy}
-                    handleCopyText={handleCopyText}
-                    handleEdit={handleEdit}
-                    handleRegenerate={handleRegenerate}
-                    handleRewind={handleRewind}
-                    handleDelete={handleDelete}
-                  />
+                  <MessageDropdownMenu {...menuProps} />
                 </div>
                 {isEditing ? (
                   // Show edit field if editing
@@ -200,7 +316,7 @@ export default function Message({
                     className="scroll-secondary h-auto w-full overflow-y-scroll text-wrap break-all bg-transparent text-left focus:outline-none"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
-                        onEditSubmit(idx !== 0, messages[idx].id);
+                        editSubmitHandler();
                         e.preventDefault();
                       }
                     }}
@@ -223,32 +339,12 @@ export default function Message({
                 )}
               </div>
             </div>
-
-            <MessageContextMenuContent
-              isLatest={isLatest}
-              isLatestCharacterMessage={isLatestCharacterMessage}
-              handleCopy={handleCopy}
-              handleCopyText={handleCopyText}
-              handleEdit={handleEdit}
-              handleRegenerate={handleRegenerate}
-              handleRewind={handleRewind}
-              handleDelete={handleDelete}
-            />
+            <MessageContextMenuContent {...menuProps} />
           </ContextMenuTrigger>
 
-          {/* Regeneration Controls
-              - if latest character message
-                - if there are candidate messages:
-                  - show <  1 / n  > candidate selector
-                  - default to showing the prime candidate if it exists
-                - else :
-                  - show regenerate button
-              - else:
-                - show message text 
-          */}
-          {isLatestCharacterMessage &&
-            /* Show the candidate selector if there are multiple candidates */
-            (messages.length > 1 ? (
+          {showRegenerate &&
+            /* Show the selector arrows if there are multiple candidates */
+            (messageWithCandidates.candidates.length > 0 ? (
               <div className="flex flex-row items-center space-x-2 p-2">
                 {/* Left Arrow */}
                 <button
@@ -259,7 +355,7 @@ export default function Message({
                 >
                   <ChevronLeftIcon className="size-5 text-tx-tertiary" />
                 </button>
-                <p className="font-mono text-sm font-semibold text-tx-tertiary">{`${idx + 1}/${messages.length}`}</p>
+                <p className="font-mono text-sm font-semibold text-tx-tertiary">{`${idx + 1}/${messageAndCandidateArr.length}`}</p>
                 {/* Right Arrow */}
                 <button
                   className="size-5"
@@ -274,7 +370,7 @@ export default function Message({
               <div className="px-2 py-1">
                 {/* Regenrate */}
                 <button className="size-6">
-                  <ArrowPathIcon className="size-6 text-tx-tertiary" onClick={handleRegenerate} />
+                  <ArrowPathIcon className="size-6 text-tx-tertiary" onClick={regenerateHandler} />
                 </button>
               </div>
             ))}
@@ -367,25 +463,25 @@ function MessagePopoverBanner({ bannerURI, avatarURI }: { bannerURI: string; ava
 }
 
 interface MenuProps {
-  isLatest: boolean;
-  isLatestCharacterMessage: boolean;
-  handleCopy: () => void;
-  handleCopyText: () => void;
-  handleEdit: () => void;
-  handleRegenerate: () => void;
-  handleRewind: () => void;
-  handleDelete: () => void;
+  showRegenerate: boolean;
+  showRewind: boolean;
+  onCopy: () => void;
+  onCopyText: () => void;
+  onEdit: () => void;
+  onRegenerate: () => void;
+  onRewind: () => void;
+  onDelete: () => void;
 }
 
 function MessageDropdownMenu({
-  isLatest,
-  isLatestCharacterMessage,
-  handleCopy,
-  handleCopyText,
-  handleEdit,
-  handleRegenerate,
-  handleRewind,
-  handleDelete
+  showRegenerate,
+  showRewind,
+  onCopy,
+  onCopyText,
+  onEdit,
+  onRegenerate,
+  onRewind,
+  onDelete
 }: MenuProps) {
   return (
     <DropdownMenu>
@@ -394,7 +490,7 @@ function MessageDropdownMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40">
         <DropdownMenuGroup>
-          <DropdownMenuItem onSelect={handleCopy}>
+          <DropdownMenuItem onSelect={onCopy}>
             Copy
             <DropdownMenuShortcut className="">
               <ClipboardDocumentIcon className="size-4" />
@@ -403,14 +499,14 @@ function MessageDropdownMenu({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onSelect={handleEdit}>
+          <DropdownMenuItem onSelect={onEdit}>
             Edit
             <DropdownMenuShortcut>
               <PencilIcon className="size-4" />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
-          {isLatestCharacterMessage && (
-            <DropdownMenuItem onSelect={handleRegenerate}>
+          {showRegenerate && (
+            <DropdownMenuItem onSelect={onRegenerate}>
               Regenerate
               <DropdownMenuShortcut>
                 <ArrowPathIcon className="size-4" />
@@ -418,8 +514,8 @@ function MessageDropdownMenu({
             </DropdownMenuItem>
           )}
 
-          {!isLatest && (
-            <DropdownMenuItem onSelect={handleRewind}>
+          {showRewind && (
+            <DropdownMenuItem onSelect={onRewind}>
               Rewind
               <DropdownMenuShortcut>
                 <BackwardIcon className="size-4" />
@@ -427,14 +523,14 @@ function MessageDropdownMenu({
             </DropdownMenuItem>
           )}
 
-          <DropdownMenuItem onSelect={handleCopyText}>
+          <DropdownMenuItem onSelect={onCopyText}>
             Copy Selected
             <DropdownMenuShortcut>
               <ClipboardDocumentIcon className="size-4" />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
 
-          <DropdownMenuItem onSelect={handleDelete}>
+          <DropdownMenuItem onSelect={onDelete}>
             Delete
             <DropdownMenuShortcut>
               <TrashIcon className="size-4" />
@@ -447,33 +543,33 @@ function MessageDropdownMenu({
 }
 
 function MessageContextMenuContent({
-  isLatest,
-  isLatestCharacterMessage,
-  handleCopy,
-  handleCopyText,
-  handleEdit,
-  handleRegenerate,
-  handleRewind,
-  handleDelete
+  showRegenerate,
+  showRewind,
+  onCopy,
+  onCopyText,
+  onEdit,
+  onRegenerate,
+  onRewind,
+  onDelete
 }: MenuProps) {
   return (
     <ContextMenuContent className="w-40">
-      <ContextMenuItem onSelect={handleCopy} className="">
+      <ContextMenuItem onSelect={onCopy} className="">
         Copy
         <ContextMenuShortcut>
           <ClipboardDocumentIcon className="size-4" />
         </ContextMenuShortcut>
       </ContextMenuItem>
       <ContextMenuSeparator />
-      <ContextMenuItem onSelect={handleEdit}>
+      <ContextMenuItem onSelect={onEdit}>
         Edit
         <ContextMenuShortcut>
           <PencilIcon className="size-4" />
         </ContextMenuShortcut>
       </ContextMenuItem>
 
-      {isLatestCharacterMessage && (
-        <ContextMenuItem onSelect={handleRegenerate}>
+      {showRegenerate && (
+        <ContextMenuItem onSelect={onRegenerate}>
           Regenerate
           <ContextMenuShortcut>
             <ArrowPathIcon className="size-4" />
@@ -481,22 +577,22 @@ function MessageContextMenuContent({
         </ContextMenuItem>
       )}
 
-      {!isLatest && (
-        <ContextMenuItem onSelect={handleRewind}>
+      {showRewind && (
+        <ContextMenuItem onSelect={onRewind}>
           Rewind
           <ContextMenuShortcut>
             <BackwardIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
       )}
-      <ContextMenuItem onSelect={handleCopyText}>
+      <ContextMenuItem onSelect={onCopyText}>
         Copy Selected
         <ContextMenuShortcut>
           <ClipboardDocumentIcon className="size-4" />
         </ContextMenuShortcut>
       </ContextMenuItem>
 
-      <ContextMenuItem onSelect={handleDelete}>
+      <ContextMenuItem onSelect={onDelete}>
         Delete
         <ContextMenuShortcut>
           <TrashIcon className="size-4" />

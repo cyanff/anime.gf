@@ -1,12 +1,11 @@
-import { AppContext, useApp } from "@/components/AppContext";
+import { useApp } from "@/components/AppContext";
 import ChatBar from "@/components/ChatBar";
 import ChatsSidebar from "@/components/ChatsSidebar";
 import Message from "@/components/Message";
 import { MessagesHistory, queries } from "@/lib/queries";
-import { time } from "@/lib/time";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { motion } from "framer-motion";
-import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import "../styles/global.css";
 
@@ -33,8 +32,8 @@ function ChatsPage({ chatID }): JSX.Element {
 
   useEffect(() => {
     (async () => {
-      const chatExistsRes = await queries.checkChatExists(chatID);
       // If active chat does not exist, set the most recent chat to be the active chat
+      const chatExistsRes = await queries.checkChatExists(chatID);
       if (chatExistsRes.kind === "ok" && !chatExistsRes.value) {
         console.error(`Chat with ID ${chatID} does not exist. Setting active chat to most recent.`);
         const recentChatRes = await queries.getMostRecentChat();
@@ -121,32 +120,6 @@ function ChatsPage({ chatID }): JSX.Element {
     return <div className="flex h-screen w-screen items-center justify-center "></div>;
   }
 
-  const handleEditSubmit = async (messageID?: number, candidateID?: number) => {
-    if (!messageID && !candidateID) {
-      return;
-    }
-    if (messageID && candidateID) {
-      return;
-    }
-    // Clear the editing state
-    setEditingMessageID(null);
-    try {
-      // Editing a main message
-      if (messageID) {
-        await queries.updateMessageText(messageID, editText);
-      }
-      // Editing a candidate message
-      else if (candidateID) {
-        await queries.updateCandidateMessage(candidateID, editText);
-      }
-    } catch (e) {
-      toast.error(`Failed to edit the message. Error: ${e}`);
-      console.error(e);
-    } finally {
-      syncChatHistory();
-    }
-  };
-
   const handleScroll = async (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     // User scrolled to top
     if (e.currentTarget.scrollTop == 0) {
@@ -183,19 +156,12 @@ function ChatsPage({ chatID }): JSX.Element {
                   messagesHistory={messagesHistory}
                   personaBundle={personaBundle}
                   cardBundle={cardBundle}
-                  isEditing={editingMessageID === message.id}
+                  editingMessageID={editingMessageID}
+                  setEditingMessageID={setEditingMessageID}
                   isGenerating={isGenerating}
                   setIsGenerating={setIsGenerating}
-                  handleEdit={() => setEditingMessageID(message.id)}
                   setEditText={setEditText}
-                  onEditSubmit={(isCandidate: boolean, id: number) => {
-                    if (isCandidate) {
-                      handleEditSubmit(undefined, id);
-                    } else {
-                      handleEditSubmit(id);
-                    }
-                  }}
-                  synChatHistory={syncChatHistory}
+                  syncChatHistory={syncChatHistory}
                 />
               );
             })}

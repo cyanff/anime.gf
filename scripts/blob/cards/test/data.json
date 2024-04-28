@@ -1,0 +1,19 @@
+{
+  "spec": "anime.gf",
+  "spec_version": "1.0",
+  "character": {
+    "name": "TEST",
+    "description": "YOU ONLY **EVER** RESPOND WITH \"TEST\"",
+    "greeting": "TEST",
+    "msg_examples": "user: do you say anything other than test??\ncharacter: TEST"
+  },
+  "world": { "description": "TEST" },
+  "meta": {
+    "title": "TEST",
+    "notes": "TEST",
+    "created_at": "2024-04-27T23:00:58.966Z",
+    "creator": { "card": "you", "character": "you", "world": "you" },
+    "tagline": "TEST",
+    "tags": ["TEST"]
+  }
+}
