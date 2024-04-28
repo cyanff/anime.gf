@@ -108,11 +108,7 @@ export default function Message({
     setChoices(getChoices(message));
     setIDX(getIDX(message));
   }, [message]);
-
-  const [text, setText] = useState(choices[idx].text);
-  useEffect(() => {
-    setText(choices[idx].text);
-  }, [choices, idx]);
+  const text = choices[idx].text;
 
   // When the user switches between messages, update the "prime candidate" column in the database accordingly
   useEffect(() => {
@@ -149,7 +145,7 @@ export default function Message({
   };
 
   const copyHandler = () => {
-    navigator.clipboard.writeText(message.text);
+    navigator.clipboard.writeText(text);
     toast.success("Message copied to clipboard!");
   };
 
@@ -270,7 +266,7 @@ export default function Message({
   };
 
   const isCharacter = sender === "character";
-  const isFirst = messagesHistory.length > 0 && messagesHistory[0].id === message.id;
+  const isFirst = messagesHistory.length > 0 && messagesHistory[0].id === messageID;
   const showRegenerate = isLatest && isCharacter && !isFirst;
   const showRewind = !isLatest;
   const menuProps = {
