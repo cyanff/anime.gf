@@ -19,13 +19,9 @@ function ChatsPage({ chatID }): JSX.Element {
   const [cardBundle, setCardBundle] = useState<CardBundle>();
   const [historyLimit, setHistoryLimit] = useState(50);
   const [messagesHistory, setMessagesHistory] = useState<MessagesHistory>([]);
-  // Keep track of which message is being edited, only one message can be edited at a time
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
-  const [editText, setEditText] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const latestCharacterMessageIDX = messagesHistory.findLastIndex((m) => m.sender === "character");
   const chatAreaRef = useRef<HTMLDivElement | null>(null);
-  // Keep track of the previous scroll height to restore it when loading more messages
   const oldScrollHeightRef = useRef(0);
   const scrollEventRef = useRef<ScrollEvent | null>(null);
   const { setActiveChatID } = useApp();
@@ -152,7 +148,7 @@ function ChatsPage({ chatID }): JSX.Element {
               return (
                 <Message
                   key={idx}
-                  messageWithCandidates={message}
+                  message={message}
                   messagesHistory={messagesHistory}
                   personaBundle={personaBundle}
                   cardBundle={cardBundle}
@@ -160,7 +156,6 @@ function ChatsPage({ chatID }): JSX.Element {
                   setEditingMessageID={setEditingMessageID}
                   isGenerating={isGenerating}
                   setIsGenerating={setIsGenerating}
-                  setEditText={setEditText}
                   syncChatHistory={syncChatHistory}
                 />
               );

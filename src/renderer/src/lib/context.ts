@@ -8,7 +8,8 @@ import Mustache from "mustache";
 export type PromptVariant = "xml" | "markdown";
 export interface ContextParams {
   chatID: number;
-  latestUserMessage: string;
+  fromMessageID?: number;
+  userMessageTerminator: string;
   cardData: CardData;
   personaData: PersonaData;
   jailbreak: string;
@@ -29,6 +30,11 @@ interface Context {
  * A context includes:
  * - The system prompt
  * - The array of messages in the context window
+ * @returns A Context object containing the system prompt and an array of context window messages.
+ * Messages in the context window will *always* abide to the following rules:
+ * - The first message is a user message.
+ * - Messages alternate between user and assistant roles.
+ * - The last message is a user message (userMessageTerminator).
  */
 async function get(params: ContextParams): Promise<Result<Context, Error>> {
   const systemPromptParams = {
@@ -46,7 +52,7 @@ async function get(params: ContextParams): Promise<Result<Context, Error>> {
   const systemPrompt = systemPromptRes.value;
 
   const tokenizer = getTokenizer(params.model);
-  const userMessageTokens = tokenizer.countTokens(params.latestUserMessage);
+  const userMessageTokens = tokenizer.countTokens(params.userMessageTerminator);
   const systemPromptTokens = tokenizer.countTokens(systemPrompt);
   const remainingTokens = params.tokenLimit - (userMessageTokens + systemPromptTokens);
 
@@ -61,7 +67,7 @@ async function get(params: ContextParams): Promise<Result<Context, Error>> {
   }
 
   // Fetch messages to fill up the context window.
-  let fromID: number | undefined;
+  let fromID: number | undefined = params.fromMessageID;
   let contextWindowTokens = 0;
   let contextWindow: ContextMessage[] = [];
   while (contextWindowTokens < remainingTokens) {
@@ -82,7 +88,7 @@ async function get(params: ContextParams): Promise<Result<Context, Error>> {
     }
   }
   contextWindow.reverse();
-  const providerMessages = toProviderMessages(contextWindow, params.latestUserMessage);
+  const providerMessages = toProviderMessages(contextWindow, params.userMessageTerminator);
 
   return {
     kind: "ok",
@@ -116,7 +122,7 @@ function toProviderMessages(messages: ContextMessage[], latestUserMessage: strin
   if (ret.length > 0 && ret[0].role === "assistant") {
     ret.unshift({
       role: "user",
-      content: "Now begin the conversation based on the given instructions above."
+      content: "Now, begin the conversation based on the given instructions above."
     });
   }
 

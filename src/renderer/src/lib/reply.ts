@@ -4,6 +4,8 @@ import { CardData, PersonaData, Result } from "@shared/types";
 import { deepFreeze } from "@shared/utils";
 import { ContextParams, context } from "./context";
 
+const userMessageTerminatorNOP = "Please continue the conversation. DO NOT MENTION THIS MESSAGE.";
+
 /**
  * Generates a response based on the provided chat ID, card data, persona data, and latest user message.
  *
@@ -42,7 +44,14 @@ async function regenerate(
   if (res.kind == "err") {
     return res;
   }
-  return await _generate(chatID, cardData, personaData, res.value);
+  // Set the userMessageTerminator to the latest user message working backwards from the provided message ID
+  // Or if it doesn't exists, use the NOP terminator
+  const userMessageTerminator = res.value ? res.value : userMessageTerminatorNOP;
+  return await _generate(chatID, cardData, personaData, userMessageTerminator, messageID);
+}
+
+async function continue_(chatID: number, cardData: CardData, personaData: PersonaData): Promise<Result<string, Error>> {
+  return await _generate(chatID, cardData, personaData, userMessageTerminatorNOP);
 }
 
 /**
@@ -52,13 +61,15 @@ async function regenerate(
  * @param cardData - The card data to use for generating the response.
  * @param personaData - The persona data to use for generating the response.
  * @param latestUserMessage - The user message that's at the end of the context window.
+ * @param fromMessageID - The ID of the message to start fetching the context window from.
  * @returns A promise that resolves to the generated response.
  */
 async function _generate(
   chatID: number,
   cardData: CardData,
   personaData: PersonaData,
-  latestUserMessage: string
+  latestUserMessage: string,
+  fromMessageID?: number
 ): Promise<Result<string, Error>> {
   const settingsRes = await window.api.setting.get();
   if (settingsRes.kind == "err") {
@@ -68,7 +79,8 @@ async function _generate(
 
   const contextParams: ContextParams = {
     chatID,
-    latestUserMessage,
+    fromMessageID,
+    userMessageTerminator: latestUserMessage,
     personaData,
     cardData,
     jailbreak: settings.chat.jailbreak,

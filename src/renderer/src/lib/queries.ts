@@ -446,13 +446,13 @@ export interface ContextMessage extends Pick<Message, "id" | "sender" | "text"> 
  *
  * @param chatID - The ID of the chat to fetch messages for.
  * @param limit - The maximum number of messages to fetch.
- * @param messageID - The ID of the message to start fetching from. If not provided, the most recent messages will be fetched.
+ * @param fromMessageID - The ID of the message to start fetching from. If not provided, the most recent messages will be fetched.
  * @returns An array of `Message` objects containing the fetched messages.
  */
 async function getContextMessagesStartingFrom(
   chatID: number,
   limit: number,
-  messageID?: number
+  fromMessageID?: number
 ): Promise<ContextMessage[]> {
   interface QueryResult {
     id: number;
@@ -466,7 +466,7 @@ async function getContextMessagesStartingFrom(
 
   let query: string;
   // If messageID is not provided, fetch the most recent messages.
-  if (!messageID || messageID <= 0) {
+  if (!fromMessageID || fromMessageID <= 0) {
     query = `
     SELECT id, text, sender, prime_candidate_id FROM messages
     WHERE chat_id = ${chatID}
@@ -476,7 +476,7 @@ async function getContextMessagesStartingFrom(
   } else {
     query = `
     SELECT id, text, sender, prime_candidate_id FROM messages
-    WHERE chat_id = ${chatID} AND id < ${messageID}
+    WHERE chat_id = ${chatID} AND id < ${fromMessageID}
     ORDER BY id desc
     LIMIT ${limit}
     `;
@@ -509,15 +509,21 @@ async function getContextMessagesStartingFrom(
   return ret;
 }
 
-async function getLatestUserMessageStartingFrom(chatID: number, messageID: number): Promise<Result<string, Error>> {
+async function getLatestUserMessageStartingFrom(
+  chatID: number,
+  messageID: number
+): Promise<Result<string | undefined, Error>> {
   const query = `
   SELECT text FROM messages
   WHERE chat_id = ${chatID} AND id < ${messageID} AND sender = 'user'
   ORDER BY id DESC
   LIMIT 1;`;
 
-  const row = (await window.api.sqlite.get(query)) as { text: string };
-  return { kind: "ok", value: row.text };
+  const rows = (await window.api.sqlite.all(query)) as { text: string }[];
+  if (rows.length === 0) {
+    return { kind: "ok", value: undefined };
+  }
+  return { kind: "ok", value: rows[0].text };
 }
 
 async function insertCandidateMessage(messageID: number, text: string): Promise<number> {

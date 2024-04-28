@@ -49,29 +49,41 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Markdown, { Components } from "react-markdown";
 import { toast } from "sonner";
 
-type MessageOrCandidate = ({ kind: "message" } & MessageI) | ({ kind: "candidate" } & MessageCandidateI);
+type Choices = ({ kind: "message" } & MessageI) | ({ kind: "candidate" } & MessageCandidateI);
 
 interface MessageProps {
-  messageWithCandidates: MessageWithCandidates;
+  message: MessageWithCandidates;
   messagesHistory: MessagesHistory;
   personaBundle: PersonaBundle;
   cardBundle: CardBundle;
   editingMessageID: number | null;
   setEditingMessageID: (id: number | null) => void;
-  setEditText: (text: string) => void;
   isGenerating: boolean;
   setIsGenerating: (isGenerating: boolean) => void;
   syncChatHistory: () => void;
 }
 
+const getChoices = (message: MessageWithCandidates): Choices[] => {
+  const ret: Choices[] = [{ kind: "message", ...message }];
+  message.candidates.forEach((candidate) => {
+    ret.push({ kind: "candidate", ...candidate });
+  });
+  return ret;
+};
+const getIDX = (message: MessageWithCandidates) => {
+  if (message.prime_candidate_id) {
+    return message.candidates.findIndex((c) => c.id === message.prime_candidate_id) + 1;
+  }
+  return 0;
+};
+
 export default function Message({
-  messageWithCandidates,
+  message,
   messagesHistory,
   personaBundle,
   cardBundle,
   isGenerating,
   setIsGenerating,
-  setEditText,
   editingMessageID,
   setEditingMessageID,
   syncChatHistory
@@ -79,39 +91,32 @@ export default function Message({
   const editFieldRef = useRef<HTMLDivElement>(null);
   const isShiftKeyPressed = useShiftKey();
   const { createDialog } = useApp();
-  const { id: messageID, chat_id: chatID, sender } = messageWithCandidates;
-  const isEditing = editingMessageID === messageWithCandidates.id;
+  const { id: messageID, chat_id: chatID, sender } = message;
+  const isEditing = editingMessageID === messageID;
+  const [editText, setEditText] = useState("");
   const { name, avatar } =
-    messageWithCandidates.sender === "user"
+    sender === "user"
       ? { name: personaBundle.data.name, avatar: personaBundle.avatarURI }
       : { name: cardBundle.data.character.name, avatar: cardBundle.avatarURI };
   const isLatest = useMemo(
     () => messagesHistory.length > 0 && messagesHistory[messagesHistory.length - 1].id === messageID,
     [messagesHistory]
   );
-  const messageAndCandidateArr = useMemo<MessageOrCandidate[]>(() => {
-    const ret: MessageOrCandidate[] = [{ kind: "message", ...messageWithCandidates }];
-    messageWithCandidates.candidates.forEach((candidate) => {
-      ret.push({ kind: "candidate", ...candidate });
-    });
-    return ret;
-  }, [messageWithCandidates]);
-
-  // Always show the prime candidate if it exists, or the message if it doesn't
-  const getIDX = () => {
-    if (messageWithCandidates.prime_candidate_id) {
-      return messageWithCandidates.candidates.findIndex((c) => c.id === messageWithCandidates.prime_candidate_id) + 1;
-    }
-    return 0;
-  };
-  const [idx, setIDX] = useState(getIDX);
+  const [choices, setChoices] = useState<Choices[]>(getChoices(message));
+  const [idx, setIDX] = useState(() => getIDX(message));
   useEffect(() => {
-    setIDX(getIDX());
-  }, [messageWithCandidates]);
+    setChoices(getChoices(message));
+    setIDX(getIDX(message));
+  }, [message]);
+
+  const [text, setText] = useState(choices[idx].text);
+  useEffect(() => {
+    setText(choices[idx].text);
+  }, [choices, idx]);
 
   // When the user switches between messages, update the "prime candidate" column in the database accordingly
   useEffect(() => {
-    const messageOrCandidate = messageAndCandidateArr[idx];
+    const messageOrCandidate = choices[idx];
     if (messageOrCandidate.kind === "message") {
       queries.updateMessagePrimeCandidate(messageID, null);
       return;
@@ -119,19 +124,6 @@ export default function Message({
       queries.updateMessagePrimeCandidate(messageID, messageOrCandidate.id);
     }
   }, [idx]);
-
-  const copyHandler = () => {
-    navigator.clipboard.writeText(messageWithCandidates.text);
-    toast.success("Message copied to clipboard!");
-  };
-
-  const copyTextHandler = () => {
-    const selectedText = window.getSelection()?.toString();
-    if (selectedText) {
-      navigator.clipboard.writeText(selectedText);
-      toast.success("Selection copied to clipboard!");
-    }
-  };
 
   // Focus on the edit field when the user starts editing
   useEffect(() => {
@@ -156,30 +148,43 @@ export default function Message({
     }, 0);
   };
 
-  const handleChangeMessage = (idx: number) => {
+  const copyHandler = () => {
+    navigator.clipboard.writeText(message.text);
+    toast.success("Message copied to clipboard!");
+  };
+
+  const copyTextHandler = () => {
+    const selectedText = window.getSelection()?.toString();
+    if (selectedText) {
+      navigator.clipboard.writeText(selectedText);
+      toast.success("Selection copied to clipboard!");
+    }
+  };
+
+  const changeChoiceHandler = (idx: number) => {
     // If the message  change to is out of bounds, regenerate the message
-    if (idx === messageAndCandidateArr.length) {
+    if (idx === choices.length) {
       regenerateHandler();
       return;
     }
     // If user is currently in message edit mode, change the edit field to the new message
     if (isEditing) {
-      setEditText(messageAndCandidateArr[idx].text);
+      setEditText(choices[idx].text);
       focusEditField();
     }
-    const clampedValue = Math.min(Math.max(idx, 0), messageAndCandidateArr.length - 1);
+    const clampedValue = Math.min(Math.max(idx, 0), choices.length - 1);
     setIDX(clampedValue);
   };
 
   const editSubmitHandler = async () => {
     setEditingMessageID(null);
+
     try {
-      const text = messageAndCandidateArr[idx].text;
-      const id = messageAndCandidateArr[idx].id;
-      if (messageAndCandidateArr[idx].kind === "message") {
-        await queries.updateMessageText(id, text);
+      const id = choices[idx].id;
+      if (choices[idx].kind === "message") {
+        await queries.updateMessageText(id, editText);
       } else {
-        await queries.updateCandidateMessage(id, text);
+        await queries.updateCandidateMessage(id, editText);
       }
     } catch (e) {
       toast.error(`Failed to edit the message. Error: ${e}`);
@@ -191,7 +196,7 @@ export default function Message({
 
   const editHandler = async () => {
     setEditingMessageID(messageID);
-    const text = messageAndCandidateArr[idx].text;
+    const text = choices[idx].text;
     setEditText(text);
   };
 
@@ -264,8 +269,8 @@ export default function Message({
     }
   };
 
-  const isCharacter = messageWithCandidates.sender === "character";
-  const isFirst = messagesHistory.length > 0 && messagesHistory[0].id === messageWithCandidates.id;
+  const isCharacter = sender === "character";
+  const isFirst = messagesHistory.length > 0 && messagesHistory[0].id === message.id;
   const showRegenerate = isLatest && isCharacter && !isFirst;
   const showRewind = !isLatest;
   const menuProps = {
@@ -324,9 +329,10 @@ export default function Message({
                     contentEditable={true}
                     suppressContentEditableWarning={true}
                   >
-                    {messageWithCandidates.text}
+                    {text}
                   </div>
                 ) : (
+                  // Show the message if not editing
                   <Markdown
                     allowedElements={["p", "blockquote", "strong", "em"]}
                     unwrapDisallowed
@@ -334,7 +340,7 @@ export default function Message({
                     className="whitespace-pre-wrap"
                     components={sender === "user" ? userMarkdown : characterMarkdown}
                   >
-                    {messageWithCandidates.text}
+                    {text}
                   </Markdown>
                 )}
               </div>
@@ -344,23 +350,23 @@ export default function Message({
 
           {showRegenerate &&
             /* Show the selector arrows if there are multiple candidates */
-            (messageWithCandidates.candidates.length > 0 ? (
+            (message.candidates.length > 0 ? (
               <div className="flex flex-row items-center space-x-2 p-2">
                 {/* Left Arrow */}
                 <button
                   className="size-5"
                   onClick={() => {
-                    handleChangeMessage(idx - 1);
+                    changeChoiceHandler(idx - 1);
                   }}
                 >
                   <ChevronLeftIcon className="size-5 text-tx-tertiary" />
                 </button>
-                <p className="font-mono text-sm font-semibold text-tx-tertiary">{`${idx + 1}/${messageAndCandidateArr.length}`}</p>
+                <p className="font-mono text-sm font-semibold text-tx-tertiary">{`${idx + 1}/${choices.length}`}</p>
                 {/* Right Arrow */}
                 <button
                   className="size-5"
                   onClick={() => {
-                    handleChangeMessage(idx + 1);
+                    changeChoiceHandler(idx + 1);
                   }}
                 >
                   <ChevronRightIcon className="size-5 text-tx-tertiary" />
