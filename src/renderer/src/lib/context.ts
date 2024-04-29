@@ -90,6 +90,8 @@ async function get(params: ContextParams): Promise<Result<Context, Error>> {
   contextWindow.reverse();
   const providerMessages = toProviderMessages(contextWindow, params.userMessageTerminator);
 
+  console.log("systemPrompt", systemPrompt);
+  console.log("providerMessages", providerMessages);
   return {
     kind: "ok",
     value: {

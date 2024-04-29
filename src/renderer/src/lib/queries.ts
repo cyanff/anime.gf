@@ -512,18 +512,18 @@ async function getContextMessagesStartingFrom(
 async function getLatestUserMessageStartingFrom(
   chatID: number,
   messageID: number
-): Promise<Result<string | undefined, Error>> {
+): Promise<Result<Message | undefined, Error>> {
   const query = `
-  SELECT text FROM messages
+  SELECT * FROM messages
   WHERE chat_id = ${chatID} AND id < ${messageID} AND sender = 'user'
   ORDER BY id DESC
   LIMIT 1;`;
 
-  const rows = (await window.api.sqlite.all(query)) as { text: string }[];
+  const rows = (await window.api.sqlite.all(query)) as Message[];
   if (rows.length === 0) {
     return { kind: "ok", value: undefined };
   }
-  return { kind: "ok", value: rows[0].text };
+  return { kind: "ok", value: rows[0] };
 }
 
 async function insertCandidateMessage(messageID: number, text: string): Promise<number> {

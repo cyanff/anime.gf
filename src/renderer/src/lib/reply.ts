@@ -2,6 +2,7 @@ import { getProvider } from "@/lib/provider/provider";
 import { queries } from "@/lib/queries";
 import { CardData, PersonaData, Result } from "@shared/types";
 import { deepFreeze } from "@shared/utils";
+import { from } from "form-data";
 import { ContextParams, context } from "./context";
 
 const userMessageTerminatorNOP = "Please continue the conversation. DO NOT MENTION THIS MESSAGE.";
@@ -29,25 +30,36 @@ async function generate(
  * Regenerates a response for the specified chat, using the latest user message starting from the provided message ID.
  *
  * @param chatID - The ID of the chat to regenerate the response for.
- * @param messageID - The ID of the message to regenerate.
+ * @param regenMessageID - The ID of the message to regenerate.
  * @param cardData - The card data to use for generating the response.
  * @param personaData - The persona data to use for generating the response.
  * @returns A promise that resolves to the generated response.
  */
 async function regenerate(
   chatID: number,
-  messageID: number,
+  regenMessageID: number,
   cardData: CardData,
   personaData: PersonaData
 ): Promise<Result<string, Error>> {
-  const res = await queries.getLatestUserMessageStartingFrom(chatID, messageID);
+  const res = await queries.getLatestUserMessageStartingFrom(chatID, regenMessageID);
   if (res.kind == "err") {
     return res;
   }
-  // Set the userMessageTerminator to the latest user message working backwards from the provided message ID
-  // Or if it doesn't exists, use the NOP terminator
-  const userMessageTerminator = res.value ? res.value : userMessageTerminatorNOP;
-  return await _generate(chatID, cardData, personaData, userMessageTerminator, messageID);
+
+  let fromMessageID: number;
+  let userMessageTerminator: string;
+  // If there's a user message, use it as the terminator and fetch context starting from the message after it.
+  if (res.value) {
+    userMessageTerminator = res.value.text;
+    fromMessageID = res.value.id;
+  }
+  // If there's no user message, use a NOP terminator and fetch context starting from the message to regenerate.
+  else {
+    userMessageTerminator = userMessageTerminatorNOP;
+    fromMessageID = regenMessageID;
+  }
+
+  return await _generate(chatID, cardData, personaData, userMessageTerminator, fromMessageID);
 }
 
 async function continue_(chatID: number, cardData: CardData, personaData: PersonaData): Promise<Result<string, Error>> {
@@ -55,20 +67,19 @@ async function continue_(chatID: number, cardData: CardData, personaData: Person
 }
 
 /**
- * Generates a response for the specified chat, using the latest user message, card data, and persona data.
+ * Generates a text response
  *
  * @param chatID - The ID of the chat to generate the response for.
  * @param cardData - The card data to use for generating the response.
  * @param personaData - The persona data to use for generating the response.
- * @param latestUserMessage - The user message that's at the end of the context window.
- * @param fromMessageID - The ID of the message to start fetching the context window from.
- * @returns A promise that resolves to the generated response.
+ * @param userMessageTerminator - The user message that's at the end of the context window.
+ * @param fromMessageID? - The ID of the message to start fetching the context window from.
  */
 async function _generate(
   chatID: number,
   cardData: CardData,
   personaData: PersonaData,
-  latestUserMessage: string,
+  userMessageTerminator: string,
   fromMessageID?: number
 ): Promise<Result<string, Error>> {
   const settingsRes = await window.api.setting.get();
@@ -80,7 +91,7 @@ async function _generate(
   const contextParams: ContextParams = {
     chatID,
     fromMessageID,
-    userMessageTerminator: latestUserMessage,
+    userMessageTerminator: userMessageTerminator,
     personaData,
     cardData,
     jailbreak: settings.chat.jailbreak,
