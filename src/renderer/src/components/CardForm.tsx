@@ -184,7 +184,7 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
                   <FormItem>
                     <FormLabel className="text-tx-primary">Character Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="What should your character be named?" {...field} />
+                      <Input placeholder="what should your character be named?" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -197,7 +197,7 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
                   <FormItem>
                     <FormLabel className="text-tx-primary">Character Description</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="add character description" {...field} />
+                      <Textarea placeholder="add a description of your character" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -210,7 +210,7 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
                   <FormItem>
                     <FormLabel className="text-tx-primary">Character Greeting</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="add character greeting" {...field} />
+                      <Textarea placeholder="how should the character greet user?" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -223,7 +223,10 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
                   <FormItem>
                     <FormLabel className="text-tx-primary">Message Examples</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="add message examples" {...field} />
+                      <Textarea
+                        placeholder={`format the message examples like so:\nuser: i love you <3\ncharacter: oh okay, not sure that i asked though\nuser: ...`}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -236,7 +239,7 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
                   <FormItem>
                     <FormLabel className="text-tx-primary">World Description</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="add world description" {...field} />
+                      <Textarea placeholder="describe the world that your character is apart of" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -249,7 +252,10 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
                   <FormItem>
                     <FormLabel className="text-tx-primary">Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="add title" {...field} />
+                      <Input
+                        placeholder="the card title that will be shown as others browse through cards"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -264,7 +270,7 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
                     <FormLabel className="text-tx-primary">Tagline</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="a brief description of how you would describe the card to others."
+                        placeholder="a brief description of how you would describe the card to others"
                         {...field}
                       />
                     </FormControl>
@@ -280,7 +286,10 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
                   <FormItem>
                     <FormLabel className="text-tx-primary">Tags</FormLabel>
                     <FormControl>
-                      <Input placeholder="add a comma separated list of tags" {...field} />
+                      <Input
+                        placeholder={`a comma separated list of tags. example: dark, yandere, mysterious`}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
