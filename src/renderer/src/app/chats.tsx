@@ -130,7 +130,7 @@ function ChatArea({
 }: ChatAreaProps) {
   const [cardBundle, setCardBundle] = useState<CardBundle>();
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
-  const chatAreaRef = useRef<HTMLDivElement | null>(null);
+  const messageHistoryRef = useRef<HTMLDivElement | null>(null);
   const oldScrollHeightRef = useRef(0);
   const scrollEventRef = useRef<ScrollEvent | null>(null);
   const { showBoundary } = useErrorBoundary();
@@ -138,9 +138,6 @@ function ChatArea({
   useEffect(() => {
     (async () => {
       await syncCardBundle();
-      setTimeout(() => {
-        scrollToBottom();
-      }, 150);
     })();
   }, [chatID]);
 
@@ -163,8 +160,11 @@ function ChatArea({
   // }, [messageHistory]);
 
   const scrollToBottom = () => {
-    if (chatAreaRef.current) {
-      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    console.log("Called");
+    console.log("messageHistoryRef", messageHistoryRef.current);
+
+    if (messageHistoryRef.current) {
+      messageHistoryRef.current.scrollTop = messageHistoryRef.current.scrollHeight;
     }
   };
 
@@ -176,15 +176,16 @@ function ChatArea({
     }
   };
 
-  if (!cardBundle) {
-    return null;
-  }
-
+  if (!cardBundle) return <div className="flex h-screen w-screen items-center justify-center "></div>;
   return (
     <div className="flex h-full w-full grow flex-row overflow-hidden">
       <div className="relative flex h-full flex-auto flex-col pl-8 pt-8">
-        <div
-          ref={chatAreaRef}
+        <motion.div
+          key={chatID}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, delay: 0.12 }}
+          ref={messageHistoryRef}
           onScroll={scrollHandler}
           className="scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-auto px-5 py-1 transition duration-500 ease-out scroll-smooth"
         >
@@ -206,37 +207,49 @@ function ChatArea({
               />
             );
           })}
-        </div>
-        <ChatBar
-          chatID={chatID}
-          personaBundle={personaBundle}
-          cardBundle={cardBundle}
-          isGenerating={isGenerating}
-          setIsGenerating={setIsGenerating}
-          onMessageSend={(message) => {
-            setMessageHistory((prevMessages: MessageHistory) => [
-              ...prevMessages,
-              {
-                id: -1,
-                chat_id: chatID,
-                sender: "user",
-                text: message,
-                is_regenerated: 0,
-                candidates: [],
-                is_embedded: 0,
-                inserted_at: new Date().toISOString()
+        </motion.div>
+
+        <motion.div
+          key={chatID}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{
+            duration: 0.3
+          }}
+          ref={messageHistoryRef}
+          onScroll={scrollHandler}
+        >
+          <ChatBar
+            chatID={chatID}
+            personaBundle={personaBundle}
+            cardBundle={cardBundle}
+            isGenerating={isGenerating}
+            setIsGenerating={setIsGenerating}
+            onMessageSend={(message) => {
+              setMessageHistory((prevMessages: MessageHistory) => [
+                ...prevMessages,
+                {
+                  id: -1,
+                  chat_id: chatID,
+                  sender: "user",
+                  text: message,
+                  is_regenerated: 0,
+                  candidates: [],
+                  is_embedded: 0,
+                  inserted_at: new Date().toISOString()
+                }
+              ]);
+              scrollToBottom();
+            }}
+            onMessageResolve={(res) => {
+              if (res.kind === "err") {
+                toast.error(`Failed to send message. ${res.error}`);
               }
-            ]);
-            scrollToBottom();
-          }}
-          onMessageResolve={(res) => {
-            if (res.kind === "err") {
-              toast.error(`Failed to send message. ${res.error}`);
-            }
-            scrollEventRef.current = ScrollEvent.NEW_CHARACTER_MESSAGE;
-            syncMessageHistory();
-          }}
-        />
+              scrollEventRef.current = ScrollEvent.NEW_CHARACTER_MESSAGE;
+              syncMessageHistory();
+            }}
+          />
+        </motion.div>
       </div>
     </div>
   );

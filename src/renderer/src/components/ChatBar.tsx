@@ -29,10 +29,8 @@ export default function ChatBar({
   const [userInput, setUserInput] = useState<string>("");
 
   const prompt = `Message ${
-    cardBundle.data.character.handle?.length
-      ? `@${cardBundle.data.character.handle}`
-      : cardBundle.data.character.name
-  }`
+    cardBundle.data.character.handle?.length ? `@${cardBundle.data.character.handle}` : cardBundle.data.character.name
+  }`;
 
   // Dynamically expand the text area to fit the user's input
   const textAreaRef = useRef<HTMLTextAreaElement>(null);

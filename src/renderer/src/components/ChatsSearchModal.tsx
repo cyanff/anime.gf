@@ -1,4 +1,5 @@
 import { useApp } from "@/components/AppContext";
+import Avatar from "@/components/Avatar";
 import { ChatSearchItem, queries } from "@/lib/queries";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import Fuse from "fuse.js";
@@ -73,7 +74,7 @@ export default function ChatsSearchModal() {
             return (
               <div
                 key={idx}
-                className="flex bg-container-secondary h-[4.5rem] w-full cursor-pointer items-center rounded-sm px-3 py-3 transition duration-200
+                className="flex bg-container-secondary h-[4.5rem] w-full cursor-pointer items-center rounded-md px-3 py-3 transition duration-200
                   ease-out hover:brightness-90"
                 onClick={() => {
                   setActiveChatID(result.id);
@@ -81,11 +82,7 @@ export default function ChatsSearchModal() {
                 }}
               >
                 <div className="flex h-full w-full items-center">
-                  <img
-                    src={result.characterAvatarURI}
-                    alt="character"
-                    className="size-12 shrink-0 rounded-full object-cover"
-                  />
+                  <Avatar avatarURI={result.characterAvatarURI} />
                   <div className={"justify-cente ml-4 flex h-full max-w-full flex-col"}>
                     <h3 className="line-clamp-1 text-[0.95rem] font-[600] text-tx-primary">{result.characterName}</h3>
                     <p className="line-clamp-1 text-[15px] font-[480] text-tx-secondary">{result.lastMessage}</p>
