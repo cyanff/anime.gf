@@ -86,7 +86,7 @@ function CharacterPopoverContent({ bundle }: { bundle: CardBundle }) {
 function AvatarAndBanner({ bannerURI, avatarURI }: { bannerURI: string; avatarURI: string }) {
   return (
     <div className="relative w-full rounded-lg">
-      <Avatar avatarURI={avatarURI} className="absolute -bottom-12 left-4 size-20 border-float" />
+      <Avatar avatarURI={avatarURI} className="absolute -bottom-12 left-4 size-20 border-float border-4" />
       <Banner bannerURI={bannerURI} className="" />
     </div>
   );

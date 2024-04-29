@@ -1,4 +1,5 @@
 import { DialogConfig, useApp } from "@/components/AppContext";
+import Avatar from "@/components/Avatar";
 import ChatsSearchModal from "@/components/ChatsSearchModal";
 import {
   ContextMenu,
@@ -18,13 +19,14 @@ import { useEffect, useState } from "react";
 export interface ChatsSideBarProps {
   chatID: number;
   personaBundle: PersonaBundle;
-  syncChatHistory: () => void;
+  syncMessageHistory: () => void;
 }
 
-export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }: ChatsSideBarProps) {
+export default function ChatsSidebar({ chatID, personaBundle, syncMessageHistory }: ChatsSideBarProps) {
   const [recentChats, setRecentChats] = useState<RecentChatI[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { createModal, createDialog, setActiveChatID } = useApp();
+  console.log("chatID", chatID);
 
   useEffect(() => {
     syncRecentChats();
@@ -99,7 +101,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
                         actionLabel: "Reset",
                         onAction: async () => {
                           await queries.resetChat(chat.chat_id);
-                          syncChatHistory();
+                          syncMessageHistory();
                         }
                       };
                       createDialog(config);
@@ -108,7 +110,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncChatHistory }:
                     avatarURI={chat.avatarURI || ""}
                     name={chat.name}
                     message={chat.last_message}
-                    active={chatID == chat.chat_id}
+                    isActive={chatID == chat.chat_id}
                     onClick={() => setActiveChatID(chat.chat_id)}
                   />
                 );
@@ -151,7 +153,7 @@ interface RecentChatProps {
   name: string;
   avatarURI: string;
   message: string;
-  active: boolean;
+  isActive: boolean;
   deleteChat: () => void;
   resetChat: () => void;
   className?: string;
@@ -163,7 +165,7 @@ function RecentChat({
   name,
   avatarURI,
   message,
-  active,
+  isActive,
   deleteChat,
   resetChat,
   className,
@@ -176,15 +178,11 @@ function RecentChat({
           {...rest}
           className={cn(
             `group flex w-full cursor-pointer items-center space-x-3 rounded-xl p-2.5 transition duration-200 ease-out
-            hover:bg-accent ${active ? "bg-container-tertiary" : ""}`,
+            hover:bg-accent ${isActive ? "bg-container-tertiary" : ""}`,
             className
           )}
         >
-          <img
-            className="size-12 shrink-0 rounded-full object-cover object-top"
-            src={avatarURI || "default_avatar.png"}
-            alt="avatar"
-          />
+          <Avatar avatarURI={avatarURI} />
 
           <div className={"flex h-full max-w-full flex-col justify-center "}>
             <h3 className="text-tx-primary line-clamp-1 text-ellipsis">{name}</h3>

@@ -7,8 +7,8 @@
 // Ex: rollback file creation, db insertions, etc.
 // Wrap better-sqlite3
 
-import { CardBundleWithoutID, CardData, PersonaBundleWithoutData, PersonaFormData } from "@shared/types";
-import { Result, isError, isValidFileName, toPathEscapedStr } from "@shared/utils";
+import { CardBundleWithoutID, CardData, PersonaBundleWithoutData, PersonaFormData, Result } from "@shared/types";
+import { isError, isValidFileName, toPathEscapedStr } from "@shared/utils";
 import archiver from "archiver";
 import crypto from "crypto";
 import { app, dialog, nativeImage } from "electron";

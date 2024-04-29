@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { useShiftKey } from "@/lib/hook/useShiftKey";
-import { MessageWithCandidates, MessagesHistory, queries } from "@/lib/queries";
+import { MessageHistory, MessageWithCandidates, queries } from "@/lib/queries";
 import { reply } from "@/lib/reply";
 import { MessageCandidate as MessageCandidateI, Message as MessageI } from "@shared/db_types";
 import { CardBundle, PersonaBundle } from "@shared/types";
@@ -52,14 +52,14 @@ type Choices = ({ kind: "message" } & MessageI) | ({ kind: "candidate" } & Messa
 
 interface MessageProps {
   message: MessageWithCandidates;
-  messagesHistory: MessagesHistory;
+  messagesHistory: MessageHistory;
   personaBundle: PersonaBundle;
   cardBundle: CardBundle;
   editingMessageID: number | null;
   setEditingMessageID: (id: number | null) => void;
   isGenerating: boolean;
   setIsGenerating: (isGenerating: boolean) => void;
-  syncChatHistory: () => void;
+  syncMessageHistory: () => void;
 }
 
 const getChoices = (message: MessageWithCandidates): Choices[] => {
@@ -85,7 +85,7 @@ export default function Message({
   setIsGenerating,
   editingMessageID,
   setEditingMessageID,
-  syncChatHistory
+  syncMessageHistory
 }: MessageProps) {
   const editFieldRef = useRef<HTMLDivElement>(null);
   const isShiftKeyPressed = useShiftKey();
@@ -185,7 +185,7 @@ export default function Message({
       toast.error(`Failed to edit the message. Error: ${e}`);
       console.error(e);
     } finally {
-      syncChatHistory();
+      syncMessageHistory();
     }
   };
 
@@ -203,7 +203,7 @@ export default function Message({
         toast.error(`Failed to rewind chat. Error: ${e}`);
         console.error(e);
       } finally {
-        syncChatHistory();
+        syncMessageHistory();
       }
     };
 
@@ -228,7 +228,7 @@ export default function Message({
         toast.error(`Failed to delete message. Error: ${e}`);
         console.error(e);
       } finally {
-        syncChatHistory();
+        syncMessageHistory();
       }
     };
 
@@ -260,7 +260,7 @@ export default function Message({
       console.error(e);
     } finally {
       setIsGenerating(false);
-      syncChatHistory();
+      syncMessageHistory();
     }
   };
 
@@ -279,7 +279,7 @@ export default function Message({
       console.error(e);
     } finally {
       setIsGenerating(false);
-      syncChatHistory();
+      syncMessageHistory();
     }
   };
 
@@ -305,7 +305,7 @@ export default function Message({
   const roleColorStyles = sender === "user" ? "bg-chat-user-grad" : "bg-chat-character-grad";
   const editingStyles = isEditing ? "outline-2 outline-dashed outline-tx-secondary" : "";
   const baseStyles =
-    "h-fit flex items-start space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 text-tx-primary rounded-3xl group/msg";
+    "h-fit flex items-start space-x-4 pl-3 pr-8 py-2.5 font-[480] hover:brightness-95 transition duration-200 ease-out text-tx-primary rounded-3xl group/msg";
   return (
     <div className={cn("max-w-3/4 shrink-0", roleAlignStyles)}>
       <ContextMenu>

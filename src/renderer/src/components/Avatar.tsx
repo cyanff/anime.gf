@@ -9,7 +9,7 @@ interface AvatarProps {
 export default function Avatar({ avatarURI, className, rest }: AvatarProps) {
   return (
     <img
-      className={cn("size-12 select-none rounded-full object-cover object-top", className)}
+      className={cn("size-12 shrink-0 select-none rounded-full object-cover object-top", className)}
       draggable="false"
       src={avatarURI || "default_avatar.png"}
       alt="Avatar"

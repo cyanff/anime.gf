@@ -2,10 +2,12 @@ import { useApp } from "@/components/AppContext";
 import ChatBar from "@/components/ChatBar";
 import ChatsSidebar from "@/components/ChatsSidebar";
 import Message from "@/components/Message";
-import { MessagesHistory, queries } from "@/lib/queries";
+import { Button } from "@/components/ui/button";
+import { MessageHistory, queries } from "@/lib/queries";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { motion } from "framer-motion";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 import { toast } from "sonner";
 import "../styles/global.css";
 
@@ -14,16 +16,12 @@ enum ScrollEvent {
   NEW_CHARACTER_MESSAGE
 }
 
-function ChatsPage({ chatID }): JSX.Element {
+export default function ChatsPage({ chatID }): JSX.Element {
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
-  const [cardBundle, setCardBundle] = useState<CardBundle>();
+  const [messagesHistory, setMessagesHistory] = useState<MessageHistory>([]);
   const [historyLimit, setHistoryLimit] = useState(50);
-  const [messagesHistory, setMessagesHistory] = useState<MessagesHistory>([]);
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const chatAreaRef = useRef<HTMLDivElement | null>(null);
-  const oldScrollHeightRef = useRef(0);
-  const scrollEventRef = useRef<ScrollEvent | null>(null);
   const { setActiveChatID } = useApp();
 
   useEffect(() => {
@@ -38,23 +36,14 @@ function ChatsPage({ chatID }): JSX.Element {
           return;
         }
       }
-      await syncChatHistory();
       await syncPersonaBundle();
-      await syncCardBundle();
-      setTimeout(() => {
-        scrollToBottom();
-      }, 200);
+      await syncMessageHistory();
     })();
   }, [chatID]);
 
-  const syncCardBundle = async () => {
-    const res = await queries.getCardBundle(chatID);
-    if (res.kind == "err") {
-      toast.error("Error fetching card bundle.");
-      return;
-    }
-    setCardBundle(res.value);
-  };
+  useEffect(() => {
+    syncMessageHistory();
+  }, [historyLimit]);
 
   const syncPersonaBundle = async () => {
     const res = await queries.getPersonaBundle(chatID);
@@ -66,36 +55,14 @@ function ChatsPage({ chatID }): JSX.Element {
     setPersonaBundle(res.value);
   };
 
-  const syncChatHistory = async () => {
+  const syncMessageHistory = async () => {
     const res = await queries.getChatHistory(chatID, historyLimit);
     if (res.kind == "err") {
       toast.error("Error fetching chat history.");
+      console.error(res.error);
       return;
     }
     setMessagesHistory(res.value);
-  };
-
-  // Sync chat history when the chat history limit changes as users scroll up
-  useEffect(() => {
-    syncChatHistory();
-  }, [historyLimit]);
-
-  useLayoutEffect(() => {
-    // Scroll to bottom on character message
-    if (scrollEventRef.current === ScrollEvent.NEW_CHARACTER_MESSAGE) {
-      scrollToBottom();
-    }
-    // Restore scroll position after loading more messages
-    else if (scrollEventRef.current === ScrollEvent.SCROLLED_TO_TOP) {
-      const delta = chatAreaRef.current!.scrollHeight - oldScrollHeightRef.current;
-      chatAreaRef.current!.scrollTop = delta;
-    }
-  }, [messagesHistory]);
-
-  const scrollToBottom = () => {
-    if (chatAreaRef.current) {
-      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
-    }
   };
 
   // Add escape key listener to exit edit mode
@@ -112,19 +79,9 @@ function ChatsPage({ chatID }): JSX.Element {
   }, []);
 
   // Loading screen
-  if (!personaBundle || !cardBundle) {
+  if (!personaBundle) {
     return <div className="flex h-screen w-screen items-center justify-center "></div>;
   }
-
-  const handleScroll = async (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    // User scrolled to top
-    if (e.currentTarget.scrollTop == 0) {
-      // Store the current scroll height so we could restore it later
-      oldScrollHeightRef.current = e.currentTarget.scrollHeight;
-      scrollEventRef.current = ScrollEvent.SCROLLED_TO_TOP;
-      setHistoryLimit((prevLimit) => prevLimit + 15);
-    }
-  };
 
   return (
     <motion.div
@@ -133,69 +90,173 @@ function ChatsPage({ chatID }): JSX.Element {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.13, delay: 0.12 }}
     >
-      <ChatsSidebar chatID={chatID} personaBundle={personaBundle} syncChatHistory={syncChatHistory} />
-      {/* Main Content */}
-      <div className="flex h-full w-full grow flex-row overflow-hidden">
-        {/* Chat Area and Chat Bar Wrapper*/}
-        <div className="relative flex h-full flex-auto flex-col pl-8 pt-8">
-          {/* Chat Area */}
-          <div
-            ref={chatAreaRef}
-            onScroll={handleScroll}
-            className="scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-auto px-5 py-1 transition duration-500 ease-out scroll-smooth"
-          >
-            {messagesHistory?.map((message, idx) => {
-              return (
-                <Message
-                  key={idx}
-                  message={message}
-                  messagesHistory={messagesHistory}
-                  personaBundle={personaBundle}
-                  cardBundle={cardBundle}
-                  editingMessageID={editingMessageID}
-                  setEditingMessageID={setEditingMessageID}
-                  isGenerating={isGenerating}
-                  setIsGenerating={setIsGenerating}
-                  syncChatHistory={syncChatHistory}
-                />
-              );
-            })}
-          </div>
-          <ChatBar
-            chatID={chatID}
-            personaBundle={personaBundle}
-            cardBundle={cardBundle}
-            isGenerating={isGenerating}
-            setIsGenerating={setIsGenerating}
-            onMessageSend={(message) => {
-              // Optimistically add the message to the chat history
-              setMessagesHistory((prevMessages: MessagesHistory) => [
-                ...prevMessages,
-                {
-                  id: -1,
-                  chat_id: chatID,
-                  sender: "user",
-                  text: message,
-                  is_regenerated: 0,
-                  candidates: [],
-                  is_embedded: 0,
-                  inserted_at: new Date().toISOString()
-                }
-              ]);
-              scrollToBottom();
-            }}
-            onMessageResolve={(res) => {
-              if (res.kind === "err") {
-                toast.error(`Failed to send message. ${res.error}`);
-              }
-              scrollEventRef.current = ScrollEvent.NEW_CHARACTER_MESSAGE;
-              syncChatHistory();
-            }}
-          />
-        </div>
-      </div>
+      <ChatsSidebar chatID={chatID} personaBundle={personaBundle} syncMessageHistory={syncMessageHistory} />
+      <ErrorBoundary key={chatID} FallbackComponent={ChatAreaFallback}>
+        <ChatArea
+          chatID={chatID}
+          messageHistory={messagesHistory}
+          setMessageHistory={setMessagesHistory}
+          setHistoryLimit={setHistoryLimit}
+          syncMessageHistory={syncMessageHistory}
+          personaBundle={personaBundle}
+          isGenerating={isGenerating}
+          setIsGenerating={setIsGenerating}
+        />
+      </ErrorBoundary>
     </motion.div>
   );
 }
 
-export default ChatsPage;
+interface ChatAreaProps {
+  chatID: number;
+  personaBundle: PersonaBundle;
+  messageHistory: MessageHistory;
+  setMessageHistory: React.Dispatch<React.SetStateAction<MessageHistory>>;
+  setHistoryLimit: React.Dispatch<React.SetStateAction<number>>;
+  syncMessageHistory: () => Promise<void>;
+  isGenerating: boolean;
+  setIsGenerating: (isGenerating: boolean) => void;
+}
+
+function ChatArea({
+  chatID,
+  personaBundle,
+  messageHistory,
+  setMessageHistory,
+  setHistoryLimit,
+  syncMessageHistory,
+  isGenerating,
+  setIsGenerating
+}: ChatAreaProps) {
+  const [cardBundle, setCardBundle] = useState<CardBundle>();
+  const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
+  const chatAreaRef = useRef<HTMLDivElement | null>(null);
+  const oldScrollHeightRef = useRef(0);
+  const scrollEventRef = useRef<ScrollEvent | null>(null);
+  const { showBoundary } = useErrorBoundary();
+
+  useEffect(() => {
+    (async () => {
+      await syncCardBundle();
+      setTimeout(() => {
+        scrollToBottom();
+      }, 150);
+    })();
+  }, [chatID]);
+
+  const syncCardBundle = async () => {
+    const res = await queries.getCardBundle(chatID);
+    if (res.kind === "err") {
+      showBoundary(res.error);
+      return;
+    }
+    setCardBundle(res.value);
+  };
+
+  // useLayoutEffect(() => {
+  //   if (scrollEventRef.current === ScrollEvent.NEW_CHARACTER_MESSAGE) {
+  //     scrollToBottom();
+  //   } else if (scrollEventRef.current === ScrollEvent.SCROLLED_TO_TOP) {
+  //     const delta = chatAreaRef.current!.scrollHeight - oldScrollHeightRef.current;
+  //     chatAreaRef.current!.scrollTop = delta;
+  //   }
+  // }, [messageHistory]);
+
+  const scrollToBottom = () => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }
+  };
+
+  const scrollHandler = async (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    if (e.currentTarget.scrollTop == 0) {
+      oldScrollHeightRef.current = e.currentTarget.scrollHeight;
+      scrollEventRef.current = ScrollEvent.SCROLLED_TO_TOP;
+      setHistoryLimit((prevLimit: number) => prevLimit + 15);
+    }
+  };
+
+  if (!cardBundle) {
+    return null;
+  }
+
+  return (
+    <div className="flex h-full w-full grow flex-row overflow-hidden">
+      <div className="relative flex h-full flex-auto flex-col pl-8 pt-8">
+        <div
+          ref={chatAreaRef}
+          onScroll={scrollHandler}
+          className="scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-auto px-5 py-1 transition duration-500 ease-out scroll-smooth"
+        >
+          {messageHistory?.map((message, idx) => {
+            return (
+              <Message
+                key={idx}
+                message={message}
+                messagesHistory={messageHistory}
+                personaBundle={personaBundle}
+                cardBundle={cardBundle}
+                editingMessageID={editingMessageID}
+                setEditingMessageID={setEditingMessageID}
+                isGenerating={isGenerating}
+                setIsGenerating={setIsGenerating}
+                syncMessageHistory={() => {
+                  syncMessageHistory();
+                }}
+              />
+            );
+          })}
+        </div>
+        <ChatBar
+          chatID={chatID}
+          personaBundle={personaBundle}
+          cardBundle={cardBundle}
+          isGenerating={isGenerating}
+          setIsGenerating={setIsGenerating}
+          onMessageSend={(message) => {
+            setMessageHistory((prevMessages: MessageHistory) => [
+              ...prevMessages,
+              {
+                id: -1,
+                chat_id: chatID,
+                sender: "user",
+                text: message,
+                is_regenerated: 0,
+                candidates: [],
+                is_embedded: 0,
+                inserted_at: new Date().toISOString()
+              }
+            ]);
+            scrollToBottom();
+          }}
+          onMessageResolve={(res) => {
+            if (res.kind === "err") {
+              toast.error(`Failed to send message. ${res.error}`);
+            }
+            scrollEventRef.current = ScrollEvent.NEW_CHARACTER_MESSAGE;
+            syncMessageHistory();
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function ChatAreaFallback({ error, resetErrorBoundary }) {
+  return (
+    <div className="flex flex-col justify-center items-center w-full h-full space-y-4">
+      <p className="text-lg text-tx-primary">An error occured while attempting to render the chat:</p>
+      <div className="bg-container-primary w-96 p-6 rounded-lg flex item-center justify-center">
+        <p className="font-mono text-red-400">{error.message || ""}</p>
+      </div>
+      <Button
+        onClick={() => {
+          resetErrorBoundary();
+          toast("Retry ran...");
+        }}
+      >
+        Try again?
+      </Button>
+    </div>
+  );
+}

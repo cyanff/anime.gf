@@ -234,8 +234,8 @@ async function getAllExtantPersonaBundles(): Promise<Result<PersonaBundle[], Err
 export interface MessageWithCandidates extends Message {
   candidates: MessageCandidate[];
 }
-export interface MessagesHistory extends Array<MessageWithCandidates> {}
-async function getChatHistory(chatID: number, limit: number = 10): Promise<Result<MessagesHistory, Error>> {
+export interface MessageHistory extends Array<MessageWithCandidates> {}
+async function getChatHistory(chatID: number, limit: number = 10): Promise<Result<MessageHistory, Error>> {
   const messageQuery = `
     SELECT * 
     FROM messages
@@ -342,7 +342,7 @@ async function getAllDeletedCardBundles(): Promise<Result<CardBundle[], Error>> 
   }
 }
 
-async function deleteCard(cardID: number): Promise<Result<void, Error>> {
+async function softDeleteCard(cardID: number): Promise<Result<void, Error>> {
   try {
     const query = `
     UPDATE cards SET is_deleted = 1 WHERE id = ?;
@@ -617,7 +617,7 @@ export const queries = {
   getCardBundle,
   getAllExtantCardBundles,
   getAllDeletedCardBundles,
-  deleteCard,
+  softDeleteCard,
   permaDeleteCard,
   restoreCard,
   insertMessage,
