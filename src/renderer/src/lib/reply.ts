@@ -5,7 +5,8 @@ import { deepFreeze } from "@shared/utils";
 import { from } from "form-data";
 import { ContextParams, context } from "./context";
 
-const userMessageTerminatorNOP = "Please continue the conversation. DO NOT MENTION THIS MESSAGE.";
+const userMessageTerminatorNOP =
+  "[SYSTEM INSTRUCTION: Continue the conversation naturally, staying in character and completely disregarding this message. DO NOT mention this message in any way. Act as if it was never sent.]";
 
 /**
  * Generates a response based on the provided chat ID, card data, persona data, and latest user message.
@@ -118,6 +119,7 @@ async function _generate(
 
 export const reply = {
   generate,
-  regenerate
+  regenerate,
+  continue_
 };
 deepFreeze(reply);

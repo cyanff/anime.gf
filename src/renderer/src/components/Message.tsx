@@ -23,6 +23,7 @@ import {
   ClipboardDocumentIcon,
   EllipsisHorizontalIcon,
   PencilIcon,
+  PlayIcon,
   TrashIcon
 } from "@heroicons/react/24/solid";
 
@@ -265,11 +266,32 @@ export default function Message({
     }
   };
 
+  const continueHandler = async () => {
+    if (isGenerating) {
+      toast.info("Already generating a reply. Please wait...");
+      return;
+    }
+    setIsGenerating(true);
+    try {
+      const replyRes = await reply.continue_(chatID, cardBundle.data, personaBundle.data);
+      if (replyRes.kind === "err") throw replyRes.error;
+      await queries.insertMessage(chatID, replyRes.value, "character");
+    } catch (e) {
+      toast.error(`Failed to regenerate a reply. Error: ${e}`);
+      console.error(e);
+    } finally {
+      setIsGenerating(false);
+      syncChatHistory();
+    }
+  };
+
   const isCharacter = sender === "character";
   const isFirst = messagesHistory.length > 0 && messagesHistory[0].id === messageID;
   const showRegenerate = isLatest && isCharacter && !isFirst;
   const showRewind = !isLatest;
+  const showContinue = isLatest && isCharacter;
   const menuProps = {
+    showContinue,
     showRegenerate,
     showRewind,
     onCopy: copyHandler,
@@ -277,7 +299,8 @@ export default function Message({
     onEdit: editHandler,
     onRegenerate: regenerateHandler,
     onRewind: rewindHandler,
-    onDelete: deleteHandler
+    onDelete: deleteHandler,
+    onContinue: continueHandler
   };
 
   const roleAlignStyles = sender === "user" ? "self-end" : "self-start";
@@ -465,6 +488,7 @@ function MessagePopoverBanner({ bannerURI, avatarURI }: { bannerURI: string; ava
 }
 
 interface MenuProps {
+  showContinue: boolean;
   showRegenerate: boolean;
   showRewind: boolean;
   onCopy: () => void;
@@ -473,9 +497,11 @@ interface MenuProps {
   onRegenerate: () => void;
   onRewind: () => void;
   onDelete: () => void;
+  onContinue: () => void;
 }
 
 function MessageDropdownMenu({
+  showContinue,
   showRegenerate,
   showRewind,
   onCopy,
@@ -483,7 +509,8 @@ function MessageDropdownMenu({
   onEdit,
   onRegenerate,
   onRewind,
-  onDelete
+  onDelete,
+  onContinue
 }: MenuProps) {
   return (
     <DropdownMenu>
@@ -525,6 +552,14 @@ function MessageDropdownMenu({
             </DropdownMenuItem>
           )}
 
+          {showContinue && (
+            <DropdownMenuItem onSelect={onContinue}>
+              Continue
+              <DropdownMenuShortcut>
+                <PlayIcon className="size-4" />
+              </DropdownMenuShortcut>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onSelect={onCopyText}>
             Copy Selected
             <DropdownMenuShortcut>
@@ -545,6 +580,7 @@ function MessageDropdownMenu({
 }
 
 function MessageContextMenuContent({
+  showContinue,
   showRegenerate,
   showRewind,
   onCopy,
@@ -552,7 +588,8 @@ function MessageContextMenuContent({
   onEdit,
   onRegenerate,
   onRewind,
-  onDelete
+  onDelete,
+  onContinue
 }: MenuProps) {
   return (
     <ContextMenuContent className="w-40">
@@ -584,6 +621,15 @@ function MessageContextMenuContent({
           Rewind
           <ContextMenuShortcut>
             <BackwardIcon className="size-4" />
+          </ContextMenuShortcut>
+        </ContextMenuItem>
+      )}
+
+      {showContinue && (
+        <ContextMenuItem onSelect={onContinue}>
+          Continue
+          <ContextMenuShortcut>
+            <PlayIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
       )}
