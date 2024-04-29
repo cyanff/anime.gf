@@ -28,8 +28,6 @@ import {
 } from "@heroicons/react/24/solid";
 
 import { DialogConfig, useApp } from "@/components/AppContext";
-import Dropdown from "@/components/Dropdown";
-import Tag from "@/components/Tag";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,16 +37,16 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { useShiftKey } from "@/lib/hook/useShiftKey";
 import { MessageWithCandidates, MessagesHistory, queries } from "@/lib/queries";
 import { reply } from "@/lib/reply";
-import { time } from "@/lib/time";
 import { MessageCandidate as MessageCandidateI, Message as MessageI } from "@shared/db_types";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Markdown, { Components } from "react-markdown";
 import { toast } from "sonner";
+import { ProfilePopoverContent } from "./ProfilePopoverContent";
 
 type Choices = ({ kind: "message" } & MessageI) | ({ kind: "candidate" } & MessageCandidateI);
 
@@ -325,7 +323,7 @@ export default function Message({
                     alt="Avatar"
                   />
                 </PopoverTrigger>
-                <MessagePopoverContent sender={sender} personaBundle={personaBundle} cardBundle={cardBundle} />
+                <ProfilePopoverContent sender={sender} bundle={sender === "user" ? personaBundle : cardBundle} />
               </Popover>
               <div className="flex flex-col justify-start space-y-0.5">
                 {/* Name */}
@@ -401,88 +399,6 @@ export default function Message({
             ))}
         </div>
       </ContextMenu>
-    </div>
-  );
-}
-
-interface MessagePopoverContentProps {
-  sender: "user" | "character";
-  personaBundle: PersonaBundle;
-  cardBundle: CardBundle;
-}
-
-function MessagePopoverContent({ sender, personaBundle, cardBundle }: MessagePopoverContentProps) {
-  if (sender === "user") {
-    const bannerURI = "default_banner.png";
-    const avatarURI = personaBundle.avatarURI || "default_avatar.png";
-
-    // USER popover
-    return (
-      <PopoverContent className="scroll-secondary bg-float max-h-[30rem] w-96 overflow-y-scroll p-0 pb-10">
-        <MessagePopoverBanner bannerURI={bannerURI} avatarURI={avatarURI} />
-        <div className="px-6 pt-12">
-          <div className="flex flex-row">
-            <div className="pr-10">
-              <div className="pb-1.5 text-xl font-semibold">{personaBundle.data.name}</div>
-            </div>
-          </div>
-          {/* User details dropdowns */}
-          <div className="-mx-2 mt-3 flex flex-col rounded-lg bg-container-primary p-3 space-y-4">
-            <h3 className="mb-1 font-semibold text-tx-primary">About</h3>
-            <p className="text-sm text-tx-secondary">{personaBundle.data.description} </p>
-          </div>
-        </div>
-      </PopoverContent>
-    );
-  } else {
-    const bannerURI = cardBundle.bannerURI;
-    const avatarURI = cardBundle.avatarURI;
-
-    // CHARACTER popover
-    return (
-      <PopoverContent className="scroll-secondary h-[30rem] w-96 overflow-y-scroll bg-float p-0">
-        <MessagePopoverBanner bannerURI={bannerURI} avatarURI={avatarURI} />
-        <div className="pl-4 pr-2 pt-12">
-          <div className="flex flex-row">
-            <div className="pr-10">
-              <div className="pb-1.5 text-xl font-semibold text-tx-primary">{cardBundle.data.character.name}</div>
-              <div className="whitespace-nowrap text-xs text-tx-tertiary font-[550]">
-                <p className="">{`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}</p>
-                {cardBundle.data.meta.updated_at && <p className="">{`updated: ${cardBundle.data.meta.updated_at}`}</p>}
-              </div>
-            </div>
-            {/* Tags */}
-            <div className="flex flex-col gap-y-2">
-              <div className="text-sm font-semibold text-tx-primary">Tags:</div>
-              <div className="flex flex-wrap gap-x-1.5 gap-y-2">
-                {cardBundle.data.meta.tags.map((tag, idx) => (
-                  <Tag key={idx} text={tag} />
-                ))}
-              </div>
-            </div>
-          </div>
-          {/* Character details dropdowns */}
-          <div className="mt-6">
-            <Dropdown label="Character Description" content={cardBundle.data.character.description} />
-            <Dropdown label="Character Persona" content={cardBundle.data.meta.notes ?? ""} />
-            <Dropdown label="Greeting Message" content={cardBundle.data.character.greeting} />
-            <Dropdown label="Example Messages" content={cardBundle.data.character.msg_examples} />
-          </div>
-        </div>
-      </PopoverContent>
-    );
-  }
-}
-
-function MessagePopoverBanner({ bannerURI, avatarURI }: { bannerURI: string; avatarURI: string }) {
-  return (
-    <div className="relative w-full rounded-lg">
-      <img src={bannerURI || "default_banner.png"} alt="Banner" className="h-36 w-full object-cover" />
-      <img
-        src={avatarURI || "default_avatar.png"}
-        alt="Profile"
-        className="absolute -bottom-12 left-4 size-20 rounded-full border-4 object-cover object-top border-float"
-      />
     </div>
   );
 }
