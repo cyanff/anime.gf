@@ -9,7 +9,7 @@ import {
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
 import { Input } from "@/components/ui/input";
-import { RecentChat as RecentChatI, queries } from "@/lib/queries";
+import { RecentChatResult, queries } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 import { ArrowPathIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { PersonaBundle } from "@shared/types";
@@ -23,7 +23,7 @@ export interface ChatsSideBarProps {
 }
 
 export default function ChatsSidebar({ chatID, personaBundle, syncMessageHistory }: ChatsSideBarProps) {
-  const [recentChats, setRecentChats] = useState<RecentChatI[]>([]);
+  const [recentChatResults, setRecentChatsResults] = useState<RecentChatResult[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { createModal, createDialog, setActiveChatID } = useApp();
   console.log("chatID", chatID);
@@ -32,11 +32,39 @@ export default function ChatsSidebar({ chatID, personaBundle, syncMessageHistory
     syncRecentChats();
   }, []);
   const syncRecentChats = async () => {
-    const chatCards = await queries.getRecentChats();
-    if (chatCards.kind == "err") {
+    const res = await queries.getRecentChatResults();
+    if (res.kind == "err") {
+      console.error(res.error);
       return;
     }
-    setRecentChats(chatCards.value);
+    setRecentChatsResults(res.value);
+  };
+
+  const deleteChatHandler = async (recentChatResult: RecentChatResult) => {
+    const config: DialogConfig = {
+      title: "Delete Chat",
+      description: "Are you sure you want to delete this chat?\nThis action cannot be undone.",
+      actionLabel: "Delete",
+      // Delete chat, and update the recent chats list, and set the chat_id to be another chat
+      onAction: async () => {
+        await queries.deleteChat(recentChatResult.value.chat_id);
+        syncRecentChats();
+      }
+    };
+    createDialog(config);
+  };
+
+  const resetChatHandler = async (recentChatResult: RecentChatResult) => {
+    const config: DialogConfig = {
+      title: "Reset Chat",
+      description: "Are you sure you want to reset this chat?\nThis action cannot be undone.",
+      actionLabel: "Reset",
+      onAction: async () => {
+        await queries.resetChat(recentChatResult.value.chat_id);
+        syncMessageHistory();
+      }
+    };
+    createDialog(config);
   };
 
   const sidebarVariants = {
@@ -76,42 +104,16 @@ export default function ChatsSidebar({ chatID, personaBundle, syncMessageHistory
 
             {/* Recent Chats */}
             <div className="scroll-secondary flex h-96 grow flex-col space-y-1.5 overflow-auto px-2">
-              {recentChats?.map((chat, idx) => {
+              {recentChatResults?.map((recentChatResult, idx) => {
+                const recentChatID = recentChatResult.value.chat_id;
                 return (
                   <RecentChat
                     key={idx}
-                    deleteChat={() => {
-                      const config: DialogConfig = {
-                        title: "Delete Chat",
-                        description: "Are you sure you want to delete this chat?\nThis action cannot be undone.",
-                        actionLabel: "Delete",
-                        // Delete chat, and update the recent chats list, and set the chat_id to be another chat
-                        onAction: async () => {
-                          await queries.deleteChat(chat.chat_id);
-                          syncRecentChats();
-                          setActiveChatID(recentChats[0].chat_id);
-                        }
-                      };
-                      createDialog(config);
-                    }}
-                    resetChat={() => {
-                      const config: DialogConfig = {
-                        title: "Reset Chat",
-                        description: "Are you sure you want to reset this chat?\nThis action cannot be undone.",
-                        actionLabel: "Reset",
-                        onAction: async () => {
-                          await queries.resetChat(chat.chat_id);
-                          syncMessageHistory();
-                        }
-                      };
-                      createDialog(config);
-                    }}
-                    id={chat.chat_id.toString()}
-                    avatarURI={chat.avatarURI || ""}
-                    name={chat.name}
-                    message={chat.last_message}
-                    isActive={chatID == chat.chat_id}
-                    onClick={() => setActiveChatID(chat.chat_id)}
+                    recentChatResult={recentChatResult}
+                    onDelete={() => deleteChatHandler(recentChatResult)}
+                    onReset={() => resetChatHandler(recentChatResult)}
+                    isActive={chatID == recentChatID}
+                    onClick={() => setActiveChatID(recentChatID)}
                   />
                 );
               })}
@@ -149,28 +151,18 @@ export default function ChatsSidebar({ chatID, personaBundle, syncMessageHistory
   );
 }
 interface RecentChatProps {
-  id: string;
-  name: string;
-  avatarURI: string;
-  message: string;
+  recentChatResult: RecentChatResult;
   isActive: boolean;
-  deleteChat: () => void;
-  resetChat: () => void;
+  onDelete: () => void;
+  onReset: () => void;
   className?: string;
   [x: string]: any;
 }
 
-function RecentChat({
-  id,
-  name,
-  avatarURI,
-  message,
-  isActive,
-  deleteChat,
-  resetChat,
-  className,
-  ...rest
-}: RecentChatProps) {
+function RecentChat({ recentChatResult: chatRes, isActive, onDelete, onReset, className, ...rest }: RecentChatProps) {
+  const isOk = chatRes.kind === "ok";
+  const avatarURI = isOk ? chatRes.value.avatarURI : "";
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>
@@ -185,19 +177,27 @@ function RecentChat({
           <Avatar avatarURI={avatarURI} />
 
           <div className={"flex h-full max-w-full flex-col justify-center "}>
-            <h3 className="text-tx-primary line-clamp-1 text-ellipsis">{name}</h3>
-            <p className="text-tx-secondary line-clamp-1 text-ellipsis text-[14.5px]">{message}</p>
+            {isOk ? (
+              <>
+                <h3 className="text-tx-primary line-clamp-1 text-ellipsis">{chatRes.value.name}</h3>
+                <p className="text-tx-secondary line-clamp-1 text-ellipsis text-[14.5px]">
+                  {chatRes.value.last_message}
+                </p>
+              </>
+            ) : (
+              <h3 className="text-red-400 line-clamp-1 text-ellipsis">{`?? ${chatRes.value.dir_name} ??`}</h3>
+            )}
           </div>
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent className="w-40 px-1 py-2">
-        <ContextMenuItem onSelect={resetChat}>
+        <ContextMenuItem onSelect={onReset}>
           Reset
           <ContextMenuShortcut>
             <ArrowPathIcon className="size-4" />
           </ContextMenuShortcut>
         </ContextMenuItem>
-        <ContextMenuItem onSelect={deleteChat}>
+        <ContextMenuItem onSelect={onDelete}>
           Delete
           <ContextMenuShortcut>
             <TrashIcon className="size-4" />

@@ -105,6 +105,7 @@ const characterFormSchema = z.object({
     .regex(/^[a-zA-Z0-9 -]*$/, "Name can only contain letters, numbers, spaces, and hyphens"),
   handle: z
     .string()
+    .min(config.card.handleMinChars)
     .max(config.card.handleMaxChars)
     .regex(/^[a-zA-Z0-9_-]*$/, "Handle can only contain letters, numbers, and dashes")
     .optional(),

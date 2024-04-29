@@ -14,6 +14,7 @@ export default function ChatsSearchModal() {
 
   useEffect(() => {
     (async () => {
+      // TODO: use sqlite fts instead, don't fetch all chats
       const res = await queries.getAllChatSearchItems();
       setSearchItems(res);
       setSearchResults(res);

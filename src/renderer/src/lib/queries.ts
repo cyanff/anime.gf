@@ -100,15 +100,27 @@ ORDER BY c.id DESC`;
   return ret;
 }
 
-export interface RecentChat {
-  chat_id: number;
-  last_message: string;
-  name: string;
-  avatarURI?: string;
+export interface RecentChatOk {
+  kind: "ok";
+  value: {
+    chat_id: number;
+    last_message: string;
+    name: string;
+    avatarURI?: string;
+  };
 }
 
+export interface RecentChatErr {
+  kind: "err";
+  value: {
+    chat_id: number;
+    dir_name: string;
+  };
+  error: Error;
+}
+export type RecentChatResult = RecentChatOk | RecentChatErr;
 // TODO, pagination
-async function getRecentChats(): Promise<Result<RecentChat[], Error>> {
+async function getRecentChatResults(): Promise<Result<RecentChatResult[], Error>> {
   const query = `
   SELECT 
   chats.id AS chat_id,
@@ -132,21 +144,31 @@ LIMIT 20;`;
       card_dir_name: string;
     }
     const rows = (await window.api.sqlite.all(query)) as QueryResult[];
-    const chatCards = await Promise.all(
+    const recentChatResults: RecentChatResult[] = await Promise.all(
       rows.map(async (row) => {
         const res = await window.api.blob.cards.get(row.card_dir_name);
         if (res.kind == "err") {
-          throw res.error;
+          return {
+            kind: "err",
+            value: {
+              chat_id: row.chat_id,
+              dir_name: row.card_dir_name
+            },
+            error: res.error
+          };
         }
         return {
-          chat_id: row.chat_id,
-          last_message: row.last_message,
-          name: res.value.data.character.name,
-          avatarURI: res.value.avatarURI
+          kind: "ok",
+          value: {
+            chat_id: row.chat_id,
+            last_message: row.last_message,
+            name: res.value.data.character.name,
+            avatarURI: res.value.avatarURI
+          }
         };
       })
     );
-    return { kind: "ok", value: chatCards };
+    return { kind: "ok", value: recentChatResults };
   } catch (e) {
     return { kind: "err", error: e };
   }
@@ -610,7 +632,7 @@ export const queries = {
   deleteChat,
   resetChat,
   getAllChatSearchItems,
-  getRecentChats,
+  getRecentChatResults,
   getMostRecentChat,
   getPersonaBundle,
   getChatHistory,
