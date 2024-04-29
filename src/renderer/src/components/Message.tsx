@@ -323,7 +323,7 @@ export default function Message({
                     alt="Avatar"
                   />
                 </PopoverTrigger>
-                <ProfilePopoverContent sender={sender} bundle={sender === "user" ? personaBundle : cardBundle} />
+                <ProfilePopoverContent type={sender} bundle={sender === "user" ? personaBundle : cardBundle} />
               </Popover>
               <div className="flex flex-col justify-start space-y-0.5">
                 {/* Name */}

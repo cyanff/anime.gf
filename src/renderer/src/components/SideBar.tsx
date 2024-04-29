@@ -65,9 +65,13 @@ export default function SideBar({ page, setPage }: SideBarProps) {
       <div className="flex flex-col">
         <DropdownMenu>
           <DropdownMenuTrigger className="outline-none">
-            <Button variant="ghost" size="icon" className={"m-2 size-16 rounded-xl"}>
+            <div
+              className={
+                "m-2 size-16 rounded-xl hover:bg-accent hover:text-tx-primary bg-transparent text-tx-secondary flex justify-center items-center"
+              }
+            >
               <PlusCircleIcon className="text-tx-secondary size-8" />
-            </Button>
+            </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent sideOffset={-15} className="*:text-tx-primary font-medium p-1.5">
             <DropdownMenuItem

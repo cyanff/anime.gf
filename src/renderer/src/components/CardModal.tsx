@@ -1,4 +1,6 @@
 import { useApp } from "@/components/AppContext";
+import Avatar from "@/components/Avatar";
+import Banner from "@/components/Banner";
 import Dropdown from "@/components/Dropdown";
 import EditCardModal from "@/components/EditCardModal";
 import Tag from "@/components/Tag";
@@ -35,17 +37,10 @@ function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
       <div className="scroll-secondary h-full w-full overflow-auto">
         {/* Banner and profile picture */}
         <div className="relative rounded-xl">
-          <img
-            src={cardBundle.bannerURI || "default_banner.png"}
-            alt="Banner"
-            draggable="false"
-            className="h-48 w-full select-none rounded-t-xl object-cover"
-          />
-          <img
-            src={cardBundle.avatarURI || "default_avatar.png"}
-            alt="Profile"
-            draggable="false"
-            className="absolute -bottom-12 left-4 h-24 w-24 select-none rounded-full border-4 border-float object-cover"
+          <Banner bannerURI={cardBundle.bannerURI} className="h-48 w-full rounded-t-xl" />
+          <Avatar
+            avatarURI={cardBundle.avatarURI}
+            className="absolute -bottom-12 left-4 size-24  border-4 border-float"
           />
         </div>
         {/* Character details container */}
@@ -54,10 +49,9 @@ function CardModal({ cardBundle, onCreateChat }: CardModalProps) {
             <div className="w-[30rem] pr-10">
               <div className="pb-2 text-2xl font-semibold text-tx-primary">
                 {cardBundle.data.character.name}
-                {cardBundle.data.character.handle &&
-                  <p className="text-tx-tertiary pb-1 text-sm font-medium">
-                    {`@${cardBundle.data.character.handle}`}
-                  </p> }
+                {cardBundle.data.character.handle && (
+                  <p className="text-tx-tertiary pb-1 text-sm font-medium">{`@${cardBundle.data.character.handle}`}</p>
+                )}
               </div>
               <p className="text-tx-tertiary pb-1 text-sm font-medium">
                 {`created: ${time.isoToFriendly(cardBundle.data.meta.created_at)}`}

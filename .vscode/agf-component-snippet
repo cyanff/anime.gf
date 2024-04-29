@@ -1,0 +1,18 @@
+{
+    "React Component": {
+        "prefix": "agf-component",
+				"body": [
+					"interface ${1:Component}Props {",
+					"}",
+					"",
+					"export default function $1({}: $1Props) {",
+					"    return (",
+					"        <div>",
+					"        </div>",
+					"    )",
+					"}"
+			],
+        "description": "Boilerplate for a React component",
+				"isFileTemplate": true
+    }
+}
