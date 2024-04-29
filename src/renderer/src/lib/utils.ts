@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]): string {
 }
 
 export function cardFormDataToCardData(data: CardFormData): CardData {
-  return {
+  const card: CardData = {
     spec: "anime.gf",
     spec_version: "1.0",
     character: {
@@ -32,4 +32,9 @@ export function cardFormDataToCardData(data: CardFormData): CardData {
       tags: data.meta.tags.split(",")
     }
   };
+
+  if (data.character.handle)
+    card.character.handle = data.character.handle;
+
+  return card as CardData;
 }

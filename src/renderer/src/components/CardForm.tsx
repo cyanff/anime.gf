@@ -192,6 +192,19 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
               />
               <FormField
                 control={form.control}
+                name="character.handle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-tx-primary">Character @handle</FormLabel>
+                    <FormControl>
+                      <Input placeholder="@handle for your character (optional)" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="character.description"
                 render={({ field }) => (
                   <FormItem>

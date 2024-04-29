@@ -12,6 +12,8 @@ export const config = {
     nameMinChars: 1,
     nameMaxChars: 128,
 
+    handleMaxChars: 15,
+
     descriptionMinChars: 0,
     descriptionMaxChars: 768,
 
