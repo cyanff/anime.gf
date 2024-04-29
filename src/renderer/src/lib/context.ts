@@ -186,7 +186,44 @@ function renderSystemPrompt(params: SystemPromptParams): Result<string, Error> {
 function getTemplate(variant: PromptVariant) {
   switch (variant) {
     case "xml":
-      throw new Error("Not implemented");
+      return `
+<instruction>
+You are now roleplaying as {{{card.character.name}}}. 
+You are in a chat with {{{persona.name}}}.
+</instruction>
+
+{{#card.character.description}}
+<character_info>
+{{{card.character.description}}}
+</character_info>
+{{/card.character.description}}
+
+{{#card.world.description}}
+<world_info>
+{{{card.world.description}}}
+</world_info>
+{{/card.world.description}}
+
+{{#persona.description}}
+<user_info>
+User's description: {{{persona.description}}}
+</user_info>
+{{/persona.description}}
+
+{{#characterMemory}}
+<character_memory>
+{{{characterMemory}}}
+</character_memory>
+{{/characterMemory}}
+
+{{#card.character.msg_examples}}
+<message_examples>
+{{{card.character.msg_examples}}}
+</message_examples>
+{{/card.character.msg_examples}}
+
+{{{jailbreak}}}`.trim();
+
     case "markdown":
       return `
 ### Instruction
@@ -223,19 +260,18 @@ User's description: {{{persona.description}}}
 {{{card.character.msg_examples}}}
 {{/card.character.msg_examples}} \
 
-{{{jailbreak}}}
-      `.trim();
+{{{jailbreak}}}`.trim();
     default:
       throw new Error("Invalid prompt variant");
   }
 }
+
 function getPromptVariant(model: string): PromptVariant {
-  return "markdown";
-  // if (model.match(/claude/i)) {
-  //   return "xml";
-  // } else {
-  //   return "markdown";
-  // }
+  if (model.match(/claude/i)) {
+    return "xml";
+  } else {
+    return "markdown";
+  }
 }
 
 export const context = {

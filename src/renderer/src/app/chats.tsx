@@ -142,7 +142,7 @@ function ChatsPage({ chatID }): JSX.Element {
           <div
             ref={chatAreaRef}
             onScroll={handleScroll}
-            className="scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-auto px-5 py-1 transition duration-500 ease-out"
+            className="scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-auto px-5 py-1 transition duration-500 ease-out scroll-smooth"
           >
             {messagesHistory?.map((message, idx) => {
               return (
