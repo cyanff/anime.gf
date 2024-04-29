@@ -10,6 +10,7 @@ interface CreationPageProps {
 
 export default function CreationPage({ setPage }: CreationPageProps) {
   const { syncCardBundles } = useApp();
+
   async function onSuccessfulSubmit(data: CardFormData) {
     const cardData: CardData = cardFormDataToCardData(data);
     const res = await window.api.blob.cards.create(
@@ -19,7 +20,7 @@ export default function CreationPage({ setPage }: CreationPageProps) {
     );
     if (res.kind === "ok") {
       setPage("collections");
-      toast.success(`Created ${data.character.name} ^-^`);
+      toast.success(`Created "${data.character.name}" ^-^`);
     } else {
       toast.error("Error creating character.");
       console.error("An error occurred while creating character:", res.error);

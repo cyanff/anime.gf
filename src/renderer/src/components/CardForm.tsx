@@ -1,3 +1,4 @@
+import { DialogConfig, useApp } from "@/components/AppContext";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,19 +24,42 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
 
   const form = useForm<CardFormData>({ resolver: zodResolver(cardFormSchema) });
 
-  const initialData: DeepPartial<CardFormData> = useMemo(
-    () => ({
-      character: cardBundle?.data.character,
-      world: cardBundle?.data.world,
-      meta: {
-        title: cardBundle?.data.meta.title,
-        notes: cardBundle?.data.meta.notes,
-        tagline: cardBundle?.data.meta.tagline,
-        tags: cardBundle?.data.meta.tags.join(",")
-      }
-    }),
-    [cardBundle]
-  );
+  const { createDialog } = useApp();
+
+  const initialData: DeepPartial<CardFormData> = useMemo(() => {
+    if (cardBundle) {
+      return {
+        character: cardBundle.data.character,
+        world: cardBundle.data.world,
+        meta: {
+          title: cardBundle.data.meta.title,
+          notes: cardBundle.data.meta.notes,
+          tagline: cardBundle.data.meta.tagline,
+          tags: cardBundle.data.meta.tags.join(",")
+        }
+      };
+    } else {
+      return {
+        character: {
+          name: "",
+          description: "",
+          greeting: "",
+          msg_examples: "",
+          bannerURI: "",
+          avatarURI: ""
+        },
+        world: {
+          description: ""
+        },
+        meta: {
+          title: "",
+          notes: "",
+          tagline: "",
+          tags: ""
+        }
+      };
+    }
+  }, [cardBundle]);
 
   useEffect(() => {
     setBannerDisplayImage(cardBundle?.bannerURI);
@@ -48,19 +72,19 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
     onSuccessfulSubmit(data);
   };
 
-  const handleBannerClick = () => {
+  const bannerClickHandler = () => {
     if (bannerInputRef.current) {
       bannerInputRef.current.click();
     }
   };
 
-  const handleProfileClick = () => {
+  const profileClickHandler = () => {
     if (avatarInputRef.current) {
       avatarInputRef.current.click();
     }
   };
 
-  const handleBannerChange = async (event) => {
+  const bannerChangeHandler = async (event) => {
     const file = event.target.files[0];
     form.setValue("character.bannerURI", file.path);
 
@@ -71,7 +95,7 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
     }
   };
 
-  const handleAvatarChange = async (event) => {
+  const avatarChangeHandler = async (event) => {
     const file = event.target.files[0];
     form.setValue("character.avatarURI", file.path);
 
@@ -82,13 +106,30 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
     }
   };
 
+  const resetHandler = () => {
+    const reset = () => {
+      form.reset(initialData);
+      setBannerDisplayImage(initialData?.character?.bannerURI ?? "");
+      setAvatarDisplayImage(initialData?.character?.avatarURI ?? "");
+    };
+
+    const config: DialogConfig = {
+      title: "Reset Form?",
+      actionLabel: "Reset",
+      description:
+        "Are you sure you want to reset the form? All unsaved changes will be lost. This action cannot be undone.",
+      onAction: reset
+    };
+    createDialog(config);
+  };
+
   return (
     <div className="scroll-secondary bg-float flex h-full w-full flex-col overflow-auto">
       {/* Banner and profile picture */}
       <div className="relative mb-12 shrink-0">
         <div
           className="bg-action-tertiary flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden opacity-75"
-          onClick={handleBannerClick}
+          onClick={bannerClickHandler}
         >
           {bannerDisplayImage ? (
             <img src={bannerDisplayImage ?? ""} alt="Profile" className="" />
@@ -103,14 +144,14 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
             {
               ref: bannerInputRef
             })}
-            onChange={handleBannerChange}
+            onChange={bannerChangeHandler}
             accept=".png"
           />
         </div>
         <div
           className="bg-action-tertiary absolute -bottom-12 left-4 flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden
             rounded-full"
-          onClick={handleProfileClick}
+          onClick={profileClickHandler}
         >
           {avatarDisplayImage ? (
             <img src={avatarDisplayImage} alt="Profile" className="" />
@@ -124,7 +165,7 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
             {
               ref: avatarInputRef
             })}
-            onChange={handleAvatarChange}
+            onChange={avatarChangeHandler}
             className="hidden"
             accept=".jpg,.jpeg,.png"
           />
@@ -260,19 +301,13 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
                 )}
               />
               <div className="flex justify-end space-x-3">
-                {formType === "edit" && (
-                  <button
-                    className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:brightness-90"
-                    type="button"
-                    onClick={() => {
-                      form.reset(initialData);
-                      setBannerDisplayImage(initialData?.character?.bannerURI ?? "");
-                      setAvatarDisplayImage(initialData?.character?.avatarURI ?? "");
-                    }}
-                  >
-                    <span className="font-medium text-tx-primary">Reset</span>
-                  </button>
-                )}
+                <button
+                  className="flex items-center space-x-2 rounded-xl bg-transparent px-4 py-2 transition-colors duration-200 hover:brightness-90"
+                  type="button"
+                  onClick={resetHandler}
+                >
+                  <span className="font-medium text-tx-primary">Reset</span>
+                </button>
 
                 <button
                   className="flex items-center space-x-2 rounded-xl bg-action-primary px-4 py-2 transition ease-out duration-200 hover:brightness-90"
