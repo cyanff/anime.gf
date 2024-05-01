@@ -1,4 +1,5 @@
 import { DialogConfig, useApp } from "@/components/AppContext";
+import Avatar from "@/components/Avatar";
 import CardModal from "@/components/CardModal";
 import EditCardModal from "@/components/EditCardModal";
 import PersonaSelectionModal from "@/components/PersonaSelectionModal";
@@ -107,11 +108,7 @@ function Card({ cardBundle }: CardProps) {
             onMouseMove={onMouseMove}
           >
             <CardPattern mouseX={mouseX} mouseY={mouseY} />
-            <img
-              className=" z-10 h-60 w-40 rounded-xl object-cover"
-              src={cardBundle.avatarURI || "default_avatar.png"}
-              draggable="false"
-            />
+            <Avatar className="z-10 h-60 w-40 rounded-xl" avatarURI={cardBundle.avatarURI} />
 
             <div className="relative flex flex-grow flex-col space-y-1">
               <div

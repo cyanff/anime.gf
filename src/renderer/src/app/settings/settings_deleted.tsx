@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { queries } from "@/lib/queries";
+import { cardBundleSearchFN } from "@/lib/utils";
 import { ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import Fuse from "fuse.js";
@@ -12,13 +13,13 @@ import { toast } from "sonner";
 
 export default function SettingsRecentlyDeleted() {
   const [deletedCards, setDeletedCards] = useState<CardBundle[]>();
-
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchResults, setSearchResults] = useState<CardBundle[]>();
   const [sortBy, setSortBy] = useState<string>("alphabetical");
   const [descending, setDescending] = useState<boolean>(true);
   const { createDialog, syncCardBundles } = useApp();
   const [selectedCards, setSelectedCards] = useState<CardBundle[]>([]);
+  const cardContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     syncDeletedCardBundles();
@@ -33,8 +34,20 @@ export default function SettingsRecentlyDeleted() {
     }
   };
 
-  // TODO, edit card bundle type to also include all data from the card table
-  // then add sort by "imported" which is the inserted_at column in the db
+  useEffect(() => {
+    const cardContainer = cardContainerRef?.current;
+    if (!cardContainer) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedCards([]);
+      }
+    };
+    cardContainer.addEventListener("keydown", handleKeyDown);
+    return () => {
+      cardContainer.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   const sortByNameAndValue = [
     { name: "Alphabetical", value: "alphabetical" },
     { name: "Created", value: "created" },
@@ -60,65 +73,20 @@ export default function SettingsRecentlyDeleted() {
       return;
     }
     const results = fuseRef.current.search(searchInput).map((result) => result.item);
-    setSearchResults(results);
-  }, [searchInput, deletedCards]);
+    const sortedResults = results.sort((a: CardBundle, b: CardBundle) => {
+      return cardBundleSearchFN(a, b, sortBy, descending);
+    });
 
-  /**
-   * A function to compare two `CardBundle` objects based on the current `sortBy` and `descending` state.
-   *
-   * @param a - The first `CardBundle` object to compare.
-   * @param b - The second `CardBundle` object to compare.
-   * @returns
-   * A ternary value (-1, 0 ,1) indicating the sort order of the two `CardBundle` objects.
-   * -1: a should come before b
-   * 0: a and b are equal
-   * 1: a should come after b
-   */
-  const cardBundleSearchFN = (a: CardBundle, b: CardBundle) => {
-    let valueA: any, valueB: any;
-    switch (sortBy) {
-      case "alphabetical":
-        valueA = a.data.character.name.toLowerCase();
-        valueB = b.data.character.name.toLowerCase();
-        break;
-      case "created":
-        valueA = new Date(a.data.meta.created_at);
-        valueB = new Date(b.data.meta.created_at);
-        break;
-      case "updated":
-        // Fallback to created date if updated date is not available
-        valueA = new Date(a.data.meta.updated_at || a.data.meta.created_at);
-        valueB = new Date(b.data.meta.updated_at || b.data.meta.created_at);
-        break;
-      default:
-        return 0;
-    }
-    let comparisonResult: number;
-    if (valueA < valueB) {
-      comparisonResult = -1;
-    } else if (valueA > valueB) {
-      comparisonResult = 1;
-    } else {
-      comparisonResult = 0;
-    }
-    // If descending is true, we want the comparison result to be reversed
-    return descending ? -comparisonResult : comparisonResult;
-  };
-
-  // On sortBy or descending change, update the search results
-  useEffect(() => {
-    if (!searchResults) return;
-    const sortedResults = searchResults.sort(cardBundleSearchFN);
     setSearchResults([...sortedResults]);
-  }, [sortBy, descending]);
+  }, [searchInput, deletedCards, descending, sortBy]);
 
-  async function handleRestore(cardBundle: CardBundle) {
+  async function restoreHandler(cardBundle: CardBundle) {
     await queries.restoreCard(cardBundle.id);
     syncDeletedCardBundles();
     syncCardBundles();
   }
 
-  function handleSingleDelete(cardBundle: CardBundle) {
+  function singleDeleteHandler(cardBundle: CardBundle) {
     const config: DialogConfig = {
       title: `Permenantly delete ${cardBundle.data.character.name}`,
       description: `Are you sure you want to permenantly delete ${cardBundle.data.character.name}?\nThis action will also delete corresponding chats with ${cardBundle.data.character.name} and cannot be undone.`,
@@ -132,7 +100,7 @@ export default function SettingsRecentlyDeleted() {
     createDialog(config);
   }
 
-  function handleCardClick(cardBundle: CardBundle) {
+  function cardClickHandler(cardBundle: CardBundle) {
     setSelectedCards((prevSelectedCards) => {
       // If the card is already selected, unselect it
       if (prevSelectedCards.includes(cardBundle)) {
@@ -145,14 +113,14 @@ export default function SettingsRecentlyDeleted() {
     });
   }
 
-  async function handleRestoreSelected() {
+  async function restoreSelectedHandler() {
     for (const cardBundle of selectedCards) {
-      await handleRestore(cardBundle);
+      await restoreHandler(cardBundle);
     }
     setSelectedCards([]);
   }
 
-  function handleDeleteSelected() {
+  function deleteSelectedHandler() {
     const config: DialogConfig = {
       title: `Permenantly delete selected cards`,
       description: `Are you sure you want to permenantly all selected cards?\nThis action will also delete corresponding chats and cannot be undone.`,
@@ -163,15 +131,17 @@ export default function SettingsRecentlyDeleted() {
           await queries.permaDeleteCard(cardBundle.id);
         }
         syncDeletedCardBundles();
+        setSelectedCards([]);
       }
     };
     createDialog(config);
-
-    setSelectedCards([]);
   }
 
   return (
-    <div className="scroll-primary h-full w-full overflow-y-scroll pl-4 antialiased lg:text-base">
+    <div
+      ref={cardContainerRef}
+      className="scroll-primary h-full w-full overflow-y-scroll pl-4 antialiased lg:text-base"
+    >
       <div className="flex flex-row space-x-4 py-2 pb-8">
         {/* Search Bar*/}
         <div className="flex flex-row space-x-4 ">
@@ -179,7 +149,7 @@ export default function SettingsRecentlyDeleted() {
             <MagnifyingGlassIcon className="ml-2 size-6 shrink-0 text-tx-secondary" />
             <Input
               className="h-9 w-full border-none grow bg-inherit focus:outline-none "
-              placeholder="Search for a chat"
+              placeholder="Search for a deleted card"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
@@ -214,10 +184,10 @@ export default function SettingsRecentlyDeleted() {
           </div>
         </div>
         <div className="flex flex-row flex-grow space-x-4 justify-end pr-8">
-          <Button variant="secondary" className="flex items-center space-x-2" onClick={handleRestoreSelected}>
+          <Button variant="secondary" className="flex items-center space-x-2" onClick={restoreSelectedHandler}>
             <span className="font-medium text-tx-primary text-sm">Restore</span>
           </Button>
-          <Button className="flex items-center space-x-2" onClick={handleDeleteSelected}>
+          <Button className="flex items-center space-x-2" onClick={deleteSelectedHandler}>
             <TrashIcon className="size-5 text-tx-primary" />
             <span className="font-medium text-tx-primary text-sm">Delete</span>
           </Button>
@@ -228,7 +198,7 @@ export default function SettingsRecentlyDeleted() {
       <div className="flex flex-wrap gap-4 scroll-smooth transition duration-500 ease-out">
         {searchResults?.length === 0 && (
           <div className="line-clamp-1 w-full whitespace-pre text-center text-lg font-semibold text-tx-tertiary">
-            {"No recently deleted cards"}
+            {"No recently deleted cards found"}
           </div>
         )}
 
@@ -237,9 +207,9 @@ export default function SettingsRecentlyDeleted() {
             <CardDeleted
               key={idx}
               cardBundle={cardBundle}
-              handleRestore={handleRestore}
-              handleSingleDelete={handleSingleDelete}
-              onClick={() => handleCardClick(cardBundle)}
+              handleRestore={restoreHandler}
+              handleSingleDelete={singleDeleteHandler}
+              onClick={() => cardClickHandler(cardBundle)}
               selected={selectedCards.includes(cardBundle)}
             />
           );

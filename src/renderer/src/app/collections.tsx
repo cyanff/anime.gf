@@ -1,27 +1,22 @@
-import { useApp } from "@/components/AppContext";
 import Card from "@/components/Card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cardBundleSearchFN } from "@/lib/utils";
 import { ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { CardBundle } from "@shared/types";
 import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
 
 interface CollectionsPageProps {
-  setPage: (page: string) => void;
   cardBundles: CardBundle[];
 }
 
-export default function CollectionsPage({ setPage, cardBundles }: CollectionsPageProps) {
-  const { createModal, closeModal, setActiveChatID } = useApp();
+export default function CollectionsPage({ cardBundles }: CollectionsPageProps) {
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);
   const [sortBy, setSortBy] = useState<string>("alphabetical");
   const [descending, setDescending] = useState<boolean>(true);
-  const { createDialog } = useApp();
 
-  // TODO, edit card bundle type to also include all data from the card table
-  // then add sort by "imported" which is the inserted_at column in the db
   const sortByNameAndValue = [
     { name: "Alphabetical", value: "alphabetical" },
     { name: "Created", value: "created" },
@@ -47,57 +42,11 @@ export default function CollectionsPage({ setPage, cardBundles }: CollectionsPag
       return;
     }
     const results = fuseRef.current.search(searchInput).map((result) => result.item);
-    setSearchResults(results);
-  }, [searchInput, cardBundles]);
-
-  /**
-   * Compares two `CardBundle` objects based on the current `sortBy` and `descending` state.
-   *
-   * @param a - The first `CardBundle` object to compare.
-   * @param b - The second `CardBundle` object to compare.
-   * @returns
-   * A ternary value (-1, 0 ,1) indicating the sort order of the two `CardBundle` objects.
-   * -1: a should come before b
-   * 0: a and b are equal
-   * 1: a should come after b
-   */
-  const cardBundleSearchFN = (a: CardBundle, b: CardBundle) => {
-    let valueA: any, valueB: any;
-    switch (sortBy) {
-      case "alphabetical":
-        valueA = a.data.character.name.toLowerCase();
-        valueB = b.data.character.name.toLowerCase();
-        break;
-      case "created":
-        valueA = new Date(a.data.meta.created_at);
-        valueB = new Date(b.data.meta.created_at);
-        break;
-      case "updated":
-        // Fallback to created date if updated date is not available
-        valueA = new Date(a.data.meta.updated_at || a.data.meta.created_at);
-        valueB = new Date(b.data.meta.updated_at || b.data.meta.created_at);
-        break;
-      default:
-        return 0;
-    }
-    let comparisonResult: number;
-    if (valueA < valueB) {
-      comparisonResult = -1;
-    } else if (valueA > valueB) {
-      comparisonResult = 1;
-    } else {
-      comparisonResult = 0;
-    }
-    // If descending is true, we want the comparison result to be reversed
-    return descending ? -comparisonResult : comparisonResult;
-  };
-
-  // On sortBy or descending change, update the search results
-  useEffect(() => {
-    if (!searchResults) return;
-    const sortedResults = searchResults.sort(cardBundleSearchFN);
+    const sortedResults = results.sort((a, b) => {
+      return cardBundleSearchFN(a, b, sortBy, descending);
+    });
     setSearchResults([...sortedResults]);
-  }, [sortBy, descending]);
+  }, [searchInput, cardBundles, sortBy, descending]);
 
   return (
     <div className="scroll-primary h-full w-full overflow-y-scroll antialiased lg:text-base pl-4">
