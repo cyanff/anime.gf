@@ -5,7 +5,7 @@ import Message from "@/components/Message";
 import { Button } from "@/components/ui/button";
 import { MessageHistory, queries } from "@/lib/queries";
 import { CardBundle, PersonaBundle } from "@shared/types";
-import { motion } from "framer-motion";
+import { motion, sync } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 import { toast } from "sonner";
@@ -14,24 +14,30 @@ import "../styles/global.css";
 interface ChatsPageProps {
   chatID: number;
 }
-
 export default function ChatsPage({ chatID }: ChatsPageProps): JSX.Element {
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
   const [messagesHistory, setMessagesHistory] = useState<MessageHistory>([]);
-  const [historyLimit, setHistoryLimit] = useState(50);
+  const historyLimitRef = useRef(50);
   const [isGenerating, setIsGenerating] = useState(false);
   const { setActiveChatID } = useApp();
 
   const syncMessageHistory = useCallback(async () => {
-    console.log(`Syncing, ${chatID}, ${historyLimit}`);
-    const res = await queries.getChatHistory(chatID, historyLimit);
+    console.log(`Syncing, ${chatID}, ${historyLimitRef}`);
+    const res = await queries.getChatHistory(chatID, historyLimitRef.current);
     if (res.kind == "err") {
       toast.error("Error fetching chat history.");
       console.error(res.error);
       return;
     }
     setMessagesHistory(res.value);
-  }, [chatID, historyLimit]);
+  }, [chatID, historyLimitRef]);
+
+  const setHistoryLimit = useCallback(
+    (historyLimit: number) => {
+      historyLimitRef.current = historyLimit;
+    },
+    [historyLimitRef]
+  );
 
   const syncPersonaBundle = useCallback(async () => {
     const res = await queries.getPersonaBundle(chatID);
@@ -63,7 +69,7 @@ export default function ChatsPage({ chatID }: ChatsPageProps): JSX.Element {
 
   useEffect(() => {
     syncMessageHistory();
-  }, [historyLimit, syncMessageHistory]);
+  }, [historyLimitRef, syncMessageHistory]);
 
   // Loading screen
   if (!personaBundle) {
@@ -83,7 +89,7 @@ export default function ChatsPage({ chatID }: ChatsPageProps): JSX.Element {
           chatID={chatID}
           messageHistory={messagesHistory}
           setMessageHistory={setMessagesHistory}
-          historyLimit={historyLimit}
+          historyLimit={historyLimitRef.current}
           setHistoryLimit={setHistoryLimit}
           syncMessageHistory={syncMessageHistory}
           personaBundle={personaBundle}
@@ -106,7 +112,7 @@ interface ChatAreaProps {
   messageHistory: MessageHistory;
   setMessageHistory: React.Dispatch<React.SetStateAction<MessageHistory>>;
   historyLimit: number;
-  setHistoryLimit: React.Dispatch<React.SetStateAction<number>>;
+  setHistoryLimit: (historyLimit: number) => void;
   syncMessageHistory: () => Promise<void>;
   isGenerating: boolean;
   setIsGenerating: (isGenerating: boolean) => void;
@@ -185,6 +191,7 @@ function ChatArea({
         kind: "user_scrolled_top"
       };
       setHistoryLimit(historyLimit + 15);
+      syncMessageHistory();
     }
   };
   // Listens to escape key to cancel editing message
