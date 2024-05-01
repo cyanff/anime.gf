@@ -51,3 +51,28 @@ export function debounce(fn: (...args: any[]) => void, ms: number) {
     timeout = setTimeout(later, ms);
   };
 }
+
+export function throttle(fn: (...args: any[]) => void, ms: number) {
+  let lastTime = 0;
+  let timeout: any;
+
+  return function executedFunction(...args: any[]) {
+    const now = Date.now();
+    const remaining = ms - (now - lastTime);
+
+    if (remaining <= 0) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      lastTime = now;
+      fn(...args);
+    } else if (!timeout) {
+      timeout = setTimeout(() => {
+        lastTime = Date.now();
+        timeout = null;
+        fn(...args);
+      }, remaining);
+    }
+  };
+}

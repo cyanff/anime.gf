@@ -4,6 +4,7 @@ import ChatsSidebar from "@/components/ChatsSidebar";
 import Message from "@/components/Message";
 import { Button } from "@/components/ui/button";
 import { MessageHistory, queries } from "@/lib/queries";
+import { debounce, throttle } from "@/lib/utils";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -82,6 +83,7 @@ export default function ChatsPage({ chatID }: ChatsPageProps): JSX.Element {
           chatID={chatID}
           messageHistory={messagesHistory}
           setMessageHistory={setMessagesHistory}
+          historyLimit={historyLimit}
           setHistoryLimit={setHistoryLimit}
           syncMessageHistory={syncMessageHistory}
           personaBundle={personaBundle}
@@ -103,6 +105,7 @@ interface ChatAreaProps {
   personaBundle: PersonaBundle;
   messageHistory: MessageHistory;
   setMessageHistory: React.Dispatch<React.SetStateAction<MessageHistory>>;
+  historyLimit: number;
   setHistoryLimit: React.Dispatch<React.SetStateAction<number>>;
   syncMessageHistory: () => Promise<void>;
   isGenerating: boolean;
@@ -114,6 +117,7 @@ function ChatArea({
   personaBundle,
   messageHistory,
   setMessageHistory,
+  historyLimit,
   setHistoryLimit,
   syncMessageHistory,
   isGenerating,
@@ -174,12 +178,13 @@ function ChatArea({
   }, [messageHistory]);
 
   const scrollHandler = async (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    if (e.currentTarget.scrollTop == 0) {
+    if (!e.currentTarget) return;
+    if (e.currentTarget.scrollTop === 0) {
       scrollEventRef.current = {
         oldScrollHeight: e.currentTarget.scrollHeight,
         kind: "user_scrolled_top"
       };
-      setHistoryLimit((prevLimit: number) => prevLimit + 15);
+      setHistoryLimit(historyLimit + 15);
     }
   };
   // Listens to escape key to cancel editing message
@@ -205,7 +210,7 @@ function ChatArea({
           transition={{ duration: 0.15, delay: 0.12 }}
           ref={messageHistoryRef}
           onScroll={scrollHandler}
-          className="scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-auto px-5 py-1 transition duration-500 ease-out"
+          className="relative scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-auto px-5 overflow-x-clip transition duration-500 ease-out"
         >
           {messageHistory?.map((message) => {
             return (
@@ -232,7 +237,7 @@ function ChatArea({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
-            duration: 0.05,
+            duration: 0.15,
             delay: 0.05
           }}
         >

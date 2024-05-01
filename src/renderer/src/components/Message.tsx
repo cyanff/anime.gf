@@ -354,7 +354,7 @@ export default function Message({
                     allowedElements={["p", "blockquote", "strong", "em"]}
                     unwrapDisallowed
                     skipHtml
-                    className="whitespace-pre-wrap"
+                    className="whitespace-pre-wrap break-all"
                     components={sender === "user" ? userMarkdown : characterMarkdown}
                   >
                     {text}
