@@ -26,7 +26,7 @@ function sqliteToISO(time: string) {
 function isoToUserRelativeTime(iso: string, timezone: string) {
   const now = new Date();
   const date = new Date(iso);
-  let yesterday = new Date(now);
+  const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);
 
   const timeFormatter = new Intl.DateTimeFormat("en-GB", {

@@ -68,7 +68,6 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
   }, [cardBundle]);
 
   const onSubmit = (data: CardFormData) => {
-    console.log(data);
     onSuccessfulSubmit(data);
   };
 

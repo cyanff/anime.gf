@@ -40,14 +40,14 @@ export default function PersonaSelectionModa({ onPersonaSelect }: PersonaSelecti
         {personaBundles.length === 0 && (
           <div className="flex h-full w-full items-center justify-center">
             <p className="select-none text-center text-sm font-[650] text-tx-tertiary whitespace-pre-wrap">
-              You don't have a persona yet... <br /> Create one in settings -&gt; personas
+              You don&apos;t have a persona yet... <br /> Create one in settings -&gt; personas
             </p>
           </div>
         )}
 
-        {personaBundles.map((bundle, idx) => (
+        {personaBundles.map((bundle) => (
           <button
-            key={idx}
+            key={bundle.data.id}
             className={`group flex h-fit w-full items-center justify-between rounded-lg p-3 font-[480] text-tx-primary transition duration-200
                       ease-out hover:bg-accent focus:outline-none`}
             onClick={() => {

@@ -26,7 +26,6 @@ export default function ChatsSidebar({ chatID, personaBundle, syncMessageHistory
   const [recentChatResults, setRecentChatsResults] = useState<RecentChatResult[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { createModal, createDialog, setActiveChatID } = useApp();
-  console.log("chatID", chatID);
 
   useEffect(() => {
     syncRecentChats();
@@ -108,7 +107,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncMessageHistory
                 const recentChatID = recentChatResult.value.chat_id;
                 return (
                   <RecentChat
-                    key={idx}
+                    key={recentChatID}
                     recentChatResult={recentChatResult}
                     onDelete={() => deleteChatHandler(recentChatResult)}
                     onReset={() => resetChatHandler(recentChatResult)}

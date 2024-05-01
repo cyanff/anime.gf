@@ -33,8 +33,21 @@ export function cardFormDataToCardData(data: CardFormData): CardData {
     }
   };
 
-  if (data.character.handle)
-    card.character.handle = data.character.handle;
+  if (data.character.handle) card.character.handle = data.character.handle;
 
   return card as CardData;
+}
+
+export function debounce(fn: (...args: any[]) => void, ms: number) {
+  let timeout: any;
+
+  return function executedFunction(...args: any[]) {
+    const later = () => {
+      clearTimeout(timeout);
+      fn(...args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, ms);
+  };
 }

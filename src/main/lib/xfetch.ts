@@ -45,7 +45,7 @@ async function get(
   headers: Record<string, string> = {},
   config: XFetchConfig = {}
 ): Promise<Result<any, Error>> {
-  let requestInit: RequestInit = {
+  const requestInit: RequestInit = {
     method: "GET",
     headers
   };

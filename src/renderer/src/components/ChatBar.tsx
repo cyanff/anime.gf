@@ -51,6 +51,7 @@ export default function ChatBar({
     onMessageSend(userInput);
     try {
       const replyRes = await reply.generate(chatID, cardBundle.data, personaBundle.data, userInput);
+
       if (replyRes.kind === "err") {
         onMessageResolve(replyRes);
         return;

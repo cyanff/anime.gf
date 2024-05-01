@@ -69,7 +69,7 @@ async function get(params: ContextParams): Promise<Result<Context, Error>> {
   // Fetch messages to fill up the context window.
   let fromID: number | undefined = params.fromMessageID;
   let contextWindowTokens = 0;
-  let contextWindow: ContextMessage[] = [];
+  const contextWindow: ContextMessage[] = [];
   while (contextWindowTokens < remainingTokens) {
     const messages = await queries.getContextMessagesStartingFrom(params.chatID, 100, fromID);
     // No more messages to fetch.

@@ -6,11 +6,11 @@ import fsp from "fs/promises";
  * @returns The frozen object
  */
 export function deepFreeze(object: any) {
-  let props = Object.getOwnPropertyNames(object);
+  const props = Object.getOwnPropertyNames(object);
 
   // Iterate through all top level properties
   props.forEach((prop) => {
-    let subProp = object[prop];
+    const subProp = object[prop];
 
     // Recursively traverse sub-properties
     if (subProp && typeof subProp === "object") {
