@@ -4,7 +4,6 @@ import ChatsSidebar from "@/components/ChatsSidebar";
 import Message from "@/components/Message";
 import { Button } from "@/components/ui/button";
 import { MessageHistory, queries } from "@/lib/queries";
-import { debounce, throttle } from "@/lib/utils";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -24,6 +23,7 @@ export default function ChatsPage({ chatID }: ChatsPageProps): JSX.Element {
   const { setActiveChatID } = useApp();
 
   const syncMessageHistory = useCallback(async () => {
+    console.log(`Syncing, ${chatID}, ${historyLimit}`);
     const res = await queries.getChatHistory(chatID, historyLimit);
     if (res.kind == "err") {
       toast.error("Error fetching chat history.");
@@ -224,9 +224,7 @@ function ChatArea({
                 setEditingMessageID={setEditingMessageID}
                 isGenerating={isGenerating}
                 setIsGenerating={setIsGenerating}
-                syncMessageHistory={() => {
-                  syncMessageHistory();
-                }}
+                syncMessageHistory={syncMessageHistory}
               />
             );
           })}

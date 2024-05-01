@@ -17,7 +17,6 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "gen-types": "",
     "new-migration": "node ./scripts/new_migration.js",
     "nuke": "./scripts/nuke.sh",
     "nuke-win": "scripts\\nuke.bat",
