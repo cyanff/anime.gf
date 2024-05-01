@@ -26,6 +26,7 @@ import {
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { card } from "@/lib/card";
 import { handleA, handleB, handleC } from "@/lib/cmd";
+import { useShiftKey } from "@/lib/hook/useShiftKey";
 import { queries } from "@/lib/queries";
 import { CardBundle } from "@shared/types";
 import { useEffect, useState } from "react";
@@ -40,6 +41,7 @@ export default function App() {
   const [cmdOpen, setCmdOpen] = useState<boolean>(false);
   const [activeChatID, setActiveChatID] = useState<number>();
   const [cardBundles, setCardBundles] = useState<CardBundle[]>([]);
+  const isShiftKeyPressed = useShiftKey();
 
   useEffect(() => {
     setActiveChatToMostRecent();
@@ -92,6 +94,10 @@ export default function App() {
   }, []);
 
   function createDialog(config: DialogConfig) {
+    if (isShiftKeyPressed) {
+      config.onAction();
+      return;
+    }
     setAlertConfig(config);
     setDialogOpen(true);
   }

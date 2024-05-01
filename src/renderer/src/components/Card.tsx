@@ -38,7 +38,7 @@ function Card({ cardBundle }: CardProps) {
       description: `Are you sure you want to delete ${cardBundle.data.character.name}?\n `,
       actionLabel: "Delete",
       onAction: async () => {
-        await queries.deleteCard(cardBundle.id);
+        await queries.softDeleteCard(cardBundle.id);
         syncCardBundles();
       }
     };

@@ -207,7 +207,7 @@ function ChatArea({
           onScroll={scrollHandler}
           className="scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-auto px-5 py-1 transition duration-500 ease-out"
         >
-          {messageHistory?.map((message, idx) => {
+          {messageHistory?.map((message) => {
             return (
               <Message
                 key={message.id}

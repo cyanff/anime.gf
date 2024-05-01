@@ -99,7 +99,7 @@ export default function Message({
       : { name: cardBundle.data.character.name, avatar: cardBundle.avatarURI };
   const isLatest = useMemo(
     () => messagesHistory.length > 0 && messagesHistory[messagesHistory.length - 1].id === messageID,
-    [messagesHistory]
+    [messagesHistory, messageID]
   );
   const [choices, setChoices] = useState<Choices[]>(getChoices(message));
   const [idx, setIDX] = useState(() => getIDX(message));
@@ -118,7 +118,7 @@ export default function Message({
     } else {
       queries.updateMessagePrimeCandidate(messageID, messageOrCandidate.id);
     }
-  }, [idx]);
+  }, [idx, messageID, choices]);
 
   // Focus on the edit field when the user starts editing
   useEffect(() => {
