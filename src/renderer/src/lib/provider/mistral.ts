@@ -93,13 +93,8 @@ async function streamChatCompletion(): Promise<any> {
   throw new Error("Not implemented");
 }
 
-async function getTextCompletion(): Promise<Result<string, Error>> {
-  throw new Error("Not implemented");
-}
-
 export const mistral: Provider = {
   getModels,
   getChatCompletion,
-  streamChatCompletion,
-  getTextCompletion
+  streamChatCompletion
 };

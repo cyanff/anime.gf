@@ -1,4 +1,5 @@
 import { openAI } from "@/lib/provider/openai";
+import { openrouter } from "@/lib/provider/openrouter";
 import { togetherAI } from "@/lib/provider/together_ai";
 import { Result } from "@shared/types";
 import { anthropic } from "./anthropic";
@@ -26,7 +27,6 @@ export interface Provider {
   getModels(): Promise<Result<string[], Error>>;
   getChatCompletion(messages: ProviderMessage[], config: CompletionConfig): Promise<Result<string, Error>>;
   streamChatCompletion(): any;
-  getTextCompletion(): Promise<Result<string, Error>>;
 }
 
 export enum ProviderE {
@@ -34,7 +34,8 @@ export enum ProviderE {
   ANTHROPIC = "anthropic",
   MISTRAL = "mistral",
   TOGETHER_AI = "together_ai",
-  OPENAI_COMPAT = "openai_compat"
+  OPENAI_COMPAT = "openai_compat",
+  OPENROUTER = "openrouter"
 }
 export function getProvider(provider: ProviderE): Provider {
   switch (provider) {
@@ -48,6 +49,8 @@ export function getProvider(provider: ProviderE): Provider {
       return mistral;
     case ProviderE.OPENAI_COMPAT:
       return openAICompat;
+    case ProviderE.OPENROUTER:
+      return openrouter;
     default:
       throw new Error("Invalid provider given to getProvider()");
   }
@@ -70,6 +73,7 @@ export function getProvidersNameAndValue(): NameAndValue[] {
     { name: "Anthropic", value: ProviderE.ANTHROPIC },
     { name: "Mistral", value: ProviderE.MISTRAL },
     { name: "Together AI", value: ProviderE.TOGETHER_AI },
-    { name: "OpenAI Compatible API", value: ProviderE.OPENAI_COMPAT }
+    { name: "OpenAI Compatible API", value: ProviderE.OPENAI_COMPAT },
+    { name: "OpenRouter", value: ProviderE.OPENROUTER }
   ];
 }

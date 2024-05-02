@@ -26,8 +26,44 @@ interface Usage {
   total_tokens: number;
 }
 
+// TODO implement fetch
 async function getModels(): Promise<Result<string[], Error>> {
-  const models = [];
+  interface Data
+    extends Array<{
+      // The official model name, ex: nousresearch/nous-hermes-2-mixtral-8x7b-sft
+      id: string;
+      architecture: {
+        modality: "text" | "chat" | "multimodal";
+        tokenizer: string;
+        instruct_type: string;
+      };
+    }> {}
+  const url = "https://openrouter.ai/api/v1/models";
+  const keyRes = await window.api.secret.get("openrouter");
+  if (keyRes.kind == "err") {
+    return keyRes;
+  }
+  const key = keyRes.value;
+
+  const headers = {
+    Authorization: `Bearer ${key}`
+  };
+
+  const modelsRes = await window.api.xfetch.get(url, headers, { timeout: 5000 });
+  if (modelsRes.kind == "err") {
+    return modelsRes;
+  }
+
+  const data = modelsRes.value.data as Data;
+  console.log("data:", data);
+
+  const filtered = data.filter(
+    (model) => model.architecture.modality === "chat" || model.architecture.modality === "multimodal"
+  );
+
+  console.log("filtered:", filtered);
+
+  const models = filtered.map((model) => model.id);
   return { kind: "ok", value: models };
 }
 
@@ -35,10 +71,18 @@ async function getChatCompletion(
   messages: ProviderMessage[],
   config: CompletionConfig
 ): Promise<Result<string, Error>> {
-  if (!config.url) {
-    return { kind: "err", error: new Error("Using a custom OpenAI API compatible endpoint but no URL provided.") };
+  // Get API key from either config or secret store
+  const keyRes = await window.api.secret.get("openrouter");
+  if (keyRes.kind == "err") {
+    return keyRes;
   }
-  const url = config.url;
+  const key = keyRes.value;
+
+  const url = "https://openrouter.ai/api/v1/chat/completions";
+  const headers = {
+    Authorization: `Bearer ${key}`
+  };
+
   // Append a system prompt if specified
   const reqMessages = config.system ? [{ role: "system", content: config.system }, ...messages] : messages;
   const body: any = {
@@ -58,7 +102,7 @@ async function getChatCompletion(
     body.top_p = config.topP;
   }
 
-  const completionRes = await window.api.xfetch.post(url, body, {});
+  const completionRes = await window.api.xfetch.post(url, body, headers);
   if (completionRes.kind == "err") {
     return completionRes;
   }
@@ -71,7 +115,7 @@ async function streamChatCompletion(): Promise<any> {
   throw new Error("Not implemented");
 }
 
-export const openAICompat: Provider = {
+export const openrouter: Provider = {
   getModels,
   getChatCompletion,
   streamChatCompletion
