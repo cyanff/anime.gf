@@ -1,4 +1,4 @@
-import { getProvider } from "@/lib/provider/provider";
+import { ProviderE, getProvider } from "@/lib/provider/provider";
 import { queries } from "@/lib/queries";
 import { CardData, PersonaData, Result } from "@shared/types";
 import { deepFreeze } from "@shared/utils";
@@ -89,6 +89,8 @@ async function _generate(
   }
   const settings = settingsRes.value;
 
+  console.log("settings", settings);
+
   const contextParams: ContextParams = {
     chatID,
     fromMessageID,
@@ -112,8 +114,10 @@ async function _generate(
     maxTokens: settings.chat.maxReplyTokens,
     temperature: settings.chat.temperature,
     topP: settings.chat.topP,
-    topK: settings.chat.topK
+    topK: settings.chat.topK,
+    url: settings.chat.url
   };
+
   return await provider.getChatCompletion(ctx.messages, completionConfig);
 }
 

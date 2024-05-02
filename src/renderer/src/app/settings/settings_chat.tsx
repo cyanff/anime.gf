@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { getProvider, getProvidersNameAndValue } from "@/lib/provider/provider";
+import { ProviderE, getProvider, getProvidersNameAndValue } from "@/lib/provider/provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { config } from "@shared/config";
 import { useEffect, useState } from "react";
@@ -13,9 +13,21 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+// Set the form's values to be the user's settings.json
+const syncSettings = async (reset: any) => {
+  const res = await window.api.setting.get();
+  if (res.kind === "err") {
+    console.error("Error getting settings:", res.error);
+    return;
+  }
+  const chatSettings = res.value.chat;
+  reset(chatSettings);
+};
+
 const schema = z.object({
   provider: z.string().default("Anthropic"),
   model: z.string().default("Claude 3 Haiku"),
+  url: z.string().max(65536).optional(),
   maxReplyTokens: z.number().min(32).default(2048),
   maxContextTokens: z.number().min(1024).default(262144),
   temperature: z.number().min(0).max(2).default(0.7),
@@ -44,8 +56,8 @@ export default function SettingsChat() {
   const selectedProvider = watch("provider");
 
   useEffect(() => {
-    syncSettings();
-  }, []);
+    syncSettings(reset);
+  }, [reset]);
 
   // Shows the user an error message if there are any errors in the form
   useEffect(() => {
@@ -53,17 +65,6 @@ export default function SettingsChat() {
       toast.error(`Error in field ${key}: ${value!.message}`);
     });
   }, [errors]);
-
-  // Set the form's values to be the user's settings.json
-  const syncSettings = async () => {
-    const res = await window.api.setting.get();
-    if (res.kind === "err") {
-      console.error("Error getting settings:", res.error);
-      return;
-    }
-    const chatSettings = res.value.chat;
-    reset(chatSettings);
-  };
 
   //  Change models based on the selected provider
   useEffect(() => {
@@ -90,12 +91,13 @@ export default function SettingsChat() {
     } else {
       toast.success("Settings saved");
     }
-    syncSettings();
+    syncSettings(reset);
   };
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center space-y-5">
       <h1 className="text-2xl text-tx-primary font-bold tracking-wide">Chat Settings</h1>
+      {/* In the future, use the shadcn form wrapper, don't use */}
       <FormProvider {...methods}>
         <form className="flex flex-col items-center space-y-5">
           {/* Card Wrapper*/}
@@ -136,21 +138,31 @@ export default function SettingsChat() {
                       Model
                     </Label>
 
-                    <Controller
-                      control={control}
-                      name="model"
-                      render={({ field }) => (
-                        <Combobox
-                          items={models.map((model) => ({ name: model, value: model }))}
-                          disabled={!selectedProvider}
-                          value={field.value}
-                          setValue={(value) => {
-                            setValue("model", value);
-                          }}
-                        />
-                      )}
-                    />
+                    {selectedProvider === ProviderE.OPENAI_COMPAT ? (
+                      <Input className="h-10" {...register("model")}></Input>
+                    ) : (
+                      <Controller
+                        control={control}
+                        name="model"
+                        render={({ field }) => (
+                          <Combobox
+                            items={models.map((model) => ({ name: model, value: model }))}
+                            disabled={!selectedProvider}
+                            value={field.value}
+                            setValue={(value) => {
+                              setValue("model", value);
+                            }}
+                          />
+                        )}
+                      />
+                    )}
                   </div>
+                  {selectedProvider === ProviderE.OPENAI_COMPAT && (
+                    <div className=" space-y-1">
+                      <Label className="text-tx-primary">OpenAI API Compatible Endpoint URL</Label>
+                      <Input className="h-10" {...register("url")}></Input>
+                    </div>
+                  )}
                 </div>
               </div>
               {/* Generation Section */}

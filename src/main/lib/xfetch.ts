@@ -8,7 +8,7 @@ export interface XFetchConfig {
 
 async function post(
   url: string,
-  body: Object = {},
+  body: object = {},
   headers: Record<string, string> = {},
   cfg: XFetchConfig = {}
 ): Promise<Result<any, Error>> {

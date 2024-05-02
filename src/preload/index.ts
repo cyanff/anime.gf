@@ -50,7 +50,7 @@ export interface API {
   xfetch: {
     post: (
       url: string,
-      body: Object,
+      body: object,
       headers: Record<string, string>,
       config?: XFetchConfig
     ) => Promise<Result<any, Error>>;

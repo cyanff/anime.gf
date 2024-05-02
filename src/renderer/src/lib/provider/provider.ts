@@ -3,6 +3,7 @@ import { togetherAI } from "@/lib/provider/together_ai";
 import { Result } from "@shared/types";
 import { anthropic } from "./anthropic";
 import { mistral } from "./mistral";
+import { openAICompat } from "./openai_compat";
 
 export interface ProviderMessage {
   role: string;
@@ -12,6 +13,7 @@ export interface ProviderMessage {
 export interface CompletionConfig {
   apiKey?: string;
   model: string;
+  url?: string;
   system?: string;
   stop?: string[];
   maxTokens: number;
@@ -31,7 +33,8 @@ export enum ProviderE {
   OPENAI = "openai",
   ANTHROPIC = "anthropic",
   MISTRAL = "mistral",
-  TOGETHER_AI = "together_ai"
+  TOGETHER_AI = "together_ai",
+  OPENAI_COMPAT = "openai_compat"
 }
 export function getProvider(provider: ProviderE): Provider {
   switch (provider) {
@@ -43,6 +46,8 @@ export function getProvider(provider: ProviderE): Provider {
       return togetherAI;
     case ProviderE.MISTRAL:
       return mistral;
+    case ProviderE.OPENAI_COMPAT:
+      return openAICompat;
     default:
       throw new Error("Invalid provider given to getProvider()");
   }
@@ -64,6 +69,7 @@ export function getProvidersNameAndValue(): NameAndValue[] {
     { name: "OpenAI", value: ProviderE.OPENAI },
     { name: "Anthropic", value: ProviderE.ANTHROPIC },
     { name: "Mistral", value: ProviderE.MISTRAL },
-    { name: "Together AI", value: ProviderE.TOGETHER_AI }
+    { name: "Together AI", value: ProviderE.TOGETHER_AI },
+    { name: "OpenAI Compatible API", value: ProviderE.OPENAI_COMPAT }
   ];
 }

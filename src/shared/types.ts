@@ -71,6 +71,7 @@ export interface Settings {
   chat: {
     provider: ProviderE;
     model: string;
+    url?: string;
     temperature: number;
     topP: number;
     topK: number;
