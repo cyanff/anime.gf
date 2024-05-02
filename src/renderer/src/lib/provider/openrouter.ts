@@ -44,7 +44,6 @@ async function getModels(): Promise<Result<string[], Error>> {
     return keyRes;
   }
   const key = keyRes.value;
-
   const headers = {
     Authorization: `Bearer ${key}`
   };
@@ -53,13 +52,16 @@ async function getModels(): Promise<Result<string[], Error>> {
   if (modelsRes.kind == "err") {
     return modelsRes;
   }
-
   const data = modelsRes.value.data as Data;
-  console.log("data:", data);
 
-  const filtered = data.filter(
-    (model) => model.architecture.modality === "chat" || model.architecture.modality === "multimodal"
-  );
+  const filtered = data.filter((model) => {
+    const isChat = model.architecture.modality === "chat";
+    const isMultimodal = model.architecture.modality === "multimodal";
+    // Open router lists many chat models as modality = text
+    // This is a hacky heuristic to filter out chat models
+    const isChatInName = model.id.includes("chat");
+    return isChat || isMultimodal || isChatInName;
+  });
 
   console.log("filtered:", filtered);
 
