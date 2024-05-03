@@ -5,7 +5,7 @@ import Message from "@/components/Message";
 import { Button } from "@/components/ui/button";
 import { MessageHistory, queries } from "@/lib/queries";
 import { CardBundle, PersonaBundle } from "@shared/types";
-import { motion, sync } from "framer-motion";
+import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 import { toast } from "sonner";
@@ -22,7 +22,6 @@ export default function ChatsPage({ chatID }: ChatsPageProps): JSX.Element {
   const { setActiveChatID } = useApp();
 
   const syncMessageHistory = useCallback(async () => {
-    console.log(`Syncing, ${chatID}, ${historyLimitRef}`);
     const res = await queries.getChatHistory(chatID, historyLimitRef.current);
     if (res.kind == "err") {
       toast.error("Error fetching chat history.");

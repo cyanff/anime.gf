@@ -89,8 +89,6 @@ async function _generate(
   }
   const settings = settingsRes.value;
 
-  console.log("settings", settings);
-
   const contextParams: ContextParams = {
     chatID,
     fromMessageID,

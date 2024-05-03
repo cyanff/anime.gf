@@ -1,3 +1,4 @@
+import { config as appConfig } from "@shared/config";
 import { Result } from "@shared/types";
 import { deepFreeze } from "@shared/utils";
 
@@ -36,6 +37,9 @@ async function post(
     }
     return { kind: "ok", value: await res.json() };
   } catch (err) {
+    if (err instanceof DOMException && err.name === "TimeoutError") {
+      return { kind: "err", error: new Error(`Request timed out.`) };
+    }
     return { kind: "err", error: err };
   }
 }
@@ -60,6 +64,9 @@ async function get(
     }
     return { kind: "ok", value: await res.json() };
   } catch (err) {
+    if (err instanceof DOMException && err.name === "TimeoutError") {
+      return { kind: "err", error: new Error(`Request timed out.`) };
+    }
     return { kind: "err", error: err };
   }
 }
@@ -73,9 +80,9 @@ async function get(
  */
 function _getConfiguredRequestInit(requestInit: RequestInit, config: XFetchConfig) {
   const ret = { ...requestInit };
-  if (config.timeout) {
-    ret.signal = AbortSignal.timeout(config.timeout);
-  }
+  const timeout = config.timeout || appConfig.requestTimeout;
+  ret.signal = AbortSignal.timeout(timeout);
+
   return ret;
 }
 

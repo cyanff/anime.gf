@@ -1,6 +1,7 @@
 import { deepFreeze } from "@shared/utils";
 
 export const config = {
+  requestTimeout: 20000,
   persona: {
     nameMinChars: 1,
     nameMaxChars: 128,
@@ -44,7 +45,7 @@ export const config = {
       provider: "anthropic",
       model: "claude-3-haiku-20240307",
       maxReplyTokens: 256,
-      maxContextTokens: 2048,
+      maxContextTokens: 4096,
       temperature: 0.7,
       topP: 1,
       topK: 50,
