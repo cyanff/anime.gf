@@ -1,3 +1,4 @@
+import { gemini } from "@/lib/provider/gemini";
 import { openAI } from "@/lib/provider/openai";
 import { openrouter } from "@/lib/provider/openrouter";
 import { togetherAI } from "@/lib/provider/together_ai";
@@ -35,7 +36,8 @@ export enum ProviderE {
   MISTRAL = "mistral",
   TOGETHER_AI = "together_ai",
   OPENAI_COMPAT = "openai_compat",
-  OPENROUTER = "openrouter"
+  OPENROUTER = "openrouter",
+  GEMINI = "gemini"
 }
 export function getProvider(provider: ProviderE): Provider {
   switch (provider) {
@@ -51,6 +53,8 @@ export function getProvider(provider: ProviderE): Provider {
       return openAICompat;
     case ProviderE.OPENROUTER:
       return openrouter;
+    case ProviderE.GEMINI:
+      return gemini;
     default:
       throw new Error("Invalid provider given to getProvider()");
   }
@@ -72,8 +76,9 @@ export function getProvidersNameAndValue(): NameAndValue[] {
     { name: "OpenAI", value: ProviderE.OPENAI },
     { name: "Anthropic", value: ProviderE.ANTHROPIC },
     { name: "Mistral", value: ProviderE.MISTRAL },
+    { name: "Gemini", value: ProviderE.GEMINI },
     { name: "Together AI", value: ProviderE.TOGETHER_AI },
-    { name: "OpenAI Compatible API", value: ProviderE.OPENAI_COMPAT },
-    { name: "OpenRouter", value: ProviderE.OPENROUTER }
+    { name: "OpenRouter", value: ProviderE.OPENROUTER },
+    { name: "OpenAI Compatible API", value: ProviderE.OPENAI_COMPAT }
   ];
 }

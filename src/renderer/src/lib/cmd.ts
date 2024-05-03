@@ -2,8 +2,6 @@
   During development, you often have to run adhoc snippets to test if things are working as expected.
   Put those snippets here so that you could trigger them using ctrl+k.
 */
-import { openAICompat } from "@/lib/provider/openai_compat";
-
 // export interface CompletionConfig {
 //   apiKey?: string;
 //   model: string;

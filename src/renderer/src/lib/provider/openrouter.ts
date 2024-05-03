@@ -63,8 +63,6 @@ async function getModels(): Promise<Result<string[], Error>> {
     return isChat || isMultimodal || isChatInName;
   });
 
-  console.log("filtered:", filtered);
-
   const models = filtered.map((model) => model.id);
   return { kind: "ok", value: models };
 }
