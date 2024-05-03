@@ -1,7 +1,7 @@
 import { queries } from "@/lib/queries";
 import { reply } from "@/lib/reply";
 import { cn } from "@/lib/utils";
-import { PaperAirplaneIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
+import { PaperAirplaneIcon, PlusCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
 import { CardBundle, PersonaBundle, Result } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -43,7 +43,7 @@ export default function ChatBar({
     textarea.style.height = textarea.scrollHeight + "px";
   }, [userInput]);
 
-  const handleSendMessage = async () => {
+  const sendMessageHandler = async () => {
     if (isGenerating) return;
     const cachedUserInput = userInput;
     setUserInput("");
@@ -67,6 +67,8 @@ export default function ChatBar({
     }
   };
 
+  const cancelGenerationHandler = async () => {};
+
   return (
     <div className="mb-1 mr-5">
       <div className="flex h-fit w-fit items-center ">
@@ -75,7 +77,7 @@ export default function ChatBar({
       <div className="flex min-h-fit w-full shrink-0 space-x-2 overflow-auto rounded-3xl bg-input-primary p-4">
         <button className="flex size-7 items-center justify-center">
           <PlusCircleIcon
-            className="size-7 transition duration-150 ease-out hover:brightness-90 fill-action-tertiary"
+            className={` size-7 transition duration-150 ease-out hover:brightness-90 fill-action-tertiary`}
             onClick={() => {
               toast("Coming in a future update!");
             }}
@@ -89,7 +91,7 @@ export default function ChatBar({
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               if (userInput.length != 0) {
-                handleSendMessage();
+                sendMessageHandler();
               }
               // Prevent inserting a new line on pressing enter
               e.preventDefault();
@@ -103,13 +105,24 @@ export default function ChatBar({
         {/* Send button */}
         <button
           onClick={() => {
-            if (userInput.length != 0) {
-              handleSendMessage();
+            if (userInput.length === 0) return;
+            if (isGenerating) {
+              sendMessageHandler();
+            } else {
+              cancelGenerationHandler();
             }
           }}
           className="h-fit w-fit "
         >
-          <PaperAirplaneIcon className="size-7 fill-action-tertiary transition duration-150 ease-out hover:brightness-90" />
+          {isGenerating ? (
+            <XCircleIcon
+              className={`fill-action-tertiary size-7 transition duration-300 ease-out hover:brightness-90`}
+            />
+          ) : (
+            <PaperAirplaneIcon
+              className={`${userInput.length > 0 ? "fill-action-primary" : "fill-action-tertiary"}  size-7 transition  duration-300 ease-out hover:brightness-90`}
+            />
+          )}
         </button>
       </div>
     </div>

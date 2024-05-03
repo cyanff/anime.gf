@@ -5,7 +5,11 @@ import { deepFreeze } from "@shared/utils";
 export interface XFetchConfig {
   // How long to wait before timing out the request, in milliseconds.
   timeout?: number;
+  uuid?: string;
 }
+
+// Map of UUIDs to AbortControllers
+const _abortControllers = new Map<string, AbortController>();
 
 async function post(
   url: string,
@@ -24,7 +28,7 @@ async function post(
     headers,
     body: JSON.stringify(body)
   };
-  const configuredRequestInit = _getConfiguredRequestInit(requestInit, cfg);
+  const configuredRequestInit = _configureRequest(requestInit, cfg);
 
   try {
     const res = await fetch(url, configuredRequestInit);
@@ -53,7 +57,7 @@ async function get(
     method: "GET",
     headers
   };
-  const configuredRequestInit = _getConfiguredRequestInit(requestInit, config);
+  const configuredRequestInit = _configureRequest(requestInit, config);
 
   try {
     const res = await fetch(url, configuredRequestInit);
@@ -71,23 +75,47 @@ async function get(
   }
 }
 
-/**
- * Configures the provided `RequestInit` object with additional options based on the given `XFetchConfig`.
- *
- * @param requestInit The base `RequestInit` object to be configured.
- * @param config The `XFetchConfig` object containing additional configuration options.
- * @returns The configured `RequestInit` object.
- */
-function _getConfiguredRequestInit(requestInit: RequestInit, config: XFetchConfig) {
+async function abort(config: XFetchConfig): Promise<Result<undefined, Error>> {
+  if (!config.uuid) return { kind: "err", error: new Error(`A request UUID not provided in the abort request.`) };
+
+  const uuid = config.uuid;
+  const abortController = _abortControllers.get(uuid);
+  if (!abortController)
+    return { kind: "err", error: new Error(`No request found with UUID ${uuid} found, cannot abort request.`) };
+
+  abortController.abort();
+  _abortControllers.delete(uuid);
+  return { kind: "ok", value: undefined };
+}
+
+function _configureRequest(requestInit: RequestInit, config: XFetchConfig) {
   const ret = { ...requestInit };
   const timeout = config.timeout || appConfig.requestTimeout;
-  ret.signal = AbortSignal.timeout(timeout);
+  const abortController = new AbortController();
+
+  const uuid = config.uuid;
+  if (uuid) {
+    _abortControllers.set(uuid, abortController);
+  }
+
+  ret.signal = abortController.signal;
+  setTimeout(() => {
+    abortController.abort();
+  }, timeout);
 
   return ret;
 }
 
+function _toRefinedError(err: unknown): { kind: "err"; error: Error } {
+  if (err instanceof DOMException && err.name === "AbortError") {
+  }
+
+  return { kind: "err", error: err as Error };
+}
+
 export const xfetch = {
   post,
-  get
+  get,
+  abort
 };
 deepFreeze(xfetch);

@@ -171,13 +171,17 @@ app.whenReady().then(async () => {
 
   ipcMain.handle(
     "xfetch.post",
-    async (_, url: string, body: Object, headers: Record<string, string>, config?: XFetchConfig) => {
+    async (_, url: string, body?: object, headers?: Record<string, string>, config?: XFetchConfig) => {
       return await xfetch.post(url, body, headers, config);
     }
   );
 
-  ipcMain.handle("xfetch.get", async (_, url: string, headers: Record<string, string>, config?: XFetchConfig) => {
+  ipcMain.handle("xfetch.get", async (_, url: string, headers?: Record<string, string>, config?: XFetchConfig) => {
     return await xfetch.get(url, headers, config);
+  });
+
+  ipcMain.handle("xfetch.abort", async (_, config: XFetchConfig) => {
+    return await xfetch.abort(config);
   });
 
   ipcMain.handle("utils.openURL", async (_, url: string) => {

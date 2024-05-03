@@ -233,6 +233,7 @@ export default function SettingsChat() {
                       name="streaming"
                       render={({ field }) => (
                         <Checkbox
+                          disabled
                           className="rounded-[4px] border-[1px]"
                           id="message-streaming"
                           checked={field.value}
@@ -244,7 +245,7 @@ export default function SettingsChat() {
                     />
 
                     <Label className="text-tx-primary" htmlFor="message-streaming">
-                      Enable Message Streaming
+                      Streaming (Coming in a future update!)
                     </Label>
                   </div>
                 </div>
