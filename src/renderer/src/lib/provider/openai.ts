@@ -89,7 +89,7 @@ async function streamChatCompletion(): Promise<any> {
   throw new Error("Not implemented");
 }
 
-export const openAI: Provider = {
+export const openai: Provider = {
   getModels,
   getChatCompletion,
   streamChatCompletion

@@ -1,5 +1,5 @@
 import { gemini } from "@/lib/provider/gemini";
-import { openAI } from "@/lib/provider/openai";
+import { openai } from "@/lib/provider/openai";
 import { openrouter } from "@/lib/provider/openrouter";
 import { togetherAI } from "@/lib/provider/together_ai";
 import { Result } from "@shared/types";
@@ -42,7 +42,7 @@ export enum ProviderE {
 export function getProvider(provider: ProviderE): Provider {
   switch (provider) {
     case ProviderE.OPENAI:
-      return openAI;
+      return openai;
     case ProviderE.ANTHROPIC:
       return anthropic;
     case ProviderE.TOGETHER_AI:
@@ -77,8 +77,8 @@ export function getProvidersNameAndValue(): NameAndValue[] {
     { name: "Anthropic", value: ProviderE.ANTHROPIC },
     { name: "Mistral", value: ProviderE.MISTRAL },
     { name: "Gemini", value: ProviderE.GEMINI },
-    { name: "Together AI", value: ProviderE.TOGETHER_AI },
     { name: "OpenRouter", value: ProviderE.OPENROUTER },
-    { name: "OpenAI Compatible API", value: ProviderE.OPENAI_COMPAT }
+    { name: "Together AI", value: ProviderE.TOGETHER_AI },
+    { name: "Custom OpenAI Compatible API", value: ProviderE.OPENAI_COMPAT }
   ];
 }
