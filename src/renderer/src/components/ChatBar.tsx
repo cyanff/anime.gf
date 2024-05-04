@@ -1,3 +1,4 @@
+import { Textarea } from "@/components/ui/textarea";
 import { queries } from "@/lib/queries";
 import { reply } from "@/lib/reply";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ export default function ChatBar({
   onMessageResolve
 }: ChatBarProps) {
   const [userInput, setUserInput] = useState<string>("");
+  const requestUUIDRef = useRef<string | null>(null);
 
   const prompt = `Message ${
     cardBundle.data.character.handle?.length ? `@${cardBundle.data.character.handle}` : cardBundle.data.character.name
@@ -50,8 +52,10 @@ export default function ChatBar({
     setIsGenerating(true);
     onMessageSend(userInput);
     try {
-      const replyRes = await reply.generate(chatID, cardBundle.data, personaBundle.data, userInput);
-
+      const requestSentHandler = (uuid: string) => {
+        requestUUIDRef.current = uuid;
+      };
+      const replyRes = await reply.generate(chatID, cardBundle.data, personaBundle.data, userInput, requestSentHandler);
       if (replyRes.kind === "err") {
         onMessageResolve(replyRes);
         return;
@@ -63,11 +67,21 @@ export default function ChatBar({
       setUserInput(cachedUserInput);
       onMessageResolve({ kind: "err", error: e });
     } finally {
+      requestUUIDRef.current = null;
       setIsGenerating(false);
     }
   };
 
-  const cancelGenerationHandler = async () => {};
+  const cancelGenerationHandler = async () => {
+    console.log("Cancelling generation...");
+    console.log("requestUUID: ", requestUUIDRef.current);
+    console.log("isGenerating: ", isGenerating);
+
+    if (!isGenerating) return;
+    if (requestUUIDRef.current === null) return;
+    const res = await window.api.xfetch.abort({ uuid: requestUUIDRef.current });
+    console.log(res);
+  };
 
   return (
     <div className="mb-1 mr-5">
@@ -85,6 +99,7 @@ export default function ChatBar({
         </button>
         {/* Textarea wrapper */}
         <textarea
+          disabled={isGenerating}
           onInput={(e) => setUserInput(e.currentTarget.value)}
           ref={textAreaRef}
           maxLength={1024}
@@ -100,16 +115,16 @@ export default function ChatBar({
           value={userInput}
           placeholder={prompt}
           className="scroll-secondary text-tx-primary h-6 max-h-64 w-full resize-none overflow-y-auto bg-inherit px-2 leading-6
-            placeholder:select-none focus:outline-none"
+            placeholder:select-none focus:outline-none disabled:cursor-not-allowed"
         />
         {/* Send button */}
         <button
           onClick={() => {
-            if (userInput.length === 0) return;
             if (isGenerating) {
-              sendMessageHandler();
-            } else {
               cancelGenerationHandler();
+            } else {
+              if (userInput.length === 0) return;
+              sendMessageHandler();
             }
           }}
           className="h-fit w-fit "

@@ -272,7 +272,7 @@ function ChatArea({
             }}
             onMessageResolve={(res) => {
               if (res.kind === "err") {
-                toast.error(`Failed to send message. ${res.error}`);
+                toast.error(`${res.error.message}`);
               }
               scrollEventRef.current = {
                 oldScrollHeight: messageHistoryRef.current!.scrollHeight,

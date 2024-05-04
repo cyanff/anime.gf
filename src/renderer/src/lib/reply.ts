@@ -2,7 +2,6 @@ import { ProviderE, getProvider } from "@/lib/provider/provider";
 import { queries } from "@/lib/queries";
 import { CardData, PersonaData, Result } from "@shared/types";
 import { deepFreeze } from "@shared/utils";
-import { from } from "form-data";
 import { ContextParams, context } from "./context";
 
 const userMessageTerminatorNOP =
@@ -21,9 +20,10 @@ async function generate(
   chatID: number,
   cardData: CardData,
   personaData: PersonaData,
-  latestUserMessage: string
+  latestUserMessage: string,
+  onRequestSent?: (uuid: string) => void
 ): Promise<Result<string, Error>> {
-  const res = await _generate(chatID, cardData, personaData, latestUserMessage);
+  const res = await _generate(chatID, cardData, personaData, latestUserMessage, undefined, onRequestSent);
   return res;
 }
 
@@ -81,7 +81,8 @@ async function _generate(
   cardData: CardData,
   personaData: PersonaData,
   userMessageTerminator: string,
-  fromMessageID?: number
+  fromMessageID?: number,
+  onRequestSent?: (uuid: string) => void
 ): Promise<Result<string, Error>> {
   const settingsRes = await window.api.setting.get();
   if (settingsRes.kind == "err") {
@@ -116,7 +117,7 @@ async function _generate(
     url: settings.chat.url
   };
 
-  return await provider.getChatCompletion(ctx.messages, completionConfig);
+  return await provider.getChatCompletion(ctx.messages, completionConfig, onRequestSent);
 }
 
 export const reply = {

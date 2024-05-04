@@ -1,6 +1,7 @@
 import { config as appConfig } from "@shared/config";
 import { Result } from "@shared/types";
 import { deepFreeze } from "@shared/utils";
+import { error } from "console";
 
 export interface XFetchConfig {
   // How long to wait before timing out the request, in milliseconds.
@@ -41,10 +42,7 @@ async function post(
     }
     return { kind: "ok", value: await res.json() };
   } catch (err) {
-    if (err instanceof DOMException && err.name === "TimeoutError") {
-      return { kind: "err", error: new Error(`Request timed out.`) };
-    }
-    return { kind: "err", error: err };
+    return _toRefinedError(err);
   }
 }
 
@@ -68,10 +66,7 @@ async function get(
     }
     return { kind: "ok", value: await res.json() };
   } catch (err) {
-    if (err instanceof DOMException && err.name === "TimeoutError") {
-      return { kind: "err", error: new Error(`Request timed out.`) };
-    }
-    return { kind: "err", error: err };
+    return _toRefinedError(err);
   }
 }
 
@@ -107,9 +102,14 @@ function _configureRequest(requestInit: RequestInit, config: XFetchConfig) {
 }
 
 function _toRefinedError(err: unknown): { kind: "err"; error: Error } {
-  if (err instanceof DOMException && err.name === "AbortError") {
+  if (err instanceof DOMException) {
+    if (err.name === "AbortError") {
+      return { kind: "err", error: new Error(`Request aborted.`) };
+    }
+    if (err.name === "TimeoutError") {
+      return { kind: "err", error: new Error(`Request timed out.`) };
+    }
   }
-
   return { kind: "err", error: err as Error };
 }
 

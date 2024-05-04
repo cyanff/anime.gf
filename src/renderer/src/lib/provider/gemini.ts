@@ -1,5 +1,7 @@
-import { CompletionConfig, Provider, ProviderMessage } from "@/lib/provider/provider";
+import { Provider, ProviderConfig, ProviderMessage } from "@/lib/provider/provider";
 import { Result } from "@shared/types";
+import { XFetchConfig } from "src/main/lib/xfetch";
+import { v4 } from "uuid";
 
 interface GeminiResponse {
   candidates: {
@@ -29,7 +31,8 @@ async function getModels(): Promise<Result<string[], Error>> {
 
 async function getChatCompletion(
   messages: ProviderMessage[],
-  config: CompletionConfig
+  config: ProviderConfig,
+  onRequestSent?: (uuid: string) => void
 ): Promise<Result<string, Error>> {
   let key;
   if (!config.apiKey) {
@@ -89,7 +92,11 @@ async function getChatCompletion(
     };
   }
 
-  const completionRes = await window.api.xfetch.post(url, body, headers);
+  const xfetchConfig: XFetchConfig = {};
+  const requestUUID = v4();
+  if (onRequestSent) xfetchConfig.uuid = requestUUID;
+  onRequestSent?.(requestUUID);
+  const completionRes = await window.api.xfetch.post(url, body, headers, xfetchConfig);
   if (completionRes.kind == "err") {
     return completionRes;
   }

@@ -1,5 +1,7 @@
-import { CompletionConfig, Provider, ProviderMessage } from "@/lib/provider/provider";
+import { Provider, ProviderConfig, ProviderMessage } from "@/lib/provider/provider";
 import { Result } from "@shared/types";
+import { XFetchConfig } from "src/main/lib/xfetch";
+import { v4 } from "uuid";
 
 interface ChatCompletion {
   id: string;
@@ -33,7 +35,8 @@ async function getModels(): Promise<Result<string[], Error>> {
 
 async function getChatCompletion(
   messages: ProviderMessage[],
-  config: CompletionConfig
+  config: ProviderConfig,
+  onRequestSent?: (uuid: string) => void
 ): Promise<Result<string, Error>> {
   if (!config.url) {
     return { kind: "err", error: new Error("Using a custom OpenAI API compatible endpoint but no URL provided.") };
@@ -58,7 +61,11 @@ async function getChatCompletion(
     body.top_p = config.topP;
   }
 
-  const completionRes = await window.api.xfetch.post(url, body, {});
+  const xfetchConfig: XFetchConfig = {};
+  const requestUUID = v4();
+  if (onRequestSent) xfetchConfig.uuid = requestUUID;
+  onRequestSent?.(requestUUID);
+  const completionRes = await window.api.xfetch.post(url, body, {}, xfetchConfig);
   if (completionRes.kind == "err") {
     return completionRes;
   }

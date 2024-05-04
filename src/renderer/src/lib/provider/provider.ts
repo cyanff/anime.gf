@@ -12,7 +12,7 @@ export interface ProviderMessage {
   content: string;
 }
 
-export interface CompletionConfig {
+export interface ProviderConfig {
   apiKey?: string;
   model: string;
   url?: string;
@@ -26,7 +26,11 @@ export interface CompletionConfig {
 
 export interface Provider {
   getModels(): Promise<Result<string[], Error>>;
-  getChatCompletion(messages: ProviderMessage[], config: CompletionConfig): Promise<Result<string, Error>>;
+  getChatCompletion(
+    messages: ProviderMessage[],
+    config: ProviderConfig,
+    onRequestSent?: (uuid: string) => void
+  ): Promise<Result<string, Error>>;
   streamChatCompletion(): any;
 }
 
@@ -59,6 +63,13 @@ export function getProvider(provider: ProviderE): Provider {
       throw new Error("Invalid provider given to getProvider()");
   }
 }
+
+// const xfetchConfig: XFetchConfig = {};
+// const requestUUID = v4();
+// console.log("ANTHR: Request UUID: ", requestUUID);
+// if (onRequestSent) xfetchConfig.uuid = requestUUID;
+// onRequestSent?.(requestUUID);
+// const completionRes = await window.api.xfetch.post("http://127.0.0.1:5000/delay", body, headers, xfetchConfig);
 
 export interface NameAndValue {
   name: string;

@@ -14,40 +14,8 @@
 //   topK?: number;
 // }
 
-import { v4 } from "uuid";
+export async function handleA() {}
 
-let config: any;
+export async function handleB() {}
 
-export async function handleA() {
-  const url = "http://127.0.0.1:5000/delay";
-  config = {
-    uuid: v4()
-  };
-
-  const res = await window.api.xfetch.post(url, {}, {}, config);
-
-  console.log("POST RES:", res);
-}
-
-export async function handleB() {
-  if (!config) {
-    console.error("No config found");
-    return;
-  }
-
-  const res = await window.api.xfetch.abort(config);
-  console.log("ABORT RES:", res);
-}
-
-export async function handleC() {
-  // timeout test
-  const start = Date.now();
-
-  const url = "http://127.0.0.1:5000/delay";
-  // const config = {
-  //   timeout: 1000
-  // };
-  const res = await window.api.xfetch.post(url, {}, {}, config);
-
-  console.log("POST RES:", res, "Time taken:", Date.now() - start);
-}
+export async function handleC() {}
