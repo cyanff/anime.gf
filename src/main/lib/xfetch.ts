@@ -1,7 +1,6 @@
 import { config as appConfig } from "@shared/config";
 import { Result } from "@shared/types";
 import { deepFreeze } from "@shared/utils";
-import { error } from "console";
 
 export interface XFetchConfig {
   // How long to wait before timing out the request, in milliseconds.
@@ -70,10 +69,7 @@ async function get(
   }
 }
 
-async function abort(config: XFetchConfig): Promise<Result<undefined, Error>> {
-  if (!config.uuid) return { kind: "err", error: new Error(`A request UUID not provided in the abort request.`) };
-
-  const uuid = config.uuid;
+async function abort(uuid: string): Promise<Result<undefined, Error>> {
   const abortController = _abortControllers.get(uuid);
   if (!abortController)
     return { kind: "err", error: new Error(`No request found with UUID ${uuid} found, cannot abort request.`) };

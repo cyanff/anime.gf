@@ -180,8 +180,8 @@ app.whenReady().then(async () => {
     return await xfetch.get(url, headers, config);
   });
 
-  ipcMain.handle("xfetch.abort", async (_, config: XFetchConfig) => {
-    return await xfetch.abort(config);
+  ipcMain.handle("xfetch.abort", async (_, uuid: string) => {
+    return await xfetch.abort(uuid);
   });
 
   ipcMain.handle("utils.openURL", async (_, url: string) => {

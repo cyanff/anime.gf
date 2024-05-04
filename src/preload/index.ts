@@ -55,7 +55,7 @@ export interface API {
       config?: XFetchConfig
     ) => Promise<Result<any, Error>>;
     get: (url: string, headers?: Record<string, string>, config?: XFetchConfig) => Promise<Result<any, Error>>;
-    abort: (config: XFetchConfig) => Promise<Result<void, Error>>;
+    abort: (uuid: string) => Promise<Result<void, Error>>;
   };
 
   utils: {
@@ -102,7 +102,7 @@ const api: API = {
   xfetch: {
     post: (url, body, headers, config) => ipcRenderer.invoke("xfetch.post", url, body, headers, config),
     get: (url, headers, config) => ipcRenderer.invoke("xfetch.get", url, headers, config),
-    abort: (config) => ipcRenderer.invoke("xfetch.abort", config)
+    abort: (uuid) => ipcRenderer.invoke("xfetch.abort", uuid)
   },
   utils: {
     openURL: (url) => ipcRenderer.invoke("utils.openURL", url)

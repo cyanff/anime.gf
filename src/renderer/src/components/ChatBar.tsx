@@ -79,7 +79,7 @@ export default function ChatBar({
 
     if (!isGenerating) return;
     if (requestUUIDRef.current === null) return;
-    const res = await window.api.xfetch.abort({ uuid: requestUUIDRef.current });
+    const res = await window.api.xfetch.abort(requestUUIDRef.current);
     console.log(res);
   };
 
