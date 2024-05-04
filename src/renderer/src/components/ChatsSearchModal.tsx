@@ -63,7 +63,7 @@ export default function ChatsSearchModal() {
           placeholder="Search for a chat"
           value={searchInput}
           onChange={searchInputHandler}
-        ></input>
+        />
       </div>
       {/* Search results */}
       <div className="scroll-secondary flex grow flex-col space-y-4 overflow-auto px-4">
@@ -74,7 +74,7 @@ export default function ChatsSearchModal() {
             return (
               <div
                 key={idx}
-                className="flex bg-container-secondary h-[4.5rem] w-full cursor-pointer items-center rounded-md px-3 py-3 transition duration-200
+                className="flex bg-container-secondary h-[4.5rem] w-full cursor-pointer items-center rounded-sm px-5 py-4 transition duration-200
                   ease-out hover:brightness-90"
                 onClick={() => {
                   setActiveChatID(result.id);
@@ -83,7 +83,7 @@ export default function ChatsSearchModal() {
               >
                 <div className="flex h-full w-full items-center">
                   <Avatar avatarURI={result.characterAvatarURI} />
-                  <div className={"justify-cente ml-4 flex h-full max-w-full flex-col"}>
+                  <div className={"justify-center ml-4 flex h-full max-w-full flex-col"}>
                     <h3 className="line-clamp-1 text-[0.95rem] font-[600] text-tx-primary">{result.characterName}</h3>
                     <p className="line-clamp-1 text-[15px] font-[480] text-tx-secondary">{result.lastMessage}</p>
                   </div>
