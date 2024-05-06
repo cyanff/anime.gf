@@ -2,7 +2,6 @@ import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import { CardData, PersonaFormData } from "@shared/types";
 import { BrowserWindow, Menu, Tray, app, ipcMain, nativeImage, net, protocol, shell } from "electron";
 import path, { join } from "path";
-import { i } from "vite/dist/node/types.d-aGj9QkWt";
 import icon from "../../resources/icon.png?asset";
 import blob from "./lib/store/blob";
 import secret from "./lib/store/secret";
@@ -44,14 +43,14 @@ app.whenReady().then(async () => {
   const tray = new Tray(nativeImage.createFromPath(icon));
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: "Show App",
-      click: function () {
+      label: "Show App      ",
+      click: () => {
         win.show();
       }
     },
     {
       label: "Quit",
-      click: function () {
+      click: () => {
         isQuiting = true;
         app.quit();
       }
@@ -63,7 +62,7 @@ app.whenReady().then(async () => {
     win.show();
   });
 
-  app.on("before-quit", function () {
+  app.on("before-quit", () => {
     isQuiting = true;
   });
 
@@ -238,22 +237,6 @@ app.whenReady().then(async () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 
-  // Quit when all windows are closed
-  app.on("window-all-closed", async () => {
-    const settingsRes = await setting.get();
-    if (settingsRes.kind === "ok" && settingsRes.value.advanced.closeToTray) {
-      win.hide();
-      return;
-    }
-
-    // Except on macOS
-    // It's common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== "darwin") {
-      app.quit();
-    }
-  });
-
   createWindow();
   // Implement Electron auto-updater
   // autoUpdater.on();
@@ -289,11 +272,19 @@ function createWindow(): void {
     win.hide();
   });
 
-  win.on("close", (e) => {
+  win.on("close", async (e) => {
     if (!isQuiting) {
       e.preventDefault();
-      win.hide();
+      const settingsRes = await setting.get();
+      if (settingsRes.kind === "ok" && settingsRes.value?.advanced?.closeToTray) {
+        win.hide();
+        return;
+      } else {
+        app.quit();
+        return false;
+      }
     }
+    app.quit();
     return false;
   });
 
