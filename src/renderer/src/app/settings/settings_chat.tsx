@@ -8,20 +8,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { ProviderE, getProvider, getProvidersNameAndValue } from "@/lib/provider/provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { config } from "@shared/config";
-import { useEffect, useState } from "react";
+import { Settings } from "@shared/types";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-// Set the form's values to be the user's settings.json
-const syncSettings = async (reset: any) => {
+const syncSettings = async (reset: any, settingsRef: MutableRefObject<Settings | null>) => {
   const res = await window.api.setting.get();
   if (res.kind === "err") {
     console.error("Error getting settings:", res.error);
     return;
   }
-  const chatSettings = res.value.chat;
-  reset(chatSettings);
+  settingsRef.current = res.value;
+  reset(res.value.chat);
 };
 
 const schema = z.object({
@@ -40,7 +40,7 @@ type Schema = z.infer<typeof schema>;
 
 export default function SettingsChat() {
   const defaultSettings = config.defaultSettings.chat;
-  const methods = useForm({ resolver: zodResolver(schema) });
+  const methods = useForm<Schema>({ resolver: zodResolver(schema) });
   const {
     register,
     handleSubmit,
@@ -51,12 +51,14 @@ export default function SettingsChat() {
     formState: { errors }
   } = methods;
 
+  const settingsRef = useRef<Settings | null>(null);
+
   const [models, setModels] = useState<string[]>([]);
   const providerNameAndValue = getProvidersNameAndValue();
   const selectedProvider = watch("provider");
 
   useEffect(() => {
-    syncSettings(reset);
+    syncSettings(reset, settingsRef);
   }, [reset]);
 
   // Shows the user an error message if there are any errors in the form
@@ -73,7 +75,7 @@ export default function SettingsChat() {
       // Clear current model list
       setModels([]);
       // Fetch & set new model list based on the selected provider
-      const res = await getProvider(selectedProvider).getModels();
+      const res = await getProvider(selectedProvider as ProviderE).getModels();
       if (res.kind === "err") {
         toast.error(
           <span className="whitespace-pre-wrap">{`An error occured while fetching the model list for ${selectedProvider}.\nDid you enter an API key?`}</span>
@@ -84,14 +86,14 @@ export default function SettingsChat() {
     })();
   }, [selectedProvider]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: Schema) => {
     const res = await window.api.setting.set({ chat: data });
     if (res.kind === "err") {
       toast.error("Something went wrong while saving settings.");
     } else {
       toast.success("Settings saved");
     }
-    syncSettings(reset);
+    syncSettings(reset, settingsRef);
   };
 
   return (
@@ -238,7 +240,7 @@ export default function SettingsChat() {
                           id="message-streaming"
                           checked={field.value}
                           onCheckedChange={(checked) => {
-                            setValue("streaming", checked);
+                            setValue("streaming", checked === true);
                           }}
                         />
                       )}

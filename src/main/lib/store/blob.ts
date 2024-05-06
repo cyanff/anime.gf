@@ -1,3 +1,5 @@
+/* eslint-disable no-inner-declarations */
+/* eslint-disable @typescript-eslint/no-namespace */
 /**
  * Blob storage manages all non structured data.
  * This includes silly tavern cards, images, audio, base weights, lora adapters, and other binary data.

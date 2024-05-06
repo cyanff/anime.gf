@@ -1,5 +1,23 @@
+import { ProviderE } from "@/lib/provider/provider";
+import { Settings } from "@shared/types";
 import { deepFreeze } from "@shared/utils";
 
+const defaultSettings: Settings = {
+  chat: {
+    provider: "anthropic" as ProviderE,
+    model: "claude-3-haiku-20240307",
+    maxReplyTokens: 256,
+    maxContextTokens: 4096,
+    temperature: 0.7,
+    topP: 1,
+    topK: 50,
+    streaming: true,
+    jailbreak: ""
+  },
+  advanced: {
+    closeToTray: true
+  }
+};
 export const config = {
   requestTimeout: 20000,
   persona: {
@@ -40,18 +58,7 @@ export const config = {
     notesMinChars: 0,
     notesMaxChars: 2048
   },
-  defaultSettings: {
-    chat: {
-      provider: "anthropic",
-      model: "claude-3-haiku-20240307",
-      maxReplyTokens: 256,
-      maxContextTokens: 4096,
-      temperature: 0.7,
-      topP: 1,
-      topK: 50,
-      streaming: true,
-      jailbreak: ""
-    }
-  }
+  defaultSettings: defaultSettings
 };
+
 deepFreeze(config);

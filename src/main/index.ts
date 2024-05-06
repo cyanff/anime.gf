@@ -1,7 +1,8 @@
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import { CardData, PersonaFormData } from "@shared/types";
-import { BrowserWindow, app, ipcMain, net, protocol, shell } from "electron";
+import { BrowserWindow, Menu, Tray, app, ipcMain, nativeImage, net, protocol, shell } from "electron";
 import path, { join } from "path";
+import { i } from "vite/dist/node/types.d-aGj9QkWt";
 import icon from "../../resources/icon.png?asset";
 import blob from "./lib/store/blob";
 import secret from "./lib/store/secret";
@@ -9,6 +10,9 @@ import setting from "./lib/store/setting";
 import sqlite from "./lib/store/sqlite";
 import { cardsRootPath, personasRootPath } from "./lib/utils";
 import { XFetchConfig, xfetch } from "./lib/xfetch";
+
+let win: any;
+let isQuiting = false;
 
 app.on("web-contents-created", (_event, contents) => {
   contents.on("will-navigate", (event, _navigationUrl) => {
@@ -34,7 +38,34 @@ app.whenReady().then(async () => {
     const { REACT_DEVELOPER_TOOLS, default: installExtension } = await import("electron-devtools-assembler");
     await installExtension(REACT_DEVELOPER_TOOLS);
   }
-  electronApp.setAppUserModelId("com.electron");
+  electronApp.setAppUserModelId("gf.anime");
+
+  // https://stackoverflow.com/questions/37828758/electron-js-how-to-minimize-close-window-to-system-tray-and-restore-window-back
+  const tray = new Tray(nativeImage.createFromPath(icon));
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: "Show App",
+      click: function () {
+        win.show();
+      }
+    },
+    {
+      label: "Quit",
+      click: function () {
+        isQuiting = true;
+        app.quit();
+      }
+    }
+  ]);
+  tray.setToolTip("anime.gf");
+  tray.setContextMenu(contextMenu);
+  tray.on("double-click", () => {
+    win.show();
+  });
+
+  app.on("before-quit", function () {
+    isQuiting = true;
+  });
 
   /**
    * An electron protocol that handles requests from the renderer process to agf:///host/path
@@ -208,7 +239,13 @@ app.whenReady().then(async () => {
   });
 
   // Quit when all windows are closed
-  app.on("window-all-closed", () => {
+  app.on("window-all-closed", async () => {
+    const settingsRes = await setting.get();
+    if (settingsRes.kind === "ok" && settingsRes.value.advanced.closeToTray) {
+      win.hide();
+      return;
+    }
+
     // Except on macOS
     // It's common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
@@ -220,11 +257,10 @@ app.whenReady().then(async () => {
   createWindow();
   // Implement Electron auto-updater
   // autoUpdater.on();
-  // https://www.electron.build/auto-update.html
 });
 
 function createWindow(): void {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     title: "anime.gf",
     icon: icon,
     width: 900,
@@ -246,6 +282,19 @@ function createWindow(): void {
 
   win.on("ready-to-show", () => {
     win.show();
+  });
+
+  win.on("minimize", (e) => {
+    e.preventDefault();
+    win.hide();
+  });
+
+  win.on("close", (e) => {
+    if (!isQuiting) {
+      e.preventDefault();
+      win.hide();
+    }
+    return false;
   });
 
   win.webContents.setWindowOpenHandler((details) => {

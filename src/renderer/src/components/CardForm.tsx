@@ -65,7 +65,7 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
     setBannerDisplayImage(cardBundle?.bannerURI);
     setAvatarDisplayImage(cardBundle?.avatarURI);
     form.reset(initialData);
-  }, [cardBundle]);
+  }, [cardBundle, form, initialData]);
 
   const onSubmit = (data: CardFormData) => {
     onSuccessfulSubmit(data);

@@ -1,4 +1,5 @@
-import { Result, isError } from "@shared/utils";
+import { Result } from "@shared/types";
+import { isError } from "@shared/utils";
 import fs from "fs/promises";
 import { attainable, secretsPath } from "../utils";
 

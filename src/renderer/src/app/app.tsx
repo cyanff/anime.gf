@@ -222,7 +222,7 @@ export default function App() {
             </div>
           )}
           {page === "chats" && activeChatID && <ChatsPage chatID={activeChatID} />}
-          {page === "collections" && <CollectionsPage setPage={setPage} cardBundles={cardBundles} />}
+          {page === "collections" && <CollectionsPage cardBundles={cardBundles} />}
           {page === "settings" && <SettingsPage />}
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { ProviderE } from "@/lib/provider/provider";
 import { config } from "@shared/config";
-import { Message, Persona } from "@shared/db_types";
+import { Persona } from "@shared/db_types";
 import { z } from "zod";
 // TODO: refactor data types to be more consistent
 
@@ -79,6 +79,9 @@ export interface Settings {
     maxContextTokens: number;
     jailbreak: string;
     streaming: boolean;
+  };
+  advanced: {
+    closeToTray: boolean;
   };
 }
 

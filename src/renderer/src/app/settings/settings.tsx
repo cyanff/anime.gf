@@ -1,3 +1,4 @@
+import SettingsAdvanced from "@/app/settings/settings_advanced";
 import SettingsChat from "@/app/settings/settings_chat";
 import SettingsRecentlyDeleted from "@/app/settings/settings_deleted";
 import SettingsKeys from "@/app/settings/settings_keys";
@@ -42,6 +43,15 @@ export default function SettingsPage() {
         >
           Recently Deleted
         </button>
+        <button
+          className={`group flex w-full cursor-pointer items-center space-x-3  p-2.5  transition
+          duration-150 ease-out hover:bg-accent ${
+            page === "advanced" ? "bg-container-tertiary text-tx-primary" : "text-tx-secondary"
+          }`}
+          onClick={() => setPage("advanced")}
+        >
+          Advanced
+        </button>
       </div>
 
       {/*Settings Content*/}
@@ -51,6 +61,7 @@ export default function SettingsPage() {
         {page === "persona" && <SettingsPersona />}
         {page === "key" && <SettingsKeys />}
         {page === "deleted" && <SettingsRecentlyDeleted />}
+        {page === "advanced" && <SettingsAdvanced />}
       </div>
     </div>
   );
