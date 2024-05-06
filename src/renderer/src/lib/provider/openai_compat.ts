@@ -1,4 +1,4 @@
-import { Provider, ProviderConfig, ProviderMessage } from "@/lib/provider/provider";
+import { Provider, ProviderConfig, ProviderE, ProviderMessage } from "@/lib/provider/provider";
 import { Result } from "@shared/types";
 import { XFetchConfig } from "src/main/lib/xfetch";
 import { v4 } from "uuid";
@@ -41,7 +41,23 @@ async function getChatCompletion(
   if (!config.url) {
     return { kind: "err", error: new Error("Using a custom OpenAI API compatible endpoint but no URL provided.") };
   }
+
+  let key;
+  if (!config.apiKey) {
+    const keyRes = await window.api.secret.get(ProviderE.OPENAI_COMPAT);
+    if (keyRes.kind == "err") {
+      return keyRes;
+    }
+    key = keyRes.value;
+  } else {
+    key = config.apiKey;
+  }
+
   const url = config.url;
+  const headers = {
+    Authorization: `Bearer ${key}`
+  };
+
   // Append a system prompt if specified
   const reqMessages = config.system ? [{ role: "system", content: config.system }, ...messages] : messages;
   const body: any = {
@@ -65,7 +81,7 @@ async function getChatCompletion(
   const requestUUID = v4();
   if (onRequestSent) xfetchConfig.uuid = requestUUID;
   onRequestSent?.(requestUUID);
-  const completionRes = await window.api.xfetch.post(url, body, {}, xfetchConfig);
+  const completionRes = await window.api.xfetch.post(url, body, headers, xfetchConfig);
   if (completionRes.kind == "err") {
     return completionRes;
   }
