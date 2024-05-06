@@ -21,7 +21,7 @@ const syncSettings = async (reset: any, settingsRef: MutableRefObject<Settings |
 };
 
 const schema = z.object({
-  closeToTray: z.boolean()
+  closeToTray: z.boolean().default(false)
 });
 type Schema = z.infer<typeof schema>;
 

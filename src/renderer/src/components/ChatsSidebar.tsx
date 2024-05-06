@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/context-menu";
 import { Input } from "@/components/ui/input";
 import { RecentChatResult, queries } from "@/lib/queries";
+import { useChatStore } from "@/lib/store/chatStore";
 import { cn } from "@/lib/utils";
 import { ArrowPathIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { PersonaBundle } from "@shared/types";
@@ -19,13 +20,13 @@ import { useEffect, useState } from "react";
 export interface ChatsSideBarProps {
   chatID: number;
   personaBundle: PersonaBundle;
-  syncMessageHistory: () => void;
 }
 
-export default function ChatsSidebar({ chatID, personaBundle, syncMessageHistory }: ChatsSideBarProps) {
+export default function ChatsSidebar({ chatID, personaBundle }: ChatsSideBarProps) {
   const [recentChatResults, setRecentChatsResults] = useState<RecentChatResult[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { createModal, createDialog, setActiveChatID } = useApp();
+  const { syncMessageHistory } = useChatStore();
 
   useEffect(() => {
     syncRecentChats();
@@ -59,8 +60,11 @@ export default function ChatsSidebar({ chatID, personaBundle, syncMessageHistory
       description: "Are you sure you want to reset this chat?\nThis action cannot be undone.",
       actionLabel: "Reset",
       onAction: async () => {
+        const resetTarget = recentChatResult.value.chat_id;
         await queries.resetChat(recentChatResult.value.chat_id);
-        syncMessageHistory();
+        if (chatID === resetTarget) {
+          syncMessageHistory();
+        }
       }
     };
     createDialog(config);
@@ -103,7 +107,7 @@ export default function ChatsSidebar({ chatID, personaBundle, syncMessageHistory
 
             {/* Recent Chats */}
             <div className="scroll-secondary flex h-96 grow flex-col space-y-1.5 overflow-auto px-2">
-              {recentChatResults?.map((recentChatResult, idx) => {
+              {recentChatResults?.map((recentChatResult, _) => {
                 const recentChatID = recentChatResult.value.chat_id;
                 return (
                   <RecentChat

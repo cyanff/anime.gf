@@ -267,11 +267,6 @@ function createWindow(): void {
     win.show();
   });
 
-  win.on("minimize", (e) => {
-    e.preventDefault();
-    win.hide();
-  });
-
   win.on("close", async (e) => {
     if (!isQuiting) {
       e.preventDefault();

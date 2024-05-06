@@ -4,6 +4,7 @@ import ChatsSidebar from "@/components/ChatsSidebar";
 import Message from "@/components/Message";
 import { Button } from "@/components/ui/button";
 import { MessageHistory, queries } from "@/lib/queries";
+import { useChatStore } from "@/lib/store/chatStore";
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -16,27 +17,7 @@ interface ChatsPageProps {
 }
 export default function ChatsPage({ chatID }: ChatsPageProps): JSX.Element {
   const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
-  const [messagesHistory, setMessagesHistory] = useState<MessageHistory>([]);
-  const historyLimitRef = useRef(50);
-  const [isGenerating, setIsGenerating] = useState(false);
   const { setActiveChatID } = useApp();
-
-  const syncMessageHistory = useCallback(async () => {
-    const res = await queries.getChatHistory(chatID, historyLimitRef.current);
-    if (res.kind == "err") {
-      toast.error("Error fetching chat history.");
-      console.error(res.error);
-      return;
-    }
-    setMessagesHistory(res.value);
-  }, [chatID, historyLimitRef]);
-
-  const setHistoryLimit = useCallback(
-    (historyLimit: number) => {
-      historyLimitRef.current = historyLimit;
-    },
-    [historyLimitRef]
-  );
 
   const syncPersonaBundle = useCallback(async () => {
     const res = await queries.getPersonaBundle(chatID);
@@ -54,7 +35,6 @@ export default function ChatsPage({ chatID }: ChatsPageProps): JSX.Element {
       const chatExistsRes = await queries.checkChatExists(chatID);
       if (chatExistsRes.kind === "ok" && !chatExistsRes.value) {
         console.error(`Chat with ID ${chatID} does not exist. Setting active chat to most recent.`);
-
         const recentChatRes = await queries.getMostRecentChat();
         if (recentChatRes.kind === "ok" && recentChatRes.value) {
           setActiveChatID(recentChatRes.value);
@@ -62,13 +42,8 @@ export default function ChatsPage({ chatID }: ChatsPageProps): JSX.Element {
         }
       }
       await syncPersonaBundle();
-      await syncMessageHistory();
     })();
-  }, [chatID, syncMessageHistory, setActiveChatID, syncPersonaBundle]);
-
-  useEffect(() => {
-    syncMessageHistory();
-  }, [historyLimitRef, syncMessageHistory]);
+  }, [chatID, setActiveChatID, syncPersonaBundle]);
 
   // Loading screen
   if (!personaBundle) {
@@ -82,19 +57,9 @@ export default function ChatsPage({ chatID }: ChatsPageProps): JSX.Element {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.13, delay: 0.12 }}
     >
-      <ChatsSidebar chatID={chatID} personaBundle={personaBundle} syncMessageHistory={syncMessageHistory} />
+      <ChatsSidebar chatID={chatID} personaBundle={personaBundle} />
       <ErrorBoundary key={chatID} FallbackComponent={ChatAreaFallback}>
-        <ChatArea
-          chatID={chatID}
-          messageHistory={messagesHistory}
-          setMessageHistory={setMessagesHistory}
-          historyLimit={historyLimitRef.current}
-          setHistoryLimit={setHistoryLimit}
-          syncMessageHistory={syncMessageHistory}
-          personaBundle={personaBundle}
-          isGenerating={isGenerating}
-          setIsGenerating={setIsGenerating}
-        />
+        <ChatArea chatID={chatID} personaBundle={personaBundle} />
       </ErrorBoundary>
     </motion.div>
   );
@@ -108,32 +73,50 @@ interface ScrollEvent {
 interface ChatAreaProps {
   chatID: number;
   personaBundle: PersonaBundle;
-  messageHistory: MessageHistory;
-  setMessageHistory: React.Dispatch<React.SetStateAction<MessageHistory>>;
-  historyLimit: number;
-  setHistoryLimit: (historyLimit: number) => void;
-  syncMessageHistory: () => Promise<void>;
-  isGenerating: boolean;
-  setIsGenerating: (isGenerating: boolean) => void;
 }
 
-function ChatArea({
-  chatID,
-  personaBundle,
-  messageHistory,
-  setMessageHistory,
-  historyLimit,
-  setHistoryLimit,
-  syncMessageHistory,
-  isGenerating,
-  setIsGenerating
-}: ChatAreaProps) {
+function ChatArea({ chatID, personaBundle }: ChatAreaProps) {
   const [cardBundle, setCardBundle] = useState<CardBundle>();
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
   const { showBoundary } = useErrorBoundary();
   const scrollEventRef = useRef<ScrollEvent | null>(null);
   const messageHistoryEndRef = useRef<HTMLDivElement | null>(null);
   const messageHistoryRef = useRef<HTMLDivElement | null>(null);
+  const [messageHistory, setMessageHistory] = useState<MessageHistory>([]);
+  const historyLimitRef = useRef(50);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const syncMessageHistory = useCallback(async () => {
+    const res = await queries.getChatHistory(chatID, historyLimitRef.current);
+    if (res.kind == "err") {
+      toast.error("Error fetching chat history.");
+      console.error(res.error);
+      return;
+    }
+    setMessageHistory(res.value);
+  }, [chatID, historyLimitRef]);
+
+  const { setSyncMessageHistory } = useChatStore();
+  useEffect(() => {
+    setSyncMessageHistory(syncMessageHistory);
+  }, [syncMessageHistory, setSyncMessageHistory]);
+
+  useEffect(() => {
+    syncMessageHistory();
+  }, [historyLimitRef, syncMessageHistory]);
+
+  const setHistoryLimit = useCallback(
+    (historyLimit: number) => {
+      historyLimitRef.current = historyLimit;
+    },
+    [historyLimitRef]
+  );
+
+  useEffect(() => {
+    (async () => {
+      await syncMessageHistory();
+    })();
+  }, [syncMessageHistory]);
 
   const syncCardBundle = useCallback(async () => {
     const res = await queries.getCardBundle(chatID);
@@ -189,7 +172,7 @@ function ChatArea({
         oldScrollHeight: e.currentTarget.scrollHeight,
         kind: "user_scrolled_top"
       };
-      setHistoryLimit(historyLimit + 15);
+      setHistoryLimit(historyLimitRef.current + 15);
       syncMessageHistory();
     }
   };
