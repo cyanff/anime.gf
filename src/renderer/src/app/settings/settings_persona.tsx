@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { useApp } from "@/components/AppContext";
+import Avatar from "@/components/Avatar";
 import { Button } from "@/components/ui/button";
 import { queries } from "@/lib/queries";
 import { PersonaBundle, PersonaFormData } from "@shared/types";
@@ -132,16 +133,11 @@ export default function SettingsPersona() {
                 <ContextMenuTrigger>
                   <button
                     className={`group flex h-fit w-full items-center justify-between rounded-lg p-3 font-[480] text-tx-primary transition duration-200
-                      ease-out hover:brightness-90 focus:outline-none`}
+                      ease-out hover:brightness-90 focus:outline-none overflow-x-hidden`}
                     onClick={() => handleEdit(bundle)}
                   >
                     <div className="mr-3 flex w-full items-center space-x-5 ">
-                      <img
-                        draggable="false"
-                        className="size-12 rounded-full object-cover object-top"
-                        src={bundle.avatarURI || "default_avatar.png"}
-                        alt="Avatar"
-                      />
+                      <Avatar avatarURI={bundle.avatarURI} />
                       <div className="flex w-full flex-col">
                         <h3 className="line-clamp-1 w-5/6 text-ellipsis text-left text-[1.07rem] font-[550]">
                           {bundle.data.name}
