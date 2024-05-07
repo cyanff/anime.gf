@@ -1,6 +1,6 @@
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import { CardData, PersonaFormData } from "@shared/types";
-import { BrowserWindow, Menu, Tray, app, ipcMain, nativeImage, net, protocol, shell } from "electron";
+import { BrowserWindow, Menu, Tray, app, dialog, ipcMain, nativeImage, net, protocol, shell } from "electron";
 import { autoUpdater } from "electron-updater";
 import path, { join } from "path";
 import icon from "../../resources/icon.png?asset";
@@ -239,8 +239,31 @@ app.whenReady().then(async () => {
   });
 
   createWindow();
-  // Implement Electron auto-updater
-  // autoUpdater.on();
+
+  autoUpdater.checkForUpdates();
+
+  autoUpdater.on("update-downloaded", (e) => {
+    const { version } = e;
+    const dialogOpts: Electron.MessageBoxOptions = {
+      type: "info",
+      buttons: ["Restart", "Later"],
+      title: "Application Update",
+      message: `anime.gf version ${version} has been downloaded.`,
+      detail: "Restart the application to apply the update."
+    };
+
+    dialog.showMessageBox(dialogOpts).then((val) => {
+      if (val.response === 0) {
+        isQuiting = true;
+        autoUpdater.quitAndInstall();
+      }
+    });
+  });
+
+  autoUpdater.on("error", (error) => {
+    console.error("There was a problem updating the application");
+    console.error(error);
+  });
 });
 
 function createWindow(): void {

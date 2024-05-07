@@ -4,10 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g., alpha-v0.0.2)'
-        required: true
-      version-number:
-        description: 'Release version number (e.g., 1.0.0)'
+        description: 'Release version (e.g., 0.0.2)'
         required: true
 
 jobs:
@@ -36,5 +33,5 @@ jobs:
       with:
         github_token: ${{ secrets.github_token }}
         release: true
-        args: -c.extraMetadata.version=${{ github.event.inputs.version-number }} -c.publish.releaseType=prerelease
+        args: -c.extraMetadata.version=${{ github.event.inputs.version }} -c.publish.releaseType=prerelease
 
