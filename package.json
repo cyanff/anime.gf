@@ -1,6 +1,8 @@
 {
   "name": "agf",
   "description": "An Electron application with React and TypeScript",
+  "homepage": "https://anime.gf",
+  "author": "anime.gf",
   "main": "./out/main/index.js",
   "repository": {
     "type": "git",
