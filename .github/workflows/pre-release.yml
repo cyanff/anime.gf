@@ -36,5 +36,5 @@ jobs:
       with:
         github_token: ${{ secrets.github_token }}
         release: true
-        args: -c.extraMetadata.version=${{ github.event.inputs.version-number }} -c.provider.releaseType=prerelease
+        args: -c.extraMetadata.version=${{ github.event.inputs.version-number }} -c.publish.releaseType=prerelease
 
