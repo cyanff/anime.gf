@@ -40,6 +40,11 @@ app.whenReady().then(async () => {
   }
   electronApp.setAppUserModelId("gf.anime");
 
+  // Set the update config path to the dev-app-update.yml in development
+  if (is.dev) {
+    autoUpdater.updateConfigPath = path.join(process.cwd(), "dev-app-update.yml");
+  }
+
   // https://stackoverflow.com/questions/37828758/electron-js-how-to-minimize-close-window-to-system-tray-and-restore-window-back
   const tray = new Tray(nativeImage.createFromPath(icon));
   const contextMenu = Menu.buildFromTemplate([

@@ -1,0 +1,5 @@
+publish:
+  provider: github
+  repo: anime.gf-dev
+  owner: cyanff 
+  vPrefixedTagName: false

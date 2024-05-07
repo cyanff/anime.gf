@@ -22,16 +22,6 @@ export function deepFreeze(object: any) {
   return Object.freeze(object);
 }
 
-export async function fileExists(path: string) {
-  try {
-    await fsp.access(path);
-    return true;
-  } catch {
-    // File doesn't exist or not accessible (e.g. no permissions)
-    return false;
-  }
-}
-
 /**
  * Remove all top level properties matching the blacklist from an object
  * @param obj The object to clone and remove properties from
