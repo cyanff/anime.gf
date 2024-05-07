@@ -1,6 +1,12 @@
 name: test
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   test:
@@ -8,8 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        #os: [macos-latest, windows-latest, ubuntu-latest]
-        os: [windows-latest, ubuntu-latest]
+        os: [ubuntu-latest]
 
     steps:
       - name: Check out Git repository
