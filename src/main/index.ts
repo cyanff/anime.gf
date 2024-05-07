@@ -240,7 +240,13 @@ app.whenReady().then(async () => {
 
   createWindow();
 
-  autoUpdater.checkForUpdates();
+  // Check for updates every 15 minutes
+  setInterval(
+    () => {
+      autoUpdater.checkForUpdatesAndNotify();
+    },
+    1000 * 60 * 15
+  );
 
   autoUpdater.on("update-downloaded", (e) => {
     const { version } = e;
