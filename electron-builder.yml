@@ -1,4 +1,4 @@
-appId: com.electron.app
+appId: gf.anime 
 productName: agf
 directories:
   buildResources: build
@@ -31,11 +31,15 @@ linux:
     - AppImage
     - snap
     - deb
-  maintainer: electronjs.org
+  maintainer: agf 
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  provider: github
+  repo: anime.gf 
+  owner: cyanff 
+  vPrefixedTagName: false
+extraMetadata:
+  version: ${version}

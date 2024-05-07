@@ -1,6 +1,7 @@
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import { CardData, PersonaFormData } from "@shared/types";
 import { BrowserWindow, Menu, Tray, app, ipcMain, nativeImage, net, protocol, shell } from "electron";
+import { autoUpdater } from "electron-updater";
 import path, { join } from "path";
 import icon from "../../resources/icon.png?asset";
 import blob from "./lib/store/blob";
