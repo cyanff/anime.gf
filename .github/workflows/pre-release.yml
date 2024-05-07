@@ -4,9 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g., v1.0.0)'
+        description: 'Release version (e.g., alpha-v0.0.2)'
         required: true
-
+      version-number:
+        description: 'Release version number (e.g., 1.0.0)'
+        required: true
 
 
 jobs:
@@ -41,7 +43,7 @@ jobs:
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ github.event.inputs.version }}"
+        automatic_release_tag: "${{ github.event.inputs.version_number }}"
         prerelease: true
         title: "Pre-Release ${{ github.event.inputs.version }}"
         files: |
