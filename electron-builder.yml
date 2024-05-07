@@ -13,6 +13,9 @@ asarUnpack:
   - resources/**
 win:
   executableName: agf
+  target:
+    - nsis
+  icon: build/icon.png
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -24,8 +27,14 @@ mac:
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   notarize: false
+  icon: build/icon.icns
+  target:
+    - dmg
 dmg:
   artifactName: ${name}-${version}.${ext}
+target:
+  - dmg
+
 linux:
   target:
     - AppImage
