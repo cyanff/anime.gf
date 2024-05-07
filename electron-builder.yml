@@ -29,7 +29,6 @@ dmg:
 linux:
   target:
     - AppImage
-    - snap
     - deb
   maintainer: agf 
   category: Utility
