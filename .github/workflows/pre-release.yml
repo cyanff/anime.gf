@@ -35,17 +35,6 @@ jobs:
       uses: samuelmeuli/action-electron-builder@v1
       with:
         github_token: ${{ secrets.github_token }}
-        release: false
-        args: -c.extraMetadata.version=${{ github.event.inputs.version-number }}
+        release: true
+        args: -c.extraMetadata.version=${{ github.event.inputs.version-number }} -c.provider.releaseType=prerelease
 
-    - name: Create Pre-Release
-      uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ github.event.inputs.version }}"
-        prerelease: true
-        title: "Pre-Release ${{ github.event.inputs.version }}"
-        files: |
-          dist/*.exe
-          dist/*.AppImage
-          dist/*.deb
