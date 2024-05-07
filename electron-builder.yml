@@ -48,3 +48,14 @@ publish:
   repo: anime.gf 
   owner: cyanff 
   vPrefixedTagName: false
+
+metadata:
+  name: anime.gf
+  repository: https://github.com/cyanff/anime.gf
+  description: anime.gf
+  homepage: anime.gf
+  author: anime.gf
+
+# Injected into the final package.json
+extraMetadata: 
+  version: ${version} 

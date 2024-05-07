@@ -1,6 +1,5 @@
 {
   "name": "agf",
-  "version": "0.0.2",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "repository": {
