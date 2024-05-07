@@ -7,9 +7,14 @@ on:
         description: 'Release version (e.g., v1.0.0)'
         required: true
 
+
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  pre-release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v3
@@ -29,7 +34,8 @@ jobs:
       uses: samuelmeuli/action-electron-builder@v1
       with:
         github_token: ${{ secrets.github_token }}
-        release: true
+        release: false
+        args: -c.extraMetadata.version=${{ github.event.inputs.version }}
 
     - name: Create Pre-Release
       uses: "marvinpinto/action-automatic-releases@latest"

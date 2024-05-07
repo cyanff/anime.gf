@@ -32,8 +32,6 @@ mac:
     - dmg
 dmg:
   artifactName: ${name}-${version}.${ext}
-target:
-  - dmg
 
 linux:
   target:
@@ -41,6 +39,7 @@ linux:
     - deb
   maintainer: agf 
   category: Utility
+  icon: build/icon.png
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
@@ -49,5 +48,3 @@ publish:
   repo: anime.gf 
   owner: cyanff 
   vPrefixedTagName: false
-extraMetadata:
-  version: ${version}
