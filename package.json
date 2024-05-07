@@ -24,7 +24,7 @@
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
     "new-migration": "node ./scripts/new_migration.js",
-    "nuke": "./scripts/nuke.sh",
+    "nuke": "electron ./scripts/nuke.js",
     "migrate": "electron ./scripts/migrate.js",
     "seed": "electron ./scripts/seed.js",
     "reset": "npm run nuke && npm run migrate && npm run seed"
