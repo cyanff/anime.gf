@@ -10,7 +10,6 @@ on:
         description: 'Release version number (e.g., 1.0.0)'
         required: true
 
-
 jobs:
   pre-release:
     runs-on: ${{ matrix.os }}
@@ -37,7 +36,7 @@ jobs:
       with:
         github_token: ${{ secrets.github_token }}
         release: false
-        args: -c.extraMetadata.version=${{ github.event.inputs.version_number }}
+        args: -c.extraMetadata.version=${{ github.event.inputs.version-number }}
 
     - name: Create Pre-Release
       uses: "marvinpinto/action-automatic-releases@latest"
