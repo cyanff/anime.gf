@@ -3,27 +3,39 @@ const os = require("os");
 const { join } = require("path");
 const fs = require("fs");
 const { app } = require("electron");
+const { dirname } = require("path");
 
-const cwd = process.cwd();
+let projectRootPath;
+let userData;
+let dbPath;
+let db;
 
-// Seed db
-const dbPath = join(os.homedir(), ".config/agf/agf.db");
-const db = new Database(dbPath);
-const statement = fs.readFileSync(join(cwd, "/scripts/seed.sql"), { encoding: "utf-8" });
-try {
-  db.exec(statement);
-} catch (e) {
-  console.log("Error seeding database.");
-  console.error(e);
-  app.exit(1);
-}
-console.log("Database seeded successfully.");
+(async () => {
+  try {
+    projectRootPath = dirname(app.getAppPath());
+    // When this script is ran with the `electron` cli, the app path is under `~/blah/blah/Electron/`
+    // we want it to be `~/blah/blah/agf/`
+    userData = join(dirname(app.getPath("userData")), "agf");
+    dbPath = join(userData, "agf.db");
+    db = new Database(dbPath);
+    const statement = fs.readFileSync(join(projectRootPath, "/scripts/seed.sql"), { encoding: "utf-8" });
 
-// Seed blob storage data
-const src = join(cwd, "/scripts/blob");
-const dest = join(os.homedir(), ".config/agf/blob");
+    // Seed blob storage data
+    const src = join(projectRootPath, "/scripts/blob");
+    const dest = join(userData, "/blob");
+    copyFolder(src, dest);
 
-copyFolder(src, dest);
+    // Seed database
+    db.exec(statement);
+  } catch (e) {
+    console.log("Error seeding database.");
+    console.error(e);
+  } finally {
+    console.log("Database seeded successfully.");
+    app.exit();
+  }
+})();
+
 function copyFolder(src, dest) {
   // Create destination folder if it doesn't exist
   if (!fs.existsSync(dest)) {
@@ -42,6 +54,3 @@ function copyFolder(src, dest) {
     }
   });
 }
-console.log("Blob storage seeded successfully.");
-
-app.exit(0);

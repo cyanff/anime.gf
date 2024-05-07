@@ -6,21 +6,30 @@ import fsp from "fs/promises";
 import JSZip from "jszip";
 import path, { dirname, join } from "path";
 
-// TODO, make sure all of these directories exists on init
-export const rootPath = process.env.NODE_ENV === "development" ? app.getAppPath() : dirname(app.getAppPath());
+const isDev = process.env.NODE_ENV === "development";
+
 export const dbPath = join(app.getPath("userData"), "agf.db");
-export const unpackedPath = join(rootPath, "/app.asar.unpacked/resources/");
-export const migrationsDir =
-  process.env.NODE_ENV === "development" ? join(rootPath, "resources/migrations") : join(unpackedPath, "migrations");
+
+// The path of the the "resources" directory
+// In development: root/resources/
+// In production:
+// Electron builder bundles everything into an ASAR archive by default
+// However, we've specified that the contents of /resources remains unpacked so that we could easily access them
+// The unpacked resources are under /app.asar.unpacked/resources
+export const resourcesPath = isDev
+  ? join(app.getAppPath(), "/resources/")
+  : join(dirname(app.getAppPath()), "/app.asar.unpacked/resources/");
+export const migrationsPath = join(resourcesPath, "/migrations");
 
 export const secretsPath = path.join(app.getPath("userData"), "secrets.json");
 export const settingsPath = path.join(app.getPath("userData"), "settings.json");
 
-// Root directory for all blob data
+// Blob
+// ======================================================================
 export const blobRootPath = path.join(app.getPath("userData"), "blob");
-// Directories for different types of blob data
 export const cardsRootPath = path.join(blobRootPath, "cards");
 export const personasRootPath = path.join(blobRootPath, "personas");
+// ======================================================================
 
 /**
  * Checks if a file exists and is accessible at the specified path.

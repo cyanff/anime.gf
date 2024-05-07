@@ -25,7 +25,7 @@ import {
   copyFolder,
   extractZipToDir,
   personasRootPath,
-  unpackedPath
+  resourcesPath
 } from "../utils";
 import sqlite from "./sqlite";
 
@@ -39,7 +39,7 @@ async function init() {
   // Copy unpackedPath/blob/cards to cardsRootPath
   if (!cardsDirExists) {
     await fsp.mkdir(cardsRootPath);
-    copyFolder(path.join(unpackedPath, "blob/cards"), cardsRootPath);
+    copyFolder(path.join(resourcesPath, "blob/cards"), cardsRootPath);
   }
 }
 

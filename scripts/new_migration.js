@@ -13,7 +13,8 @@ begin transaction;
 commit;
 `;
 
-// YYYYMMDDHHmmss
+// lexicographically
+// This is lexicographically sortable
 const timestamp = new Date()
   .toISOString()
   .replace(/[^0-9]/g, "")
