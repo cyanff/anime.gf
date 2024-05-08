@@ -58,13 +58,39 @@ function ensureSchemaMigrationsTable() {
 
 async function init() {
   db = Database(dbPath);
-  //   // Users of the app's first release doesn't have a schema_migrations table
-  //   // Yet their schemas are up to date.
-  //   // So we'll just create the schema_migrations table and insert the first migration
-  // if schema migrations table doesn't exist and a table exists "cards"
-  //  create schema_migrations table
-  // insert the init migration
-  // return
+
+  // For users of the app's first release, the database will not have a schema_migrations table,
+  // even though their database schema is already up to date.
+  // In this case, we need to create the schema_migrations table and insert the initial migration record.
+  // We can detect this situation by checking if the schema_migrations table doesn't exist, but the cards table does exist.
+  const schemeTableQueryResult = db
+    .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='schema_migrations'")
+    .all();
+  const cardsTableQueryResult = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='cards'").all();
+  if (schemeTableQueryResult.length === 0 && cardsTableQueryResult.length === 1) {
+    console.log(
+      "Old database without schema_migrations table found.\nCreating schema_migrations table and inserting init migration..."
+    );
+    const migrationsRes = await getMigrations();
+    if (migrationsRes.kind === "err") {
+      console.error("Error getting migrations:", migrationsRes.error);
+      return;
+    }
+    if (migrationsRes.value.length === 0) {
+      console.error("No migrations found");
+      return;
+    }
+
+    const initMigration = migrationsRes.value[0];
+    ensureSchemaMigrationsTable();
+    db.prepare("INSERT INTO schema_migrations (version, statement, name) VALUES (?, ?, ?)").run(
+      initMigration.version,
+      initMigration.statement,
+      initMigration.name
+    );
+    return;
+  }
+
   await update();
 }
 
