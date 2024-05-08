@@ -1,22 +1,21 @@
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
-import { CardData, PersonaFormData } from "@shared/types";
-import { BrowserWindow, Menu, Tray, app, dialog, ipcMain, nativeImage, net, protocol, shell } from "electron";
+import { BrowserWindow, Menu, Tray, app, dialog, nativeImage, net, protocol, shell } from "electron";
 import { autoUpdater } from "electron-updater";
 import path, { join } from "path";
 import icon from "../../resources/icon.png?asset";
+import ipc from "./lib/ipc";
 import blob from "./lib/store/blob";
 import secret from "./lib/store/secret";
 import setting from "./lib/store/setting";
 import sqlite from "./lib/store/sqlite";
 import { cardsRootPath, personasRootPath } from "./lib/utils";
-import { XFetchConfig, xfetch } from "./lib/xfetch";
 
-let window: any;
 // let loadingWindow: any;
+let window: any;
 let isQuiting = false;
 
+// Prevent multiple app instances
 const gotTheLock = app.requestSingleInstanceLock();
-
 if (!gotTheLock) {
   app.quit();
 }
@@ -156,99 +155,7 @@ app.whenReady().then(async () => {
   await blob.init();
   await secret.init();
   await setting.init();
-
-  ipcMain.handle("sqlite.run", async (_, query: string, params: [] = []) => {
-    return sqlite.run(query, params);
-  });
-  ipcMain.handle("sqlite.all", async (_, query: string, params: [] = []) => {
-    return sqlite.all(query, params);
-  });
-  ipcMain.handle("sqlite.get", async (_, query: string, params: [] = []) => {
-    return sqlite.get(query, params);
-  });
-  ipcMain.handle("sqlite.runAsTransaction", async (_, queries: string[], params: [][]) => {
-    return sqlite.runAsTransaction(queries, params);
-  });
-
-  ipcMain.handle("blob.image.get", async (_, path: string) => {
-    return await blob.image.get(path);
-  });
-
-  ipcMain.handle("blob.cards.get", async (_, card: string) => {
-    return await blob.cards.get(card);
-  });
-
-  ipcMain.handle(
-    "blob.cards.create",
-    async (_, cardData: CardData, bannerURI: string | null, avatarURI: string | null) => {
-      return await blob.cards.create(cardData, bannerURI, avatarURI);
-    }
-  );
-
-  ipcMain.handle(
-    "blob.cards.update",
-    async (_, cardID: number, cardData: CardData, bannerURI: string | null, avatarURI: string | null) => {
-      return await blob.cards.update(cardID, cardData, bannerURI, avatarURI);
-    }
-  );
-
-  ipcMain.handle("blob.cards.del", async (_, cardID: number) => {
-    return await blob.cards.del(cardID);
-  });
-
-  ipcMain.handle("blob.cards.exportToZip", async (_, card: string) => {
-    return await blob.cards.exportToZip(card);
-  });
-
-  ipcMain.handle("blob.cards.importFromZip", async (_, zip: string) => {
-    return await blob.cards.importFromZip(zip);
-  });
-
-  ipcMain.handle("blob.personas.get", async (_, persona: string) => {
-    return await blob.personas.get(persona);
-  });
-  ipcMain.handle("blob.personas.post", async (_, data: PersonaFormData) => {
-    return await blob.personas.post(data);
-  });
-
-  ipcMain.handle("blob.personas.put", async (_, id: number, data: PersonaFormData) => {
-    return await blob.personas.put(id, data);
-  });
-
-  ipcMain.handle("secret.get", async (_, k: string) => {
-    return await secret.get(k);
-  });
-
-  ipcMain.handle("secret.set", async (_, k: string, v: string) => {
-    return await secret.set(k, v);
-  });
-
-  ipcMain.handle(
-    "xfetch.post",
-    async (_, url: string, body?: object, headers?: Record<string, string>, config?: XFetchConfig) => {
-      return await xfetch.post(url, body, headers, config);
-    }
-  );
-
-  ipcMain.handle("xfetch.get", async (_, url: string, headers?: Record<string, string>, config?: XFetchConfig) => {
-    return await xfetch.get(url, headers, config);
-  });
-
-  ipcMain.handle("xfetch.abort", async (_, uuid: string) => {
-    return await xfetch.abort(uuid);
-  });
-
-  ipcMain.handle("utils.openURL", async (_, url: string) => {
-    return await shell.openExternal(url);
-  });
-
-  ipcMain.handle("setting.get", async () => {
-    return await setting.get();
-  });
-
-  ipcMain.handle("setting.set", async (_, settings: any) => {
-    return await setting.set(settings);
-  });
+  await ipc.init();
 
   // Open or close DevTools using F12 in development
   // Ignore Cmd/Ctrl + R in production.

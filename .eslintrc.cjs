@@ -14,6 +14,14 @@ module.exports = {
     "no-unused-expressions": "warn",
     "@typescript-eslint/explicit-function-return-type": "off",
     "prettier/prettier": 0,
-    "react/prop-types": "off"
+    "react/prop-types": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_"
+      }
+    ]
   }
 };
