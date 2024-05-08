@@ -1,9 +1,8 @@
+import { Result } from "@shared/types";
 import Database from "better-sqlite3";
-import { app } from "electron";
 import fsp from "fs/promises";
 import path from "path";
 import { attainable, dbPath, migrationsPath } from "../utils";
-import { Result } from "./../../../shared/types";
 
 // TODO: refactor apis in this file to return Result<T,E>
 let db: Database.Database;
@@ -86,16 +85,19 @@ async function update() {
   const migrations = migrationsRes.value;
   const targetVersion = migrations[migrations.length - 1].version;
   const currentVersion = currentVersionRes.value || "0";
+  console.log("Current version:", currentVersionRes.value);
+  console.log("Target version:", targetVersion);
   if (currentVersion === targetVersion) {
     console.log("Database is already up to date");
     return;
   }
   if (currentVersion > targetVersion) {
     console.error(
-      "Current database version is newer than the target version!\nThis should never happen.\nSkipping migrations."
+      "Current database version is newer than the target version!\nThis should never happen!!!!!.\nSkipping migrations..."
     );
     return;
   }
+  console.log(`Updating database from version ${currentVersion} to ${targetVersion}...`);
   const newMigrations = migrations.filter((m) => m.version > currentVersion);
 
   try {
