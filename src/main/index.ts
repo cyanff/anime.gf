@@ -11,7 +11,8 @@ import sqlite from "./lib/store/sqlite";
 import { cardsRootPath, personasRootPath } from "./lib/utils";
 import { XFetchConfig, xfetch } from "./lib/xfetch";
 
-let win: any;
+let window: any;
+// let loadingWindow: any;
 let isQuiting = false;
 
 app.on("web-contents-created", (_event, contents) => {
@@ -45,13 +46,14 @@ app.whenReady().then(async () => {
     autoUpdater.updateConfigPath = path.join(process.cwd(), "dev-app-update.yml");
   }
 
+  // Close to tray functionalities
   // https://stackoverflow.com/questions/37828758/electron-js-how-to-minimize-close-window-to-system-tray-and-restore-window-back
   const tray = new Tray(nativeImage.createFromPath(icon));
   const contextMenu = Menu.buildFromTemplate([
     {
       label: "Show App      ",
       click: () => {
-        win.show();
+        window.show();
       }
     },
     {
@@ -65,7 +67,7 @@ app.whenReady().then(async () => {
   tray.setToolTip("anime.gf");
   tray.setContextMenu(contextMenu);
   tray.on("double-click", () => {
-    win.show();
+    window.show();
   });
 
   app.on("before-quit", () => {
@@ -242,9 +244,6 @@ app.whenReady().then(async () => {
     // For macOS, re-create a window in the app when the dock icon is clicked
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
-
-  createWindow();
-
   // Check for updates every 15 minutes
   setInterval(
     () => {
@@ -252,7 +251,6 @@ app.whenReady().then(async () => {
     },
     1000 * 60 * 15
   );
-
   autoUpdater.on("update-downloaded", (e) => {
     const { version } = e;
     const dialogOpts: Electron.MessageBoxOptions = {
@@ -275,10 +273,29 @@ app.whenReady().then(async () => {
     console.error("There was a problem updating the application");
     console.error(error);
   });
+
+  createWindow();
 });
 
+// function createLoadingWindow() {
+//   loadingWindow = new BrowserWindow({
+//     width: 400,
+//     height: 300,
+//     frame: false,
+//     transparent: true,
+//     alwaysOnTop: true
+//   });
+//   if (is.dev) {
+//     loadingWindow.loadURL(join(process.env["ELECTRON_RENDERER_URL"] || "", "loading.html"));
+//   } else {
+//     loadingWindow.loadFile(join(__dirname, "../renderer/loading.html"));
+//   }
+
+//   loadingWindow.on("closed", () => (loadingWindow = null));
+// }
+
 function createWindow(): void {
-  win = new BrowserWindow({
+  window = new BrowserWindow({
     title: "anime.gf",
     icon: icon,
     width: 900,
@@ -298,16 +315,17 @@ function createWindow(): void {
     }
   });
 
-  win.on("ready-to-show", () => {
-    win.show();
+  window.on("ready-to-show", () => {
+    // if (loadingWindow) loadingWindow.close();
+    window.show();
   });
 
-  win.on("close", async (e) => {
+  window.on("close", async (e) => {
     if (!isQuiting) {
       e.preventDefault();
       const settingsRes = await setting.get();
       if (settingsRes.kind === "ok" && settingsRes.value?.advanced?.closeToTray) {
-        win.hide();
+        window.hide();
         return;
       } else {
         app.quit();
@@ -318,15 +336,15 @@ function createWindow(): void {
     return false;
   });
 
-  win.webContents.setWindowOpenHandler((details) => {
+  window.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url);
     return { action: "deny" };
   });
 
   // Load vite dev server in development or static files in production
   if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
-    win.loadURL(process.env["ELECTRON_RENDERER_URL"]);
+    window.loadURL(process.env["ELECTRON_RENDERER_URL"]);
   } else {
-    win.loadFile(join(__dirname, "../renderer/index.html"));
+    window.loadFile(join(__dirname, "../renderer/index.html"));
   }
 }
