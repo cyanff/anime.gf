@@ -15,11 +15,11 @@ let window: any;
 // let loadingWindow: any;
 let isQuiting = false;
 
-app.on("web-contents-created", (_event, contents) => {
-  contents.on("will-navigate", (event, _navigationUrl) => {
-    event.preventDefault();
-  });
-});
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+}
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -35,13 +35,15 @@ protocol.registerSchemesAsPrivileged([
 app.enableSandbox();
 
 app.whenReady().then(async () => {
+  // Load react devtools in development if REACT_DEVTOOLS is set to true
   if (is.dev && process.env["REACT_DEVTOOLS"] === "true") {
     const { REACT_DEVELOPER_TOOLS, default: installExtension } = await import("electron-devtools-assembler");
     await installExtension(REACT_DEVELOPER_TOOLS);
   }
   electronApp.setAppUserModelId("gf.anime");
 
-  // Set the update config path to the dev-app-update.yml in development
+  // Set the autoUpdater config path to the dev-app-update.yml in development
+  // This allows us to test the autoUpdater with releases from another repo
   if (is.dev) {
     autoUpdater.updateConfigPath = path.join(process.cwd(), "dev-app-update.yml");
   }
@@ -69,9 +71,23 @@ app.whenReady().then(async () => {
   tray.on("double-click", () => {
     window.show();
   });
-
   app.on("before-quit", () => {
     isQuiting = true;
+  });
+
+  app.on("second-instance", () => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (window) {
+      if (window.isMinimized()) window.restore();
+      window.focus();
+    }
+  });
+
+  // Disable navigation for security purposes
+  app.on("web-contents-created", (_event, contents) => {
+    contents.on("will-navigate", (event, _navigationUrl) => {
+      event.preventDefault();
+    });
   });
 
   /**
@@ -277,23 +293,6 @@ app.whenReady().then(async () => {
   createWindow();
 });
 
-// function createLoadingWindow() {
-//   loadingWindow = new BrowserWindow({
-//     width: 400,
-//     height: 300,
-//     frame: false,
-//     transparent: true,
-//     alwaysOnTop: true
-//   });
-//   if (is.dev) {
-//     loadingWindow.loadURL(join(process.env["ELECTRON_RENDERER_URL"] || "", "loading.html"));
-//   } else {
-//     loadingWindow.loadFile(join(__dirname, "../renderer/loading.html"));
-//   }
-
-//   loadingWindow.on("closed", () => (loadingWindow = null));
-// }
-
 function createWindow(): void {
   window = new BrowserWindow({
     title: "anime.gf",
@@ -348,3 +347,20 @@ function createWindow(): void {
     window.loadFile(join(__dirname, "../renderer/index.html"));
   }
 }
+
+// function createLoadingWindow() {
+//   loadingWindow = new BrowserWindow({
+//     width: 400,
+//     height: 300,
+//     frame: false,
+//     transparent: true,
+//     alwaysOnTop: true
+//   });
+//   if (is.dev) {
+//     loadingWindow.loadURL(join(process.env["ELECTRON_RENDERER_URL"] || "", "loading.html"));
+//   } else {
+//     loadingWindow.loadFile(join(__dirname, "../renderer/loading.html"));
+//   }
+
+//   loadingWindow.on("closed", () => (loadingWindow = null));
+// }

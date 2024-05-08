@@ -64,7 +64,7 @@ async function init() {
   //   // So we'll just create the schema_migrations table and insert the first migration
   // if schema migrations table doesn't exist and a table exists "cards"
   //  create schema_migrations table
-  // insert the first migration
+  // insert the init migration
   // return
   await update();
 }
