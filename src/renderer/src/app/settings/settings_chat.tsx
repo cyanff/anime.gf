@@ -141,7 +141,7 @@ export default function SettingsChat() {
                     </Label>
 
                     {selectedProvider === ProviderE.OPENAI_COMPAT ? (
-                      <Input className="h-10" {...register("model")}></Input>
+                      <Input placeholder="llama3" className="h-10" {...register("model")}></Input>
                     ) : (
                       <Controller
                         control={control}
@@ -162,7 +162,7 @@ export default function SettingsChat() {
                   {selectedProvider === ProviderE.OPENAI_COMPAT && (
                     <div className=" space-y-1">
                       <Label className="text-tx-primary">OpenAI API Compatible Endpoint URL</Label>
-                      <Input className="h-10" {...register("url")}></Input>
+                      <Input placeholder="https://api.groq.com/openai/v1" className="h-10" {...register("url")}></Input>
                     </div>
                   )}
                 </div>

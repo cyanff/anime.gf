@@ -77,7 +77,12 @@ app.whenReady().then(async () => {
   app.on("second-instance", () => {
     // Someone tried to run a second instance, we should focus our window.
     if (window) {
-      if (window.isMinimized()) window.restore();
+      if (window.isMinimized()) {
+        window.restore();
+      }
+      if (!window.isVisible()) {
+        window.show();
+      }
       window.focus();
     }
   });

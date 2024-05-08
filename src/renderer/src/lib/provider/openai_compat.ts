@@ -1,5 +1,6 @@
 import { Provider, ProviderConfig, ProviderE, ProviderMessage } from "@/lib/provider/provider";
 import { Result } from "@shared/types";
+import { joinPaths } from "@tanstack/router";
 import { XFetchConfig } from "src/main/lib/xfetch";
 import { v4 } from "uuid";
 
@@ -53,7 +54,9 @@ async function getChatCompletion(
     key = config.apiKey;
   }
 
-  const url = config.url;
+  const localhostReplacedURL = config.url.replace("localhost", "127.0.0.1");
+  const url = joinPaths([localhostReplacedURL, "/chat/completions"]);
+
   const headers = {
     Authorization: `Bearer ${key}`
   };
