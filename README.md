@@ -7,10 +7,21 @@ User-friendly, multi-API support (OpenAI, Anthropic, Mistral, Together AI), Conf
 Open source waifus on the desktop. Alpha Early Access v0.0.1™® 
 
 
+# News! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧
+Alpha v0.0.2 Released! (05/09/2024)
+- Open AI Compatible API Support!
+  - Use any endpoint like groq, ollama, vllm, ...
+- Linux & MacOS support
+  - Linux and MacOS binaries will now be included with every release!
+  - Sorry I made you all build binaries yourself last time ... (x╭╮x)  
+- Added electron auto-updater
+  - The app now automatically keeps itself up to date. You won't have to manually download new releases from now!
+- View the full release notes and download it **here**
+
 ## Features
 - Character card creation
 - Drag and drop import/export character cards
-- Edit, delete character cards
+- Edit, and delete character cards
 - Recently deleted character card restore
 - User personas 
 - Chat reset, delete
@@ -46,7 +57,7 @@ Open source waifus on the desktop. Alpha Early Access v0.0.1™®
 ## Planned 
 ### Local Inference
 Want to run your models locally? The app will manage the entire process for you!
-No seperate backend required.
+No separate backend required.
 ### Online character database
 An online database and website to host and share character cards! 
 ### More To Be Announced...
