@@ -34,14 +34,14 @@ export default function CollectionsPage({ cardBundles }: CollectionsPageProps) {
     fuseRef.current = new Fuse(cardBundles, fuseOptions);
   }, [cardBundles]);
 
-  // On searchInput change, update the search results
   useEffect(() => {
     if (!fuseRef.current) return;
+    let results: CardBundle[];
     if (searchInput.trim() === "") {
-      setSearchResults(cardBundles);
-      return;
+      results = cardBundles;
+    } else {
+      results = fuseRef.current.search(searchInput).map((result) => result.item);
     }
-    const results = fuseRef.current.search(searchInput).map((result) => result.item);
     const sortedResults = results.sort((a, b) => {
       return cardBundleSearchFN(a, b, sortBy, descending);
     });

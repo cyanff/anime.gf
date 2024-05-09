@@ -1,6 +1,6 @@
 INSERT INTO personas (name, dir_name, description,  is_default)
 VALUES
-    ('cyan', 'cyan',  'Nobel laureate in Physics', 1),
+    ('cyan', 'cyan',  '', 1),
     ('snafu', 'snafu', 'Nobel laureate in Chemistry', 0);
 
 INSERT INTO cards (dir_name)
@@ -14,6 +14,9 @@ VALUES
     ('miku'),
     ('kurisu'),
     ('rias'),
+    ('cyan'),
+    ('frieren'),
+    ('rem'),
     ('test');
 
 

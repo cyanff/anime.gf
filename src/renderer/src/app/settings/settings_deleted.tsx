@@ -68,11 +68,12 @@ export default function SettingsRecentlyDeleted() {
   // On searchInput change, update the search results
   useEffect(() => {
     if (!fuseRef.current) return;
+    let results: CardBundle[];
     if (searchInput.trim() === "") {
-      setSearchResults(deletedCards);
-      return;
+      results = deletedCards || [];
+    } else {
+      results = fuseRef.current.search(searchInput).map((result) => result.item);
     }
-    const results = fuseRef.current.search(searchInput).map((result) => result.item);
     const sortedResults = results.sort((a: CardBundle, b: CardBundle) => {
       return cardBundleSearchFN(a, b, sortBy, descending);
     });
