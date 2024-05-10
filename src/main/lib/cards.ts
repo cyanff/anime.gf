@@ -1,4 +1,5 @@
-import { CardBundleWithoutID, CardData, Result, cardSchema } from "@shared/types";
+import { config } from "@shared/config";
+import { CardBundleWithoutID, CardData, Result, cardSchema, cardTagsSchema } from "@shared/types";
 import { deepFreeze, isValidFileName, toPathEscapedStr } from "@shared/utils";
 import archiver from "archiver";
 import { app, dialog } from "electron";
@@ -8,6 +9,7 @@ import JSZip from "jszip";
 import path from "path";
 import tEXt from "png-chunk-text";
 import extract from "png-chunks-extract";
+import { v4 } from "uuid";
 import { z } from "zod";
 import { fromError } from "zod-validation-error";
 import sqlite from "./store/sqlite";
@@ -97,7 +99,7 @@ export async function create(
   avatarURI: string | null
 ): Promise<Result<undefined, Error>> {
   const pathEscapedCharName = toPathEscapedStr(cardData.character.name);
-  const cardDirName = `${pathEscapedCharName}-${crypto.randomUUID()}`;
+  const cardDirName = `${pathEscapedCharName}-${v4}`;
   const cardDirPath = path.join(cardsRootPath, cardDirName);
 
   await fsp.mkdir(cardDirPath, { recursive: true });
@@ -185,10 +187,13 @@ async function import_(filePath: string): Promise<Result<void, Error>> {
   }
 
   const ext = path.extname(filePath).toLowerCase();
+
+  console.log("ext", ext);
   switch (ext) {
     case ".zip":
       return await _agfImport(filePath);
-    case ".png" || ".json":
+    case ".json":
+    case ".png":
       return await _sillyImport(filePath);
     default:
       return { kind: "err", error: new Error(`Unsupported file type: ${ext}`) };
@@ -198,7 +203,7 @@ async function import_(filePath: string): Promise<Result<void, Error>> {
 async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
   const ext = path.extname(filePath).toLowerCase();
   if (ext !== ".json" && ext !== ".png") {
-    return { kind: "err", error: new Error("Invalid file type. Must be .json or .png.") };
+    return { kind: "err", error: new Error("Invalid file type for SillyTavern card. Must be .json or .png.") };
   }
 
   const isPNG = ext === ".png";
@@ -220,40 +225,13 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
   }
   const sillyCard: SillyCardData = parseResult.data;
 
-  const agfCard: CardData = {
-    spec: "anime.gf",
-    spec_version: "1.0",
-    character: {
-      name: sillyCard.data.name,
-      description: [sillyCard.data.description, sillyCard.data.personality, sillyCard.data.scenario].join("\n\n"),
-      greeting: sillyCard.data.first_mes,
-      alt_greetings: sillyCard.data.alternate_greetings || [],
-      msg_examples: sillyCard.data.mes_example
-    },
-    world: {
-      description: ""
-    },
-    meta: {
-      title: sillyCard.data.name,
-      notes: sillyCard.data.creator_notes,
-      tagline: "",
-      tags: sillyCard.data.tags,
-      created_at: new Date().toISOString(),
-      creator: {
-        card: sillyCard.data.creator || "",
-        character: sillyCard.data.creator || "",
-        world: ""
-      }
-    }
-  };
-
-  const validateRes = cardSchema.safeParse(agfCard);
-  if (!validateRes.success) {
-    const hrError = fromError(validateRes.error);
-    return { kind: "err", error: new Error(`Failed to convert SillyTavern card: ${hrError}`) };
+  const agfCardRes = await _sillyCardToAGFCard(sillyCard);
+  if (agfCardRes.kind === "err") {
+    return agfCardRes;
   }
+  const agfCard = agfCardRes.value;
 
-  const cardDirRes = await _nameToCardDir(validateRes.data.character.name);
+  const cardDirRes = await _nameToCardDir(agfCard.character.name);
   if (cardDirRes.kind === "err") {
     return cardDirRes;
   }
@@ -261,12 +239,12 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
 
   try {
     await fsp.mkdir(dirPath);
-    // Write avatar
+    // Write .png file to avatar.png
     if (isPNG) {
       const avatarPath = path.join(dirPath, "avatar.png");
       await fsp.copyFile(filePath, avatarPath);
     }
-    // Remote avatar
+    // Remote avatar, download and write
     else {
       if (sillyCard.data.avatar && sillyCard.data.avatar === "none") {
         // download avatar from url
@@ -287,6 +265,52 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
     await fsp.rm(dirPath, { recursive: true });
     return { kind: "err", error: e };
   }
+}
+
+async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<CardData, Error>> {
+  // Convert all possible tags, filter out invalid ones, and limit to max count
+  const tags = sillyCard.data.tags
+    .map((tag) => tag.toLowerCase().trim())
+    .filter((tag) => {
+      const res = cardTagsSchema.safeParse(tag);
+      return res.success;
+    })
+    .slice(0, config.card.tagsMaxCount);
+
+  const agfCard: CardData = {
+    spec: "anime.gf",
+    spec_version: "1.0",
+    character: {
+      name: sillyCard.data.name,
+      description: [sillyCard.data.description, sillyCard.data.personality, sillyCard.data.scenario].join("\n"),
+      greeting: sillyCard.data.first_mes,
+      alt_greetings: sillyCard.data.alternate_greetings || [],
+      msg_examples: sillyCard.data.mes_example
+    },
+    world: {
+      description: ""
+    },
+    meta: {
+      title: sillyCard.data.name,
+      notes: sillyCard.data.creator_notes,
+      tagline: "",
+      tags: tags,
+      created_at: new Date().toISOString(),
+      creator: {
+        card: sillyCard.data.creator || "",
+        character: sillyCard.data.creator || "",
+        world: ""
+      }
+    }
+  };
+
+  const res = cardSchema.safeParse(agfCard);
+  if (!res.success) {
+    const hrError = fromError(res.error);
+    return { kind: "err", error: new Error(`Failed to convert SillyTavern card to anime.gf format: ${hrError}`) };
+  }
+
+  return { kind: "ok", value: res.data };
 }
 
 async function _pngToCharacterData(pngPath: string): Promise<Result<any, Error>> {
@@ -359,7 +383,7 @@ async function _nameToCardDir(name: string): Promise<Result<{ dirName: string; d
     };
   }
   const pathEscapedCharName = toPathEscapedStr(name);
-  const dirName = `${pathEscapedCharName}-${crypto.randomUUID()}`;
+  const dirName = `${pathEscapedCharName}-${v4()}`;
   const dirPath = path.join(cardsRootPath, dirName);
   return { kind: "ok", value: { dirName, dirPath } };
 }

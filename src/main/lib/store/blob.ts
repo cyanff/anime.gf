@@ -8,12 +8,12 @@
 // FIXME: Add proper transaction handling with support for rolling back *any* state as well as db state.
 // Ex: rollback file creation, db insertions, etc.
 // Wrap better-sqlite3
-
 import { PersonaBundleWithoutData, PersonaFormData, Result } from "@shared/types";
 import { isError, isValidFileName, toPathEscapedStr } from "@shared/utils";
 import { nativeImage } from "electron";
 import fsp from "fs/promises";
 import path from "path";
+import { v4 } from "uuid";
 import { cards } from "../cards";
 import { attainable, blobRootPath, cardsRootPath, copyFolder, personasRootPath, resourcesPath } from "../utils";
 import sqlite from "./sqlite";
@@ -84,7 +84,7 @@ export namespace personas {
     }
 
     const pathEscapedName = toPathEscapedStr(name);
-    const personaDirName = `${pathEscapedName}-${crypto.randomUUID()}`;
+    const personaDirName = `${pathEscapedName}-${v4()}`;
     const personaDirPath = path.join(personasRootPath, personaDirName);
     try {
       await fsp.mkdir(personaDirPath, { recursive: true });
@@ -159,7 +159,7 @@ export namespace personas {
 
     const oldName = res.name;
     const oldDirName = res.dir_name;
-    const newDirName = `${toPathEscapedStr(name)}-${crypto.randomUUID()}`;
+    const newDirName = `${toPathEscapedStr(name)}-${v4()}`;
     const isNameDifferent = name !== oldName;
 
     if (!isValidFileName(name)) {

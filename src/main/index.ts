@@ -10,7 +10,6 @@ import setting from "./lib/store/setting";
 import sqlite from "./lib/store/sqlite";
 import { cardsRootPath, personasRootPath } from "./lib/utils";
 
-// let loadingWindow: any;
 let window: any;
 let isQuiting = false;
 
@@ -259,20 +258,3 @@ function createWindow(): void {
     window.loadFile(join(__dirname, "../renderer/index.html"));
   }
 }
-
-// function createLoadingWindow() {
-//   loadingWindow = new BrowserWindow({
-//     width: 400,
-//     height: 300,
-//     frame: false,
-//     transparent: true,
-//     alwaysOnTop: true
-//   });
-//   if (is.dev) {
-//     loadingWindow.loadURL(join(process.env["ELECTRON_RENDERER_URL"] || "", "loading.html"));
-//   } else {
-//     loadingWindow.loadFile(join(__dirname, "../renderer/loading.html"));
-//   }
-
-//   loadingWindow.on("closed", () => (loadingWindow = null));
-// }

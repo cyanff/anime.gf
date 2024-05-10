@@ -2,6 +2,7 @@ import { ProviderE } from "@/lib/provider/provider";
 import { config } from "@shared/config";
 import { Persona } from "@shared/db_types";
 import { z } from "zod";
+import { supportedImageExts } from "./utils";
 
 // Card Schema
 // The core representation expected by all parts of the app.
@@ -28,26 +29,26 @@ const characterSchema = z.object({
 const worldSchema = z.object({
   description: z.string().min(config.card.descriptionMinChars).max(config.card.descriptionMaxChars)
 });
+
+const cardTagSchema = z
+  .string()
+  .min(config.card.tagMinChars)
+  .max(config.card.tagMaxChars)
+  .regex(/^[a-z0-9-\s]+$/, "Tag must be lowercase alphanumeric with dash and spaces allowed.");
+
+export const cardTagsSchema = z.array(cardTagSchema).min(config.card.tagsMinCount).max(config.card.tagsMaxCount);
+
 const metaSchema = z.object({
   title: z.string().min(config.card.titleMinChars).max(config.card.titleMaxChars),
   notes: z.string().min(config.card.notesMinChars).max(config.card.notesMaxChars),
   tagline: z.string().min(config.card.tagLineMinChars).max(config.card.taglineMaxChars),
-  tags: z
-    .array(
-      z
-        .string()
-        .min(config.card.tagMinChars)
-        .max(config.card.tagMaxChars)
-        .regex(/^[a-z0-9-\s]+$/, "Tag must be lowercase alphanumeric with dash and spaces allowed.")
-    )
-    .min(config.card.tagsMinCount)
-    .max(config.card.tagsMaxCount),
+  tags: cardTagsSchema,
   created_at: z.string().datetime(),
   updated_at: z.string().datetime().optional(),
   creator: z.object({
-    card: z.string().min(config.persona.nameMinChars).max(config.persona.nameMaxChars),
-    character: z.string().min(config.persona.nameMinChars).max(config.persona.nameMaxChars),
-    world: z.string().min(config.persona.nameMinChars).max(config.persona.nameMaxChars)
+    card: z.string().min(0).max(config.persona.nameMaxChars),
+    character: z.string().min(0).max(config.persona.nameMaxChars),
+    world: z.string().min(0).max(config.persona.nameMaxChars)
   })
 });
 
@@ -169,7 +170,8 @@ export interface Settings {
 }
 
 export type CardFormData = z.infer<typeof cardFormSchema>;
+
 export type Result<T, E> = { kind: "ok"; value: T } | { kind: "err"; error: E };
 
-export const supportedImageExts = ["png", "jpg", "webp", "gif"];
 export type ImageExt = (typeof supportedImageExts)[number];
+export type supportedCardExts = (typeof supportedImageExts)[number];

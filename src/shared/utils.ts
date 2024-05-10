@@ -77,3 +77,5 @@ export function toPathEscapedStr(str: string) {
 export function getFileExtension(fileName: string): string | undefined {
   return fileName.split(".").pop() || undefined;
 }
+
+export const supportedImageExts = ["png", "jpg", "webp", "gif"];

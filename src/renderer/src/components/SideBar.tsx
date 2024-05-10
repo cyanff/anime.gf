@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { card } from "@/lib/card";
+import { card, supportedCardExts } from "@/lib/card";
 import {
   ArrowDownOnSquareIcon,
   BookOpenIcon,
@@ -18,7 +18,7 @@ import {
   PlusCircleIcon,
   UserGroupIcon
 } from "@heroicons/react/24/solid";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { toast } from "sonner";
 
 interface SideBarProps {
@@ -30,9 +30,12 @@ export default function SideBar({ page, setPage }: SideBarProps) {
   const cardImportInputRef = useRef<HTMLInputElement>(null);
   const { syncCardBundles } = useApp();
 
-  async function cardImportInputChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log(e);
+  // Ex: ".png, .zip, json"
+  const acceptFilesStr = useMemo(() => {
+    return supportedCardExts.map((ext) => "." + ext).join(", ");
+  }, []);
 
+  async function cardImportInputChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (!files) return;
     const res = await card.importFromFileList(files);
@@ -49,6 +52,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
       toast.success(`${numValidFiles} files imported successfully.`);
     }
     syncCardBundles();
+    // Reset the inpupt so that the same file can be uploaded again
     e.target.value = "";
   }
 
@@ -58,7 +62,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
         ref={cardImportInputRef}
         className="hidden"
         type="file"
-        accept=".zip"
+        accept={acceptFilesStr}
         onChange={cardImportInputChangeHandler}
         multiple
       />
