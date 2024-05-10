@@ -335,7 +335,7 @@ export default function Message({
                   // Show edit field if editing
                   <div
                     ref={editFieldRef}
-                    className="scroll-secondary h-auto w-full overflow-y-scroll text-wrap break-all bg-transparent text-left focus:outline-none"
+                    className="scroll-secondary h-auto w-full overflow-y-scroll text-wrap whitespace-pre-line break-all bg-transparent text-left focus:outline-none"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         editSubmitHandler();
