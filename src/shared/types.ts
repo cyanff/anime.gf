@@ -13,7 +13,10 @@ const characterSchema = z.object({
     .string()
     .min(config.card.nameMinChars)
     .max(config.card.nameMaxChars)
-    .regex(/^[a-zA-Z0-9 -]*$/, "Name can only contain letters, numbers, spaces, and hyphens"),
+    .regex(
+      /^[\p{L}\p{N}_ -]+$/u,
+      "Invalid input. Only Unicode letters, numbers, spaces, hyphens, and underscores are allowed."
+    ),
   handle: z
     .string()
     .min(config.card.handleMinChars)
@@ -30,13 +33,13 @@ const worldSchema = z.object({
   description: z.string().min(config.card.descriptionMinChars).max(config.card.descriptionMaxChars)
 });
 
-const cardTagSchema = z
+export const cardTagSchema = z
   .string()
   .min(config.card.tagMinChars)
   .max(config.card.tagMaxChars)
   .regex(/^[a-z0-9-\s]+$/, "Tag must be lowercase alphanumeric with dash and spaces allowed.");
 
-export const cardTagsSchema = z.array(cardTagSchema).min(config.card.tagsMinCount).max(config.card.tagsMaxCount);
+const cardTagsSchema = z.array(cardTagSchema).min(config.card.tagsMinCount).max(config.card.tagsMaxCount);
 
 const metaSchema = z.object({
   title: z.string().min(config.card.titleMinChars).max(config.card.titleMaxChars),
@@ -44,7 +47,7 @@ const metaSchema = z.object({
   tagline: z.string().min(config.card.tagLineMinChars).max(config.card.taglineMaxChars),
   tags: cardTagsSchema,
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime().optional(),
+  updated_at: z.string().datetime().or(z.literal("")).optional(),
   creator: z.object({
     card: z.string().min(0).max(config.persona.nameMaxChars),
     character: z.string().min(0).max(config.persona.nameMaxChars),
@@ -85,7 +88,10 @@ const characterFormSchema = z.object({
     .string()
     .min(config.card.nameMinChars)
     .max(config.card.nameMaxChars)
-    .regex(/^[a-zA-Z0-9 -]*$/, "Name can only contain letters, numbers, spaces, and hyphens"),
+    .regex(
+      /^[\p{L}\p{N}_ -]+$/u,
+      "Invalid input. Only Unicode letters, numbers, spaces, hyphens, and underscores are allowed."
+    ),
   handle: z
     .string()
     .min(config.card.handleMinChars)
@@ -104,17 +110,25 @@ const worldFormSchema = z.object({
   description: z.string().min(config.card.descriptionMinChars).max(config.card.descriptionMaxChars)
 });
 const metaFormSchema = z.object({
-  title: z.string().min(config.card.titleMinChars).max(config.card.titleMaxChars),
+  title: z
+    .string()
+    .min(config.card.titleMinChars)
+    .max(config.card.titleMaxChars)
+    .regex(
+      /^[\p{L}\p{N}_ -]+$/u,
+      "Invalid input. Only Unicode letters, numbers, spaces, hyphens, and underscores are allowed."
+    ),
   notes: z.string().min(config.card.notesMinChars).max(config.card.notesMaxChars),
   tagline: z.string().min(config.card.tagLineMinChars).max(config.card.taglineMaxChars),
   // TODO: this should be z.array(z.string()) instead, this is hacky
   // Change this when you polish tag support
   // Use React Aria https://react-spectrum.adobe.com/react-aria/TagGroup.html
+  // Tags are a list of strings, all lowercase, alphanumeric, with dashes and spaces allowed.
   tags: z
     .string()
     .min(1)
-    .max(256)
-    .regex(/^(\w+)(,\s*\w+)*$/, "Tags must be a comma separated list of words without spaces.")
+    .max(512)
+    .regex(/^[a-z0-9-\s]+$/, "Tag must be lowercase alphanumeric with dash and spaces allowed.")
 });
 
 export const cardFormSchema = z.object({

@@ -1,5 +1,5 @@
 import { config } from "@shared/config";
-import { CardBundleWithoutID, CardData, Result, cardSchema, cardTagsSchema } from "@shared/types";
+import { CardBundleWithoutID, CardData, Result, cardSchema, cardTagSchema } from "@shared/types";
 import { deepFreeze, isValidFileName, toPathEscapedStr } from "@shared/utils";
 import archiver from "archiver";
 import { app, dialog } from "electron";
@@ -205,7 +205,7 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
   if (ext !== ".json" && ext !== ".png") {
     return { kind: "err", error: new Error("Invalid file type for SillyTavern card. Must be .json or .png.") };
   }
-
+  // Read silly tavern data depending on if it's a .png or .json file
   const isPNG = ext === ".png";
   let data: string;
   if (isPNG) {
@@ -218,6 +218,7 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
     data = await fsp.readFile(filePath, "utf8");
   }
 
+  // Parse SillyTavern card data
   const parseResult = sillyCardSchema.safeParse(JSON.parse(data));
   if (!parseResult.success) {
     const hrError = fromError(parseResult.error);
@@ -225,6 +226,7 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
   }
   const sillyCard: SillyCardData = parseResult.data;
 
+  // Convert SillyTavern card to anime.gf format
   const agfCardRes = await _sillyCardToAGFCard(sillyCard);
   if (agfCardRes.kind === "err") {
     return agfCardRes;
@@ -237,6 +239,7 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
   }
   const { dirName, dirPath } = cardDirRes.value;
 
+  // Create the anime.gf card in the cards directory
   try {
     await fsp.mkdir(dirPath);
     // Write .png file to avatar.png
@@ -249,7 +252,6 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
       if (sillyCard.data.avatar && sillyCard.data.avatar === "none") {
         // download avatar from url
         const avatarPath = path.join(dirPath, "avatar.png");
-
         const bufferRes = await downloadImageBuffer(sillyCard.data.avatar);
         if (bufferRes.kind === "err") {
           return bufferRes;
@@ -272,10 +274,13 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
   const tags = sillyCard.data.tags
     .map((tag) => tag.toLowerCase().trim())
     .filter((tag) => {
-      const res = cardTagsSchema.safeParse(tag);
+      const res = cardTagSchema.safeParse(tag);
+      console.log(`tag ${tag} is ${res.success ? "valid" : "invalid"}`);
       return res.success;
     })
     .slice(0, config.card.tagsMaxCount);
+
+  // Coerce name to /^[\p{L}\p{N}_ -]+$/u,
 
   const agfCard: CardData = {
     spec: "anime.gf",
@@ -303,6 +308,12 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
       }
     }
   };
+
+  console.log(JSON.stringify(agfCard, null, 2));
+  console.log("SillyCard", JSON.stringify(sillyCard, null, 2));
+  console.log("cardcreator", sillyCard.data.creator);
+  console.log("cardname", sillyCard.data.name);
+  console.log("cardtags", tags);
 
   const res = cardSchema.safeParse(agfCard);
   if (!res.success) {

@@ -1,0 +1,41 @@
+{
+  "React Component": {
+    "prefix": "agf-component",
+    "body": [
+      "interface ${1:Component}Props {",
+      "}",
+      "",
+      "export default function $1({}: $1Props) {",
+      "    return (",
+      "        <div>",
+      "        </div>",
+      "    )",
+      "}"
+    ],
+    "description": "Boilerplate for a React component",
+    "isFileTemplate": true
+  },
+  "Main Header": {
+    "prefix": "agf-header",
+    "body": [
+      "/* -------------------------------------------------------------------------- */",
+      "/*                                $1                                */",
+      "/* -------------------------------------------------------------------------- */"
+    ],
+    "description": "Inserts a main header comment block"
+  },
+  "Sub Header": {
+    "prefix": "agf-subheader",
+    "body": [
+      "/* ------------------------------ $1 ------------------------------ */"
+    ],
+    "description": "Inserts a sub header comment block"
+  },
+  "Line": {
+    "prefix": "agf-line",
+    "body": [
+      "/* -------------------------------------------------------------------------- */"
+    ],
+    "description": "Inserts a line comment"
+  }
+}

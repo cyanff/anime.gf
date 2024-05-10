@@ -5,9 +5,6 @@ VALUES
 
 INSERT INTO cards (dir_name)
 VALUES
-    ('zephyr'),
-    ('eliza'),
-    ('astro'),
     ('mai'),
     ('lucy'),
     ('yuno'),

@@ -38,7 +38,7 @@ export const config = {
     descriptionMaxChars: 524288,
 
     greetingMinChars: 1,
-    greetingMaxChars: 2048,
+    greetingMaxChars: 16384,
 
     altGreetingsMinCount: 0,
     altGreetingsMaxCount: 64,
@@ -53,7 +53,7 @@ export const config = {
     taglineMaxChars: 256,
 
     tagsMinCount: 0,
-    tagsMaxCount: 16,
+    tagsMaxCount: 32,
 
     tagMinChars: 1,
     tagMaxChars: 32,

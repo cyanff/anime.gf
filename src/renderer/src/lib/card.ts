@@ -35,6 +35,7 @@ async function importFromFileList(files: FileList): Promise<Result<void, Error>[
     }
 
     const res = await window.api.blob.cards.import_(file.path);
+
     results.push(res);
   }
 
