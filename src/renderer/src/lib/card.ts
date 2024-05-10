@@ -26,7 +26,7 @@ async function importFromFileList(files: FileList): Promise<Result<void, Error>[
       results.push({ kind: "err", error: new Error(`${file.name} is too large`) });
       continue;
     }
-    const res = await window.api.blob.cards.importFromZip(file.path);
+    const res = await window.api.blob.cards.import_(file.path);
     results.push(res);
   }
 
@@ -38,7 +38,7 @@ async function exportToZip(id: number): Promise<Result<void, Error>> {
   if (cardDirRes.kind === "err") {
     return cardDirRes;
   }
-  const exportRes = await window.api.blob.cards.exportToZip(cardDirRes.value);
+  const exportRes = await window.api.blob.cards.export_(cardDirRes.value);
   return exportRes;
 }
 

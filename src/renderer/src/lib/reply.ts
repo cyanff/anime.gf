@@ -1,4 +1,4 @@
-import { ProviderE, getProvider } from "@/lib/provider/provider";
+import { getProvider } from "@/lib/provider/provider";
 import { queries } from "@/lib/queries";
 import { CardData, PersonaData, Result } from "@shared/types";
 import { deepFreeze } from "@shared/utils";

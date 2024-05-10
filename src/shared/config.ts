@@ -25,38 +25,41 @@ export const config = {
     nameMaxChars: 128,
 
     descriptionMinChars: 0,
-    descriptionMaxChars: 768
+    descriptionMaxChars: 1024
   },
   card: {
     nameMinChars: 1,
     nameMaxChars: 128,
 
     handleMinChars: 1,
-    handleMaxChars: 15,
+    handleMaxChars: 32,
 
     descriptionMinChars: 0,
-    descriptionMaxChars: 768,
+    descriptionMaxChars: 524288,
 
     greetingMinChars: 1,
-    greetingMaxChars: 256,
+    greetingMaxChars: 2048,
+
+    altGreetingsMinCount: 0,
+    altGreetingsMaxCount: 64,
 
     msgExamplesMinChars: 0,
-    msgExamplesMaxChars: 1024,
+    msgExamplesMaxChars: 8192,
 
     titleMinChars: 1,
     titleMaxChars: 128,
 
     tagLineMinChars: 0,
-    taglineMaxChars: 128,
+    taglineMaxChars: 256,
 
     tagsMinCount: 0,
-    tagsMaxCount: 8,
+    tagsMaxCount: 16,
 
-    tagsMinChars: 2,
-    tagsMaxChars: 32,
+    tagMinChars: 1,
+    tagMaxChars: 32,
 
     notesMinChars: 0,
-    notesMaxChars: 2048
+    notesMaxChars: 4096
   },
   defaultSettings: defaultSettings
 };

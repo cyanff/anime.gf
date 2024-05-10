@@ -31,6 +31,8 @@ export default function SideBar({ page, setPage }: SideBarProps) {
   const { syncCardBundles } = useApp();
 
   async function cardImportInputChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
+    console.log(e);
+
     const files = e.target.files;
     if (!files) return;
     const res = await card.importFromFileList(files);
@@ -47,6 +49,7 @@ export default function SideBar({ page, setPage }: SideBarProps) {
       toast.success(`${numValidFiles} files imported successfully.`);
     }
     syncCardBundles();
+    e.target.value = "";
   }
 
   return (

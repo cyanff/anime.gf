@@ -1,4 +1,4 @@
-import { Result } from "@shared/types";
+import { ImageExt, Result } from "@shared/types";
 import { isError } from "@shared/utils";
 import { app } from "electron";
 import fs, { PathLike } from "fs";
@@ -87,4 +87,44 @@ export function copyFolder(src, dest) {
       fs.copyFileSync(srcPath, destPath);
     }
   });
+}
+
+export async function downloadImageBuffer(url: string): Promise<Result<Buffer, Error>> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      return { kind: "err", error: new Error(`Failed to download image from ${url}`) };
+    }
+
+    const arrayBuffer = await res.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const extRes = await imageExtFromBuffer(buffer);
+    if (extRes.kind === "err") {
+      throw extRes.error;
+    }
+    return { kind: "ok", value: buffer };
+  } catch (e) {
+    return { kind: "err", error: e };
+  }
+}
+
+const magicBytesPairs = [
+  ["89504E47", "png"],
+  ["FFD8FF", "jpg"],
+  ["52494646", "webp"],
+  ["47494638", "gif"]
+];
+
+export async function imageExtFromBuffer(buffer: Buffer): Promise<Result<ImageExt, Error>> {
+  try {
+    const magicBytes = buffer.toString("hex", 0, 4);
+    for (const [bytes, ext] of magicBytesPairs) {
+      if (magicBytes.startsWith(bytes)) {
+        return { kind: "ok", value: ext };
+      }
+    }
+    return { kind: "err", error: new Error("Unsupported image type") };
+  } catch (e) {
+    return { kind: "err", error: e };
+  }
 }

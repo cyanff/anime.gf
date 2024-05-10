@@ -46,12 +46,12 @@ async function init() {
     return await blob.cards.del(cardID);
   });
 
-  ipcMain.handle("blob.cards.exportToZip", async (_, card: string) => {
-    return await blob.cards.exportToZip(card);
+  ipcMain.handle("blob.cards.export_", async (_, card: string) => {
+    return await blob.cards.export_(card);
   });
 
-  ipcMain.handle("blob.cards.importFromZip", async (_, zip: string) => {
-    return await blob.cards.importFromZip(zip);
+  ipcMain.handle("blob.cards.import_", async (_, zip: string) => {
+    return await blob.cards.import_(zip);
   });
 
   ipcMain.handle("blob.personas.get", async (_, persona: string) => {

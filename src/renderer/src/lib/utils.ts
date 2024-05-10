@@ -14,6 +14,7 @@ export function cardFormDataToCardData(data: CardFormData): CardData {
       name: data.character.name,
       description: data.character.description,
       greeting: data.character.greeting,
+      alt_greetings: [],
       msg_examples: data.character.msg_examples
     },
     world: {
@@ -34,7 +35,6 @@ export function cardFormDataToCardData(data: CardFormData): CardData {
   };
 
   if (data.character.handle) card.character.handle = data.character.handle;
-
   return card as CardData;
 }
 

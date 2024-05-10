@@ -29,8 +29,8 @@ export interface API {
         avatarURI: string | null
       ) => Promise<Result<undefined, Error>>;
       del: (cardID: number) => Promise<Result<undefined, Error>>;
-      exportToZip: (card: string) => Promise<Result<void, Error>>;
-      importFromZip: (zip: string) => Promise<Result<void, Error>>;
+      export_: (card: string) => Promise<Result<void, Error>>;
+      import_: (zip: string) => Promise<Result<void, Error>>;
     };
     personas: {
       get: (persona: string) => Promise<Result<PersonaBundleWithoutData, Error>>;
@@ -81,8 +81,8 @@ const api: API = {
       update: (cardID, cardData, bannerURI, avatarURI) =>
         ipcRenderer.invoke("blob.cards.update", cardID, cardData, bannerURI, avatarURI),
       del: (cardID) => ipcRenderer.invoke("blob.cards.del", cardID),
-      exportToZip: (card) => ipcRenderer.invoke("blob.cards.exportToZip", card),
-      importFromZip: (zip) => ipcRenderer.invoke("blob.cards.importFromZip", zip)
+      export_: (card) => ipcRenderer.invoke("blob.cards.export_", card),
+      import_: (zip) => ipcRenderer.invoke("blob.cards.import_", zip)
     },
     personas: {
       get: (persona) => ipcRenderer.invoke("blob.personas.get", persona),

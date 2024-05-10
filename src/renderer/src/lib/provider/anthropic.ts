@@ -1,6 +1,5 @@
 import { Provider, ProviderConfig, ProviderMessage } from "@/lib/provider/provider";
 import { Result } from "@shared/types";
-import { on } from "events";
 import { XFetchConfig } from "src/main/lib/xfetch";
 import { v4 } from "uuid";
 
