@@ -117,9 +117,9 @@ const magicBytesPairs = [
 
 export async function imageExtFromBuffer(buffer: Buffer): Promise<Result<ImageExt, Error>> {
   try {
-    const magicBytes = buffer.toString("hex", 0, 4);
-    for (const [bytes, ext] of magicBytesPairs) {
-      if (magicBytes.startsWith(bytes)) {
+    const magicBytes = buffer.toString("hex", 0, 4).toUpperCase();
+    for (const [key, ext] of magicBytesPairs) {
+      if (magicBytes.startsWith(key)) {
         return { kind: "ok", value: ext };
       }
     }

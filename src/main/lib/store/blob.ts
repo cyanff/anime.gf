@@ -9,7 +9,7 @@
 // Ex: rollback file creation, db insertions, etc.
 // Wrap better-sqlite3
 import { PersonaBundleWithoutData, PersonaFormData, Result } from "@shared/types";
-import { isError, isValidFileName, toPathEscapedStr } from "@shared/utils";
+import { isError, isValidFileName, spacesToHyphens } from "@shared/utils";
 import { nativeImage } from "electron";
 import fsp from "fs/promises";
 import path from "path";
@@ -83,7 +83,7 @@ export namespace personas {
       };
     }
 
-    const pathEscapedName = toPathEscapedStr(name);
+    const pathEscapedName = spacesToHyphens(name);
     const personaDirName = `${pathEscapedName}-${v4()}`;
     const personaDirPath = path.join(personasRootPath, personaDirName);
     try {
@@ -159,7 +159,7 @@ export namespace personas {
 
     const oldName = res.name;
     const oldDirName = res.dir_name;
-    const newDirName = `${toPathEscapedStr(name)}-${v4()}`;
+    const newDirName = `${spacesToHyphens(name)}-${v4()}`;
     const isNameDifferent = name !== oldName;
 
     if (!isValidFileName(name)) {

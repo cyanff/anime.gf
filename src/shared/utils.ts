@@ -59,18 +59,13 @@ export function isError(error: any): asserts error is Error {
   }
 }
 
-/**
- * Checks if the given file name string is valid.
- * A valid file name MUST only contain alphanumeric characters, spaces, and hyphens.
- * This is critical to mitigate directory traversal.
- * @param name The name string to validate.
- * @returns `true` if the name is valid, `false` otherwise.
- */
+// Valid file name is unicode letters, numbers, spaces, hyphens, and underscores.
+// This is safe against path traversal
 export function isValidFileName(name: string): boolean {
-  return /^[\w\-\s]+$/.test(name);
+  return /^[\p{L}\p{N}_ -]+$/u.test(name);
 }
 
-export function toPathEscapedStr(str: string) {
+export function spacesToHyphens(str: string) {
   return str.toLowerCase().replace(/\s/g, "-");
 }
 

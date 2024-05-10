@@ -1,6 +1,6 @@
 import { config } from "@shared/config";
 import { CardBundleWithoutID, CardData, Result, cardSchema, cardTagSchema } from "@shared/types";
-import { deepFreeze, isValidFileName, toPathEscapedStr } from "@shared/utils";
+import { deepFreeze, isValidFileName, spacesToHyphens } from "@shared/utils";
 import archiver from "archiver";
 import { app, dialog } from "electron";
 import fs from "fs";
@@ -98,7 +98,7 @@ export async function create(
   bannerURI: string | null,
   avatarURI: string | null
 ): Promise<Result<undefined, Error>> {
-  const pathEscapedCharName = toPathEscapedStr(cardData.character.name);
+  const pathEscapedCharName = spacesToHyphens(cardData.character.name);
   const cardDirName = `${pathEscapedCharName}-${v4}`;
   const cardDirPath = path.join(cardsRootPath, cardDirName);
 
@@ -249,14 +249,15 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
     }
     // Remote avatar, download and write
     else {
-      if (sillyCard.data.avatar && sillyCard.data.avatar === "none") {
+      if (sillyCard.data.avatar && sillyCard.data.avatar !== "none") {
         // download avatar from url
         const avatarPath = path.join(dirPath, "avatar.png");
         const bufferRes = await downloadImageBuffer(sillyCard.data.avatar);
-        if (bufferRes.kind === "err") {
-          return bufferRes;
+
+        console.log("bufferRes", bufferRes);
+        if (bufferRes.kind === "ok") {
+          await fsp.writeFile(avatarPath, bufferRes.value);
         }
-        await fsp.writeFile(avatarPath, bufferRes.value);
       }
     }
     await fsp.writeFile(path.join(dirPath, "data.json"), JSON.stringify(agfCard, null, 2));
@@ -280,13 +281,15 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
     })
     .slice(0, config.card.tagsMaxCount);
 
-  // Coerce name to /^[\p{L}\p{N}_ -]+$/u,
+  // Replace all characters that are not unicode letters, numbers, spaces, hyphens, or underscores with an underscore
+  const name = sillyCard.data.name;
+  const cleanedName = name.replace(/[^\p{L}\p{N}_ -]/gu, "_");
 
   const agfCard: CardData = {
     spec: "anime.gf",
     spec_version: "1.0",
     character: {
-      name: sillyCard.data.name,
+      name: cleanedName,
       description: [sillyCard.data.description, sillyCard.data.personality, sillyCard.data.scenario].join("\n"),
       greeting: sillyCard.data.first_mes,
       alt_greetings: sillyCard.data.alternate_greetings || [],
@@ -296,7 +299,7 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
       description: ""
     },
     meta: {
-      title: sillyCard.data.name,
+      title: cleanedName,
       notes: sillyCard.data.creator_notes,
       tagline: "",
       tags: tags,
@@ -393,7 +396,7 @@ async function _nameToCardDir(name: string): Promise<Result<{ dirName: string; d
       )
     };
   }
-  const pathEscapedCharName = toPathEscapedStr(name);
+  const pathEscapedCharName = spacesToHyphens(name);
   const dirName = `${pathEscapedCharName}-${v4()}`;
   const dirPath = path.join(cardsRootPath, dirName);
   return { kind: "ok", value: { dirName, dirPath } };
