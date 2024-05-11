@@ -22,7 +22,7 @@ export async function handleA() {
   const cardData = { character: { name: "John" } } as CardData;
   const personaData = { name: "Jane" } as PersonaData;
 
-  const res = render("Hello {{user}}, you are roleplaying as {{char}}", {
+  const res = render("Hello {{user}}, <!-- comment --><div></div> you are roleplaying as {{char}}", {
     cardData: cardData,
     personaData: personaData
   });

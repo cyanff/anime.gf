@@ -1,3 +1,4 @@
+import { render } from "@/lib/macros";
 import { getProvider } from "@/lib/provider/provider";
 import { queries } from "@/lib/queries";
 import { CardData, PersonaData, Result } from "@shared/types";
@@ -117,7 +118,15 @@ async function _generate(
     url: settings.chat.url
   };
 
-  return await provider.getChatCompletion(ctx.messages, completionConfig, onRequestSent);
+  const chatCompletionRes = await provider.getChatCompletion(ctx.messages, completionConfig, onRequestSent);
+  if (chatCompletionRes.kind == "err") {
+    return chatCompletionRes;
+  }
+
+  const reply = chatCompletionRes.value;
+  const renderReplyRes = render(reply, contextParams);
+
+  return renderReplyRes.kind == "err" ? { kind: "ok", value: reply } : { kind: "ok", value: renderReplyRes.value };
 }
 
 export const reply = {

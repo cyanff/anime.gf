@@ -61,7 +61,13 @@ export const config = {
     notesMinChars: 0,
     notesMaxChars: 8096,
 
-    maxFileSizeBytes: 5e7
+    maxFileSizeBytes: 5e7,
+
+    systemPromptMinChars: 0,
+    systemPromptMaxChars: 4096,
+
+    postHistoryInstructionsMinChars: 0,
+    postHistoryInstructionsMaxChars: 8096
   },
   defaultSettings: defaultSettings
 };

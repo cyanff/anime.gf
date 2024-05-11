@@ -57,10 +57,9 @@ export default function ChatBar({
     } else {
       renderedUserInput = renderUserInputRes.value;
     }
-
     setUserInput("");
     setIsGenerating(true);
-    onMessageSend(cachedUserInput);
+    onMessageSend(renderedUserInput);
     try {
       const requestSentHandler = (uuid: string) => {
         requestUUIDRef.current = uuid;
@@ -76,18 +75,7 @@ export default function ChatBar({
         onMessageResolve(replyRes);
         return;
       }
-      const charReply = replyRes.value;
-
-      const renderedReplyRes = render(charReply, { cardData: cardBundle.data, personaData: personaBundle.data });
-      let renderedReply: string;
-      if (renderedReplyRes.kind === "err") {
-        console.error("Failed to render macros in character reply. Continuing anyways...", renderedReplyRes.error);
-        renderedReply = charReply;
-      } else {
-        renderedReply = renderedReplyRes.value;
-      }
-
-      const insertRes = await queries.insertMessagePair(chatID, renderedUserInput, renderedReply);
+      const insertRes = await queries.insertMessagePair(chatID, renderedUserInput, replyRes.value);
       onMessageResolve(insertRes);
     } catch (e) {
       // Restore user inputs

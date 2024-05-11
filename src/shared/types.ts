@@ -26,7 +26,12 @@ const characterSchema = z.object({
   description: z.string().min(config.card.descriptionMinChars).max(config.card.descriptionMaxChars),
   greeting: greetingSchema,
   alt_greetings: z.array(greetingSchema).min(config.card.altGreetingsMinCount).max(config.card.altGreetingsMaxCount),
-  msg_examples: z.string().min(config.card.msgExamplesMinChars).max(config.card.msgExamplesMaxChars)
+  msg_examples: z.string().min(config.card.msgExamplesMinChars).max(config.card.msgExamplesMaxChars),
+  system_prompt: z.string().min(config.card.systemPromptMinChars).max(config.card.systemPromptMaxChars),
+  post_history_instructions: z
+    .string()
+    .min(config.card.postHistoryInstructionsMinChars)
+    .max(config.card.postHistoryInstructionsMaxChars)
 });
 
 const worldSchema = z.object({

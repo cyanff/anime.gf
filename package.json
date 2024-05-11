@@ -74,6 +74,7 @@
     "react-hook-form": "^7.51.3",
     "react-markdown": "^9.0.1",
     "sonner": "^1.4.41",
+    "string-strip-html": "^8.4.0",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1",

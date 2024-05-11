@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { useShiftKey } from "@/lib/hook/useShiftKey";
+import { render } from "@/lib/macros";
 import { MessageHistory, MessageWithCandidates, queries } from "@/lib/queries";
 import { reply } from "@/lib/reply";
 import { MessageCandidate as MessageCandidateI, Message as MessageI } from "@shared/db_types";
@@ -176,10 +177,13 @@ export default function Message({
 
     try {
       const id = choices[idx].id;
+      const renderMacrosRes = render(editText, { cardData: cardBundle.data, personaData: personaBundle.data });
+      const renderedEditText = renderMacrosRes.kind === "err" ? editText : renderMacrosRes.value;
+
       if (choices[idx].kind === "message") {
-        await queries.updateMessageText(id, editText);
+        await queries.updateMessageText(id, renderedEditText);
       } else {
-        await queries.updateCandidateMessage(id, editText);
+        await queries.updateCandidateMessage(id, renderedEditText);
       }
     } catch (e) {
       toast.error(`Failed to edit the message. Error: ${e}`);
@@ -244,6 +248,7 @@ export default function Message({
       createDialog(config);
     }
   };
+
   const regenerateHandler = async () => {
     if (isGenerating) {
       toast.info("Already generating a reply. Please wait...");
@@ -335,7 +340,7 @@ export default function Message({
                   // Show edit field if editing
                   <div
                     ref={editFieldRef}
-                    className="scroll-secondary h-auto w-full overflow-y-scroll text-wrap break-all bg-transparent text-left focus:outline-none"
+                    className="scroll-secondary whitespace-pre-line h-auto w-full overflow-y-scroll text-wrap break-all bg-transparent text-left focus:outline-none"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         editSubmitHandler();

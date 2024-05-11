@@ -10,6 +10,7 @@ import JSZip from "jszip";
 import path from "path";
 import tEXt from "png-chunk-text";
 import extract from "png-chunks-extract";
+import { stripHtml } from "string-strip-html";
 import { v4 } from "uuid";
 import { z } from "zod";
 import { fromError } from "zod-validation-error";
@@ -269,34 +270,47 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
 
 async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<CardData, Error>> {
   // Convert all possible tags, filter out invalid ones, and limit to max count
-  const tags = sillyCard.data.tags
+  const cleanedTags = sillyCard.data.tags
     .map((tag) => tag.toLowerCase().trim())
     .filter((tag) => {
       const res = cardTagSchema.safeParse(tag);
       return res.success;
     })
     .slice(0, config.card.tagsMaxCount);
-
-  // Replace all characters that are not unicode letters, numbers, spaces, hyphens, or underscores with an underscore
-  const name = sillyCard.data.name;
-  const cleanedName = name.replace(/[^\p{L}\p{N}_ -]/gu, "_");
-
-  const creatorName = sillyCard.data.creator || "";
+  const cleanedName = sillyCard.data.name.replace(/[^\p{L}\p{N}_ -]/gu, "_").substring(0, config.card.nameMaxChars);
+  const creatorName = sillyCard.data.creator?.substring(0, config.card.nameMaxChars) || "";
   const cleanedCreatorName = creatorName.replace(/[^\p{L}\p{N}_ -]/gu, "_");
-
   const strippedCreatorNotes = md.strip(sillyCard.data.creator_notes, {}).trim();
   const trimmedCreatorNotes = strippedCreatorNotes.substring(0, config.card.notesMaxChars);
   const trimmedTagline = strippedCreatorNotes.substring(0, config.card.taglineMaxChars);
+  const description = [sillyCard.data.description, sillyCard.data.personality, sillyCard.data.scenario].join("\n");
+  const cleanedDescription = stripHtml(description).result.substring(0, config.card.descriptionMaxChars);
+  const cleanedGreeting = stripHtml(sillyCard.data.first_mes).result.substring(0, config.card.greetingMaxChars);
+  const cleanedAltGreetings =
+    sillyCard.data.alternate_greetings?.map((greeting) =>
+      stripHtml(greeting).result.substring(0, config.card.greetingMaxChars)
+    ) || [];
+  const cleanedMsgExamples = stripHtml(sillyCard.data.mes_example).result.substring(0, config.card.msgExamplesMaxChars);
+  const cleanedSystemPrompt = stripHtml(sillyCard.data.system_prompt).result.substring(
+    0,
+    config.card.systemPromptMaxChars
+  );
+  const cleanedPostHistoryInstructions = stripHtml(sillyCard.data.post_history_instructions).result.substring(
+    0,
+    config.card.postHistoryInstructionsMaxChars
+  );
 
   const agfCard: CardData = {
     spec: "anime.gf",
     spec_version: "1.0",
     character: {
       name: cleanedName,
-      description: [sillyCard.data.description, sillyCard.data.personality, sillyCard.data.scenario].join("\n"),
-      greeting: sillyCard.data.first_mes,
-      alt_greetings: sillyCard.data.alternate_greetings || [],
-      msg_examples: sillyCard.data.mes_example
+      description: cleanedDescription,
+      greeting: cleanedGreeting,
+      alt_greetings: cleanedAltGreetings,
+      msg_examples: cleanedMsgExamples,
+      system_prompt: cleanedSystemPrompt,
+      post_history_instructions: cleanedPostHistoryInstructions
     },
     world: {
       description: ""
@@ -305,7 +319,7 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
       title: cleanedName,
       notes: trimmedCreatorNotes,
       tagline: trimmedTagline,
-      tags: tags,
+      tags: cleanedTags,
       created_at: new Date().toISOString(),
       creator: {
         card: cleanedCreatorName,
@@ -320,7 +334,6 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
     const hrError = fromError(res.error);
     return { kind: "err", error: new Error(`Failed to convert SillyTavern card to anime.gf format: ${hrError}`) };
   }
-
   return { kind: "ok", value: res.data };
 }
 

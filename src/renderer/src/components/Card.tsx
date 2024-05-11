@@ -12,6 +12,7 @@ import {
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
 import { card } from "@/lib/card";
+import { render } from "@/lib/macros";
 import { queries } from "@/lib/queries";
 import { ArrowUpOnSquareIcon, ChatBubbleLeftRightIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { CardBundle, PersonaBundle } from "@shared/types";
@@ -55,8 +56,10 @@ function Card({ cardBundle }: CardProps) {
       return;
     }
     const chatID = createChatRes.value.lastInsertRowid as number;
+    const renderRes = render(greeting, { cardData: cardBundle.data, personaData: personaBundle.data });
+    const renderedGreeting = renderRes.kind === "err" ? greeting : renderRes.value;
 
-    const insertGreetingRes = await queries.insertMessage(chatID, greeting, "character");
+    const insertGreetingRes = await queries.insertMessage(chatID, renderedGreeting, "character");
     if (insertGreetingRes.kind == "err") {
       toast.error("Error inserting character greeting message.");
     }
