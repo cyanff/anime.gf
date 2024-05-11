@@ -1,3 +1,4 @@
+import { render } from "@/lib/macros";
 import { ProviderMessage } from "@/lib/provider/provider";
 import { ContextMessage, queries } from "@/lib/queries";
 import { getTokenizer } from "@/lib/tokenizer/provider";
@@ -170,8 +171,12 @@ function renderSystemPrompt(params: SystemPromptParams): Result<string, Error> {
     jailbreak: params.jailbreak
   };
   try {
-    const systemPrompt = Mustache.render(template, ctx);
-    return { kind: "ok", value: systemPrompt };
+    const renderedSystemPrompt = Mustache.render(template, ctx);
+    const renderMacroRes = render(renderedSystemPrompt, { cardData: params.cardData, personaData: params.personaData });
+    if (renderMacroRes.kind === "err") {
+      return { kind: "err", error: renderMacroRes.error };
+    }
+    return { kind: "ok", value: renderMacroRes.value };
   } catch (e) {
     return { kind: "err", error: e };
   }

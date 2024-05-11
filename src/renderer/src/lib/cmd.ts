@@ -14,7 +14,20 @@
 //   topK?: number;
 // }
 
-export async function handleA() {}
+import { render } from "@/lib/macros";
+import { CardData, PersonaData } from "@shared/types";
+
+export async function handleA() {
+  // replace {{user}} and {{char}}
+  const cardData = { character: { name: "John" } } as CardData;
+  const personaData = { name: "Jane" } as PersonaData;
+
+  const res = render("Hello {{user}}, you are roleplaying as {{char}}", {
+    cardData: cardData,
+    personaData: personaData
+  });
+  console.log(res);
+}
 
 export async function handleB() {}
 

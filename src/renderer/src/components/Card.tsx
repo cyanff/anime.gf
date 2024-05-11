@@ -117,7 +117,7 @@ function Card({ cardBundle }: CardProps) {
               >
                 {cardBundle.data.character.name}
               </div>
-              <div className="absolute -top-20 z-10 overflow-hidden pl-5 text-left text-sm font-[530] text-tx-secondary">
+              <div className="absolute -top-20 z-10 whitespace-pre-line line-clamp-3 overflow-hidden pl-5 text-left text-sm font-[530] text-tx-secondary">
                 {cardBundle.data.meta.tagline}
               </div>
               <div className="absolute -top-2 h-16 space-x-0.5 space-y-1 overflow-hidden pl-5 text-left">

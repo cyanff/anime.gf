@@ -199,7 +199,7 @@ function ChatArea({ chatID, personaBundle }: ChatAreaProps) {
           transition={{ duration: 0.15, delay: 0.12 }}
           ref={messageHistoryRef}
           onScroll={scrollHandler}
-          className="relative scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-auto px-5 overflow-x-clip transition duration-500 ease-out"
+          className="relative pt-2 scroll-primary mr-2 flex grow scroll-py-0 flex-col space-y-4 overflow-auto px-5 overflow-x-clip transition duration-500 ease-out"
         >
           {messageHistory?.map((message) => {
             return (

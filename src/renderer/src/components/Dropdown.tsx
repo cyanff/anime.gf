@@ -20,7 +20,7 @@ export default function Dropdown({ label, content }: DropdownProps) {
         <ChevronDownIcon className={`duration-125 size-5 transition  ${isOpen ? "rotate-180 transform" : ""}`} />
       </button>
       <div
-        className={`bg-container-tertiary overflow-hidden rounded-b-xl transition-all duration-200 ease-in-out ${
+        className={`bg-container-tertiary overflow-auto scroll-secondary rounded-b-xl transition-all duration-200 ease-in-out ${
           isOpen ? "max-h-96" : "max-h-0"
         }`}
       >

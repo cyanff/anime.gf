@@ -1,3 +1,4 @@
+import { render } from "@/lib/macros";
 import { queries } from "@/lib/queries";
 import { reply } from "@/lib/reply";
 import { cn } from "@/lib/utils";
@@ -47,19 +48,46 @@ export default function ChatBar({
   const sendMessageHandler = async () => {
     if (isGenerating) return;
     const cachedUserInput = userInput;
+    const renderUserInputRes = render(userInput, { cardData: cardBundle.data, personaData: personaBundle.data });
+
+    let renderedUserInput: string;
+    if (renderUserInputRes.kind === "err") {
+      console.error("Failed to render macros in user input. Continuing anyways...", renderUserInputRes.error);
+      renderedUserInput = userInput;
+    } else {
+      renderedUserInput = renderUserInputRes.value;
+    }
+
     setUserInput("");
     setIsGenerating(true);
-    onMessageSend(userInput);
+    onMessageSend(cachedUserInput);
     try {
       const requestSentHandler = (uuid: string) => {
         requestUUIDRef.current = uuid;
       };
-      const replyRes = await reply.generate(chatID, cardBundle.data, personaBundle.data, userInput, requestSentHandler);
+      const replyRes = await reply.generate(
+        chatID,
+        cardBundle.data,
+        personaBundle.data,
+        renderedUserInput,
+        requestSentHandler
+      );
       if (replyRes.kind === "err") {
         onMessageResolve(replyRes);
         return;
       }
-      const insertRes = await queries.insertMessagePair(chatID, userInput, replyRes.value);
+      const charReply = replyRes.value;
+
+      const renderedReplyRes = render(charReply, { cardData: cardBundle.data, personaData: personaBundle.data });
+      let renderedReply: string;
+      if (renderedReplyRes.kind === "err") {
+        console.error("Failed to render macros in character reply. Continuing anyways...", renderedReplyRes.error);
+        renderedReply = charReply;
+      } else {
+        renderedReply = renderedReplyRes.value;
+      }
+
+      const insertRes = await queries.insertMessagePair(chatID, renderedUserInput, renderedReply);
       onMessageResolve(insertRes);
     } catch (e) {
       // Restore user inputs

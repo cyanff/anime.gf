@@ -1,4 +1,5 @@
 import { config } from "@shared/config";
+import { md } from "@shared/md";
 import { CardBundleWithoutID, CardData, Result, cardSchema, cardTagSchema } from "@shared/types";
 import { deepFreeze, isValidFileName, spacesToHyphens } from "@shared/utils";
 import archiver from "archiver";
@@ -174,7 +175,6 @@ export async function del(cardID: number): Promise<Result<undefined, Error>> {
   try {
     // Delete the card directory
     await fs.promises.rm(cardDirPath, { recursive: true });
-
     return { kind: "ok", value: undefined };
   } catch (error) {
     return { kind: "err", error: error };
@@ -188,7 +188,6 @@ async function import_(filePath: string): Promise<Result<void, Error>> {
 
   const ext = path.extname(filePath).toLowerCase();
 
-  console.log("ext", ext);
   switch (ext) {
     case ".zip":
       return await _agfImport(filePath);
@@ -253,8 +252,6 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
         // download avatar from url
         const avatarPath = path.join(dirPath, "avatar.png");
         const bufferRes = await downloadImageBuffer(sillyCard.data.avatar);
-
-        console.log("bufferRes", bufferRes);
         if (bufferRes.kind === "ok") {
           await fsp.writeFile(avatarPath, bufferRes.value);
         }
@@ -276,7 +273,6 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
     .map((tag) => tag.toLowerCase().trim())
     .filter((tag) => {
       const res = cardTagSchema.safeParse(tag);
-      console.log(`tag ${tag} is ${res.success ? "valid" : "invalid"}`);
       return res.success;
     })
     .slice(0, config.card.tagsMaxCount);
@@ -284,6 +280,13 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
   // Replace all characters that are not unicode letters, numbers, spaces, hyphens, or underscores with an underscore
   const name = sillyCard.data.name;
   const cleanedName = name.replace(/[^\p{L}\p{N}_ -]/gu, "_");
+
+  const creatorName = sillyCard.data.creator || "";
+  const cleanedCreatorName = creatorName.replace(/[^\p{L}\p{N}_ -]/gu, "_");
+
+  const strippedCreatorNotes = md.strip(sillyCard.data.creator_notes, {}).trim();
+  const trimmedCreatorNotes = strippedCreatorNotes.substring(0, config.card.notesMaxChars);
+  const trimmedTagline = strippedCreatorNotes.substring(0, config.card.taglineMaxChars);
 
   const agfCard: CardData = {
     spec: "anime.gf",
@@ -300,23 +303,17 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
     },
     meta: {
       title: cleanedName,
-      notes: sillyCard.data.creator_notes,
-      tagline: "",
+      notes: trimmedCreatorNotes,
+      tagline: trimmedTagline,
       tags: tags,
       created_at: new Date().toISOString(),
       creator: {
-        card: sillyCard.data.creator || "",
-        character: sillyCard.data.creator || "",
+        card: cleanedCreatorName,
+        character: cleanedCreatorName,
         world: ""
       }
     }
   };
-
-  console.log(JSON.stringify(agfCard, null, 2));
-  console.log("SillyCard", JSON.stringify(sillyCard, null, 2));
-  console.log("cardcreator", sillyCard.data.creator);
-  console.log("cardname", sillyCard.data.name);
-  console.log("cardtags", tags);
 
   const res = cardSchema.safeParse(agfCard);
   if (!res.success) {

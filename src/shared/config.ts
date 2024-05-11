@@ -59,7 +59,7 @@ export const config = {
     tagMaxChars: 32,
 
     notesMinChars: 0,
-    notesMaxChars: 4096,
+    notesMaxChars: 8096,
 
     maxFileSizeBytes: 5e7
   },
