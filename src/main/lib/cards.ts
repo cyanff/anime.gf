@@ -22,7 +22,7 @@ const sillyCardSchema = z.object({
   spec_version: z.literal("2.0"),
   data: z.object({
     name: z.string(),
-    avatar: z.string(),
+    avatar: z.string().optional(),
     description: z.string(),
     personality: z.string(),
     scenario: z.string(),
