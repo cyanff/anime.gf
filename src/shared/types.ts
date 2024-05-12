@@ -28,10 +28,7 @@ const characterSchema = z.object({
   alt_greetings: z.array(greetingSchema).min(config.card.altGreetingsMinCount).max(config.card.altGreetingsMaxCount),
   msg_examples: z.string().min(config.card.msgExamplesMinChars).max(config.card.msgExamplesMaxChars),
   system_prompt: z.string().min(config.card.systemPromptMinChars).max(config.card.systemPromptMaxChars),
-  post_history_instructions: z
-    .string()
-    .min(config.card.postHistoryInstructionsMinChars)
-    .max(config.card.postHistoryInstructionsMaxChars)
+  jailbreak: z.string().min(config.card.jailbreakMinChars).max(config.card.jailbreakMaxChars)
 });
 
 const worldSchema = z.object({

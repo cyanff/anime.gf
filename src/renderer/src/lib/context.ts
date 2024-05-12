@@ -17,7 +17,7 @@ export interface ContextParams {
   model: string;
   tokenLimit: number;
 }
-interface SystemPromptParams extends Pick<ContextParams, "cardData" | "personaData" | "jailbreak"> {
+interface SystemPromptParams extends Pick<ContextParams, "cardData" | "personaData"> {
   variant: PromptVariant;
   characterMemory: string;
 }
@@ -27,30 +27,25 @@ interface Context {
 }
 
 /**
- * Generates a context object containing the system prompt and an array of messages for a given set of parameters.
- * A context includes:
- * - The system prompt
- * - The array of messages in the context window
- * @returns A Context object containing the system prompt and an array of context window messages.
- * Messages in the context window will *always* abide to the following rules:
- * - The first message is a user message.
- * - Messages alternate between user and assistant roles.
- * - The last message is a user message (userMessageTerminator).
+ * Generates a context object containing the system prompt and the array of messages for a given set of parameters.
  */
 async function get(params: ContextParams): Promise<Result<Context, Error>> {
-  const systemPromptParams = {
-    cardData: params.cardData,
-    personaData: params.personaData,
-    characterMemory: "",
-    jailbreak: params.jailbreak,
-    variant: getPromptVariant(params.model)
-  };
-
-  const systemPromptRes = renderSystemPrompt(systemPromptParams);
-  if (systemPromptRes.kind === "err") {
-    return systemPromptRes;
+  let systemPrompt: string;
+  if (params.cardData.character.system_prompt) {
+    systemPrompt = params.cardData.character.system_prompt;
+  } else {
+    const systemPromptParams = {
+      cardData: params.cardData,
+      personaData: params.personaData,
+      characterMemory: "",
+      variant: getPromptVariant(params.model)
+    };
+    const systemPromptRes = renderSystemPrompt(systemPromptParams);
+    if (systemPromptRes.kind === "err") {
+      return systemPromptRes;
+    }
+    systemPrompt = systemPromptRes.value;
   }
-  const systemPrompt = systemPromptRes.value;
 
   const tokenizer = getTokenizer(params.model);
   const userMessageTokens = tokenizer.countTokens(params.userMessageTerminator);
@@ -89,7 +84,15 @@ async function get(params: ContextParams): Promise<Result<Context, Error>> {
     }
   }
   contextWindow.reverse();
-  const providerMessages = toProviderMessages(contextWindow, params.userMessageTerminator);
+
+  // Add global or card specific jailbreak to the final user message
+  let userMessageTerminator = params.userMessageTerminator;
+  const jailbreak = params.cardData.character.jailbreak || params.jailbreak;
+  if (jailbreak) {
+    userMessageTerminator += "\n\n" + jailbreak;
+  }
+
+  const providerMessages = _toProviderMessages(contextWindow, userMessageTerminator);
 
   console.log("systemPrompt", systemPrompt);
   console.log("providerMessages", providerMessages);
@@ -113,7 +116,7 @@ async function get(params: ContextParams): Promise<Result<Context, Error>> {
  * @param latestUserMessage - The latest user message to be added to the end of the `ProviderMessage` array.
  * @returns An array of `ProviderMessage` objects representing the conversation history in the format expected by the provider.
  */
-function toProviderMessages(messages: ContextMessage[], latestUserMessage: string): ProviderMessage[] {
+function _toProviderMessages(messages: ContextMessage[], latestUserMessage: string): ProviderMessage[] {
   let ret = messages.map((m) => {
     return {
       role: m.sender === "user" ? "user" : "assistant",
@@ -167,8 +170,7 @@ function renderSystemPrompt(params: SystemPromptParams): Result<string, Error> {
   const ctx = {
     card: params.cardData,
     persona: params.personaData,
-    characterMemory: params.characterMemory,
-    jailbreak: params.jailbreak
+    characterMemory: params.characterMemory
   };
   try {
     const renderedSystemPrompt = Mustache.render(template, ctx);
@@ -225,9 +227,7 @@ User's description: {{{persona.description}}}
 <message_examples>
 {{{card.character.msg_examples}}}
 </message_examples>
-{{/card.character.msg_examples}}
-
-{{{jailbreak}}}`.trim();
+{{/card.character.msg_examples}}`.trim();
 
     case "markdown":
       return `
@@ -263,9 +263,7 @@ User's description: {{{persona.description}}}
 
 ### Messages Examples
 {{{card.character.msg_examples}}}
-{{/card.character.msg_examples}} \
-
-{{{jailbreak}}}`.trim();
+{{/card.character.msg_examples}}`.trim();
     default:
       throw new Error("Invalid prompt variant");
   }

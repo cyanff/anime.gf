@@ -66,8 +66,8 @@ export const config = {
     systemPromptMinChars: 0,
     systemPromptMaxChars: 4096,
 
-    postHistoryInstructionsMinChars: 0,
-    postHistoryInstructionsMaxChars: 8096
+    jailbreakMinChars: 0,
+    jailbreakMaxChars: 8096
   },
   defaultSettings: defaultSettings
 };

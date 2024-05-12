@@ -144,7 +144,7 @@ export async function update(
 ): Promise<Result<undefined, Error>> {
   // Retrieve the dir_name of the card from the database using the id
   const query = `SELECT dir_name FROM cards WHERE id =?;`;
-  const row = (await sqlite.get(query, [cardID])) as { dir_name: string };
+  const row = sqlite.get(query, [cardID]) as { dir_name: string };
 
   // Construct the path to the card directory
   const cardDirPath = path.join(cardsRootPath, row.dir_name);
@@ -297,7 +297,7 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
   );
   const cleanedPostHistoryInstructions = stripHtml(sillyCard.data.post_history_instructions).result.substring(
     0,
-    config.card.postHistoryInstructionsMaxChars
+    config.card.jailbreakMaxChars
   );
 
   const agfCard: CardData = {
@@ -310,7 +310,7 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
       alt_greetings: cleanedAltGreetings,
       msg_examples: cleanedMsgExamples,
       system_prompt: cleanedSystemPrompt,
-      post_history_instructions: cleanedPostHistoryInstructions
+      jailbreak: cleanedPostHistoryInstructions
     },
     world: {
       description: ""
