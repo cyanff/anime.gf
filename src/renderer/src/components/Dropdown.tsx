@@ -1,5 +1,6 @@
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
+import Markdown from "react-markdown";
 
 interface DropdownProps {
   label: string;
@@ -19,13 +20,15 @@ export default function Dropdown({ label, content }: DropdownProps) {
         <span>{label}</span>
         <ChevronDownIcon className={`duration-125 size-5 transition  ${isOpen ? "rotate-180 transform" : ""}`} />
       </button>
-      <div
-        className={`bg-container-tertiary overflow-auto scroll-secondary rounded-b-xl transition-all duration-200 ease-in-out ${
-          isOpen ? "max-h-96" : "max-h-0"
-        }`}
+      <Markdown
+        unwrapDisallowed
+        skipHtml
+        className={`whitespace-pre-line bg-container-tertiary overflow-auto
+        scroll-secondary rounded-b-xl transition duration-200 ease-in-out
+        text-sm text-tx-secondary ${isOpen ? "max-h-96 px-4 pb-2 pt-4" : "max-h-0"}`}
       >
-        <p className="px-4 pb-2 pt-4 text-sm text-tx-secondary">{content}</p>
-      </div>
+        {content}
+      </Markdown>
     </div>
   );
 }

@@ -106,7 +106,7 @@ export default function ChatsSidebar({ chatID, personaBundle }: ChatsSideBarProp
             </div>
 
             {/* Recent Chats */}
-            <div className="scroll-secondary flex h-96 grow flex-col space-y-1.5 overflow-auto px-2">
+            <div className="scroll-secondary flex h-96 grow flex-col space-y-1.5 overflow-y-auto overflow-x-hidden px-2">
               {recentChatResults?.map((recentChatResult, _) => {
                 const recentChatID = recentChatResult.value.chat_id;
                 return (
@@ -179,11 +179,11 @@ function RecentChat({ recentChatResult: chatRes, isActive, onDelete, onReset, cl
         >
           <Avatar avatarURI={avatarURI} />
 
-          <div className={"flex h-full max-w-full flex-col justify-center "}>
+          <div className={"flex h-full max-w-full flex-col justify-center overflow-hidden"}>
             {isOk ? (
               <>
                 <h3 className="text-tx-primary line-clamp-1 text-ellipsis">{chatRes.value.name}</h3>
-                <p className="text-tx-secondary line-clamp-1 text-ellipsis text-[14.5px]">
+                <p className="text-tx-secondary line-clamp-1 text-ellipsis text-[14.5px] w-full">
                   {chatRes.value.last_message}
                 </p>
               </>

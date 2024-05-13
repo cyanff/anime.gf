@@ -73,6 +73,7 @@
     "react-error-boundary": "^4.0.13",
     "react-hook-form": "^7.51.3",
     "react-markdown": "^9.0.1",
+    "remark-gfm": "^4.0.0",
     "sonner": "^1.4.41",
     "string-strip-html": "^8.4.0",
     "tailwind-merge": "^2.2.1",

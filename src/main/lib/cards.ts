@@ -242,15 +242,13 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
   // Create the anime.gf card in the cards directory
   try {
     await fsp.mkdir(dirPath);
-    // Write .png file to avatar.png
+    // Use the png as the avatar
     if (isPNG) {
       const avatarPath = path.join(dirPath, "avatar.png");
       await fsp.copyFile(filePath, avatarPath);
-    }
-    // Remote avatar, download and write
-    else {
+    } else {
+      // Remote avatar specified, download and save it
       if (sillyCard.data.avatar && sillyCard.data.avatar !== "none") {
-        // download avatar from url
         const avatarPath = path.join(dirPath, "avatar.png");
         const bufferRes = await downloadImageBuffer(sillyCard.data.avatar);
         if (bufferRes.kind === "ok") {
@@ -280,22 +278,21 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
   const cleanedName = sillyCard.data.name.replace(/[^\p{L}\p{N}_ -]/gu, "_").substring(0, config.card.nameMaxChars);
   const creatorName = sillyCard.data.creator?.substring(0, config.card.nameMaxChars) || "";
   const cleanedCreatorName = creatorName.replace(/[^\p{L}\p{N}_ -]/gu, "_");
-  const strippedCreatorNotes = md.strip(sillyCard.data.creator_notes, {}).trim();
-  const trimmedCreatorNotes = strippedCreatorNotes.substring(0, config.card.notesMaxChars);
-  const trimmedTagline = strippedCreatorNotes.substring(0, config.card.taglineMaxChars);
+
+  const notes = sillyCard.data.creator_notes;
+  const trimmedCreatorNotes = notes.substring(0, config.card.notesMaxChars);
+  const trimmedTagline = md.strip(notes, {}).substring(0, config.card.taglineMaxChars);
+
   const description = [sillyCard.data.description, sillyCard.data.personality, sillyCard.data.scenario].join("\n");
-  const cleanedDescription = stripHtml(description).result.substring(0, config.card.descriptionMaxChars);
-  const cleanedGreeting = stripHtml(sillyCard.data.first_mes).result.substring(0, config.card.greetingMaxChars);
-  const cleanedAltGreetings =
-    sillyCard.data.alternate_greetings?.map((greeting) =>
-      stripHtml(greeting).result.substring(0, config.card.greetingMaxChars)
-    ) || [];
-  const cleanedMsgExamples = stripHtml(sillyCard.data.mes_example).result.substring(0, config.card.msgExamplesMaxChars);
-  const cleanedSystemPrompt = stripHtml(sillyCard.data.system_prompt).result.substring(
-    0,
-    config.card.systemPromptMaxChars
-  );
-  const cleanedPostHistoryInstructions = stripHtml(sillyCard.data.post_history_instructions).result.substring(
+  const trimmedDescription = description.substring(0, config.card.descriptionMaxChars);
+
+  const trimmedGreeting = sillyCard.data.first_mes.substring(0, config.card.greetingMaxChars);
+
+  const trimmedAltGreetings =
+    sillyCard.data.alternate_greetings?.map((greeting) => greeting.substring(0, config.card.greetingMaxChars)) || [];
+  const trimmeMsgExamples = sillyCard.data.mes_example.substring(0, config.card.msgExamplesMaxChars);
+  const trimmedSystemPrompt = sillyCard.data.system_prompt.substring(0, config.card.systemPromptMaxChars);
+  const trimmedPostHistoryInstructions = sillyCard.data.post_history_instructions.substring(
     0,
     config.card.jailbreakMaxChars
   );
@@ -305,12 +302,12 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<Result<Car
     spec_version: "1.0",
     character: {
       name: cleanedName,
-      description: cleanedDescription,
-      greeting: cleanedGreeting,
-      alt_greetings: cleanedAltGreetings,
-      msg_examples: cleanedMsgExamples,
-      system_prompt: cleanedSystemPrompt,
-      jailbreak: cleanedPostHistoryInstructions
+      description: trimmedDescription,
+      greeting: trimmedGreeting,
+      alt_greetings: trimmedAltGreetings,
+      msg_examples: trimmeMsgExamples,
+      system_prompt: trimmedSystemPrompt,
+      jailbreak: trimmedPostHistoryInstructions
     },
     world: {
       description: ""

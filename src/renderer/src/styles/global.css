@@ -348,7 +348,7 @@
   --popover-foreground: var(--tx-primary);
   --radius: 0.8rem;
   font-weight: 480;
-  overflow-y : hidden
+  overflow-y : hidden;
 }
 
 .scroll-primary::-webkit-scrollbar {

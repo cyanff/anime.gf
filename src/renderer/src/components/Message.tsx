@@ -46,6 +46,7 @@ import { MessageCandidate as MessageCandidateI, Message as MessageI } from "@sha
 import { CardBundle, PersonaBundle } from "@shared/types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Markdown, { Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
 import { ProfilePopoverContent } from "./ProfilePopoverContent";
 
@@ -340,7 +341,7 @@ export default function Message({
                   // Show edit field if editing
                   <div
                     ref={editFieldRef}
-                    className="scroll-secondary whitespace-pre-line h-auto w-full overflow-y-scroll text-wrap break-all bg-transparent text-left focus:outline-none"
+                    className="whitespace-pre-line h-auto w-full [overflow-wrap:anywhere] text-wrap bg-transparent text-left focus:outline-none"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         editSubmitHandler();
@@ -354,12 +355,9 @@ export default function Message({
                     {text}
                   </div>
                 ) : (
-                  // Show the message if not editing
                   <Markdown
-                    allowedElements={["p", "blockquote", "strong", "em"]}
-                    unwrapDisallowed
-                    skipHtml
-                    className="whitespace-pre-wrap"
+                    className="[overflow-wrap:anywhere] whitespace-pre-wrap"
+                    remarkPlugins={[remarkGfm]}
                     components={sender === "user" ? userMarkdown : characterMarkdown}
                   >
                     {text}
@@ -571,6 +569,25 @@ function MessageContextMenuContent({
   );
 }
 
+const sharedMarkdown: Partial<Components> = {
+  a: ({ children, href }) => (
+    <a href={href} className="text-tx-primary underline italic">
+      {children}
+    </a>
+  ),
+  h1: ({ children }) => <h1 className="text-5xl font-bold">{children}</h1>,
+  h2: ({ children }) => <h2 className="text-4xl font-bold">{children}</h2>,
+  h3: ({ children }) => <h3 className="text-3xl font-bold">{children}</h3>,
+  h4: ({ children }) => <h4 className="text-2xl font-bold">{children}</h4>,
+  h5: ({ children }) => <h5 className="text-xl font-bold">{children}</h5>,
+  h6: ({ children }) => <h6 className="text-lg font-bold">{children}</h6>,
+  ul: ({ children }) => <ul className="ml-2 list-disc whitespace-normal">{children}</ul>,
+  ol: ({ children }) => <ol className="ml-2 list-decimal whitespace-normal">{children}</ol>,
+  li: ({ children }) => <li className="">{children}</li>,
+  code: ({ children }) => <code className="rounded font-mono text-sm">{children}</code>,
+  img: ({ src, alt }) => <img src={src} alt={alt} className="max-w-full h-auto" />
+};
+
 const userMarkdown: Partial<Components> = {
   em: ({ children }) => <span className="font-[550] italic text-tx-primary">{children}</span>,
   strong: ({ children }) => <span className="pr-1 font-bold text-tx-primary">{children}</span>,
@@ -581,7 +598,8 @@ const userMarkdown: Partial<Components> = {
         {children}
       </div>
     );
-  }
+  },
+  ...sharedMarkdown
 };
 
 const characterMarkdown: Partial<Components> = {
@@ -594,5 +612,6 @@ const characterMarkdown: Partial<Components> = {
         {children}
       </div>
     );
-  }
+  },
+  ...sharedMarkdown
 };

@@ -88,8 +88,10 @@ app.whenReady().then(async () => {
 
   // Disable navigation for security purposes
   app.on("web-contents-created", (_event, contents) => {
-    contents.on("will-navigate", (event, _navigationUrl) => {
+    contents.on("will-navigate", (event, url) => {
       event.preventDefault();
+      if (url.startsWith("agf://") || url.startsWith("http://localhost")) return;
+      shell.openExternal(url);
     });
   });
 
@@ -220,7 +222,6 @@ function createWindow(): void {
       sandbox: true,
       contextIsolation: true,
       nodeIntegration: false,
-      webviewTag: false,
       webSecurity: true
     }
   });
@@ -247,6 +248,7 @@ function createWindow(): void {
   });
 
   window.webContents.setWindowOpenHandler((details) => {
+    // Open external links in the default browser
     shell.openExternal(details.url);
     return { action: "deny" };
   });
