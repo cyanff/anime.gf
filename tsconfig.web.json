@@ -5,7 +5,6 @@
     "src/renderer/src/**/*",
     "src/shared/**/*",
     "src/preload/*.ts",
-    "src/main/**/*.ts",
     "src/renderer/src/**/*.tsx",
     "src/shared/config.ts"
 , "src/main/lib/xfetch.ts"  ],
