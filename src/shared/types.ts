@@ -70,11 +70,11 @@ export type CardData = z.infer<typeof cardSchema>;
 //  Card Storage
 // =========================================================
 // Contents of the card directory
-export interface CardBundle {
+export type CardBundle = {
   data: CardData;
   avatarURI: string;
   bannerURI: string;
-}
+};
 
 export interface UICardBundle extends CardBundle {
   id: string;
