@@ -3,17 +3,17 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cardBundleSearchFN } from "@/lib/utils";
 import { ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { CardBundle } from "@shared/types";
+import { UICardBundle } from "@shared/types";
 import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
 
 interface CollectionsPageProps {
-  cardBundles: CardBundle[];
+  cardBundles: UICardBundle[];
 }
 
 export default function CollectionsPage({ cardBundles }: CollectionsPageProps) {
   const [searchInput, setSearchInput] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<CardBundle[]>(cardBundles);
+  const [searchResults, setSearchResults] = useState<UICardBundle[]>(cardBundles);
   const [sortBy, setSortBy] = useState<string>("alphabetical");
   const [descending, setDescending] = useState<boolean>(true);
 
@@ -22,7 +22,7 @@ export default function CollectionsPage({ cardBundles }: CollectionsPageProps) {
     { name: "Created", value: "created" },
     { name: "Updated", value: "updated" }
   ];
-  const fuseRef = useRef<Fuse<CardBundle>>();
+  const fuseRef = useRef<Fuse<UICardBundle>>();
 
   // On cardBundles change, update fuse search index
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function CollectionsPage({ cardBundles }: CollectionsPageProps) {
 
   useEffect(() => {
     if (!fuseRef.current) return;
-    let results: CardBundle[];
+    let results: UICardBundle[];
     if (searchInput.trim() === "") {
       results = cardBundles;
     } else {

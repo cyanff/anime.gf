@@ -21,12 +21,13 @@ import { useApp } from "@/components/AppContext";
 import Avatar from "@/components/Avatar";
 import { Button } from "@/components/ui/button";
 import { queries } from "@/lib/queries";
-import { PersonaBundle, PersonaFormData } from "@shared/types";
+import { PersonaFormData } from "@shared/forms";
+import { UIPersonaBundle } from "@shared/types";
 import { toast } from "sonner";
 import { PersonaFormModal } from "../../components/PersonaFormModal";
 
 export default function SettingsPersona() {
-  const [personaBundles, setPersonaBundles] = useState<PersonaBundle[]>([]);
+  const [personaBundles, setPersonaBundles] = useState<UIPersonaBundle[]>([]);
   const { createModal, closeModal } = useApp();
 
   useEffect(() => {
@@ -66,7 +67,7 @@ export default function SettingsPersona() {
     );
   };
 
-  const handleEdit = (bundle: PersonaBundle) => {
+  const handleEdit = (bundle: UIPersonaBundle) => {
     const name = bundle.data.name;
     const description = bundle.data.description;
     const isDefault = bundle.data.is_default === 1 ? true : false;
@@ -103,7 +104,7 @@ export default function SettingsPersona() {
     );
   };
 
-  const handleDelete = async (bundle: PersonaBundle) => {
+  const handleDelete = async (bundle: UIPersonaBundle) => {
     const res = await queries.deletePersona(bundle);
     if (res.kind === "ok") {
       toast.success("Persona deleted successfully.");

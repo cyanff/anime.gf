@@ -43,7 +43,7 @@ import { render } from "@/lib/macros";
 import { MessageHistory, MessageWithCandidates, queries } from "@/lib/queries";
 import { reply } from "@/lib/reply";
 import { MessageCandidate as MessageCandidateI, Message as MessageI } from "@shared/db_types";
-import { CardBundle, PersonaBundle } from "@shared/types";
+import { UICardBundle, UIPersonaBundle } from "@shared/types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Markdown, { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -55,8 +55,8 @@ type Choices = ({ kind: "message" } & MessageI) | ({ kind: "candidate" } & Messa
 interface MessageProps {
   message: MessageWithCandidates;
   messagesHistory: MessageHistory;
-  personaBundle: PersonaBundle;
-  cardBundle: CardBundle;
+  personaBundle: UIPersonaBundle;
+  cardBundle: UICardBundle;
   editingMessageID: number | null;
   setEditingMessageID: (id: number | null) => void;
   isGenerating: boolean;
@@ -585,7 +585,7 @@ const sharedMarkdown: Partial<Components> = {
   ol: ({ children }) => <ol className="ml-2 list-decimal whitespace-normal">{children}</ol>,
   li: ({ children }) => <li className="">{children}</li>,
   code: ({ children }) => <code className="rounded font-mono text-sm">{children}</code>,
-  img: ({ src, alt }) => <img src={src} alt={alt} className="max-w-full h-auto" />
+  img: ({ src, alt }) => <img draggable={false} src={src} alt={alt} className="max-w-full h-auto rounded-lg" />
 };
 
 const userMarkdown: Partial<Components> = {

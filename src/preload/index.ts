@@ -1,4 +1,5 @@
-import { CardBundle, CardData, PersonaBundleWithoutData, PersonaFormData, Result, Settings } from "@shared/types";
+import { PersonaFormData } from "@shared/forms";
+import { CardData, PersonaBundle, Result, Settings, UICardBundle } from "@shared/types";
 import { contextBridge, ipcRenderer } from "electron";
 import { RunResult } from "../main/lib/store/sqlite";
 import { XFetchConfig } from "../main/lib/xfetch";
@@ -12,11 +13,8 @@ export interface API {
     runAsTransaction: (queries: string[], params: any[][]) => Promise<void>;
   };
   blob: {
-    image: {
-      get: (path: string) => Promise<Result<any, Error>>;
-    };
     cards: {
-      get: (card: string) => Promise<Result<CardBundle, Error>>;
+      get: (card: string) => Promise<Result<UICardBundle, Error>>;
       create: (
         cardData: CardData,
         bannerURI: string | null,
@@ -33,7 +31,7 @@ export interface API {
       import_: (zip: string) => Promise<Result<void, Error>>;
     };
     personas: {
-      get: (persona: string) => Promise<Result<PersonaBundleWithoutData, Error>>;
+      get: (persona: string) => Promise<Result<PersonaBundle, Error>>;
       post: (data: PersonaFormData) => Promise<Result<void, Error>>;
       put: (id: number, data: PersonaFormData) => Promise<Result<void, Error>>;
       rename: (oldName: string, newName: string) => Promise<Result<void, Error>>;
@@ -60,6 +58,7 @@ export interface API {
 
   utils: {
     openURL: (url: string) => void;
+    getNativeImage: (path: string) => Promise<Result<Electron.NativeImage, Error>>;
   };
 }
 
@@ -71,9 +70,6 @@ const api: API = {
     runAsTransaction: (queries, params) => ipcRenderer.invoke("sqlite.runAsTransaction", queries, params)
   },
   blob: {
-    image: {
-      get: (path) => ipcRenderer.invoke("blob.image.get", path)
-    },
     cards: {
       get: (card) => ipcRenderer.invoke("blob.cards.get", card),
       create: (cardData, bannerURI, avatarURI) =>
@@ -105,7 +101,8 @@ const api: API = {
     abort: (uuid) => ipcRenderer.invoke("xfetch.abort", uuid)
   },
   utils: {
-    openURL: (url) => ipcRenderer.invoke("utils.openURL", url)
+    openURL: (url) => ipcRenderer.invoke("utils.openURL", url),
+    getNativeImage: (path) => ipcRenderer.invoke("utils.getNativeImage", path)
   }
 };
 

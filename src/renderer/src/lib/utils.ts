@@ -1,4 +1,5 @@
-import { CardBundle, CardData, CardFormData } from "@shared/types";
+import { CardFormData } from "@shared/forms";
+import { CardData, UICardBundle } from "@shared/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -88,7 +89,7 @@ export function throttle(fn: (...args: any[]) => void, ms: number) {
  * 0: a and b are equal
  * 1: a should come after b
  */
-export const cardBundleSearchFN = (a: CardBundle, b: CardBundle, sortBy: string, descending: boolean) => {
+export const cardBundleSearchFN = (a: UICardBundle, b: UICardBundle, sortBy: string, descending: boolean) => {
   let valueA: any, valueB: any;
   switch (sortBy) {
     case "alphabetical":

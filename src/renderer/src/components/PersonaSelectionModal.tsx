@@ -1,16 +1,16 @@
 import { useApp } from "@/components/AppContext";
 import { Button } from "@/components/ui/button";
 import { queries } from "@/lib/queries";
-import { PersonaBundle } from "@shared/types";
+import { UIPersonaBundle } from "@shared/types";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface PersonaSelectionModalProps {
-  onPersonaSelect: (personaBundle: PersonaBundle) => void;
+  onPersonaSelect: (personaBundle: UIPersonaBundle) => void;
 }
 
 export default function PersonaSelectionModa({ onPersonaSelect }: PersonaSelectionModalProps) {
-  const [personaBundles, setPersonaBundles] = useState<PersonaBundle[]>([]);
+  const [personaBundles, setPersonaBundles] = useState<UIPersonaBundle[]>([]);
 
   useEffect(() => {
     syncPersonaBundles();

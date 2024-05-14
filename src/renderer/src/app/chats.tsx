@@ -5,7 +5,7 @@ import Message from "@/components/Message";
 import { Button } from "@/components/ui/button";
 import { MessageHistory, queries } from "@/lib/queries";
 import { useChatStore } from "@/lib/store/chatStore";
-import { CardBundle, PersonaBundle } from "@shared/types";
+import { UICardBundle, UIPersonaBundle } from "@shared/types";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
@@ -16,7 +16,7 @@ interface ChatsPageProps {
   chatID: number;
 }
 export default function ChatsPage({ chatID }: ChatsPageProps): JSX.Element {
-  const [personaBundle, setPersonaBundle] = useState<PersonaBundle>();
+  const [personaBundle, setPersonaBundle] = useState<UIPersonaBundle>();
   const { setActiveChatID } = useApp();
 
   const syncPersonaBundle = useCallback(async () => {
@@ -72,11 +72,11 @@ interface ScrollEvent {
 
 interface ChatAreaProps {
   chatID: number;
-  personaBundle: PersonaBundle;
+  personaBundle: UIPersonaBundle;
 }
 
 function ChatArea({ chatID, personaBundle }: ChatAreaProps) {
-  const [cardBundle, setCardBundle] = useState<CardBundle>();
+  const [cardBundle, setCardBundle] = useState<UICardBundle>();
   const [editingMessageID, setEditingMessageID] = useState<number | null>(null);
   const { showBoundary } = useErrorBoundary();
   const scrollEventRef = useRef<ScrollEvent | null>(null);

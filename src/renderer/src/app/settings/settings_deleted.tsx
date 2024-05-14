@@ -6,19 +6,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { queries } from "@/lib/queries";
 import { cardBundleSearchFN } from "@/lib/utils";
 import { ArrowUpIcon, Bars3BottomLeftIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { CardBundle } from "@shared/types";
+import { UICardBundle } from "@shared/types";
 import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export default function SettingsRecentlyDeleted() {
-  const [deletedCards, setDeletedCards] = useState<CardBundle[]>();
+  const [deletedCards, setDeletedCards] = useState<UICardBundle[]>();
   const [searchInput, setSearchInput] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<CardBundle[]>();
+  const [searchResults, setSearchResults] = useState<UICardBundle[]>();
   const [sortBy, setSortBy] = useState<string>("alphabetical");
   const [descending, setDescending] = useState<boolean>(true);
   const { createDialog, syncCardBundles } = useApp();
-  const [selectedCards, setSelectedCards] = useState<CardBundle[]>([]);
+  const [selectedCards, setSelectedCards] = useState<UICardBundle[]>([]);
   const cardContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function SettingsRecentlyDeleted() {
     { name: "Created", value: "created" },
     { name: "Updated", value: "updated" }
   ];
-  const fuseRef = useRef<Fuse<CardBundle>>();
+  const fuseRef = useRef<Fuse<UICardBundle>>();
 
   // On cardBundles change, update fuse search index
   useEffect(() => {
@@ -68,26 +68,26 @@ export default function SettingsRecentlyDeleted() {
   // On searchInput change, update the search results
   useEffect(() => {
     if (!fuseRef.current) return;
-    let results: CardBundle[];
+    let results: UICardBundle[];
     if (searchInput.trim() === "") {
       results = deletedCards || [];
     } else {
       results = fuseRef.current.search(searchInput).map((result) => result.item);
     }
-    const sortedResults = results.sort((a: CardBundle, b: CardBundle) => {
+    const sortedResults = results.sort((a: UICardBundle, b: UICardBundle) => {
       return cardBundleSearchFN(a, b, sortBy, descending);
     });
 
     setSearchResults([...sortedResults]);
   }, [searchInput, deletedCards, descending, sortBy]);
 
-  async function restoreHandler(cardBundle: CardBundle) {
+  async function restoreHandler(cardBundle: UICardBundle) {
     await queries.restoreCard(cardBundle.id);
     syncDeletedCardBundles();
     syncCardBundles();
   }
 
-  function singleDeleteHandler(cardBundle: CardBundle) {
+  function singleDeleteHandler(cardBundle: UICardBundle) {
     const config: DialogConfig = {
       title: `Permenantly delete ${cardBundle.data.character.name}`,
       description: `Are you sure you want to permenantly delete ${cardBundle.data.character.name}?\nThis action will also delete corresponding chats with ${cardBundle.data.character.name} and cannot be undone.`,
@@ -101,7 +101,7 @@ export default function SettingsRecentlyDeleted() {
     createDialog(config);
   }
 
-  function cardClickHandler(cardBundle: CardBundle) {
+  function cardClickHandler(cardBundle: UICardBundle) {
     setSelectedCards((prevSelectedCards) => {
       // If the card is already selected, unselect it
       if (prevSelectedCards.includes(cardBundle)) {

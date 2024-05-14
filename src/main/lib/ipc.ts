@@ -1,9 +1,11 @@
-import { CardData, PersonaFormData } from "@shared/types";
+import { PersonaFormData } from "@shared/forms";
+import { CardData } from "@shared/types";
 import { ipcMain, shell } from "electron";
 import blob from "./store/blob";
 import secret from "./store/secret";
 import setting from "./store/setting";
 import sqlite from "./store/sqlite";
+import { getNativeImage } from "./utils";
 import { XFetchConfig, xfetch } from "./xfetch";
 
 async function init() {
@@ -18,10 +20,6 @@ async function init() {
   });
   ipcMain.handle("sqlite.runAsTransaction", async (_, queries: string[], params: [][]) => {
     return sqlite.runAsTransaction(queries, params);
-  });
-
-  ipcMain.handle("blob.image.get", async (_, path: string) => {
-    return await blob.image.get(path);
   });
 
   ipcMain.handle("blob.cards.get", async (_, card: string) => {
@@ -92,6 +90,9 @@ async function init() {
     return await shell.openExternal(url);
   });
 
+  ipcMain.handle("utils.getNativeImage", async (_, path: string) => {
+    return getNativeImage(path);
+  });
   ipcMain.handle("setting.get", async () => {
     return await setting.get();
   });

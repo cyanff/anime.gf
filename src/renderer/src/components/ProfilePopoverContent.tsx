@@ -4,22 +4,22 @@ import Dropdown from "@/components/Dropdown";
 import Tag from "@/components/Tag";
 import { PopoverContent } from "@/components/ui/popover";
 import { time } from "@/lib/time";
-import { CardBundle, PersonaBundle } from "@shared/types";
+import { UICardBundle, UIPersonaBundle } from "@shared/types";
 
-type Bundle = PersonaBundle | CardBundle;
+type Bundle = UIPersonaBundle | UICardBundle;
 interface ProfilePopoverProps {
   type: "user" | "character";
   bundle: Bundle;
 }
 export function ProfilePopoverContent({ type, bundle }: ProfilePopoverProps) {
   return type === "user" ? (
-    <UserPopoverContent bundle={bundle as PersonaBundle} />
+    <UserPopoverContent bundle={bundle as UIPersonaBundle} />
   ) : (
-    <CharacterPopoverContent bundle={bundle as CardBundle} />
+    <CharacterPopoverContent bundle={bundle as UICardBundle} />
   );
 }
 
-function UserPopoverContent({ bundle }: { bundle: PersonaBundle }) {
+function UserPopoverContent({ bundle }: { bundle: UIPersonaBundle }) {
   const bannerURI = "default_banner.png";
   const avatarURI = bundle.avatarURI || "default_avatar.png";
 
@@ -45,7 +45,7 @@ function UserPopoverContent({ bundle }: { bundle: PersonaBundle }) {
   );
 }
 
-function CharacterPopoverContent({ bundle }: { bundle: CardBundle }) {
+function CharacterPopoverContent({ bundle }: { bundle: UICardBundle }) {
   const bannerURI = bundle.bannerURI;
   const avatarURI = bundle.avatarURI;
 

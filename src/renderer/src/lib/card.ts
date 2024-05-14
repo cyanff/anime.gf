@@ -16,26 +16,7 @@ async function importFromFileList(files: FileList): Promise<Result<void, Error>[
   const results: Result<void, Error>[] = [];
   for (let i = 0; i < numFiles; i++) {
     const file = files[i];
-    const ext = getFileExtension(file.name);
-
-    if (ext && !supportedCardExts.includes(ext)) {
-      results.push({ kind: "err", error: new Error(`${file.name} is not a supported file type.`) });
-      continue;
-    }
-
-    // Reject files larger than 50MB
-    if (file.size > config.card.maxFileSizeBytes) {
-      results.push({
-        kind: "err",
-        error: new Error(
-          `${file.name} is too large. Max size is ${config.card.maxFileSizeBytes / 1e6}MB. File is ${file.size / 1e6}MB.`
-        )
-      });
-      continue;
-    }
-
     const res = await window.api.blob.cards.import_(file.path);
-
     results.push(res);
   }
 

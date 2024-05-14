@@ -15,21 +15,14 @@
     "description": "Boilerplate for a React component",
     "isFileTemplate": true
   },
-  "Main Header": {
-    "prefix": "agf-header",
-    "body": [
-      "/* -------------------------------------------------------------------------- */",
-      "/*                                $1                                */",
-      "/* -------------------------------------------------------------------------- */"
-    ],
-    "description": "Inserts a main header comment block"
-  },
-  "Sub Header": {
-    "prefix": "agf-subheader",
-    "body": [
-      "/* ------------------------------ $1 ------------------------------ */"
-    ],
-    "description": "Inserts a sub header comment block"
+  "Comment Block": {
+      "prefix": "agf-header",
+      "body": [
+          "// =========================================================",
+          "//  ${1:}",
+          "// ========================================================="
+      ],
+      "description": "Create a comment block with a placeholder for the comment name"
   },
   "Line": {
     "prefix": "agf-line",

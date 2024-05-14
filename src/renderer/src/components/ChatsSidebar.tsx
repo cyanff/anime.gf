@@ -13,13 +13,13 @@ import { RecentChatResult, queries } from "@/lib/queries";
 import { useChatStore } from "@/lib/store/chatStore";
 import { cn } from "@/lib/utils";
 import { ArrowPathIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { PersonaBundle } from "@shared/types";
+import { UIPersonaBundle } from "@shared/types";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 export interface ChatsSideBarProps {
   chatID: number;
-  personaBundle: PersonaBundle;
+  personaBundle: UIPersonaBundle;
 }
 
 export default function ChatsSidebar({ chatID, personaBundle }: ChatsSideBarProps) {

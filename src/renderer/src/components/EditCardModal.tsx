@@ -1,11 +1,12 @@
 import { useApp } from "@/components/AppContext";
 import CardForm from "@/components/CardForm";
 import { cardFormDataToCardData } from "@/lib/utils";
-import { CardBundle, CardFormData } from "@shared/types";
+import { CardFormData } from "@shared/forms";
+import { UICardBundle } from "@shared/types";
 import { toast } from "sonner";
 
 interface EditCardModalProps {
-  cardBundle: CardBundle;
+  cardBundle: UICardBundle;
 }
 
 export default function EditCardModal({ cardBundle }: EditCardModalProps) {
@@ -17,8 +18,8 @@ export default function EditCardModal({ cardBundle }: EditCardModalProps) {
     const res = await window.api.blob.cards.update(
       cardBundle.id,
       cardData,
-      data.character.bannerURI ?? null,
-      data.character.avatarURI ?? null
+      data.character.bannerFilePath ?? null,
+      data.character.avatarFilePath ?? null
     );
     syncCardBundles();
     if (res.kind === "err") {

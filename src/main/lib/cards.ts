@@ -1,6 +1,6 @@
 import { config } from "@shared/config";
 import { md } from "@shared/md";
-import { CardBundleWithoutID, CardData, Result, cardSchema, cardTagSchema } from "@shared/types";
+import { CardBundle, CardData, Result, cardSchema, cardTagSchema } from "@shared/types";
 import { deepFreeze, isValidFileName, spacesToHyphens } from "@shared/utils";
 import archiver from "archiver";
 import { app, dialog } from "electron";
@@ -10,12 +10,15 @@ import JSZip from "jszip";
 import path from "path";
 import tEXt from "png-chunk-text";
 import extract from "png-chunks-extract";
-import { stripHtml } from "string-strip-html";
 import { v4 } from "uuid";
 import { z } from "zod";
 import { fromError } from "zod-validation-error";
 import sqlite from "./store/sqlite";
 import { attainable, cardsRootPath, downloadImageBuffer, extractZipToDir } from "./utils";
+
+// FIXME: Add proper transaction handling with support for rolling back *any* state as well as db state.
+// Ex: rollback file creation, db insertions, etc.
+// Wrap better-sqlite3
 
 const sillyCardSchema = z.object({
   spec: z.literal("chara_card_v2"),
@@ -51,7 +54,7 @@ type SillyCardData = z.infer<typeof sillyCardSchema>;
  * @returns A result object containing the CardResources if successful, else error.
  *
  */
-export async function get(name: string): Promise<Result<CardBundleWithoutID, Error>> {
+export async function get(name: string): Promise<Result<CardBundle, Error>> {
   const dirPath = path.join(cardsRootPath, name);
   if (!(await attainable(dirPath))) {
     return { kind: "err", error: new Error(`Card folder "${name}" not found`) };
@@ -88,6 +91,8 @@ export async function get(name: string): Promise<Result<CardBundleWithoutID, Err
   };
 }
 
+async function _write() {}
+
 /**
  * Posts a card to the storage.
  * @param cardData - The data of the card to be posted.
@@ -103,9 +108,7 @@ export async function create(
   const pathEscapedCharName = spacesToHyphens(cardData.character.name);
   const cardDirName = `${pathEscapedCharName}-${v4}`;
   const cardDirPath = path.join(cardsRootPath, cardDirName);
-
   await fsp.mkdir(cardDirPath, { recursive: true });
-
   await fsp.writeFile(path.join(cardDirPath, "data.json"), JSON.stringify(cardData));
 
   if (avatarURI) {
@@ -130,11 +133,6 @@ export async function create(
 
 /**
  * Updates the card data and images in the card directory.
- * @param cardID - The ID of the card to update.
- * @param cardData - The updated card data.
- * @param bannerURI - The new banner image, or null if not provided.
- * @param avatarURI - The new avatar image, or null if not provided.
- * @returns A promise that resolves to a Result object indicating the success or failure of the update operation.
  */
 export async function update(
   cardID: number,
@@ -168,7 +166,7 @@ export async function update(
 export async function del(cardID: number): Promise<Result<undefined, Error>> {
   // Retrieve the dir_name of the card from the database using the id
   const query = `SELECT dir_name FROM cards WHERE id =?;`;
-  const row = (await sqlite.get(query, [cardID])) as { dir_name: string };
+  const row = sqlite.get(query, [cardID]) as { dir_name: string };
 
   // Construct the path to the card directory
   const cardDirPath = path.join(cardsRootPath, row.dir_name);
@@ -186,8 +184,17 @@ async function import_(filePath: string): Promise<Result<void, Error>> {
   if (!(await attainable(filePath))) {
     return { kind: "err", error: new Error(`File "${filePath}" not accessible.`) };
   }
-
   const ext = path.extname(filePath).toLowerCase();
+
+  const stats = await fsp.stat(filePath);
+  if (stats.size > config.card.maxFileSizeBytes) {
+    return {
+      kind: "err",
+      error: new Error(
+        `File is too large. Max size is ${config.card.maxFileSizeBytes / 1e6}MB. File is ${stats.size / 1e6}MB.`
+      )
+    };
+  }
 
   switch (ext) {
     case ".zip":

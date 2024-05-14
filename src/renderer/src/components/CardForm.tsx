@@ -4,14 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PencilSquareIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CardBundle, CardFormData, cardFormSchema } from "@shared/types";
+import { CardFormData, cardFormSchema } from "@shared/forms";
+import { UICardBundle } from "@shared/types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DeepPartial, useForm } from "react-hook-form";
 
 type FormType = "create" | "edit";
 
 interface CardFormProps {
-  cardBundle?: CardBundle;
+  cardBundle?: UICardBundle;
   onSuccessfulSubmit(data: CardFormData): void;
   formType: FormType;
 }
@@ -85,9 +86,9 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
 
   const bannerChangeHandler = async (event) => {
     const file = event.target.files[0];
-    form.setValue("character.bannerURI", file.path);
+    form.setValue("character.bannerFilePath", file.path);
 
-    const res = await window.api.blob.image.get(file.path);
+    const res = await window.api.utils.getNativeImage(file.path);
     if (res.kind === "ok") {
       const dataUrl = res.value.toDataURL();
       setBannerDisplayImage(dataUrl);
@@ -96,9 +97,9 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
 
   const avatarChangeHandler = async (event) => {
     const file = event.target.files[0];
-    form.setValue("character.avatarURI", file.path);
+    form.setValue("character.avatarFilePath", file.path);
 
-    const res = await window.api.blob.image.get(file.path);
+    const res = await window.api.utils.getNativeImage(file.path);
     if (res.kind === "ok") {
       const dataUrl = res.value.toDataURL();
       setAvatarDisplayImage(dataUrl);
@@ -108,8 +109,8 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
   const resetHandler = () => {
     const reset = () => {
       form.reset(initialData);
-      setBannerDisplayImage(initialData?.character?.bannerURI ?? "");
-      setAvatarDisplayImage(initialData?.character?.avatarURI ?? "");
+      setBannerDisplayImage(initialData?.character?.bannerFilePath ?? "");
+      setAvatarDisplayImage(initialData?.character?.avatarFilePath ?? "");
     };
 
     const config: DialogConfig = {
@@ -131,7 +132,7 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
           onClick={bannerClickHandler}
         >
           {bannerDisplayImage ? (
-            <img src={bannerDisplayImage ?? ""} alt="Profile" className="" />
+            <img draggable={false} src={bannerDisplayImage ?? ""} className="" />
           ) : (
             <PencilSquareIcon className="absolute h-12 w-12 text-tx-primary" />
           )}
@@ -139,7 +140,7 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
           <input
             type="file"
             className="hidden"
-            {...(form.register("character.bannerURI"),
+            {...(form.register("character.bannerFilePath"),
             {
               ref: bannerInputRef
             })}
@@ -153,14 +154,14 @@ export default function CardForm({ cardBundle, onSuccessfulSubmit, formType }: C
           onClick={profileClickHandler}
         >
           {avatarDisplayImage ? (
-            <img src={avatarDisplayImage} alt="Profile" className="" />
+            <img draggable={false} src={avatarDisplayImage} className="" />
           ) : (
             <PencilSquareIcon className="absolute h-8 w-8 text-tx-primary" />
           )}
           <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 hover:opacity-10"></div>
           <input
             type="file"
-            {...(form.register("character.avatarURI"),
+            {...(form.register("character.avatarFilePath"),
             {
               ref: avatarInputRef
             })}

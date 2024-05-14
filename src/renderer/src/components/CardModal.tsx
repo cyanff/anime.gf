@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button";
 import { card } from "@/lib/card";
 import { time } from "@/lib/time";
 import { ArrowUpOnSquareIcon, ChatBubbleLeftRightIcon, PencilIcon } from "@heroicons/react/24/solid";
-import { CardBundle } from "@shared/types";
+import { UICardBundle } from "@shared/types";
 import { toast } from "sonner";
 interface CardModalProps {
-  cardBundle: CardBundle;
+  cardBundle: UICardBundle;
   onCreateChat: () => void;
 }
 

@@ -1,5 +1,5 @@
 import { Chat, Message, MessageCandidate, Persona } from "@shared/db_types";
-import { CardBundle, PersonaBundle, Result } from "@shared/types";
+import { Result, UICardBundle, UIPersonaBundle } from "@shared/types";
 import { deepFreeze, isError } from "@shared/utils";
 import { RunResult } from "better-sqlite3";
 
@@ -197,7 +197,7 @@ async function getMostRecentChat(): Promise<Result<number | undefined, Error>> {
   }
 }
 
-async function getPersonaBundle(chatID: number): Promise<Result<PersonaBundle, Error>> {
+async function getPersonaBundle(chatID: number): Promise<Result<UIPersonaBundle, Error>> {
   const query = `
   SELECT * 
   FROM personas
@@ -223,7 +223,7 @@ async function getPersonaBundle(chatID: number): Promise<Result<PersonaBundle, E
   }
 }
 
-async function getAllExtantPersonaBundles(): Promise<Result<PersonaBundle[], Error>> {
+async function getAllExtantPersonaBundles(): Promise<Result<UIPersonaBundle[], Error>> {
   const query = "SELECT * FROM personas WHERE is_deleted = 0;";
 
   try {
@@ -287,7 +287,7 @@ async function getChatHistory(chatID: number, limit: number = 10): Promise<Resul
   }
 }
 
-async function getCardBundle(chatID: number): Promise<Result<CardBundle, Error>> {
+async function getCardBundle(chatID: number): Promise<Result<UICardBundle, Error>> {
   try {
     const query = `
   SELECT cards.dir_name
@@ -306,21 +306,21 @@ async function getCardBundle(chatID: number): Promise<Result<CardBundle, Error>>
   }
 }
 
-async function getAllExtantCardBundles(): Promise<Result<CardBundle[], Error>> {
+async function getAllExtantCardBundles(): Promise<Result<UICardBundle[], Error>> {
   try {
     const query = `
       SELECT cards.id, cards.dir_name
       FROM cards
       WHERE cards.is_deleted = 0;`;
     const rows = (await window.api.sqlite.all(query)) as { id: number; dir_name: string }[];
-    const cardBundles: CardBundle[] = [];
+    const cardBundles: UICardBundle[] = [];
     for (const row of rows) {
       const res = await window.api.blob.cards.get(row.dir_name);
       if (res.kind == "err") {
         console.error("Error fetching a card bundle", res.error);
         continue;
       }
-      const cardBundle: CardBundle = {
+      const cardBundle: UICardBundle = {
         id: row.id,
         data: res.value.data,
         avatarURI: res.value.avatarURI,
@@ -335,21 +335,21 @@ async function getAllExtantCardBundles(): Promise<Result<CardBundle[], Error>> {
   }
 }
 
-async function getAllDeletedCardBundles(): Promise<Result<CardBundle[], Error>> {
+async function getAllDeletedCardBundles(): Promise<Result<UICardBundle[], Error>> {
   try {
     const query = `
       SELECT cards.id, cards.dir_name
       FROM cards
       WHERE cards.is_deleted = 1;`;
     const rows = (await window.api.sqlite.all(query)) as { id: number; dir_name: string }[];
-    const cardBundles: CardBundle[] = [];
+    const cardBundles: UICardBundle[] = [];
     for (const row of rows) {
       const res = await window.api.blob.cards.get(row.dir_name);
       if (res.kind == "err") {
         console.error("Error fetching a card bundle", res.error);
         continue;
       }
-      const cardBundle: CardBundle = {
+      const cardBundle: UICardBundle = {
         id: row.id,
         data: res.value.data,
         avatarURI: res.value.avatarURI,
@@ -604,7 +604,7 @@ async function getCardDir(cardID: number): Promise<Result<string, Error>> {
   }
 }
 
-async function deletePersona(bundle: PersonaBundle): Promise<Result<void, Error>> {
+async function deletePersona(bundle: UIPersonaBundle): Promise<Result<void, Error>> {
   const query = `
     UPDATE personas SET is_deleted = 1, is_default = 0 WHERE id = ?;
     `;

@@ -7,12 +7,12 @@ import {
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { CardBundle } from "@shared/types";
+import { UICardBundle } from "@shared/types";
 import { motion, useMotionValue } from "framer-motion";
 import { CardPattern } from "./ui/card-pattern";
 
 interface CardProps {
-  cardBundle: CardBundle;
+  cardBundle: UICardBundle;
   handleRestore: (cardBundle) => void;
   handleSingleDelete: (cardBundle) => void;
   onClick: () => void;

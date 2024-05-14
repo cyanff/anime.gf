@@ -15,12 +15,12 @@ import { card } from "@/lib/card";
 import { render } from "@/lib/macros";
 import { queries } from "@/lib/queries";
 import { ArrowUpOnSquareIcon, ChatBubbleLeftRightIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { CardBundle, PersonaBundle } from "@shared/types";
+import { UICardBundle, UIPersonaBundle } from "@shared/types";
 import { motion, useMotionValue } from "framer-motion";
 import { toast } from "sonner";
 import { CardPattern } from "./ui/card-pattern";
 interface CardProps {
-  cardBundle: CardBundle;
+  cardBundle: UICardBundle;
 }
 
 function Card({ cardBundle }: CardProps) {
@@ -47,7 +47,7 @@ function Card({ cardBundle }: CardProps) {
     createDialog(config);
   };
 
-  async function createChatWithPersona(personaBundle: PersonaBundle) {
+  async function createChatWithPersona(personaBundle: UIPersonaBundle) {
     const greeting = cardBundle.data.character.greeting;
 
     const createChatRes = await queries.createChat(personaBundle.data.id, cardBundle.id);
@@ -72,7 +72,7 @@ function Card({ cardBundle }: CardProps) {
     closeModal();
     createModal(
       <PersonaSelectionModal
-        onPersonaSelect={(personaBundle: PersonaBundle) => {
+        onPersonaSelect={(personaBundle: UIPersonaBundle) => {
           createChatWithPersona(personaBundle);
         }}
       />

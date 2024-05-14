@@ -3,15 +3,15 @@ import { queries } from "@/lib/queries";
 import { reply } from "@/lib/reply";
 import { cn } from "@/lib/utils";
 import { PaperAirplaneIcon, PlusCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
-import { CardBundle, PersonaBundle, Result } from "@shared/types";
+import { Result, UICardBundle, UIPersonaBundle } from "@shared/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import styles from "../styles/Typing.module.css";
 
 interface ChatBarProps {
   chatID: number;
-  personaBundle: PersonaBundle;
-  cardBundle: CardBundle;
+  personaBundle: UIPersonaBundle;
+  cardBundle: UICardBundle;
   isGenerating: boolean;
   setIsGenerating: (isGenerating: boolean) => void;
   onMessageSend: (message: string) => void;

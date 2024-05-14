@@ -21,8 +21,6 @@ export default function Dropdown({ label, content }: DropdownProps) {
         <ChevronDownIcon className={`duration-125 size-5 transition  ${isOpen ? "rotate-180 transform" : ""}`} />
       </button>
       <Markdown
-        unwrapDisallowed
-        skipHtml
         className={`whitespace-pre-line bg-container-tertiary overflow-auto
         scroll-secondary rounded-b-xl transition duration-200 ease-in-out
         text-sm text-tx-secondary ${isOpen ? "max-h-96 px-4 pb-2 pt-4" : "max-h-0"}`}

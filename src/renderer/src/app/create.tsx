@@ -1,7 +1,8 @@
 import { useApp } from "@/components/AppContext";
 import CardForm from "@/components/CardForm";
 import { cardFormDataToCardData } from "@/lib/utils";
-import { CardData, CardFormData } from "@shared/types";
+import { CardFormData } from "@shared/forms";
+import { CardData } from "@shared/types";
 import { toast } from "sonner";
 
 interface CreationPageProps {
@@ -15,8 +16,8 @@ export default function CreationPage({ setPage }: CreationPageProps) {
     const cardData: CardData = cardFormDataToCardData(data);
     const res = await window.api.blob.cards.create(
       cardData,
-      data.character.bannerURI ?? null,
-      data.character.avatarURI ?? null
+      data.character.bannerFilePath ?? null,
+      data.character.avatarFilePath ?? null
     );
     if (res.kind === "ok") {
       setPage("collections");

@@ -28,7 +28,7 @@ import { card } from "@/lib/card";
 import { handleA, handleB, handleC } from "@/lib/cmd";
 import { useShiftKey } from "@/lib/hook/useShiftKey";
 import { queries } from "@/lib/queries";
-import { CardBundle } from "@shared/types";
+import { UICardBundle } from "@shared/types";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -40,7 +40,7 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [cmdOpen, setCmdOpen] = useState<boolean>(false);
   const [activeChatID, setActiveChatID] = useState<number>();
-  const [cardBundles, setCardBundles] = useState<CardBundle[]>([]);
+  const [cardBundles, setCardBundles] = useState<UICardBundle[]>([]);
   const isShiftKeyPressed = useShiftKey();
 
   useEffect(() => {

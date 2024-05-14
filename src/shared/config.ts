@@ -61,13 +61,20 @@ export const config = {
     notesMinChars: 0,
     notesMaxChars: 8096,
 
-    maxFileSizeBytes: 5e7,
+    maxFileSizeBytes: 10e6,
 
     systemPromptMinChars: 0,
     systemPromptMaxChars: 4096,
 
     jailbreakMinChars: 0,
     jailbreakMaxChars: 8096
+  },
+  app: {
+    avatarWidth: 400,
+    avatarHeight: 600,
+
+    bannerWidth: 1500,
+    bannerHeight: 500
   },
   defaultSettings: defaultSettings
 };

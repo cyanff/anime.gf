@@ -1,6 +1,6 @@
 import { ImageExt, Result } from "@shared/types";
 import { isError } from "@shared/utils";
-import { app } from "electron";
+import { app, nativeImage } from "electron";
 import fs, { PathLike } from "fs";
 import fsp from "fs/promises";
 import JSZip from "jszip";
@@ -124,6 +124,15 @@ export async function imageExtFromBuffer(buffer: Buffer): Promise<Result<ImageEx
       }
     }
     return { kind: "err", error: new Error("Unsupported image type") };
+  } catch (e) {
+    return { kind: "err", error: e };
+  }
+}
+
+export async function getNativeImage(path: string): Promise<Result<Electron.NativeImage, Error>> {
+  try {
+    const image = nativeImage.createFromPath(path);
+    return { kind: "ok", value: image };
   } catch (e) {
     return { kind: "err", error: e };
   }
