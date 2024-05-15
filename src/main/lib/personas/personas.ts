@@ -1,11 +1,11 @@
-import { PersonaFormData } from "@shared/forms";
+import { PersonaFormData } from "@shared/schema/form_schema";
 import { PersonaBundle, Result } from "@shared/types";
 import { deepFreeze, isError, isValidFileName, spacesToHyphens } from "@shared/utils";
 import fsp from "fs/promises";
 import path from "path";
 import { v4 } from "uuid";
-import sqlite from "../lib/store/sqlite";
-import { attainable, personasRootPath } from "./utils";
+import sqlite from "../store/sqlite";
+import { attainable, personasRootPath } from "../utils";
 
 async function get(name: string): Promise<Result<PersonaBundle, Error>> {
   const dirPath = path.join(personasRootPath, name);

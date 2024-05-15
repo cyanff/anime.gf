@@ -3,37 +3,15 @@ import { supportedImageExts } from "@shared/utils";
 import fsp from "fs/promises";
 import JSZip from "jszip";
 import { join } from "path";
-import { attainable } from "../utils";
+import { cardsRootPath } from "../utils";
 
 const images = ["avatar", "banner"];
 
-export async function readData(path: string): Promise<Result<CardData, Error>> {
+export async function readData(cardDirname: string): Promise<Result<CardData, Error>> {
   try {
-    return JSON.parse(await fsp.readFile(path, "utf8"));
-  } catch (e) {
-    return { kind: "err", error: e };
-  }
-}
-
-export async function readDir(path: string): Promise<Result<RawPlatformCardBundle, Error>> {
-  try {
-    const data = JSON.parse(await fsp.readFile(join(path, "data.json"), "utf8"));
-
-    const imagePaths: string[] = [];
-
-    for (let i = 0; i < images.length; i++) {
-      for (const ext of supportedImageExts) {
-        const imagePath = join(path, `${images[i]}.${ext}`);
-        if (await attainable(imagePath)) {
-          imagePaths.push(imagePath);
-          break;
-        }
-      }
-    }
-    const [avatarPath, bannerPath] = imagePaths;
-    const avatarBuffer = avatarPath ? await fsp.readFile(avatarPath) : undefined;
-    const bannerBuffer = bannerPath ? await fsp.readFile(join(bannerPath)) : undefined;
-    return { kind: "ok", value: { data, avatarBuffer, bannerBuffer } };
+    const path = join(cardsRootPath, cardDirname, "data.json");
+    const str = await fsp.readFile(path, "utf8");
+    return { kind: "ok", value: JSON.parse(str) };
   } catch (e) {
     return { kind: "err", error: e };
   }

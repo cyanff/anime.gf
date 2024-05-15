@@ -62,7 +62,7 @@ async function getAllChatSearchItems(): Promise<ChatSearchItem[]> {
   interface QueryResult {
     id: number;
     lastMessage: string;
-    dir_name: string;
+    cardID: number;
   }
   const query = `
   SELECT
@@ -72,7 +72,7 @@ async function getAllChatSearchItems(): Promise<ChatSearchItem[]> {
      WHERE m.chat_id = c.id AND m.sender = 'character'
      ORDER BY m.id DESC
      LIMIT 1) AS lastMessage,
-    ca.dir_name
+    ca.id as cardID
 FROM
     chats c
         JOIN
@@ -83,7 +83,7 @@ ORDER BY c.id DESC`;
 
   const ret: ChatSearchItem[] = [];
   for (const row of rows) {
-    const res = await window.api.blob.cards.get(row.dir_name);
+    const res = await window.api.blob.cards.get(row.cardID);
     if (res.kind === "err") {
       console.error("Error fetching card bundle", res.error);
       continue;
@@ -129,7 +129,8 @@ async function getRecentChatResults(): Promise<Result<RecentChatResult[], Error>
    WHERE messages.chat_id = chats.id
    ORDER BY messages.inserted_at DESC
    LIMIT 1) AS last_message,
-  cards.dir_name AS card_dir_name
+  cards.dir_name AS card_dir_name,
+  cards.id AS cardID 
 FROM 
   chats
   JOIN cards ON chats.card_id = cards.id
@@ -142,12 +143,14 @@ LIMIT 20;`;
       chat_id: number;
       last_message: string;
       card_dir_name: string;
+      cardID: number;
     }
     const rows = (await window.api.sqlite.all(query)) as QueryResult[];
     const recentChatResults: RecentChatResult[] = await Promise.all(
       rows.map(async (row) => {
-        const res = await window.api.blob.cards.get(row.card_dir_name);
-        if (res.kind == "err") {
+        const res = await window.api.blob.cards.get(row.cardID);
+        console.log(res);
+        if (res.kind === "err") {
           return {
             kind: "err",
             value: {
@@ -308,24 +311,18 @@ async function getCardBundle(chatID: number): Promise<Result<UICardBundle, Error
 async function getAllExtantCardBundles(): Promise<Result<UICardBundle[], Error>> {
   try {
     const query = `
-      SELECT cards.id, cards.dir_name
+      SELECT cards.id
       FROM cards
       WHERE cards.is_deleted = 0;`;
-    const rows = (await window.api.sqlite.all(query)) as { id: number; dir_name: string }[];
+    const rows = (await window.api.sqlite.all(query)) as { id: number }[];
     const cardBundles: UICardBundle[] = [];
     for (const row of rows) {
-      const res = await window.api.blob.cards.get(row.dir_name);
+      const res = await window.api.blob.cards.get(row.id);
       if (res.kind == "err") {
         console.error("Error fetching a card bundle", res.error);
         continue;
       }
-      const cardBundle: UICardBundle = {
-        id: row.id,
-        data: res.value.data,
-        avatarURI: res.value.avatarURI,
-        bannerURI: res.value.bannerURI
-      };
-      cardBundles.push(cardBundle);
+      cardBundles.push(res.value);
     }
     return { kind: "ok", value: cardBundles };
   } catch (e) {
@@ -337,24 +334,18 @@ async function getAllExtantCardBundles(): Promise<Result<UICardBundle[], Error>>
 async function getAllDeletedCardBundles(): Promise<Result<UICardBundle[], Error>> {
   try {
     const query = `
-      SELECT cards.id, cards.dir_name
+      SELECT cards.id
       FROM cards
       WHERE cards.is_deleted = 1;`;
-    const rows = (await window.api.sqlite.all(query)) as { id: number; dir_name: string }[];
+    const rows = (await window.api.sqlite.all(query)) as { id: number }[];
     const cardBundles: UICardBundle[] = [];
     for (const row of rows) {
-      const res = await window.api.blob.cards.get(row.dir_name);
+      const res = await window.api.blob.cards.get(row.id);
       if (res.kind == "err") {
         console.error("Error fetching a card bundle", res.error);
         continue;
       }
-      const cardBundle: UICardBundle = {
-        id: row.id,
-        data: res.value.data,
-        avatarURI: res.value.avatarURI,
-        bannerURI: res.value.bannerURI
-      };
-      cardBundles.push(cardBundle);
+      cardBundles.push(res.value);
     }
     return { kind: "ok", value: cardBundles };
   } catch (e) {

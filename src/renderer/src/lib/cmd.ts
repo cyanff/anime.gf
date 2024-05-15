@@ -14,19 +14,13 @@
 //   topK?: number;
 // }
 
-import { render } from "@/lib/macros";
-import { CardData, PersonaData } from "@shared/types";
+import { cardTagSchema, cardTagsSchema } from "@shared/schema/schema";
 
 export async function handleA() {
-  // replace {{user}} and {{char}}
-  const cardData = { character: { name: "John" } } as CardData;
-  const personaData = { name: "Jane" } as PersonaData;
+  const tag = "test";
+  const tags = [tag];
 
-  const res = render("Hello {{user}}, <!-- comment --><div></div> you are roleplaying as {{char}}", {
-    cardData: cardData,
-    personaData: personaData
-  });
-  console.log(res);
+  console.log(cardTagsSchema.safeParse(tags));
 }
 
 export async function handleB() {}

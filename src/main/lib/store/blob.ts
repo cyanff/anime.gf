@@ -6,7 +6,7 @@
 import fsp from "fs/promises";
 import path from "path";
 import { cards } from "../cards/cards";
-import { personas } from "../personas";
+import { personas } from "../personas/personas";
 import { attainable, blobRootPath, cardsRootPath, copyFolder, resourcesPath } from "../utils";
 
 async function init() {

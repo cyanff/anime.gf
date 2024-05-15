@@ -3,9 +3,8 @@
  */
 
 import { queries } from "@/lib/queries";
-import { config } from "@shared/config";
 import { Result } from "@shared/types";
-import { deepFreeze, getFileExtension } from "@shared/utils";
+import { deepFreeze } from "@shared/utils";
 
 async function importFromFileList(files: FileList): Promise<Result<void, Error>[]> {
   const numFiles = files.length;

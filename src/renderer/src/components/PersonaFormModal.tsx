@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PersonaFormData, personaFormSchema } from "@shared/forms";
+import { PersonaFormData, personaFormSchema } from "@shared/schema/form_schema";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -63,7 +63,7 @@ export function PersonaFormModal({
     setValue("avatarURI", file.path);
 
     // Display the selected image in the preview
-    const res = await window.api.blob.image.get(file.path);
+    const res = await window.api.utils.getNativeImage(file.path);
     if (res.kind === "ok") {
       const dataURL = res.value.toDataURL();
       setAvatarNativeImage(dataURL);

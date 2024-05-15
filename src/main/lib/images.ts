@@ -1,1 +1,1 @@
-import { config } from "@shared/config";
+// Handles image transformations

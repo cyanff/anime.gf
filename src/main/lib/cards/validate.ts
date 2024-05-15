@@ -1,5 +1,6 @@
 import { config } from "@shared/config";
-import { PlatformCardBundle, RawPlatformCardBundle, Result, cardSchema } from "@shared/types";
+import { cardSchema } from "@shared/schema/schema";
+import { PlatformCardBundle, RawPlatformCardBundle, Result } from "@shared/types";
 import sharp from "sharp";
 import { z } from "zod";
 import { fromError } from "zod-validation-error";
@@ -35,8 +36,10 @@ export async function validate(cardBundle: RawPlatformCardBundle): Promise<Resul
     return { kind: "err", error: new Error(`Card data failed validation: ${hrError}`) };
   }
 
+  let avatarSharp: sharp.Sharp | undefined;
   if (avatarBuffer) {
-    const avatarMetadata = await sharp(avatarBuffer).metadata();
+    avatarSharp = sharp(avatarBuffer);
+    const avatarMetadata = await avatarSharp.metadata();
     if (avatarMetadata.width !== config.card.avatarWidth || avatarMetadata.height !== config.card.avatarHeight) {
       return {
         kind: "err",
@@ -50,16 +53,17 @@ export async function validate(cardBundle: RawPlatformCardBundle): Promise<Resul
       };
     }
   }
-  if (bannerBuffer) {
-    const bannerMetadata = await sharp(bannerBuffer).metadata();
 
+  let bannerSharp: sharp.Sharp | undefined;
+  if (bannerBuffer) {
+    bannerSharp = sharp(bannerBuffer);
+    const bannerMetadata = await bannerSharp.metadata();
     if (bannerMetadata.width !== config.card.bannerWidth || bannerMetadata.height !== config.card.bannerHeight) {
       return {
         kind: "err",
         error: new Error(`Banner image must be ${config.card.bannerWidth}x${config.card.bannerHeight} pixels.`)
       };
     }
-
     if (bannerBuffer.length > config.card.bannerMaxFileSizeBytes) {
       return {
         kind: "err",
@@ -67,5 +71,6 @@ export async function validate(cardBundle: RawPlatformCardBundle): Promise<Resul
       };
     }
   }
-  return { kind: "ok", value: { data: dataValidationRes.data, avatarBuffer, bannerBuffer } };
+
+  return { kind: "ok", value: { data: dataValidationRes.data, avatarSharp, bannerSharp } };
 }

@@ -1,6 +1,7 @@
 import { config } from "@shared/config";
 import { md } from "@shared/md";
-import { CardData, PathLike, Result, UICardBundle, cardTagSchema } from "@shared/types";
+import { cardTagSchema } from "@shared/schema/schema";
+import { CardData, InputCardData, Result, UICardBundle } from "@shared/types";
 import { deepFreeze, isValidFileName, spacesToHyphens, supportedImageExts } from "@shared/utils";
 import archiver from "archiver";
 import { app, dialog } from "electron";
@@ -12,8 +13,8 @@ import extract from "png-chunks-extract";
 import { v4 } from "uuid";
 import { fromError } from "zod-validation-error";
 import sqlite from "../store/sqlite";
-import { attainable, cardsRootPath, downloadImageBuffer, extractZipToDir, pathLikeToBuffer } from "../utils";
-import { readData } from "./read";
+import { attainable, cardsRootPath, downloadImageBuffer, extractZipToDir } from "../utils";
+import { readData, readZIP } from "./read";
 import { SillyCardData, sillyCardSchema, validate } from "./validate";
 
 // FIXME: Add proper transaction handling with support for rolling back *any* state as well as db state.
@@ -44,10 +45,9 @@ export async function get(id: string): Promise<Result<UICardBundle, Error>> {
     return { kind: "err", error: e };
   }
 
-  const dataRes = await readData(path.join(cardsRootPath, `${cardDirname}/data.json`));
-  if (dataRes.kind === "err") {
-    return dataRes;
-  }
+  const dataRes = await readData(cardDirname);
+  if (dataRes.kind === "err") return dataRes;
+
   const [avatarURI, bannerURI] = await Promise.all([
     _getImageURI(cardDirname, "avatar"),
     _getImageURI(cardDirname, "banner")
@@ -66,7 +66,6 @@ export async function get(id: string): Promise<Result<UICardBundle, Error>> {
 
 async function _getImageURI(cardDirname: string, imageName: string): Promise<string> {
   const uriPrefix = "agf:///cards/";
-
   for (const ext of supportedImageExts) {
     const imagePath = path.join(cardsRootPath, `${cardDirname}/${imageName}.${ext}`);
     try {
@@ -96,7 +95,7 @@ export async function create(
   const cardDirName = `${pathEscapedCharName}-${v4}`;
   const cardDirPath = path.join(cardsRootPath, cardDirName);
   await fsp.mkdir(cardDirPath, { recursive: true });
-  await fsp.writeFile(path.join(cardDirPath, "data.json"), JSON.stringify(cardData));
+  await fsp.writeFile(path.join(cardDirPath, "data.json"), JSON.stringify(cardData, null, 2));
 
   if (avatarFilePath) {
     await fsp.copyFile(avatarFilePath, path.join(cardDirPath, "avatar.png"));
@@ -122,14 +121,14 @@ export async function create(
  * Updates the card data and images in the card directory.
  */
 export async function update(
-  cardID: number,
+  id: number,
   cardData: CardData,
   bannerFilePath: string | null,
   avatarFilePath: string | null
 ): Promise<Result<undefined, Error>> {
   // Retrieve the dir_name of the card from the database using the id
   const query = `SELECT dir_name FROM cards WHERE id =?;`;
-  const row = sqlite.get(query, [cardID]) as { dir_name: string };
+  const row = sqlite.get(query, [id]) as { dir_name: string };
 
   // Construct the path to the card directory
   const cardDirPath = path.join(cardsRootPath, row.dir_name);
@@ -199,7 +198,6 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
   if (ext !== ".json" && ext !== ".png") {
     return { kind: "err", error: new Error("Invalid file type for SillyTavern card. Must be .json or .png.") };
   }
-
   // Read silly tavern data based on it's file type
   const isPNG = ext === ".png";
   let data: string;
@@ -225,34 +223,40 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
   if (cardDirRes.kind === "err") return cardDirRes;
   const { dirName, dirPath } = cardDirRes.value;
 
-  // Get avatar path
-  let avatarPath: PathLike | undefined;
+  // Get avatar buffer from either the PNG or avatar field
+  let avatarBuffer: Buffer | undefined;
   if (isPNG) {
-    avatarPath = filePath;
+    try {
+      avatarBuffer = await fsp.readFile(filePath);
+    } catch (e) {
+      // Skip
+    }
   } else {
     if (sillyCard.data.avatar && sillyCard.data.avatar !== "none") {
       const bufferRes = await downloadImageBuffer(sillyCard.data.avatar);
       if (bufferRes.kind === "ok") {
-        avatarPath = bufferRes.value;
+        avatarBuffer = bufferRes.value;
       }
     }
   }
+  const rawCardBundle = {
+    data: agfCard,
+    avatarBuffer
+  };
 
   // Validate
-  const validationRes = await validate(agfCard, avatarPath);
-  if (validationRes.kind === "err") {
-    return validationRes;
+  const cardBundleRes = await validate(rawCardBundle);
+  if (cardBundleRes.kind === "err") {
+    return cardBundleRes;
   }
+  const cardBundle = cardBundleRes.value;
 
   // Save
   try {
     await fsp.mkdir(dirPath);
-    await fsp.writeFile(path.join(dirPath, "data.json"), JSON.stringify(agfCard, null, 2));
-    if (avatarPath) {
-      const bufferRes = await pathLikeToBuffer(avatarPath);
-      if (bufferRes.kind === "ok") {
-        await fsp.writeFile(path.join(dirPath, "avatar.png"), bufferRes.value);
-      }
+    await fsp.writeFile(path.join(dirPath, "data.json"), JSON.stringify(cardBundle.data, null, 2));
+    if (cardBundle.avatarSharp) {
+      await cardBundle.avatarSharp.toFile(path.join(dirPath, "avatar.png"));
     }
     const query = `INSERT INTO cards (dir_name) VALUES (?);`;
     sqlite.run(query, [dirName]);
@@ -294,7 +298,7 @@ async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<CardData> 
     config.card.jailbreakMaxChars
   );
 
-  const agfCard: CardData = {
+  const agfCard: InputCardData = {
     spec: "anime.gf",
     spec_version: "1.0",
     character: {
@@ -348,11 +352,15 @@ async function _pngToCharacterData(pngPath: string): Promise<Result<any, Error>>
 }
 
 async function _agfImport(zipPath: string): Promise<Result<void, Error>> {
-  const validationRes = await validateZIP(zipPath);
-  if (validationRes.kind === "err") {
-  }
+  const rawCardBundleRes = await readZIP(zipPath);
+  if (rawCardBundleRes.kind === "err") return rawCardBundleRes;
+  const rawCardBundle = rawCardBundleRes.value;
 
-  const cardDirRes = await _nameToCardDir(validateRes.data.character.name);
+  const cardBundleRes = await validate(rawCardBundle);
+  if (cardBundleRes.kind === "err") return cardBundleRes;
+  const cardBundle = cardBundleRes.value;
+
+  const cardDirRes = await _nameToCardDir(cardBundle.data.character.name);
   if (cardDirRes.kind === "err") {
     return cardDirRes;
   }

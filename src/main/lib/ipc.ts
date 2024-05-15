@@ -22,8 +22,8 @@ async function init() {
     return sqlite.runAsTransaction(queries, params);
   });
 
-  ipcMain.handle("blob.cards.get", async (_, card: string) => {
-    return await blob.cards.get(card);
+  ipcMain.handle("blob.cards.get", async (_, id: string) => {
+    return await blob.cards.get(id);
   });
 
   ipcMain.handle(
@@ -35,8 +35,8 @@ async function init() {
 
   ipcMain.handle(
     "blob.cards.update",
-    async (_, cardID: number, cardData: CardData, bannerURI: string | null, avatarURI: string | null) => {
-      return await blob.cards.update(cardID, cardData, bannerURI, avatarURI);
+    async (_, id: number, cardData: CardData, bannerURI: string | null, avatarURI: string | null) => {
+      return await blob.cards.update(id, cardData, bannerURI, avatarURI);
     }
   );
 
