@@ -5,7 +5,7 @@
 
 import fsp from "fs/promises";
 import path from "path";
-import { cards } from "../cards";
+import { cards } from "../cards/cards";
 import { personas } from "../personas";
 import { attainable, blobRootPath, cardsRootPath, copyFolder, resourcesPath } from "../utils";
 

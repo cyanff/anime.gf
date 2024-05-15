@@ -89,11 +89,14 @@ export function copyFolder(src, dest) {
   });
 }
 
-export async function downloadImageBuffer(url: string): Promise<Result<Buffer, Error>> {
+export async function downloadImageBuffer(path: PathLike): Promise<Result<Buffer, Error>> {
   try {
-    const res = await fetch(url);
+    if (path instanceof Buffer) {
+      return { kind: "ok", value: path };
+    }
+    const res = await fetch(path);
     if (!res.ok) {
-      return { kind: "err", error: new Error(`Failed to download image from ${url}`) };
+      return { kind: "err", error: new Error(`Failed to download image from ${path}`) };
     }
 
     const arrayBuffer = await res.arrayBuffer();
@@ -135,5 +138,30 @@ export async function getNativeImage(path: string): Promise<Result<Electron.Nati
     return { kind: "ok", value: image };
   } catch (e) {
     return { kind: "err", error: e };
+  }
+}
+
+export async function pathLikeToBuffer(path: PathLike): Promise<Result<Buffer, Error>> {
+  try {
+    if (path instanceof Buffer) {
+      return { kind: "ok", value: path };
+    }
+
+    if (typeof path === "string") {
+      if (!(await attainable(path))) {
+        return { kind: "err", error: new Error(`Path "${path}" is not accessible.`) };
+      }
+      const buffer = await fsp.readFile(path);
+      return { kind: "ok", value: buffer };
+    }
+
+    if (path instanceof URL) {
+      downloadImageBuffer(path);
+      const buffer = await fsp.readFile(path);
+      return { kind: "ok", value: buffer };
+    }
+    throw new Error("PathLike is not a string, Buffer, or URL");
+  } catch (error) {
+    return { kind: "err", error: new Error(`Failed to convert PathLike to Buffer: ${error.message}`) };
   }
 }

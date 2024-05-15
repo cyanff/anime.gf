@@ -18,6 +18,7 @@ const defaultSettings: Settings = {
     closeToTray: true
   }
 };
+
 export const config = {
   requestTimeout: 20000,
   persona: {
@@ -25,7 +26,12 @@ export const config = {
     nameMaxChars: 128,
 
     descriptionMinChars: 0,
-    descriptionMaxChars: 1024
+    descriptionMaxChars: 1024,
+
+    avatarWidth: 400,
+    avatarHeight: 600,
+    bannerWidth: 1500,
+    bannerHeight: 500
   },
   card: {
     nameMinChars: 1,
@@ -67,15 +73,17 @@ export const config = {
     systemPromptMaxChars: 4096,
 
     jailbreakMinChars: 0,
-    jailbreakMaxChars: 8096
-  },
-  app: {
+    jailbreakMaxChars: 8096,
+
     avatarWidth: 400,
     avatarHeight: 600,
+    avatarMaxFileSizeBytes: 3e6,
 
     bannerWidth: 1500,
-    bannerHeight: 500
+    bannerHeight: 500,
+    bannerMaxFileSizeBytes: 3e6
   },
+  app: {},
   defaultSettings: defaultSettings
 };
 

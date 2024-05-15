@@ -69,21 +69,24 @@ export type CardData = z.infer<typeof cardSchema>;
 // =========================================================
 //  Card Storage
 // =========================================================
-// Contents of the card directory
-export type CardBundle = {
+
+export interface UICardBundle {
+  id: string;
   data: CardData;
   avatarURI: string;
   bannerURI: string;
-};
-
-export interface UICardBundle extends CardBundle {
-  id: string;
 }
 
-export interface BackendCardBundle {
+export interface PlatformCardBundle {
   data: CardData;
-  avatarFilePath: string;
-  bannerFilePath: string;
+  avatarBuffer?: Buffer;
+  bannerBuffer?: Buffer;
+}
+
+export interface RawPlatformCardBundle {
+  data: object;
+  avatarBuffer?: Buffer;
+  bannerBuffer?: Buffer;
 }
 
 // =========================================================
@@ -124,3 +127,4 @@ export interface Settings {
 export type Result<T, E> = { kind: "ok"; value: T } | { kind: "err"; error: E };
 export type ImageExt = (typeof supportedImageExts)[number];
 export type supportedCardExts = (typeof supportedImageExts)[number];
+export type PathLike = string | Buffer | URL;
