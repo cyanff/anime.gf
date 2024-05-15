@@ -14,14 +14,14 @@ export interface API {
   };
   blob: {
     cards: {
-      get: (card: string) => Promise<Result<UICardBundle, Error>>;
+      get: (id: number) => Promise<Result<UICardBundle, Error>>;
       create: (
         cardData: CardData,
         bannerURI: string | null,
         avatarURI: string | null
       ) => Promise<Result<undefined, Error>>;
       update: (
-        cardID: number,
+        id: number,
         cardData: CardData,
         bannerURI: string | null,
         avatarURI: string | null
@@ -71,11 +71,11 @@ const api: API = {
   },
   blob: {
     cards: {
-      get: (card) => ipcRenderer.invoke("blob.cards.get", card),
+      get: (id) => ipcRenderer.invoke("blob.cards.get", id),
       create: (cardData, bannerURI, avatarURI) =>
         ipcRenderer.invoke("blob.cards.create", cardData, bannerURI, avatarURI),
-      update: (cardID, cardData, bannerURI, avatarURI) =>
-        ipcRenderer.invoke("blob.cards.update", cardID, cardData, bannerURI, avatarURI),
+      update: (id, cardData, bannerURI, avatarURI) =>
+        ipcRenderer.invoke("blob.cards.update", id, cardData, bannerURI, avatarURI),
       del: (cardID) => ipcRenderer.invoke("blob.cards.del", cardID),
       export_: (card) => ipcRenderer.invoke("blob.cards.export_", card),
       import_: (zip) => ipcRenderer.invoke("blob.cards.import_", zip)

@@ -290,18 +290,17 @@ async function getChatHistory(chatID: number, limit: number = 10): Promise<Resul
 async function getCardBundle(chatID: number): Promise<Result<UICardBundle, Error>> {
   try {
     const query = `
-  SELECT cards.dir_name
+  SELECT cards.id
   FROM chats
            JOIN cards ON chats.card_id = cards.id
   WHERE chats.id = ${chatID};`;
-    const row = (await window.api.sqlite.get(query)) as { dir_name: string };
-    const res = await window.api.blob.cards.get(row.dir_name);
+    const row = (await window.api.sqlite.get(query)) as { id: number };
+    const res = await window.api.blob.cards.get(row.id);
     if (res.kind == "err") {
       throw res.error;
     }
     return { kind: "ok", value: res.value };
   } catch (e) {
-    isError(e);
     return { kind: "err", error: e };
   }
 }

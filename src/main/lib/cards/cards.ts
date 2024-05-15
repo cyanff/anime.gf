@@ -1,7 +1,7 @@
 import { config } from "@shared/config";
 import { md } from "@shared/md";
-import { CardData, PathLike, PlatformCardBundle, Result, UICardBundle, cardTagSchema } from "@shared/types";
-import { deepFreeze, isValidFileName, spacesToHyphens } from "@shared/utils";
+import { CardData, PathLike, Result, UICardBundle, cardTagSchema } from "@shared/types";
+import { deepFreeze, isValidFileName, spacesToHyphens, supportedImageExts } from "@shared/utils";
 import archiver from "archiver";
 import { app, dialog } from "electron";
 import fs from "fs";
@@ -13,6 +13,7 @@ import { v4 } from "uuid";
 import { fromError } from "zod-validation-error";
 import sqlite from "../store/sqlite";
 import { attainable, cardsRootPath, downloadImageBuffer, extractZipToDir, pathLikeToBuffer } from "../utils";
+import { readData } from "./read";
 import { SillyCardData, sillyCardSchema, validate } from "./validate";
 
 // FIXME: Add proper transaction handling with support for rolling back *any* state as well as db state.
@@ -32,42 +33,51 @@ import { SillyCardData, sillyCardSchema, validate } from "./validate";
  * @returns A result object containing the CardResources if successful, else error.
  *
  */
-export async function get(name: string): Promise<Result<PlatformCardBundle, Error>> {
-  const dirPath = path.join(cardsRootPath, name);
-  if (!(await attainable(dirPath))) {
-    return { kind: "err", error: new Error(`Card folder "${name}" not found`) };
-  }
+export async function get(id: string): Promise<Result<UICardBundle, Error>> {
+  const query = `SELECT dir_name FROM cards WHERE id = ?;`;
+  let cardDirname: string;
 
-  const dataFilePath = path.join(dirPath, "data.json");
-  if (!(await attainable(dataFilePath))) {
-    return { kind: "err", error: new Error(`data.json not found in "${name}" folder`) };
-  }
-
-  let data;
   try {
-    data = JSON.parse(await fsp.readFile(dataFilePath, "utf8"));
+    const row = sqlite.get(query, [id]) as { dir_name: string };
+    cardDirname = row.dir_name;
   } catch (e) {
     return { kind: "err", error: e };
   }
 
-  // TODO: Promise.all() to fetch both URIs asynchronously
-  // TODO: extract
-  const uriPrefix = "agf:///cards/";
-  const avatarFilePath = path.join(dirPath, "avatar.png");
-  const avatarFileExists = await attainable(avatarFilePath);
-  const avatarURI = avatarFileExists ? uriPrefix + name + "/avatar.png" : "";
-  const bannerFilePath = path.join(dirPath, "banner.png");
-  const bannerFileExists = await attainable(bannerFilePath);
-  const bannerURI = bannerFileExists ? uriPrefix + name + "/banner.png" : "";
+  const dataRes = await readData(path.join(cardsRootPath, `${cardDirname}/data.json`));
+  if (dataRes.kind === "err") {
+    return dataRes;
+  }
+  const [avatarURI, bannerURI] = await Promise.all([
+    _getImageURI(cardDirname, "avatar"),
+    _getImageURI(cardDirname, "banner")
+  ]);
 
   return {
     kind: "ok",
     value: {
-      data: data,
+      id,
+      data: dataRes.value,
       avatarURI,
       bannerURI
     }
   };
+}
+
+async function _getImageURI(cardDirname: string, imageName: string): Promise<string> {
+  const uriPrefix = "agf:///cards/";
+
+  for (const ext of supportedImageExts) {
+    const imagePath = path.join(cardsRootPath, `${cardDirname}/${imageName}.${ext}`);
+    try {
+      if (await attainable(imagePath)) {
+        return `${uriPrefix}${cardDirname}/${imageName}.${ext}`;
+      }
+    } catch (e) {
+      continue;
+    }
+  }
+  return "";
 }
 
 /**
