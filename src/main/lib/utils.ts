@@ -141,7 +141,7 @@ export async function getNativeImage(path: string): Promise<Result<Electron.Nati
   }
 }
 
-export async function pathLikeToBuffer(path: PathLike): Promise<Result<Buffer, Error>> {
+export async function fileToBuffer(path: PathLike): Promise<Result<Buffer, Error>> {
   try {
     if (path instanceof Buffer) {
       return { kind: "ok", value: path };

@@ -1,4 +1,4 @@
-appId: gf.anime 
+appId: gf.anime
 productName: agf
 directories:
   buildResources: build
@@ -37,7 +37,7 @@ linux:
   target:
     - AppImage
     - deb
-  maintainer: agf 
+  maintainer: agf
   category: Utility
   icon: build/icon.png
 appImage:
@@ -45,10 +45,10 @@ appImage:
 npmRebuild: false
 publish:
   provider: github
-  repo: anime.gf 
-  owner: cyanff 
+  repo: anime.gf
+  owner: cyanff
   vPrefixedTagName: false
 
 # Injected into the final package.json
-extraMetadata: 
-  version: ${version} 
+extraMetadata:
+  version: ${version}

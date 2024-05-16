@@ -26,6 +26,9 @@ export const sillyCardSchema = z.object({
 });
 export type SillyCardData = z.infer<typeof sillyCardSchema>;
 
+// TODO, validate image buffer is in supportedFileExts
+// If not, convert to supported file ext
+// TODO: auto resize image to correct size
 export async function validate(cardBundle: RawPlatformCardBundle): Promise<Result<PlatformCardBundle, Error>> {
   const { data, avatarBuffer, bannerBuffer } = cardBundle;
 

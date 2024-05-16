@@ -1,4 +1,4 @@
-import { PersonaFormData } from "@shared/forms";
+import { PersonaFormData } from "@shared/schema/form_schema";
 import { CardData, PersonaBundle, Result, Settings, UICardBundle } from "@shared/types";
 import { contextBridge, ipcRenderer } from "electron";
 import { RunResult } from "../main/lib/store/sqlite";
@@ -15,19 +15,15 @@ export interface API {
   blob: {
     cards: {
       get: (id: number) => Promise<Result<UICardBundle, Error>>;
-      create: (
-        cardData: CardData,
-        bannerURI: string | null,
-        avatarURI: string | null
-      ) => Promise<Result<undefined, Error>>;
+      create: (data: CardData, bannerFilePath?: string, avatarFilePath?: string) => Promise<Result<void, Error>>;
       update: (
         id: number,
-        cardData: CardData,
-        bannerURI: string | null,
-        avatarURI: string | null
-      ) => Promise<Result<undefined, Error>>;
-      del: (cardID: number) => Promise<Result<undefined, Error>>;
-      export_: (card: string) => Promise<Result<void, Error>>;
+        data: CardData,
+        bannerFilePath?: string,
+        avatarFilePath?: string
+      ) => Promise<Result<void, Error>>;
+      del: (cardID: number) => Promise<Result<void, Error>>;
+      export_: (id: number) => Promise<Result<void, Error>>;
       import_: (zip: string) => Promise<Result<void, Error>>;
     };
     personas: {
@@ -72,12 +68,12 @@ const api: API = {
   blob: {
     cards: {
       get: (id) => ipcRenderer.invoke("blob.cards.get", id),
-      create: (cardData, bannerURI, avatarURI) =>
-        ipcRenderer.invoke("blob.cards.create", cardData, bannerURI, avatarURI),
-      update: (id, cardData, bannerURI, avatarURI) =>
-        ipcRenderer.invoke("blob.cards.update", id, cardData, bannerURI, avatarURI),
-      del: (cardID) => ipcRenderer.invoke("blob.cards.del", cardID),
-      export_: (card) => ipcRenderer.invoke("blob.cards.export_", card),
+      create: (data, bannerFilePath, avatarFilePath) =>
+        ipcRenderer.invoke("blob.cards.create", data, bannerFilePath, avatarFilePath),
+      update: (id, data, bannerFilePath, avatarFilePath) =>
+        ipcRenderer.invoke("blob.cards.update", id, data, bannerFilePath, avatarFilePath),
+      del: (id) => ipcRenderer.invoke("blob.cards.del", id),
+      export_: (id) => ipcRenderer.invoke("blob.cards.export_", id),
       import_: (zip) => ipcRenderer.invoke("blob.cards.import_", zip)
     },
     personas: {

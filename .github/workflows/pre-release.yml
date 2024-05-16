@@ -1,10 +1,10 @@
-name: pre-release 
+name: pre-release
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g., 0.0.2)'
+        description: "Release version (e.g., 0.0.2)"
         required: true
 
 jobs:
@@ -15,23 +15,22 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Use Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18.x
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Build resources
-      run: npm run build
+      - name: Build resources
+        run: npm run build
 
-    - name: Build with electron-builder
-      uses: samuelmeuli/action-electron-builder@v1
-      with:
-        github_token: ${{ secrets.github_token }}
-        release: true
-        args: -c.extraMetadata.version=${{ github.event.inputs.version }} -c.publish.releaseType=prerelease
-
+      - name: Build with electron-builder
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          release: true
+          args: -c.extraMetadata.version=${{ github.event.inputs.version }} -c.publish.releaseType=prerelease

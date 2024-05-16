@@ -14,7 +14,7 @@
 //   topK?: number;
 // }
 
-import { cardTagSchema, cardTagsSchema } from "@shared/schema/schema";
+import { cardTagsSchema } from "@shared/schema/schema";
 
 export async function handleA() {
   const tag = "test";

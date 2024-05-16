@@ -1,3 +1,5 @@
+import { FormatEnum } from "sharp";
+
 /**
  * Freeze an object along with all of it's properties and subproperties making it completely immutable.
  * This is useful because Object.freeze() only freezes the top level properties.
@@ -74,3 +76,31 @@ export function getFileExtension(fileName: string): string | undefined {
 }
 
 export const supportedImageExts = ["png", "jpg", "webp", "gif"];
+export const supportedImageExtsWithDot = supportedImageExts.map((ext) => `.${ext}`);
+
+const formatMapping: { [key: string]: string } = {
+  avif: "avif",
+  dz: "dz",
+  fits: "fits",
+  gif: "gif",
+  heif: "heif",
+  input: "input",
+  jpeg: "jpg",
+  jpg: "jpg",
+  jp2: "jp2",
+  jxl: "jxl",
+  magick: "magick",
+  openslide: "openslide",
+  pdf: "pdf",
+  png: "png",
+  ppm: "ppm",
+  raw: "raw",
+  svg: "svg",
+  tiff: "tiff",
+  tif: "tiff",
+  v: "v",
+  webp: "webp"
+};
+export function sharpFormatToExt(format: keyof FormatEnum | undefined): string | undefined {
+  return format && supportedImageExts.includes(formatMapping[format]) ? formatMapping[format] : undefined;
+}

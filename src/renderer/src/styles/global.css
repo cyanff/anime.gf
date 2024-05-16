@@ -56,7 +56,7 @@
     --scroll-primary-thumb: hsl(0, 0%, 9%);
     --scroll-primary-track: hsl(0, 0%, 16%);
     --scroll-secondary-thumb: hsl(0, 0%, 30%);
-    --scroll-secondary-track: rgba(0, 0, 0, 0.0);
+    --scroll-secondary-track: rgba(0, 0, 0, 0);
 
     /* Floating elements, ex: modals, popovers, dialogs */
     --float: hsl(0, 0%, 13%); /* Darker than background */
@@ -263,7 +263,6 @@
     --action-primary: hsl(345, 77%, 48%);
     --action-secondary: hsl(230, 25%, 55%);
     --action-tertiary: hsl(230, 25%, 25%);
-
   }
 
   /* Twilight dark theme */
@@ -348,7 +347,7 @@
   --popover-foreground: var(--tx-primary);
   --radius: 0.8rem;
   font-weight: 480;
-  overflow-y : hidden;
+  overflow-y: hidden;
 }
 
 .scroll-primary::-webkit-scrollbar {

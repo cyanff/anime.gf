@@ -16,19 +16,17 @@
     "isFileTemplate": true
   },
   "Comment Block": {
-      "prefix": "agf-header",
-      "body": [
-          "// =========================================================",
-          "//  ${1:}",
-          "// ========================================================="
-      ],
-      "description": "Create a comment block with a placeholder for the comment name"
+    "prefix": "agf-header",
+    "body": [
+      "// =========================================================",
+      "//  ${1:}",
+      "// ========================================================="
+    ],
+    "description": "Create a comment block with a placeholder for the comment name"
   },
   "Line": {
     "prefix": "agf-line",
-    "body": [
-      "/* -------------------------------------------------------------------------- */"
-    ],
+    "body": ["/* -------------------------------------------------------------------------- */"],
     "description": "Inserts a line comment"
   }
 }
