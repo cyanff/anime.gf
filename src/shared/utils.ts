@@ -101,6 +101,22 @@ const formatMapping: { [key: string]: string } = {
   v: "v",
   webp: "webp"
 };
+
 export function sharpFormatToExt(format: keyof FormatEnum | undefined): string | undefined {
-  return format && formatMapping[format];
+  if (!format) return undefined;
+  return formatMapping[format];
 }
+
+/**
+ * Converts a Sharp image format to a supported image file extension, if available.
+ *
+ * @param format - The Sharp image format to convert.
+ * @returns The supported image file extension, or `undefined` if the format is not supported.
+ */
+export function sharpFormatToSupportedImageExt(format: keyof FormatEnum | undefined): string | undefined {
+  if (!format) return undefined;
+  const ext = sharpFormatToExt(format);
+  if (!ext) return undefined;
+  return supportedImageExts.includes(ext) ? ext : undefined;
+}
+export const supportedCardExts = ["zip", "json", "png"];

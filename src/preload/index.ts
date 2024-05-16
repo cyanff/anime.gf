@@ -4,7 +4,6 @@ import { contextBridge, ipcRenderer } from "electron";
 import { RunResult } from "../main/lib/store/sqlite";
 import { XFetchConfig } from "../main/lib/xfetch";
 
-// Expose API types to the renderer process
 export interface API {
   sqlite: {
     run: (query: string, params?: any[]) => Promise<RunResult>;

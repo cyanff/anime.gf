@@ -12,7 +12,7 @@ export type InputCardData = z.input<typeof cardSchema>;
 //  Card Storage
 // =========================================================
 export interface UICardBundle {
-  id: string;
+  id: number;
   data: CardData;
   avatarURI: string;
   bannerURI: string;

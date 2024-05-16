@@ -1,4 +1,4 @@
-import { PersonaFormData } from "@shared/forms";
+import { PersonaFormData } from "@shared/schema/form_schema";
 import { CardData } from "@shared/types";
 import { ipcMain, shell } from "electron";
 import blob from "./store/blob";
@@ -26,16 +26,13 @@ async function init() {
     return await blob.cards.get(id);
   });
 
-  ipcMain.handle(
-    "blob.cards.create",
-    async (_, cardData: CardData, bannerURI: string | null, avatarURI: string | null) => {
-      return await blob.cards.create(cardData, bannerURI, avatarURI);
-    }
-  );
+  ipcMain.handle("blob.cards.create", async (_, cardData: CardData, bannerURI?: string, avatarURI?: string) => {
+    return await blob.cards.create(cardData, bannerURI, avatarURI);
+  });
 
   ipcMain.handle(
     "blob.cards.update",
-    async (_, id: number, cardData: CardData, bannerURI: string | null, avatarURI: string | null) => {
+    async (_, id: number, cardData: CardData, bannerURI?: string, avatarURI?: string) => {
       return await blob.cards.update(id, cardData, bannerURI, avatarURI);
     }
   );
@@ -44,8 +41,8 @@ async function init() {
     return await blob.cards.del(cardID);
   });
 
-  ipcMain.handle("blob.cards.export_", async (_, card: string) => {
-    return await blob.cards.export_(card);
+  ipcMain.handle("blob.cards.export_", async (_, id: number) => {
+    return await blob.cards.export_(id);
   });
 
   ipcMain.handle("blob.cards.import_", async (_, zip: string) => {

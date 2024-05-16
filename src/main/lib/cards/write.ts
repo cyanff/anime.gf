@@ -1,5 +1,5 @@
 import { PlatformCardBundle, Result } from "@shared/types";
-import { isValidFileName, sharpFormatToExt, spacesToHyphens } from "@shared/utils";
+import { isValidFileName, sharpFormatToSupportedImageExt, spacesToHyphens } from "@shared/utils";
 import archiver from "archiver";
 import fs from "fs";
 import fsp from "fs/promises";
@@ -25,13 +25,13 @@ export async function writeDir(cardBundle: PlatformCardBundle, dirName?: string)
     await fsp.writeFile(join(dirPath, "data.json"), JSON.stringify(data, null, 2));
 
     if (avatarSharp) {
-      const ext = sharpFormatToExt((await avatarSharp.metadata()).format);
-      if (!ext) return { kind: "err", error: new Error("Avatar image format is not supported.") };
+      let ext = sharpFormatToSupportedImageExt((await avatarSharp.metadata()).format);
+      if (!ext) ext = "png";
       await avatarSharp.toFile(join(dirPath, `avatar.${ext}`));
     }
     if (bannerSharp) {
-      const ext = sharpFormatToExt((await bannerSharp.metadata()).format);
-      if (!ext) return { kind: "err", error: new Error("Banner image format is not supported.") };
+      let ext = sharpFormatToSupportedImageExt((await bannerSharp.metadata()).format);
+      if (!ext) ext = "png";
       await bannerSharp.toFile(join(dirPath, `banner.${ext}`));
     }
     const query = `INSERT INTO cards (dir_name) VALUES (?);`;
@@ -41,6 +41,40 @@ export async function writeDir(cardBundle: PlatformCardBundle, dirName?: string)
     // Rollback
     const delRes = await del(cardRowID, dirPath);
     if (delRes.kind === "err") console.error("Error during rollback:", delRes.error);
+    return { kind: "err", error: e };
+  }
+}
+
+export async function writeZIP(cardBundle: PlatformCardBundle, zipPath: string): Promise<Result<void, Error>> {
+  try {
+    const { data, avatarSharp, bannerSharp } = cardBundle;
+    const output = fs.createWriteStream(zipPath);
+    const archive = archiver("zip", {
+      zlib: { level: 5 }
+    });
+
+    archive.pipe(output);
+
+    // Add data.json
+    archive.append(JSON.stringify(data, null, 2), { name: "data.json" });
+
+    if (avatarSharp) {
+      let ext = sharpFormatToSupportedImageExt((await avatarSharp.metadata()).format);
+      if (!ext) ext = "png";
+      const avatarBuffer = await avatarSharp.toBuffer();
+      archive.append(avatarBuffer, { name: `avatar.${ext}` });
+    }
+
+    if (bannerSharp) {
+      let ext = sharpFormatToSupportedImageExt((await bannerSharp.metadata()).format);
+      if (!ext) ext = "png";
+      const bannerBuffer = await bannerSharp.toBuffer();
+      archive.append(bannerBuffer, { name: `banner.${ext}` });
+    }
+
+    await archive.finalize();
+    return { kind: "ok", value: undefined };
+  } catch (e) {
     return { kind: "err", error: e };
   }
 }
@@ -60,40 +94,6 @@ export async function del(id?: number, dirPath?: string): Promise<Result<void, E
     if (dirPath) {
       await fsp.rm(dirPath, { recursive: true });
     }
-    return { kind: "ok", value: undefined };
-  } catch (e) {
-    return { kind: "err", error: e };
-  }
-}
-
-export async function writeZIP(cardBundle: PlatformCardBundle, zipPath: string): Promise<Result<void, Error>> {
-  try {
-    const { data, avatarSharp, bannerSharp } = cardBundle;
-    const output = fs.createWriteStream(zipPath);
-    const archive = archiver("zip", {
-      zlib: { level: 5 }
-    });
-
-    archive.pipe(output);
-
-    // Add data.json
-    archive.append(JSON.stringify(data, null, 2), { name: "data.json" });
-
-    if (avatarSharp) {
-      const ext = sharpFormatToExt((await avatarSharp.metadata()).format);
-      if (!ext) return { kind: "err", error: new Error("Avatar image format is not supported.") };
-      const avatarBuffer = await avatarSharp.toBuffer();
-      archive.append(avatarBuffer, { name: `avatar.${ext}` });
-    }
-
-    if (bannerSharp) {
-      const ext = sharpFormatToExt((await bannerSharp.metadata()).format);
-      if (!ext) return { kind: "err", error: new Error("Banner image format is not supported.") };
-      const bannerBuffer = await bannerSharp.toBuffer();
-      archive.append(bannerBuffer, { name: `banner.${ext}` });
-    }
-
-    await archive.finalize();
     return { kind: "ok", value: undefined };
   } catch (e) {
     return { kind: "err", error: e };

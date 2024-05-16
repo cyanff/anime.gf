@@ -7,9 +7,9 @@ import path from "path";
 import { fromError } from "zod-validation-error";
 import sqlite from "../store/sqlite";
 import { attainable, cardsRootPath, downloadImageBuffer } from "../utils";
+import { SillyCardData, parse, sillyCardSchema } from "./parse";
 import { readData, readDir, readFilePathCardBundle, readZIP } from "./read";
 import { _pngToCharacterData, _sillyCardToAGFCard, getDBCardFromID } from "./utils";
-import { SillyCardData, sillyCardSchema, validate } from "./validate";
 import { del, writeDir, writeZIP } from "./write";
 
 /**
@@ -25,7 +25,7 @@ import { del, writeDir, writeZIP } from "./write";
  * @returns A result object containing the CardResources if successful, else error.
  *
  */
-export async function get(id: string): Promise<Result<UICardBundle, Error>> {
+export async function get(id: number): Promise<Result<UICardBundle, Error>> {
   const query = `SELECT dir_name FROM cards WHERE id = ?;`;
   let cardDirname: string;
 
@@ -82,7 +82,7 @@ export async function create(
   if (rawCardBundleRes.kind === "err") return rawCardBundleRes;
   const rawCardbundle = rawCardBundleRes.value;
 
-  const validationRes = await validate(rawCardbundle);
+  const validationRes = await parse(rawCardbundle);
   if (validationRes.kind === "err") return validationRes;
   const cardBundle = validationRes.value;
 
@@ -102,7 +102,7 @@ export async function update(
   if (rawCardBundleRes.kind === "err") return rawCardBundleRes;
   const rawCardbundle = rawCardBundleRes.value;
 
-  const validationRes = await validate(rawCardbundle);
+  const validationRes = await parse(rawCardbundle);
   if (validationRes.kind === "err") return validationRes;
   const cardBundle = validationRes.value;
 
@@ -187,7 +187,7 @@ async function _sillyImport(filePath: string): Promise<Result<void, Error>> {
     data: agfCard,
     avatarBuffer
   };
-  const cardBundleRes = await validate(rawCardBundle);
+  const cardBundleRes = await parse(rawCardBundle);
   if (cardBundleRes.kind === "err") {
     return cardBundleRes;
   }
@@ -200,7 +200,7 @@ async function _agfImport(zipPath: string): Promise<Result<void, Error>> {
   if (rawCardBundleRes.kind === "err") return rawCardBundleRes;
   const rawCardBundle = rawCardBundleRes.value;
 
-  const cardBundleRes = await validate(rawCardBundle);
+  const cardBundleRes = await parse(rawCardBundle);
   if (cardBundleRes.kind === "err") return cardBundleRes;
   const cardBundle = cardBundleRes.value;
   return await writeDir(cardBundle);
@@ -226,7 +226,7 @@ async function export_(id: number): Promise<Result<void, Error>> {
   if (rawCardBundleRes.kind === "err") return rawCardBundleRes;
   const rawCardBundle = rawCardBundleRes.value;
 
-  const cardBundleRes = await validate(rawCardBundle);
+  const cardBundleRes = await parse(rawCardBundle);
   if (cardBundleRes.kind === "err") return cardBundleRes;
   const cardBundle = cardBundleRes.value;
 

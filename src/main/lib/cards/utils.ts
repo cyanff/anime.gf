@@ -7,7 +7,7 @@ import fsp from "fs/promises";
 import tEXt from "png-chunk-text";
 import extract from "png-chunks-extract";
 import sqlite from "../store/sqlite";
-import { SillyCardData } from "./validate";
+import { SillyCardData } from "./parse";
 
 export async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<CardData> {
   // Convert all possible tags, filter out invalid ones, and limit to max count

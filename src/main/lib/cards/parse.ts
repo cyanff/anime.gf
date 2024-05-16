@@ -1,7 +1,7 @@
 import { config } from "@shared/config";
 import { cardSchema } from "@shared/schema/schema";
 import { PlatformCardBundle, RawPlatformCardBundle, Result } from "@shared/types";
-import { sharpFormatToExt, supportedImageExts } from "@shared/utils";
+import { sharpFormatToSupportedImageExt, supportedImageExts } from "@shared/utils";
 import sharp from "sharp";
 import { z } from "zod";
 import { fromError } from "zod-validation-error";
@@ -31,7 +31,7 @@ export interface ValidationOptions {
   coerce?: boolean;
 }
 
-export async function validate(
+export async function parse(
   cardBundle: RawPlatformCardBundle,
   options: ValidationOptions = { coerce: true }
 ): Promise<Result<PlatformCardBundle, Error>> {
@@ -47,7 +47,7 @@ export async function validate(
     let avatarSharp = avatarBuffer ? sharp(avatarBuffer, { animated: true }) : undefined;
     if (avatarSharp) {
       const metadata = await avatarSharp.metadata();
-      const ext = sharpFormatToExt(metadata.format);
+      const ext = sharpFormatToSupportedImageExt(metadata.format);
       const isSupportedExt = supportedImageExts.includes(ext || "");
       const isCorrectSize = metadata.width === config.card.avatarWidth && metadata.height === config.card.avatarHeight;
       const isCorrectFileSize = metadata.size ? metadata.size < config.card.avatarMaxFileSizeBytes : false;
@@ -64,9 +64,7 @@ export async function validate(
           avatarSharp = avatarSharp.resize(config.card.avatarWidth, config.card.avatarHeight);
         }
         if (!isSupportedExt) {
-          console.log("Converting avatar to PNG");
           avatarSharp = avatarSharp.toFormat("png");
-          console.log(JSON.stringify(avatarSharp, null, 2));
         }
       } else {
         if (!isCorrectSize) {
@@ -87,7 +85,7 @@ export async function validate(
     let bannerSharp = bannerBuffer ? sharp(bannerBuffer) : undefined;
     if (bannerSharp) {
       const metadata = await bannerSharp.metadata();
-      const ext = sharpFormatToExt(metadata.format);
+      const ext = sharpFormatToSupportedImageExt(metadata.format);
       const isSupportedExt = supportedImageExts.includes(ext || "");
       const isCorrectSize = metadata.width === config.card.bannerWidth && metadata.height === config.card.bannerHeight;
       const isCorrectFileSize = metadata.size ? metadata.size < config.card.bannerMaxFileSizeBytes : false;

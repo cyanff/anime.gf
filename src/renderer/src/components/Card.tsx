@@ -11,7 +11,6 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
-import { card } from "@/lib/card";
 import { render } from "@/lib/macros";
 import { queries } from "@/lib/queries";
 import { ArrowUpOnSquareIcon, ChatBubbleLeftRightIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
@@ -80,7 +79,8 @@ function Card({ cardBundle }: CardProps) {
   }
 
   async function exportCardHandler() {
-    const res = await card.exportToZip(cardBundle.id);
+    const id = +cardBundle.id;
+    const res = await window.api.blob.cards.export_(id);
     if (res.kind === "err") {
       toast.error(`Error exporting card. ${res.error}`);
       return;
@@ -132,7 +132,7 @@ function Card({ cardBundle }: CardProps) {
               </div>
               {}
               <div className="text-tx-tertiary absolute top-20 z-10 pl-5 text-left text-sm font-medium">
-                by @{cardBundle.data.meta.creator.card || "anonymous"}
+                by @{cardBundle.data.meta.creator.card || "Anonymous"}
               </div>
             </div>
           </div>

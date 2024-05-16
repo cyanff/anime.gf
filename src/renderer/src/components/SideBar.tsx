@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { card, supportedCardExts } from "@/lib/card";
+import { card } from "@/lib/card";
 import {
   ArrowDownOnSquareIcon,
   BookOpenIcon,
@@ -18,6 +18,7 @@ import {
   PlusCircleIcon,
   UserGroupIcon
 } from "@heroicons/react/24/solid";
+import { supportedCardExts } from "@shared/utils";
 import { useMemo, useRef } from "react";
 import { toast } from "sonner";
 
