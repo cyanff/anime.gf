@@ -1,6 +1,7 @@
 import { config } from "@shared/config";
 import { cardSchema } from "@shared/schema/schema";
 import { PlatformCardBundle, RawPlatformCardBundle, Result } from "@shared/types";
+import { sharpFormatToExt, supportedImageExts } from "@shared/utils";
 import sharp from "sharp";
 import { z } from "zod";
 import { fromError } from "zod-validation-error";
@@ -26,54 +27,103 @@ export const sillyCardSchema = z.object({
 });
 export type SillyCardData = z.infer<typeof sillyCardSchema>;
 
-// TODO, validate image buffer is in supportedFileExts
-// If not, convert to supported file ext
-// TODO: auto resize image to correct size
-export async function validate(cardBundle: RawPlatformCardBundle): Promise<Result<PlatformCardBundle, Error>> {
-  const { data, avatarBuffer, bannerBuffer } = cardBundle;
+export interface ValidationOptions {
+  coerce?: boolean;
+}
 
-  const dataValidationRes = cardSchema.safeParse(data);
+export async function validate(
+  cardBundle: RawPlatformCardBundle,
+  options: ValidationOptions = { coerce: true }
+): Promise<Result<PlatformCardBundle, Error>> {
+  try {
+    const { data, avatarBuffer, bannerBuffer } = cardBundle;
 
-  if (!dataValidationRes.success) {
-    const hrError = fromError(dataValidationRes.error);
-    return { kind: "err", error: new Error(`Card data failed validation: ${hrError}`) };
+    const dataValidationRes = cardSchema.safeParse(data);
+    if (!dataValidationRes.success) {
+      const hrError = fromError(dataValidationRes.error);
+      return { kind: "err", error: new Error(`Card data failed validation: ${hrError}`) };
+    }
+
+    let avatarSharp = avatarBuffer ? sharp(avatarBuffer, { animated: true }) : undefined;
+    if (avatarSharp) {
+      const metadata = await avatarSharp.metadata();
+      const ext = sharpFormatToExt(metadata.format);
+      const isSupportedExt = supportedImageExts.includes(ext || "");
+      const isCorrectSize = metadata.width === config.card.avatarWidth && metadata.height === config.card.avatarHeight;
+      const isCorrectFileSize = metadata.size ? metadata.size < config.card.avatarMaxFileSizeBytes : false;
+
+      if (!isCorrectFileSize) {
+        return {
+          kind: "err",
+          error: new Error(`Avatar image must be less than ${config.card.avatarMaxFileSizeBytes / 1e6}MB.`)
+        };
+      }
+
+      if (options.coerce) {
+        if (!isCorrectSize) {
+          avatarSharp = avatarSharp.resize(config.card.avatarWidth, config.card.avatarHeight);
+        }
+        if (!isSupportedExt) {
+          console.log("Converting avatar to PNG");
+          avatarSharp = avatarSharp.toFormat("png");
+          console.log(JSON.stringify(avatarSharp, null, 2));
+        }
+      } else {
+        if (!isCorrectSize) {
+          return {
+            kind: "err",
+            error: new Error(`Avatar image must be ${config.card.avatarWidth}x${config.card.avatarHeight} pixels.`)
+          };
+        }
+        if (!isSupportedExt) {
+          return {
+            kind: "err",
+            error: new Error(`Avatar image must be one of the following file types: ${supportedImageExts.join(", ")}`)
+          };
+        }
+      }
+    }
+
+    let bannerSharp = bannerBuffer ? sharp(bannerBuffer) : undefined;
+    if (bannerSharp) {
+      const metadata = await bannerSharp.metadata();
+      const ext = sharpFormatToExt(metadata.format);
+      const isSupportedExt = supportedImageExts.includes(ext || "");
+      const isCorrectSize = metadata.width === config.card.bannerWidth && metadata.height === config.card.bannerHeight;
+      const isCorrectFileSize = metadata.size ? metadata.size < config.card.bannerMaxFileSizeBytes : false;
+
+      if (!isCorrectFileSize) {
+        return {
+          kind: "err",
+          error: new Error(`Banner image must be less than ${config.card.bannerMaxFileSizeBytes / 1e6}MB.`)
+        };
+      }
+
+      if (options.coerce) {
+        if (!isCorrectSize) {
+          bannerSharp = bannerSharp.resize(config.card.bannerWidth, config.card.bannerHeight);
+        }
+        if (!isSupportedExt) {
+          bannerSharp = bannerSharp.toFormat("png");
+        }
+      } else {
+        if (!isCorrectSize) {
+          return {
+            kind: "err",
+            error: new Error(`Banner image must be ${config.card.bannerWidth}x${config.card.bannerHeight} pixels.`)
+          };
+        }
+        if (!isSupportedExt) {
+          return {
+            kind: "err",
+            error: new Error(`Banner image must be one of the following file types: ${supportedImageExts.join(", ")}`)
+          };
+        }
+      }
+    }
+
+    return { kind: "ok", value: { data: dataValidationRes.data, avatarSharp, bannerSharp } };
+  } catch (e) {
+    return { kind: "err", error: e };
   }
-
-  let avatarSharp: sharp.Sharp | undefined;
-  if (avatarBuffer) {
-    avatarSharp = sharp(avatarBuffer);
-    const avatarMetadata = await avatarSharp.metadata();
-    if (avatarMetadata.width !== config.card.avatarWidth || avatarMetadata.height !== config.card.avatarHeight) {
-      return {
-        kind: "err",
-        error: new Error(`Avatar image must be ${config.card.avatarWidth}x${config.card.avatarHeight} pixels.`)
-      };
-    }
-    if (avatarBuffer.length > config.card.avatarMaxFileSizeBytes) {
-      return {
-        kind: "err",
-        error: new Error(`Avatar image must be less than ${config.card.avatarMaxFileSizeBytes / 1e6}MB.`)
-      };
-    }
-  }
-
-  let bannerSharp: sharp.Sharp | undefined;
-  if (bannerBuffer) {
-    bannerSharp = sharp(bannerBuffer);
-    const bannerMetadata = await bannerSharp.metadata();
-    if (bannerMetadata.width !== config.card.bannerWidth || bannerMetadata.height !== config.card.bannerHeight) {
-      return {
-        kind: "err",
-        error: new Error(`Banner image must be ${config.card.bannerWidth}x${config.card.bannerHeight} pixels.`)
-      };
-    }
-    if (bannerBuffer.length > config.card.bannerMaxFileSizeBytes) {
-      return {
-        kind: "err",
-        error: new Error(`Banner image must be less than ${config.card.bannerMaxFileSizeBytes / 1e6}MB.`)
-      };
-    }
-  }
-
-  return { kind: "ok", value: { data: dataValidationRes.data, avatarSharp, bannerSharp } };
 }

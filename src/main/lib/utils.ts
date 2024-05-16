@@ -98,35 +98,9 @@ export async function downloadImageBuffer(path: PathLike): Promise<Result<Buffer
     if (!res.ok) {
       return { kind: "err", error: new Error(`Failed to download image from ${path}`) };
     }
-
     const arrayBuffer = await res.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const extRes = await imageExtFromBuffer(buffer);
-    if (extRes.kind === "err") {
-      throw extRes.error;
-    }
     return { kind: "ok", value: buffer };
-  } catch (e) {
-    return { kind: "err", error: e };
-  }
-}
-
-const magicBytesPairs = [
-  ["89504E47", "png"],
-  ["FFD8FF", "jpg"],
-  ["52494646", "webp"],
-  ["47494638", "gif"]
-];
-
-export async function imageExtFromBuffer(buffer: Buffer): Promise<Result<ImageExt, Error>> {
-  try {
-    const magicBytes = buffer.toString("hex", 0, 4).toUpperCase();
-    for (const [key, ext] of magicBytesPairs) {
-      if (magicBytes.startsWith(key)) {
-        return { kind: "ok", value: ext };
-      }
-    }
-    return { kind: "err", error: new Error("Unsupported image type") };
   } catch (e) {
     return { kind: "err", error: e };
   }

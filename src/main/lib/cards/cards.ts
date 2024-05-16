@@ -12,10 +12,6 @@ import { _pngToCharacterData, _sillyCardToAGFCard, getDBCardFromID } from "./uti
 import { SillyCardData, sillyCardSchema, validate } from "./validate";
 import { del, writeDir, writeZIP } from "./write";
 
-// FIXME: Add proper transaction handling with support for rolling back *any* state as well as db state.
-// Ex: rollback file creation, db insertions, etc.
-// Wrap better-sqlite3
-
 /**
  * Gets card data under the appData/blob/cards directory given a card dir name.
  *

@@ -130,8 +130,9 @@ function Card({ cardBundle }: CardProps) {
                   ))}
                 </div>
               </div>
+              {}
               <div className="text-tx-tertiary absolute top-20 z-10 pl-5 text-left text-sm font-medium">
-                by @{cardBundle.data.meta.creator.card}
+                by @{cardBundle.data.meta.creator.card || "anonymous"}
               </div>
             </div>
           </div>

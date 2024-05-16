@@ -102,5 +102,5 @@ const formatMapping: { [key: string]: string } = {
   webp: "webp"
 };
 export function sharpFormatToExt(format: keyof FormatEnum | undefined): string | undefined {
-  return format && supportedImageExts.includes(formatMapping[format]) ? formatMapping[format] : undefined;
+  return format && formatMapping[format];
 }
