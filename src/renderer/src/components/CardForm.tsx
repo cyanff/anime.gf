@@ -4,8 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PencilSquareIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CardFormData, cardFormSchema } from "@shared/schema/form_schema";
-import { UICardBundle } from "@shared/types";
+import { cardFormSchema } from "@shared/schema/form";
+import { CardFormData, UICardBundle } from "@shared/types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DeepPartial, useForm } from "react-hook-form";
 

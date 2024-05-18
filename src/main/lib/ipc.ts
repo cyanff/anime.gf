@@ -1,10 +1,10 @@
-import { PersonaFormData } from "@shared/schema/form_schema";
+import { PersonaFormData } from "@shared/schema/form";
 import { CardData } from "@shared/types";
 import { ipcMain, shell } from "electron";
+import sqlite from "./sqlite";
 import blob from "./store/blob";
 import secret from "./store/secret";
 import setting from "./store/setting";
-import sqlite from "./store/sqlite";
 import { getNativeImage } from "./utils";
 import { XFetchConfig, xfetch } from "./xfetch";
 

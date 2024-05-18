@@ -1,20 +1,12 @@
-/**
- * Blob storage manages all non structured data.
- * This includes silly tavern cards, images, audio, base weights, lora adapters, and other binary data.
- */
-
+import { deepFreeze } from "@shared/utils";
 import fsp from "fs/promises";
 import path from "path";
-import { cards } from "../cards/cards";
-import { personas } from "../personas/personas";
-import { attainable, blobRootPath, cardsRootPath, copyFolder, resourcesPath } from "../utils";
-
+import { attainable, blobRootPath, cardsRootPath, copyFolder, resourcesPath } from "./utils";
 async function init() {
   const blobDirExists = await attainable(blobRootPath);
   if (!blobDirExists) {
     await fsp.mkdir(blobRootPath);
   }
-
   const cardsDirExists = await attainable(cardsRootPath);
   // Copy unpackedPath/blob/cards to cardsRootPath
   if (!cardsDirExists) {
@@ -23,8 +15,7 @@ async function init() {
   }
 }
 
-export default {
-  init,
-  cards,
-  personas
+export const blob = {
+  init
 };
+deepFreeze(blob);

@@ -6,7 +6,7 @@ import { CardData, InputCardData, Result } from "@shared/types";
 import fsp from "fs/promises";
 import tEXt from "png-chunk-text";
 import extract from "png-chunks-extract";
-import sqlite from "../store/sqlite";
+import sqlite from "../sqlite";
 import { SillyCardData } from "./parse";
 
 export async function _sillyCardToAGFCard(sillyCard: SillyCardData): Promise<CardData> {

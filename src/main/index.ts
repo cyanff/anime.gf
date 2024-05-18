@@ -1,16 +1,15 @@
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import { BrowserWindow, Menu, Tray, app, dialog, nativeImage, net, protocol, shell } from "electron";
+import { createIPCHandler } from "electron-trpc/main";
 import { autoUpdater } from "electron-updater";
 import path, { join } from "path";
 import icon from "../../resources/icon.png?asset";
-import ipc from "./lib/ipc";
-import blob from "./lib/store/blob";
-import secret from "./lib/store/secret";
-import setting from "./lib/store/setting";
-import sqlite from "./lib/store/sqlite";
+import { blob } from "./lib/blob";
+import { sqlite } from "./lib/sqlite";
 import { cardsRootPath, personasRootPath } from "./lib/utils";
+import { router } from "./routers/router";
 
-let window: any;
+export let win: any;
 let isQuiting = false;
 
 // Prevent multiple app instances
@@ -53,7 +52,7 @@ app.whenReady().then(async () => {
     {
       label: "Show App      ",
       click: () => {
-        window.show();
+        win.show();
       }
     },
     {
@@ -67,7 +66,7 @@ app.whenReady().then(async () => {
   tray.setToolTip("anime.gf");
   tray.setContextMenu(contextMenu);
   tray.on("double-click", () => {
-    window.show();
+    win.show();
   });
   app.on("before-quit", () => {
     isQuiting = true;
@@ -75,14 +74,14 @@ app.whenReady().then(async () => {
 
   app.on("second-instance", () => {
     // Someone tried to run a second instance, we should focus our window.
-    if (window) {
-      if (window.isMinimized()) {
-        window.restore();
+    if (win) {
+      if (win.isMinimized()) {
+        win.restore();
       }
-      if (!window.isVisible()) {
-        window.show();
+      if (!win.isVisible()) {
+        win.show();
       }
-      window.focus();
+      win.focus();
     }
   });
 
@@ -157,11 +156,9 @@ app.whenReady().then(async () => {
     });
   });
 
-  await sqlite.init();
   await blob.init();
-  await secret.init();
-  await setting.init();
-  await ipc.init();
+  await sqlite.init();
+  createIPCHandler({ router, windows: [win] });
 
   // Open or close DevTools using F12 in development
   // Ignore Cmd/Ctrl + R in production.
@@ -207,7 +204,7 @@ app.whenReady().then(async () => {
 });
 
 function createWindow(): void {
-  window = new BrowserWindow({
+  win = new BrowserWindow({
     title: "anime.gf",
     icon: icon,
     width: 900,
@@ -226,28 +223,29 @@ function createWindow(): void {
     }
   });
 
-  window.on("ready-to-show", () => {
+  win.on("ready-to-show", () => {
     // if (loadingWindow) loadingWindow.close();
-    window.show();
+    win.show();
   });
 
-  window.on("close", async (e) => {
+  win.on("close", async (e) => {
     if (!isQuiting) {
       e.preventDefault();
-      const settingsRes = await setting.get();
-      if (settingsRes.kind === "ok" && settingsRes.value?.advanced?.closeToTray) {
-        window.hide();
-        return;
-      } else {
-        app.quit();
-        return false;
-      }
+      // FIXME:
+      // const settingsRes = await setting.get();
+      // if (settingsRes.kind === "ok" && settingsRes.value?.advanced?.closeToTray) {
+      //   window.hide();
+      //   return;
+      // } else {
+      app.quit();
+      return false;
+      // }
     }
     app.quit();
     return false;
   });
 
-  window.webContents.setWindowOpenHandler((details) => {
+  win.webContents.setWindowOpenHandler((details) => {
     // Open external links in the default browser
     shell.openExternal(details.url);
     return { action: "deny" };
@@ -255,8 +253,8 @@ function createWindow(): void {
 
   // Load vite dev server in development or static files in production
   if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
-    window.loadURL(process.env["ELECTRON_RENDERER_URL"]);
+    win.loadURL(process.env["ELECTRON_RENDERER_URL"]);
   } else {
-    window.loadFile(join(__dirname, "../renderer/index.html"));
+    win.loadFile(join(__dirname, "../renderer/index.html"));
   }
 }

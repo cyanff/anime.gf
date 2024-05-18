@@ -5,7 +5,7 @@ import fs from "fs";
 import fsp from "fs/promises";
 import { join } from "path";
 import { v4 } from "uuid";
-import sqlite from "../store/sqlite";
+import sqlite from "../sqlite";
 import { cardsRootPath } from "../utils";
 import { getDBCardFromID } from "./utils";
 

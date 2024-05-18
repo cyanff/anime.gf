@@ -2,20 +2,8 @@ import { config } from "@shared/config";
 import { z } from "zod";
 
 // =========================================================
-// Forms
+//  Card
 // =========================================================
-export const personaFormSchema = z.object({
-  name: z
-    .string()
-    .min(config.persona.nameMinChars)
-    .max(config.persona.nameMaxChars)
-    .regex(/^[a-zA-Z0-9 -]*$/, "Name can only contain letters, numbers, spaces, and hyphens"),
-  description: z.string().max(config.persona.descriptionMaxChars),
-  isDefault: z.boolean(),
-  avatarURI: z.string().optional(),
-  bannerURI: z.string().optional()
-});
-export type PersonaFormData = z.infer<typeof personaFormSchema>;
 const characterFormSchema = z.object({
   name: z
     .string()
@@ -68,4 +56,18 @@ export const cardFormSchema = z.object({
   world: worldFormSchema,
   meta: metaFormSchema
 });
-export type CardFormData = z.infer<typeof cardFormSchema>;
+
+// =========================================================
+//  Persona
+// =========================================================
+export const personaFormSchema = z.object({
+  name: z
+    .string()
+    .min(config.persona.nameMinChars)
+    .max(config.persona.nameMaxChars)
+    .regex(/^[a-zA-Z0-9 -]*$/, "Name can only contain letters, numbers, spaces, and hyphens"),
+  description: z.string().max(config.persona.descriptionMaxChars),
+  isDefault: z.boolean(),
+  avatarURI: z.string().optional(),
+  bannerURI: z.string().optional()
+});

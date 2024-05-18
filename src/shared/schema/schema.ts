@@ -101,3 +101,11 @@ export const cardSchema = z.object({
   world: worldSchema,
   meta: metaSchema
 });
+
+// =========================================================
+// Persona Schema
+// =========================================================
+export const personaSchema = z.object({
+  name: z.string().min(config.persona.nameMinChars).max(config.persona.nameMaxChars),
+  description: z.string().min(config.persona.descriptionMinChars).max(config.persona.descriptionMaxChars)
+});

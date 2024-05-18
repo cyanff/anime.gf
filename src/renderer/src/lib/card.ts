@@ -2,8 +2,7 @@
  * Handles card import / export
  */
 
-import { queries } from "@/lib/queries";
-import { Result, UICardBundle } from "@shared/types";
+import { Result } from "@shared/types";
 import { deepFreeze } from "@shared/utils";
 
 async function importFromFileList(files: FileList): Promise<Result<void, Error>[]> {

@@ -2,7 +2,7 @@ import { Result } from "@shared/types";
 import Database from "better-sqlite3";
 import fsp from "fs/promises";
 import path from "path";
-import { attainable, dbPath, migrationsPath } from "../utils";
+import { attainable, dbPath, migrationsPath } from "./utils";
 
 // TODO: refactor apis in this file to return Result<T,E>
 let db: Database.Database;
@@ -11,6 +11,7 @@ export interface RunResult {
   changes: number;
   lastInsertRowid: number | bigint;
 }
+
 export function run(query: string, params: any[] = []): RunResult {
   const stmt = db.prepare(query);
   return stmt.run(...params);
@@ -46,19 +47,8 @@ interface Migration {
   name: string;
 }
 
-function ensureSchemaMigrationsTable() {
-  const q = `
-    CREATE TABLE IF NOT EXISTS schema_migrations (
-      version TEXT NOT NULL PRIMARY KEY,
-      statement TEXT,
-      name TEXT
-    )`;
-  db.exec(q);
-}
-
 async function init() {
   db = Database(dbPath);
-
   // For users of the app's first release, the database will not have a schema_migrations table,
   // even though their database schema is already up to date.
   // In this case, we need to create the schema_migrations table and insert the initial migration record.
@@ -94,7 +84,17 @@ async function init() {
   await update();
 }
 
-async function update() {
+export function ensureSchemaMigrationsTable() {
+  const q = `
+    CREATE TABLE IF NOT EXISTS schema_migrations (
+      version TEXT NOT NULL PRIMARY KEY,
+      statement TEXT,
+      name TEXT
+    )`;
+  db.exec(q);
+}
+
+export async function update() {
   ensureSchemaMigrationsTable();
 
   // Check if the database needs to be updated
@@ -136,7 +136,7 @@ async function update() {
   }
 }
 
-async function runMigrations(migrations: Migration[]): Promise<Result<void, Error>> {
+export async function runMigrations(migrations: Migration[]): Promise<Result<void, Error>> {
   try {
     for (const migration of migrations) {
       db.exec(migration.statement);
@@ -149,7 +149,7 @@ async function runMigrations(migrations: Migration[]): Promise<Result<void, Erro
   }
 }
 
-async function getMigrations(): Promise<Result<Migration[], Error>> {
+export async function getMigrations(): Promise<Result<Migration[], Error>> {
   try {
     const files = await fsp.readdir(migrationsPath);
     const migrations: Migration[] = [];
@@ -202,7 +202,7 @@ async function restore() {
   }
 }
 
-export default {
+export const sqlite = {
   init,
   run,
   all,

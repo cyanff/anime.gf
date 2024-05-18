@@ -1,4 +1,4 @@
-import { ImageExt, Result } from "@shared/types";
+import { Result } from "@shared/types";
 import { isError } from "@shared/utils";
 import { app, nativeImage } from "electron";
 import fs, { PathLike } from "fs";

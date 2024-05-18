@@ -1,12 +1,6 @@
 import { config as appConfig } from "@shared/config";
-import { Result } from "@shared/types";
+import { Result, XFetchConfig } from "@shared/types";
 import { deepFreeze } from "@shared/utils";
-
-export interface XFetchConfig {
-  // How long to wait before timing out the request, in milliseconds.
-  timeout?: number;
-  uuid?: string;
-}
 
 // Map of UUIDs to AbortControllers
 const _abortControllers = new Map<string, AbortController>();

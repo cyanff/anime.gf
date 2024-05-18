@@ -1,12 +1,14 @@
 import { ProviderE } from "@/lib/provider/provider";
-import { Persona } from "@shared/db_types";
 import { Sharp } from "sharp";
 import { z } from "zod";
-import { cardSchema } from "./schema/schema";
+import { cardFormSchema, personaFormSchema } from "./schema/form";
+import { XFetchConfigSchema } from "./schema/ipc";
+import { cardSchema, personaSchema } from "./schema/schema";
 import { supportedImageExts } from "./utils";
 
 export type CardData = z.infer<typeof cardSchema>;
 export type InputCardData = z.input<typeof cardSchema>;
+export type PersonaData = z.infer<typeof personaSchema>;
 
 // =========================================================
 //  Card Storage
@@ -33,14 +35,23 @@ export interface RawPlatformCardBundle {
 // =========================================================
 //  Persona Storage
 // =========================================================
-export interface PersonaBundle {
+export interface UIPersonaBundle {
+  id: number;
+  data: PersonaData;
   avatarURI: string;
+  isDefault: boolean;
 }
 
-export interface PersonaData extends Persona {}
-
-export interface UIPersonaBundle extends PersonaBundle {
+export interface PlatformPersonaBundle {
   data: PersonaData;
+  avatarSharp?: Sharp;
+  bannerSharp?: Sharp;
+}
+
+export interface RawPlatformPersonaBundle {
+  data: object;
+  avatarBuffer?: Buffer;
+  bannerBuffer?: Buffer;
 }
 
 // =========================================================
@@ -68,3 +79,6 @@ export type Result<T, E> = { kind: "ok"; value: T } | { kind: "err"; error: E };
 export type ImageExt = (typeof supportedImageExts)[number];
 export type supportedCardExts = (typeof supportedImageExts)[number];
 export type PathLike = string | Buffer | URL;
+export type XFetchConfig = z.infer<typeof XFetchConfigSchema>;
+export type CardFormData = z.infer<typeof cardFormSchema>;
+export type PersonaFormData = z.infer<typeof personaFormSchema>;

@@ -7,8 +7,6 @@ import { attainable, cardsRootPath, fileToBuffer } from "../utils";
 
 const images = ["avatar", "banner"];
 
-// There should just be "read(), along with a general option of what to read"
-
 export async function readData(cardDirName: string): Promise<Result<CardData, Error>> {
   try {
     const path = join(cardsRootPath, cardDirName, "data.json");

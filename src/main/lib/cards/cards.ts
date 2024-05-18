@@ -5,7 +5,7 @@ import { app, dialog } from "electron";
 import fsp from "fs/promises";
 import path from "path";
 import { fromError } from "zod-validation-error";
-import sqlite from "../store/sqlite";
+import sqlite from "../sqlite";
 import { attainable, cardsRootPath, downloadImageBuffer } from "../utils";
 import { SillyCardData, parse, sillyCardSchema } from "./parse";
 import { readData, readDir, readFilePathCardBundle, readZIP } from "./read";
