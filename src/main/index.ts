@@ -3,13 +3,16 @@ import { BrowserWindow, Menu, Tray, app, dialog, nativeImage, net, protocol, she
 import { createIPCHandler } from "electron-trpc/main";
 import { autoUpdater } from "electron-updater";
 import path, { join } from "path";
+// @ts-ignore - Electron vite asset import type error
 import icon from "../../resources/icon.png?asset";
 import { blob } from "./lib/blob";
 import { sqlite } from "./lib/sqlite";
 import { cardsRootPath, personasRootPath } from "./lib/utils";
-import { router } from "./routers/router";
+import { router } from "./router";
 
-export let win: any;
+// TODO: Decompose and refactor this heap of noise
+
+let win: any;
 let isQuiting = false;
 
 // Prevent multiple app instances
@@ -158,7 +161,6 @@ app.whenReady().then(async () => {
 
   await blob.init();
   await sqlite.init();
-  createIPCHandler({ router, windows: [win] });
 
   // Open or close DevTools using F12 in development
   // Ignore Cmd/Ctrl + R in production.
@@ -201,6 +203,7 @@ app.whenReady().then(async () => {
   });
 
   createWindow();
+  createIPCHandler({ router, windows: [win] });
 });
 
 function createWindow(): void {

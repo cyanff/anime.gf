@@ -4,7 +4,7 @@
 
 import { Result } from "@shared/types";
 import { deepFreeze } from "@shared/utils";
-
+// TODO: move this to platform
 async function importFromFileList(files: FileList): Promise<Result<void, Error>[]> {
   const numFiles = files.length;
   if (numFiles === 0) {

@@ -120,3 +120,32 @@ export function sharpFormatToSupportedImageExt(format: keyof FormatEnum | undefi
   return supportedImageExts.includes(ext) ? ext : undefined;
 }
 export const supportedCardExts = ["zip", "json", "png"];
+
+/* 
+  The MIT License (MIT)
+  Copyright (c) 2016-2018 Cheton Wu
+  https://github.com/cheton/is-electron?tab=MIT-1-ov-file
+*/
+function isElectron() {
+  // Renderer process
+  if (typeof window !== "undefined" && typeof window.process === "object" && window.process.type === "renderer") {
+    return true;
+  }
+
+  // Main process
+  if (typeof process !== "undefined" && typeof process.versions === "object" && !!process.versions.electron) {
+    return true;
+  }
+
+  // Detect the user agent when the `nodeIntegration` option is set to false
+  if (
+    typeof navigator === "object" &&
+    typeof navigator.userAgent === "string" &&
+    navigator.userAgent.indexOf("Electron") >= 0
+  ) {
+    return true;
+  }
+
+  return false;
+}
+export const isLocal = isElectron();

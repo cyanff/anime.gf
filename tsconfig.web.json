@@ -5,6 +5,7 @@
     "src/renderer/src/**/*",
     "src/shared/**/*",
     "src/renderer/src/**/*.tsx",
+    "src/main/**/*.ts",
     "src/preload/*.d.ts",
     "src/shared/config.ts"
 , "src/main/lib/xfetch.ts"  ],
@@ -18,7 +19,10 @@
       ],
       "@shared/*": [
         "./src/shared/*"
-      ]
+      ],
+      "@platform": [
+        "./src/renderer/src/lib/platform/platform.ts"
+      ],
     },
     "noUnusedLocals": false,
     "noUnusedParameters": false,

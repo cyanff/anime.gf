@@ -210,7 +210,7 @@ export default function App() {
           </CommandDialog>
         )}
 
-        {/* <div className="flex h-full w-full overflow-hidden py-4">
+        <div className="flex h-full w-full overflow-hidden py-4">
           {page === "create" && <CreationPage setPage={setPage} />}
           {page === "chats" && !activeChatID && (
             <div className="flex items-center justify-center w-full h-full text-tx-tertiary">
@@ -224,7 +224,7 @@ export default function App() {
           {page === "chats" && activeChatID && <ChatsPage chatID={activeChatID} />}
           {page === "collections" && <CollectionsPage cardBundles={cardBundles} />}
           {page === "settings" && <SettingsPage />}
-        </div> */}
+        </div>
       </div>
     </AppContext.Provider>
   );
