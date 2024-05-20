@@ -5,4 +5,4 @@ out
 *.log*
 qdrant_storage
 electron.vite.config.*.mjs
-@/components/ui/*
+@/*

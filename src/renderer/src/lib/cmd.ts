@@ -12,9 +12,7 @@ const client = createTRPCProxyClient<AppRouter>({
   links: [ipcLink()]
 });
 
-export async function handleA() {
-  console.log(platform.hello());
-}
+export async function handleA() {}
 
 export async function handleB() {
   const res = await client.test.query();
