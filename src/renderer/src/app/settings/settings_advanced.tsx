@@ -65,7 +65,7 @@ export default function SettingsAdvanced() {
                             setValue("closeToTray", checked === true);
                           }}
                         />
-                        <Label className="text-tx-primary">Close app to tray</Label>
+                        <Label className="text-tx-primary" htmlFor="closeToTray">Close app to tray</Label>
                       </div>
                     </FormControl>
                     <FormMessage />

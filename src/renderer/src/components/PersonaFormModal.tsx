@@ -1,5 +1,6 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -139,7 +140,7 @@ export function PersonaFormModal({
           render={({ field }) => (
             <Checkbox
               className="rounded-[4px] border-[1px]"
-              id="message-streaming"
+              id="personaIsDefault"
               checked={field.value}
               onCheckedChange={(checked) => {
                 const val = checked === true ? true : false;
@@ -148,7 +149,7 @@ export function PersonaFormModal({
             />
           )}
         />
-        <span className="text-sm text-tx-primary">Make Default</span>
+        <Label className="text-sm text-tx-primary" htmlFor="personaIsDefault">Make Default</Label>
       </div>
 
       {/* Footer Controls*/}
